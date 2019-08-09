@@ -1,0 +1,401 @@
+package com.atmko.stack;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
+import android.util.SparseArray;
+
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Stack extends RecyclerView.OnScrollListener {
+    //stack operation identifiers
+    public static final int GO_DOWN_ONE_BLOCK = 1;
+    public static final int GO_UP_ONE_BLOCK = 2;
+
+    private int firstPage;
+    private int totalPages;
+    private int blockLimit;
+    private PagingBlockTemplate pagingBlockTemplate;
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter adapter;
+    private SparseArray<PagingBlock> pagingBlockMap;
+
+    public Stack(boolean pageZeroStart, int blockLimit, PagingBlockTemplate pagingBlockTemplate,
+                 RecyclerView recyclerView, RecyclerView.Adapter adapter) {
+
+        this.firstPage = pageZeroStart ? 0 : 1;
+        this.blockLimit = blockLimit;
+        this.pagingBlockTemplate = pagingBlockTemplate;
+        this.recyclerView = recyclerView;
+        this.adapter = adapter;
+        this.pagingBlockMap = new SparseArray<>();
+    }
+
+
+    private List getAdapterData() {
+        List dataList = null;
+        try {
+            Class adapterClass = Class.forName(adapter.getClass().getName());
+            Method getAdapterData = adapterClass.getMethod("getAdapterData");
+            dataList = (List) getAdapterData.invoke(adapter);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            throw new Error ("method \"getAdapterData()\" not found\n");
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
+        return dataList;
+    }
+
+    private boolean isAdapterEmpty() {
+        return getAdapterData().size() == 0;
+    }
+
+    public SparseArray<PagingBlock> getPagingBlockMap() {
+        return pagingBlockMap;
+    }
+
+    public int[] saveBlockStructure() {
+        int[] blockIndexRange = new int[2];
+
+        blockIndexRange[0] = pagingBlockMap.keyAt(0);
+
+        int lastBlockNumber = pagingBlockMap.keyAt(pagingBlockMap.size() - 1);
+        //index range[1] not inclusive in operation.
+        //therefore + 1 is added to include last block
+        int rangeAdjustment = lastBlockNumber + 1;
+
+        blockIndexRange[1] = rangeAdjustment;
+
+        return blockIndexRange;
+    }
+
+    public void restorePagingBlockStructure(int[] blockIndexRange) {
+        //index range[1] not inclusive in operation.
+        //e.g range of: 1, 4 generates 3 values (1, 2, 3)
+        int iterationSize = blockIndexRange[1] - blockIndexRange[0];
+
+        for (int index = 0; index < iterationSize; index++) {
+            int blockIndex = blockIndexRange[0] + index;
+            PagingBlock pagingBlock = new PagingBlock(getFirstPage(), blockIndex, pagingBlockTemplate.getBlockPageCapacity());
+
+            pagingBlockMap.put(blockIndex, pagingBlock);
+        }
+    }
+
+    public void setPagingBlockMap(SparseArray<PagingBlock> pagingBlockMap) {
+        this.pagingBlockMap = pagingBlockMap;
+    }
+
+    private int getTotalPages() {
+        return this.totalPages;
+    }
+
+    public void setTotalPages(int totalPages) {
+        this.totalPages = totalPages;
+    }
+
+    //initial setup paging block
+    public void initialize() {
+        //clear values
+        pagingBlockMap.clear();
+        getAdapterData().clear();
+
+        adapter.notifyDataSetChanged();
+        totalPages = 0;
+
+        //load new block
+        loadNextBlock(0);
+    }
+
+    private int getFirstPage() {
+        return firstPage;
+    }
+
+    //this method is called as many times as the value of blockPageCapacity
+    public void stackPage(int blockNumber, int pageNumber, List dataList, int stackOperation) {
+        //get blocks for stacking
+        PagingBlock pagingBlock = pagingBlockMap.get(blockNumber);
+
+        //set data lists
+        pagingBlock.setDataListByPage(pageNumber, dataList);
+
+        //make sure all data lists have been set before continuing
+        if (pagingBlock.getPageList().size() == pagingBlock.getBlockPageCapacity()) {
+            //if we're moving down a block
+            if (stackOperation == GO_DOWN_ONE_BLOCK) {
+                addItemsForwardsIntoAdapter(pagingBlock);
+
+                //if we're moving up a block
+            } else if (stackOperation == GO_UP_ONE_BLOCK){
+                addItemsBackwardsIntoAdapter(pagingBlock);
+            }
+        }
+    }
+
+    private void addItemsForwardsIntoAdapter(PagingBlock pagingBlock) {
+        //iterate forwards through number of pages
+        for (int index = 0; index < pagingBlock.getPageList().size(); index++) {
+            int page = pagingBlock.getPageList().keyAt(index);
+
+            //use page to get corresponding page list
+            List pageList = pagingBlock.getDataListByPage(page);
+
+            //iterate forwards through list
+            for (int i = 0; i < pageList.size(); i++) {
+                //add each item to back of list
+                getAdapterData().add(pageList.get(i));
+
+                //update item at last position
+                adapter.notifyItemInserted(getAdapterData().size() - 1);
+            }
+
+            //TODO data still in paging data now useless now that its been added to adapter.
+            // consider deleting it
+        }
+
+        recyclerView.setLayoutFrozen(false);
+    }
+
+    private void addItemsBackwardsIntoAdapter(PagingBlock pagingBlock) {
+        //iterate backwards through number of pages
+        for (int index = pagingBlock.getPageList().size() - 1; index >= 0; index--) {
+            int page = pagingBlock.getPageList().keyAt(index);
+
+            //use page to get corresponding page list
+            List pageList = pagingBlock.getDataListByPage(page);
+
+            //iterate backwards through list
+            for (int i = pageList.size() - 1; i >= 0; i--) {
+                //add each item to front of list
+                getAdapterData().add(0, pageList.get(i));
+
+                //update item at first position
+                adapter.notifyItemInserted(0);
+            }
+
+            //TODO data still in paging data now useless now that its been added to adapter.
+            // consider deleting it
+        }
+
+        recyclerView.setLayoutFrozen(false);
+    }
+
+    private void removeTopBlock() {
+        int firstKey = pagingBlockMap.keyAt(0);
+        int listSize = pagingBlockMap.get(firstKey).getFullDataCount();
+
+        //loop through length of block
+        for (int index = 0; index < listSize; index++) {
+            //remove top item in adapter
+            getAdapterData().remove(0);
+            //notify change
+            adapter.notifyItemRemoved(0);
+        }
+
+        pagingBlockMap.remove(firstKey);
+    }
+
+    private void removeBottomBlock() {
+        int lastKey = pagingBlockMap.keyAt(pagingBlockMap.size() - 1);
+        int listSize = pagingBlockMap.get(lastKey).getFullDataCount();
+
+        //loop through length of block
+        for (int index = 0; index < listSize; index++) {
+            //remove bottom item in adapter
+            getAdapterData().remove(getAdapterData().size() - 1);
+            //notify change
+            adapter.notifyItemRemoved(getAdapterData().size() - 1);
+        }
+
+        pagingBlockMap.remove(lastKey);
+    }
+
+    private void addTopBlock() {
+        int firstKey = pagingBlockMap.keyAt(0);
+        int newKey = firstKey - 1;
+
+        loadPreviousBlock(newKey);
+    }
+
+    private void loadPreviousBlock(int blockNumber) {
+        //initialize paging block
+        PagingBlock pagingBlock =
+                new PagingBlock(getFirstPage(), blockNumber, pagingBlockTemplate.blockPageCapacity);
+
+        //add block to list
+        pagingBlockMap.put(blockNumber, pagingBlock);
+
+        //define first targetPage
+        int targetPage = pagingBlock.getFirstPageInBlock();
+
+        //iterate through block page capacity
+        for (int i = 0; i < pagingBlockTemplate.getBlockPageCapacity(); i++) {
+            //fetch page data
+            pagingBlockTemplate.createPageLoader.onPageStartReached(blockNumber, targetPage);
+
+            //increase targetPage value
+            targetPage += 1;
+        }
+    }
+
+    private void addBottomBlock() {
+        int lastKey = pagingBlockMap.keyAt(pagingBlockMap.size() - 1);
+        int newKey = lastKey + 1;
+
+        loadNextBlock(newKey);
+    }
+
+    private void loadNextBlock(int blockNumber) {
+        //initialize paging block
+        PagingBlock pagingBlock = new PagingBlock(getFirstPage(), blockNumber, pagingBlockTemplate.blockPageCapacity);
+
+        //add block to list
+        pagingBlockMap.put(blockNumber, pagingBlock);
+
+        //define first targetPage
+        int targetPage = pagingBlock.getFirstPageInBlock();
+
+        //TODO if number of pages ahead is < getBlockPageCapacity then extra api queries are a wasted
+        //iterate through block page capacity
+        for (int i = 0; i < pagingBlockTemplate.getBlockPageCapacity(); i++) {
+            //fetch page data
+            pagingBlockTemplate.createPageLoader.onPageEndReached(blockNumber, targetPage);
+
+            //increase targetPage value
+            targetPage += 1;
+        }
+    }
+
+    private int getFirstPageInStack() throws IndexOutOfBoundsException {
+        if (getPagingBlockMap().size() == 0) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        //get key of first block in stack
+        int topPagingBlockKey = pagingBlockMap.keyAt(0);
+        //get top block using key
+        PagingBlock topPagingBlock = pagingBlockMap.get(topPagingBlockKey);
+
+        return topPagingBlock.getFirstPageInBlock();
+    }
+
+    private int getLastPageInStack() throws IndexOutOfBoundsException {
+        if (getPagingBlockMap().size() == 0) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        //get key of last block in stack
+        int bottomPagingBlockKey = pagingBlockMap.keyAt(pagingBlockMap.size() - 1);
+        //get bottom block using key
+        PagingBlock bottomPagingBlock = pagingBlockMap.get(bottomPagingBlockKey);
+
+        return bottomPagingBlock.getLastPageInBlock();
+    }
+
+    public static class PagingBlockTemplate {
+        OnCreatePageLoader createPageLoader;
+        private int pageCapacity;
+        private int blockPageCapacity;
+
+        public PagingBlockTemplate(OnCreatePageLoader createPageLoader, int pageCapacity,
+                                   int blockPageCapacity) {
+            this.createPageLoader = createPageLoader;
+            this.pageCapacity = pageCapacity;
+            this.blockPageCapacity = blockPageCapacity;
+        }
+
+        private int getBlockPageCapacity() {
+            return blockPageCapacity;
+        }
+
+        public interface OnCreatePageLoader {
+            void onPageEndReached(int blockNumber, int targetPage);
+            void onPageStartReached(int blockNumber, int targetPage);
+        }
+    }
+
+    private boolean atListEnd;
+    private boolean atListStart;
+
+    @Override
+    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+        super.onScrolled(recyclerView, dx, dy);
+
+        @SuppressWarnings("ConstantConditions")
+        //error caught in throw when invoking findLastCompletelyVisibleItemPosition()
+                int lastShown = ((GridLayoutManager)recyclerView.getLayoutManager())
+                .findLastCompletelyVisibleItemPosition();
+
+        //error caught in throw when invoking findFirstCompletelyVisibleItemPosition()
+        int firstShownIndex = ((GridLayoutManager)recyclerView.getLayoutManager())
+                .findFirstCompletelyVisibleItemPosition();
+
+        //isLastItem makes sure we are at the end of list
+        boolean isLastItem = lastShown == adapter.getItemCount() - 1;
+        //isFirstItem makes sure we are at the start of list
+        boolean isFirstItem = firstShownIndex == 0;
+
+        int availablePages = getTotalPages();
+
+        //!emptyAdapter prevents unwanted page loads when clearing adapter data...
+        // ...because lastItem is considered true
+        boolean emptyAdapter = isAdapterEmpty();
+
+        try {
+            boolean morePagesAhead = getLastPageInStack() < availablePages;
+
+            //if at lastItem && if morePagesAhead && if adapter not empty
+            atListEnd = isLastItem && morePagesAhead && !emptyAdapter;
+
+        } catch (IndexOutOfBoundsException e) {
+            atListEnd = false;
+        }
+
+        try {
+            boolean morePagesBehind = getFirstPageInStack() > getFirstPage();
+
+            //if at firstItem && if morePagesBehind && if adapter not empty
+            atListStart = isFirstItem && morePagesBehind && !emptyAdapter;
+
+        } catch (IndexOutOfBoundsException e) {
+            atListStart = false;
+        }
+    }
+
+    @Override
+    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+        super.onScrollStateChanged(recyclerView, newState);
+        if (atListEnd && newState == RecyclerView.SCROLL_STATE_IDLE) {
+            if (pagingBlockMap.size() == blockLimit) {
+                removeTopBlock();
+            }
+
+            //prevents crash when simultaneously scrolling and updating adapter data
+            this.recyclerView.setLayoutFrozen(true);
+
+            addBottomBlock();
+
+        } else if (atListStart && newState == RecyclerView.SCROLL_STATE_IDLE) {
+            if (pagingBlockMap.size() == blockLimit) {
+                removeBottomBlock();
+            }
+
+            //prevents crash when simultaneously scrolling and updating adapter data
+            this.recyclerView.setLayoutFrozen(true);
+
+            addTopBlock();
+        }
+    }
+}

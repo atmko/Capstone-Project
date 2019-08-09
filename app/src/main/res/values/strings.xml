@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">On My Watch</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="settings_action_bar_label">Settings</string>
+
+    <string name="settings_review_title">Review this app</string>
+    <string name="settings_contact_developer_title">Contact Developer</string>
+    <string name="settings_default_media_title">Default media</string>
+    <string name="settings_poster_size_title">Poster quality</string>
+    <string name="settings_backdrop_size_title">Backdrop quality</string>
+    <string name="settings_auto_sync_title">Automatic sync</string>
+    <string name="settings_manual_backup_title">Backup</string>
+    <string name="settings_about_app_title">About App</string>
+
+    <string name="settings_review_summary">This app is developed by a single individual. Please consider leaving a 5 star review if you like the app. It does more than you know and means a whole lot. Thanks!"</string>
+    <string name="settings_contact_developer_summary">I would like to know what you think about the app</string>
+    <string name="settings_default_media_summary">Change the default media type to be opened on all screens."</string>
+    <string name="settings_poster_size_summary">Higher image qualities may use more data, and require longer load times."</string>
+    <string name="settings_backdrop_size_summary">Higher image qualities may use more data, and require longer load times."</string>
+    <string name="settings_auto_sync_summary">Create automatic backups</string>
+    <string name="settings_manual_backup_summary">Create a manual backup</string>
+    <string name="settings_about_app_summary">On My Watch Version 1.0.0</string>
+
+    <!--CONTENT DESCRIPTIONS-->
+    <string name="poster_description">poster image</string>
+
+    <!--<string name="search_preset_movie_url_format">https://api.themoviedb.org/3/movie/{sort}?api_key={api_key}&amp;language={lang}&amp;page={page}&amp;region={region}</string>-->
+    <!--<string name="search_manual_movie_url_format">https://api.themoviedb.org/3/search/movie/?api_key={api_key}&amp;query={query}&amp;language={lang}&amp;page={page}&amp;include_adult={include_adult}&amp;region={region}&amp;year={year}&amp;primary_release_year={primary_release_year}</string>-->
+
+    <!--<string name="search_preset_tv_url_format">https://api.themoviedb.org/3/tv/{sort}?api_key={api_key}&amp;language={lang}&amp;page={page}</string>-->
+    <!--<string name="search_manual_tv_url_format">https://api.themoviedb.org/3/search/tv/?api_key={api_key}&amp;query={query}&amp;language={lang}&amp;page={page}&amp;include_adult={include_adult}&amp;region={region}&amp;year={year}&amp;primary_release_year={primary_release_year}</string>-->
+
+
+</resources>

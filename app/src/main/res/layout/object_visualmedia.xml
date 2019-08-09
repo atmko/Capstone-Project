@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/top_frame_layout"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/search_poster_height">
+
+    <ImageView
+        android:id="@+id/posterImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/poster_description"
+        android:scaleType="center"/>
+
+</FrameLayout>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:id="@+id/master_fragments_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:background="@color/design_default_color_primary"
+            android:layout_weight="1"/>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/colorAccent"/>
+
+        <FrameLayout
+            android:id="@+id/detail_fragments_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:background="@color/colorPrimaryDark"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/popup_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:background="@color/colorAccent"
+        android:visibility="gone"
+        android:layout_weight="1"/>
+
+</FrameLayout>

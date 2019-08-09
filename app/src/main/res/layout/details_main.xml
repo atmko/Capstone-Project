@@ -1,0 +1,222 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#232323">
+
+    <!--TODO fix height programmatically-->
+    <ImageView
+        android:id="@+id/backdrop_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="215dp"
+        android:src="@drawable/backdrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:scaleType="centerCrop"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginLeft="32dp"
+        android:background="@color/background"
+        android:paddingStart="16dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="4dp"
+        android:text="Trailer"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/backdrop_image_view"
+        app:layout_constraintStart_toStartOf="@+id/backdrop_image_view" />
+
+    <TextView
+        android:id="@+id/title_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:text="Alita Battle Angel"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/backdrop_image_view" />
+
+    <!--______________________________________________-->
+    <TextView
+        android:id="@+id/date_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:textSize="12sp"
+        android:textColor="#A8A8A8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_text_view"
+        android:text="2019" />
+
+    <TextView
+        android:id="@+id/maturity_rating_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="8dp"
+        android:textSize="12sp"
+        android:textColor="#A8A8A8"
+        app:layout_constraintStart_toEndOf="@+id/date_text_view"
+        app:layout_constraintTop_toBottomOf="@+id/title_text_view"
+        android:text="PG-13" />
+
+    <TextView
+        android:id="@+id/genre_1_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="8dp"
+        android:textSize="12sp"
+        android:textColor="#A8A8A8"
+        app:layout_constraintStart_toEndOf="@+id/maturity_rating_text_view"
+        app:layout_constraintTop_toBottomOf="@+id/title_text_view"
+        android:text="action" />
+
+    <TextView
+        android:id="@+id/genre_2_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="8dp"
+        android:textSize="12sp"
+        android:textColor="#A8A8A8"
+        app:layout_constraintStart_toEndOf="@+id/genre_1_text_view"
+        app:layout_constraintTop_toBottomOf="@+id/title_text_view"
+        android:text="drama" />
+    <!--______________________________________________-->
+
+    <!--______________________________________________-->
+    <ImageButton
+        android:id="@+id/notify_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@null"
+        android:src="@drawable/ic_notify"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/date_text_view" />
+
+    <ImageButton
+        android:id="@+id/share_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="16dp"
+        android:background="@null"
+        android:src="@drawable/ic_share"
+        app:layout_constraintStart_toEndOf="@id/notify_button"
+        app:layout_constraintTop_toBottomOf="@id/date_text_view" />
+
+    <ImageButton
+        android:id="@+id/rate_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="16dp"
+        android:background="@null"
+        android:src="@drawable/ic_rate"
+        app:layout_constraintStart_toEndOf="@id/share_button"
+        app:layout_constraintTop_toBottomOf="@id/date_text_view" />
+    <!--______________________________________________-->
+
+    <TextView
+        android:id="@+id/notify_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textSize="12sp"
+        android:textColor="#A8A8A8"
+        app:layout_constraintEnd_toEndOf="@+id/notify_button"
+        app:layout_constraintStart_toStartOf="@+id/notify_button"
+        app:layout_constraintTop_toBottomOf="@id/notify_button"
+        android:text="notify" />
+
+    <TextView
+        android:id="@+id/share_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textSize="12sp"
+        android:textColor="#A8A8A8"
+        app:layout_constraintEnd_toEndOf="@+id/share_button"
+        app:layout_constraintStart_toStartOf="@+id/share_button"
+        app:layout_constraintTop_toBottomOf="@id/notify_button"
+        android:text="share" />
+
+    <TextView
+        android:id="@+id/rate_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textSize="12sp"
+        android:textColor="#A8A8A8"
+        app:layout_constraintEnd_toEndOf="@+id/rate_button"
+        app:layout_constraintStart_toStartOf="@id/rate_button"
+        app:layout_constraintTop_toBottomOf="@id/notify_button"
+        android:text="rate" />
+
+    <TextView
+        android:id="@+id/rating_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
+        android:fontFamily="sans-serif-black"
+        android:text="7.5"
+        android:textColor="@android:color/white"
+        android:textSize="48sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/genre_2_text_view" />
+
+    <TextView
+        android:id="@+id/overView_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginRight="12dp"
+        android:text="Light years from Earth, 26 years after being abducted,
+Peter Quill finds himself the prime target of a manhunt
+after discovering an orb wanted by Ronan the Accuser."
+        android:textColor="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/notify_text_view" />
+
+    <ImageButton
+        android:id="@+id/show_more_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@null"
+        android:src="@drawable/ic_show_more"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/overView_text_view" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

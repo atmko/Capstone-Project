@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background"
+    tools:context=".MasterActivity">
+    <!--TODO: create UI-->
+
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorAccent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/media_type_text_view"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@null"
+                android:fontFamily="sans-serif-medium"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:text="Movies"
+                android:textAlignment="textStart"
+                android:textAllCaps="false"
+                android:textColor="@android:color/black"
+                android:textSize="18dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/spinner_arrow_image_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:background="@null"
+                android:src="@drawable/ic_spinner_arrow"
+                app:layout_constraintBottom_toBottomOf="@+id/media_type_text_view"
+                app:layout_constraintStart_toEndOf="@id/media_type_text_view" />
+
+            <Button
+                android:id="@+id/lists_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="32dp"
+                android:layout_marginLeft="32dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:textAllCaps="false"
+                android:fontFamily="sans-serif-medium"
+                android:background="@null"
+                android:text="Lists"
+                android:textColor="@android:color/black"
+                android:textSize="18dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/spinner_arrow_image_button"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/search_image_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@null"
+                android:padding="16dp"
+                android:src="@drawable/ic_manual_search"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:textStyle="bold"
+                android:text="Spotlight"
+                android:textSize="18dp"
+                android:textColor="@android:color/white" />
+
+            <FrameLayout
+                android:id="@+id/spotlight_container"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_marginTop="8dp"
+                android:background="#7C7C7C"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:textStyle="bold"
+                android:text="Watching"
+                android:textSize="18dp"
+                android:textColor="@android:color/white" />
+
+            <FrameLayout
+                android:id="@+id/watching_list_container"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_marginTop="8dp"
+                android:background="#7C7C7C" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:textStyle="bold"
+                android:text="To Watch"
+                android:textSize="18dp"
+                android:textColor="@android:color/white" />
+
+            <FrameLayout
+                android:id="@+id/to_watch_list_container"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_marginTop="8dp"
+                android:background="#7C7C7C"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

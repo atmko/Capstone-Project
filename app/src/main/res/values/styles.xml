@@ -1,0 +1,51 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+    
+    <style name="preferences_theme" parent="@style/Theme.AppCompat">
+        <item name="actionBarStyle">@style/preferences_theme.app_bar_style</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorSecondary">@color/color_subtext</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:listDivider">@color/colorAccent</item>
+        <item name="android:selectableItemBackground">@color/background</item>
+    </style>
+
+    <style name="preferences_theme.app_bar_style" parent="Base.Widget.AppCompat.ActionBar">
+        <item name="titleTextStyle">@style/preferences_theme.app_bar_style.title_style</item>
+        <item name="background">@color/colorAccent</item>
+        <item name="backgroundStacked">@color/colorAccent</item>
+        <item name="backgroundSplit">@color/colorAccent</item>
+    </style>
+
+    <style name="preferences_theme.app_bar_style.title_style" parent="Base.TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <!--TODO change style name and item order-->
+    <style name="Theme.UserDialog" parent="@style/Theme.AppCompat.Dialog">
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowMinWidthMajor">80%</item>
+        <item name="android:windowMinWidthMinor">80%</item>
+    </style>
+
+    <style name="tab_style">
+        <item name="tabIndicatorColor">@android:color/black</item>
+        <item name="tabTextColor">@android:color/black</item>
+        <item name="tabIndicatorFullWidth">true</item>
+        <item name="tabIndicatorHeight">3dp</item>
+        <item name="android:background">@color/colorPrimary</item>
+    </style>
+
+</resources>

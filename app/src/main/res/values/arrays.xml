@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="search_preset_media_types">
+        <item>series</item>
+        <item>movies</item>
+    </array>
+
+    <array name="list_media_types">
+        <item>series</item>
+        <item>movies</item>
+    </array>
+
+    <array name="search_manual_media_types">
+        <item>series</item>
+        <item>movies</item>
+        <item>people</item>
+    </array>
+
+    <array name="preset_movie_search_titles">
+        <!--<item>latest</item>-->
+        <item>now playing</item>
+        <item>popular</item>
+        <item>top rated</item>
+        <item>upcoming</item>
+    </array>
+
+    <array name="preset_movie_search_urls">
+        <item>https://api.themoviedb.org/3/movie/now_playing?api_key={api_key}&amp;language={lang}&amp;page={page}&amp;region={region}</item>
+        <item>https://api.themoviedb.org/3/movie/popular?api_key={api_key}&amp;language={lang}&amp;page={page}&amp;region={region}</item>
+        <item>https://api.themoviedb.org/3/movie/top_rated?api_key={api_key}&amp;language={lang}&amp;page={page}&amp;region={region}</item>
+        <item>https://api.themoviedb.org/3/movie/upcoming?api_key={api_key}&amp;language={lang}&amp;page={page}&amp;region={region}</item>
+    </array>
+
+<!--___________________________________________-->
+
+    <array name="preset_tv_search_titles">
+        <!--<item>latest</item>-->
+        <item>airing today</item>
+        <item>on the air</item>
+        <item>popular</item>
+        <item>top rated</item>
+    </array>
+
+    <array name="preset_tv_search_urls">
+        <item>https://api.themoviedb.org/3/tv/airing_today?api_key={api_key}&amp;language={lang}&amp;page={page}</item>
+        <item>https://api.themoviedb.org/3/tv/on_the_air?api_key={api_key}&amp;language={lang}&amp;page={page}</item>
+        <item>https://api.themoviedb.org/3/tv/popular?api_key={api_key}&amp;language={lang}&amp;page={page}</item>
+        <item>https://api.themoviedb.org/3/tv/top_rated?api_key={api_key}&amp;language={lang}&amp;page={page}</item>
+    </array>
+
+    <array name="manual_search_urls">
+        <item>https://api.themoviedb.org/3/search/tv?api_key={api_key}&amp;language={language}&amp;query={query}&amp;page={page}&amp;first_air_date_year={first_air_date_year}</item>
+        <item>https://api.themoviedb.org/3/search/movie?api_key={api_key}&amp;language={language}&amp;query={query}&amp;page={page}&amp;include_adult={include_adult}&amp;region={region}&amp;year={year}&amp;primary_release_year={primary_release_year}</item>
+        <item>https://api.themoviedb.org/3/search/person?api_key={api_key}&amp;language={language}&amp;query={query}&amp;page={page}&amp;include_adult={include_adult}&amp;region={region}</item>
+    </array>
+
+    <array name="details_urls">
+        <item>https://api.themoviedb.org/3/tv/{id}?api_key={api_key}&amp;language={language}&amp;append_to_response=credits</item>
+        <item>https://api.themoviedb.org/3/movie/{id}?api_key={api_key}&amp;language={language}&amp;append_to_response=credits</item>
+        <item></item>
+    </array>
+
+    <array name="detail_tv_extras_titles">
+        <item>cast</item>
+        <item>seasons</item>
+        <item>reviews</item>
+    </array>
+
+    <array name="detail_movie_extras_titles">
+        <item>cast</item>
+        <item>reviews</item>
+    </array>
+
+    <array name="preference_key_checklist">
+        <item>language</item>
+        <item>query</item>
+        <item>page</item>
+        <item>include_adult</item>
+        <item>region</item>
+        <item>year</item>
+        <item>primary_release_year</item>
+        <item>first_air_date_year</item><!--for series-->
+    </array>
+
+    <!--DATABASE-->
+
+    <array name="watch_status_movies_titles">
+        <item>none</item>
+        <item>to watch</item>
+        <item>watching</item>
+        <item>watched</item>
+        <item>dropped</item>
+        <item>other</item>
+    </array>
+
+    <array name="watch_status_movies_values">
+        <item>0</item>    <!--NONE-->
+        <item>1</item>    <!--TO WATCH-->
+        <item>2</item>    <!--WATCHING-->
+        <item>3</item>    <!--WATCHED-->
+        <item>4</item>    <!--DROPPED-->
+        <item>5</item>    <!--OTHER-->
+    </array>
+
+    <array name="watch_status_series_titles">
+        <item>none</item>
+        <item>to watch</item>
+        <item>watching</item>
+        <item>watched</item>
+        <item>dropped</item>
+        <item>other</item>
+    </array>
+
+    <array name="watch_status_series_values">
+        <item>0</item>    <!--NONE-->
+        <item>1</item>    <!--TO WATCH-->
+        <item>2</item>    <!--WATCHING-->
+        <item>3</item>    <!--WATCHED-->
+        <item>4</item>    <!--DROPPED-->
+        <item>5</item>    <!--OTHER-->
+    </array>
+
+    <array name="options_spinner_titles">
+        <item>edit list</item>
+        <item>delete</item>
+        <item>null</item>
+    </array>
+
+    <array name="spotlight_url">
+        <item>https://api.themoviedb.org/3/movie/popular?api_key={api_key}&amp;language={lang}&amp;page={page}&amp;region={region}</item>
+        <item>https://api.themoviedb.org/3/tv/popular?api_key={api_key}&amp;language={lang}&amp;page={page}</item>
+    </array>
+
+</resources>

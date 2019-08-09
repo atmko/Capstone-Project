@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <Preference
+        android:title="@string/settings_review_title"
+        android:summary="@string/settings_review_summary"
+        app:iconSpaceReserved="false"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="true"/>
+
+    <EditTextPreference
+        android:title="@string/settings_contact_developer_title"
+        android:summary="@string/settings_contact_developer_summary"
+        app:iconSpaceReserved="false"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="true"/>
+
+    <ListPreference
+        android:defaultValue="Movies"
+        android:key="default_media"
+        android:title="@string/settings_default_media_title"
+        android:summary="@string/settings_default_media_summary"
+        app:iconSpaceReserved="false"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="true"/>
+
+    <ListPreference
+        android:defaultValue="small"
+        android:key="poster_size"
+        android:title="@string/settings_poster_size_title"
+        android:summary="@string/settings_poster_size_summary"
+        app:iconSpaceReserved="false"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="true"/>
+
+    <ListPreference
+        android:defaultValue="small"
+        android:key="backdrop_size"
+        android:title="@string/settings_backdrop_size_title"
+        android:summary="@string/settings_backdrop_size_summary"
+        app:iconSpaceReserved="false"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="true"/>
+
+    <SwitchPreference
+        android:defaultValue="on"
+        android:key="auto_backup"
+        android:title="@string/settings_auto_sync_title"
+        android:summary="@string/settings_auto_sync_summary"
+        app:iconSpaceReserved="false"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="true"/>
+
+    <Preference
+        android:title="@string/settings_manual_backup_title"
+        android:summary="@string/settings_manual_backup_summary"
+        app:iconSpaceReserved="false"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="true"/>
+
+    <Preference
+        android:title="@string/settings_about_app_title"
+        android:summary="@string/settings_about_app_summary"
+        app:iconSpaceReserved="false"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="true"/>
+
+</PreferenceScreen>

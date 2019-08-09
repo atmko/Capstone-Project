@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--margins-->
+    <dimen name="search_image_spacing">4dp</dimen>
+    <dimen name="standard_layout_margin">8dp</dimen>
+    <!--<dimen name="review_margin">@dimen/double_layout_margin</dimen>-->
+    <dimen name="double_layout_margin">16dp</dimen>
+
+    <!--view dimensions-->
+    <dimen name="search_poster_height">160dp</dimen>
+    <dimen name="poster_aspect_ratio">1.5dp</dimen>
+</resources>

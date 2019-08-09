@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ImageButton xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/up_navigation_button"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingTop="20dp"
+    android:paddingEnd="20dp"
+    android:paddingStart="20dp"
+    android:paddingBottom="20dp"
+    android:src="@drawable/ic_up_nav_btn"
+    android:background="@null"
+    tools:showIn="@layout/fragment_details" />
