@@ -23,6 +23,7 @@ import com.atmko.onmywatch.SettingsActivity;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.utils.SearchPreferences;
 
+import static com.atmko.onmywatch.Fragments.ListsParentFragment.LIST_TYPE_WATCH;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
 
@@ -153,13 +154,13 @@ public class HomeFragment extends Fragment {
                     .newInstance(mMediaType, spotlightUrl, searchPreferences);
 
             HomeListDisplayFragment toWatchHomeList = HomeListDisplayFragment
-                    .newInstance(mMediaType, movieWatchStatusTitles[MediaData.WATCH_STATUS_TO_WATCH]);
+                    .newInstance(mMediaType, LIST_TYPE_WATCH, movieWatchStatusTitles[MediaData.WATCH_STATUS_TO_WATCH]);
 
             HomeListDisplayFragment watchingHomeList = HomeListDisplayFragment
-                    .newInstance(mMediaType, movieWatchStatusTitles[MediaData.WATCH_STATUS_WATCHING]);
+                    .newInstance(mMediaType, LIST_TYPE_WATCH, movieWatchStatusTitles[MediaData.WATCH_STATUS_WATCHING]);
 
             HomeListDisplayFragment watchedHomeList = HomeListDisplayFragment
-                    .newInstance(mMediaType, movieWatchStatusTitles[MediaData.WATCH_STATUS_WATCHED]);
+                    .newInstance(mMediaType, LIST_TYPE_WATCH, movieWatchStatusTitles[MediaData.WATCH_STATUS_WATCHED]);
 
             getChildFragmentManager()
                     .beginTransaction()
@@ -181,13 +182,13 @@ public class HomeFragment extends Fragment {
                     .newInstance(mMediaType, spotlightUrl, searchPreferences);
 
             HomeListDisplayFragment toWatchHomeList = HomeListDisplayFragment
-                    .newInstance(mMediaType, seriesWatchStatusTitles[MediaData.WATCH_STATUS_TO_WATCH]);
+                    .newInstance(mMediaType, LIST_TYPE_WATCH, seriesWatchStatusTitles[MediaData.WATCH_STATUS_TO_WATCH]);
 
             HomeListDisplayFragment watchingHomeList = HomeListDisplayFragment
-                    .newInstance(mMediaType, seriesWatchStatusTitles[MediaData.WATCH_STATUS_WATCHING]);
+                    .newInstance(mMediaType, LIST_TYPE_WATCH, seriesWatchStatusTitles[MediaData.WATCH_STATUS_WATCHING]);
 
             HomeListDisplayFragment watchedHomeList = HomeListDisplayFragment
-                    .newInstance(mMediaType, seriesWatchStatusTitles[MediaData.WATCH_STATUS_WATCHED]);
+                    .newInstance(mMediaType, LIST_TYPE_WATCH, seriesWatchStatusTitles[MediaData.WATCH_STATUS_WATCHED]);
 
             getChildFragmentManager()
                     .beginTransaction()

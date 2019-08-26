@@ -31,20 +31,37 @@ public class MediaDataAdapter extends RecyclerView.Adapter<MediaDataAdapter.Medi
     private final Fragment mFragment;
     private final List<MediaData> mAdapterData;
     private final OnListItemClickListener mOnListItemClickListener;
+    private boolean mInPlaceholderMode;
 
     //layout ids
     @SuppressWarnings("FieldCanBeLocal")
     private final int STANDARD_LAYOUT_ID = 1;
     private final int NO_POSTER_LAYOUT = 2;
+    private final int EMPTY_ADAPTER_ID = 3;
 
     public MediaDataAdapter(OnListItemClickListener clickListener) {
         mFragment = ((Fragment) clickListener);
         mOnListItemClickListener = clickListener;
         mAdapterData = new ArrayList<>();
+        mInPlaceholderMode = false;
     }
 
     public interface OnListItemClickListener {
         void onItemClick(int position);
+    }
+
+    public boolean inPlaceholderMode() {
+        return mInPlaceholderMode;
+    }
+
+    public void setInPlaceholderMode(boolean inPlaceholderMode) {
+        mInPlaceholderMode = inPlaceholderMode;
+
+        if (mInPlaceholderMode) {
+            mAdapterData.clear();
+            mAdapterData.add(null);
+            notifyDataSetChanged();
+        }
     }
 
     public class MediaDataAdapterViewHolder extends RecyclerView.ViewHolder
@@ -141,11 +158,18 @@ public class MediaDataAdapter extends RecyclerView.Adapter<MediaDataAdapter.Medi
 
         int resourceId;
 
-        if (viewType == NO_POSTER_LAYOUT) {
+        if (viewType == STANDARD_LAYOUT_ID) {
+            resourceId = R.layout.object_media_data;
+
+        } else if (viewType == NO_POSTER_LAYOUT) {
             resourceId = R.layout.no_poster_layout;
+
+        } else if (viewType == EMPTY_ADAPTER_ID) {
+            resourceId = R.layout.item_empty_list;
 
         } else {
             resourceId = R.layout.object_media_data;
+
         }
 
         View view = layoutInflater.inflate(resourceId, viewGroup, false);
@@ -156,6 +180,8 @@ public class MediaDataAdapter extends RecyclerView.Adapter<MediaDataAdapter.Medi
     @Override
     public void onBindViewHolder(@NonNull MediaDataAdapterViewHolder adapterViewHolder, int position) {
         Context context = adapterViewHolder.topFrameLayout.getContext();
+
+        if (adapterViewHolder.getItemViewType() == EMPTY_ADAPTER_ID) return;
 
         //get current MediaData
         MediaData currentMediaData = mAdapterData.get(position);
@@ -185,6 +211,8 @@ public class MediaDataAdapter extends RecyclerView.Adapter<MediaDataAdapter.Medi
 
     @Override
     public int getItemViewType(int position) {
+        if (mInPlaceholderMode) return EMPTY_ADAPTER_ID;
+
         //if poster path != null
         boolean hasPoster = mAdapterData.get(position).getPosterPath() != null;
 

@@ -2,16 +2,14 @@ package com.atmko.onmywatch.Fragments;
 
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,6 +21,8 @@ import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.utils.SearchPreferences;
+import com.atmko.onmywatch.view_models.ListResultsViewModelFactory;
+import com.atmko.onmywatch.view_models.ListsResultsViewModel;
 
 import org.parceler.Parcels;
 
@@ -35,14 +35,14 @@ import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
 public class HomeListDisplayFragment extends Fragment implements MediaDataAdapter.OnListItemClickListener{
     public static String FRAGMENT_KEY = "home_list_display_fragment";
 
+    private static final String LIST_TYPE_KEY = "list_type";
     private static final String MEDIA_TYPE_KEY = "media_type";
     private static final String LIST_NAME_KEY = "list_name";
 
     //fragment instantiation values
+    private int mListType;
     private int mMediaType;
     private String mListName;
-
-    private static final String ADAPTER_DATA_LIST_KEY = "adapter_data_list";
 
     //post instantiation values
     private RecyclerView mRecyclerView;
@@ -53,9 +53,10 @@ public class HomeListDisplayFragment extends Fragment implements MediaDataAdapte
         // Required empty public constructor
     }
 
-    public static HomeListDisplayFragment newInstance(int mediaType, String listName) {
+    public static HomeListDisplayFragment newInstance(int mediaType, int listType, String listName) {
         HomeListDisplayFragment fragment = new HomeListDisplayFragment();
         Bundle args = new Bundle();
+        args.putInt(LIST_TYPE_KEY, listType);
         args.putInt(MEDIA_TYPE_KEY, mediaType);
         args.putString(LIST_NAME_KEY, listName);
         fragment.setArguments(args);
@@ -66,6 +67,7 @@ public class HomeListDisplayFragment extends Fragment implements MediaDataAdapte
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            mListType = getArguments().getInt(LIST_TYPE_KEY);
             mMediaType = getArguments().getInt(MEDIA_TYPE_KEY);
             mListName = getArguments().getString(LIST_NAME_KEY);
         }
@@ -83,14 +85,25 @@ public class HomeListDisplayFragment extends Fragment implements MediaDataAdapte
 
         defineViews();
 
-        if (savedInstanceState == null) {
-            observeData();
+        final String[] watchStatusMoviesTitles = getContext().getResources()
+                .getStringArray(R.array.watch_status_movie_titles);
+        List<String> titleList = Arrays.asList(watchStatusMoviesTitles);
 
-            //TODO live data isn't called on restore this will be fixed with view model
+        AppDatabase database = AppDatabase.getInstance(getContext());
+        ListResultsViewModelFactory resultsViewModelFactory =
+                new ListResultsViewModelFactory(database, ListsParentFragment.LIST_TYPE_WATCH,
+                        mMediaType, titleList, mListName);
+
+        final ListsResultsViewModel viewModel =
+                ViewModelProviders.of(this, resultsViewModelFactory)
+                        .get(ListsResultsViewModel.class);
+
+        observeData(viewModel);
+
+        if (savedInstanceState == null) {
+
         } else {
-            List<MediaData> mediaDataList =
-                    Parcels.unwrap(savedInstanceState.getParcelable(ADAPTER_DATA_LIST_KEY));
-            mMediaDataAdapter.addAdapterData(mediaDataList);
+
         }
     }
 
@@ -101,39 +114,49 @@ public class HomeListDisplayFragment extends Fragment implements MediaDataAdapte
         mRecyclerView.setAdapter(mMediaDataAdapter);
     }
 
-    private void observeData() {
-        AppDatabase mDatabase = AppDatabase.getInstance(getContext());
-        final String[] watchStatusMoviesTitles =
-                getContext().getResources().getStringArray(R.array.watch_status_movie_titles);
-        List<String> titleList = Arrays.asList(watchStatusMoviesTitles);
+    private void observeData(ListsResultsViewModel viewModel) {
+        //if this is a watch list
+        if (mListType == ListsParentFragment.LIST_TYPE_WATCH) {
+            //if media data is movie
+            if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
+                viewModel.getAllMoviesInWatchList().observe(this, new Observer<List<MovieData>>() {
+                    @Override
+                    public void onChanged(List<MovieData> mediaDataList) {
+                        populateAndNotifyAdapter(mediaDataList);
+                    }
+                });
 
-        if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
-            LiveData<List<MovieData>> listLiveData = mDatabase.movieDataDao()
-                    .getMoviesByWatchStatus(titleList.indexOf(mListName));
+            //if media data is series
+            } else if (mMediaType == MasterActivity.MEDIA_TYPE_SERIES) {
+                viewModel.getAllSeriesInWatchList().observe(this, new Observer<List<SeriesData>>() {
+                    @Override
+                    public void onChanged(List<SeriesData> mediaDataList) {
+                        populateAndNotifyAdapter(mediaDataList);
+                    }
+                });
+            }
+        }
 
-            listLiveData.observe(getActivity(), new Observer<List<MovieData>>() {
-                @Override
-                public void onChanged(List<MovieData> movieDataList) {
-                    mMediaDataAdapter.getAdapterData().clear();
-                    mMediaDataAdapter.addAdapterData(movieDataList);
+        //if this is a user list
+        if (mListType == ListsParentFragment.LIST_TYPE_USER) {
+            //if media data is movie
+            if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
+                viewModel.getAllMoviesInUserList().observe(this, new Observer<List<MovieData>>() {
+                    @Override
+                    public void onChanged(List<MovieData> mediaDataList) {
+                        populateAndNotifyAdapter(mediaDataList);
+                    }
+                });
 
-                    Log.d(FRAGMENT_KEY, "querying database");
-                }
-            });
-
-        } else if (mMediaType == MasterActivity.MEDIA_TYPE_SERIES) {
-            LiveData<List<SeriesData>> listLiveData = mDatabase.seriesDataDao()
-                    .getSeriesByWatchStatus(titleList.indexOf(mListName));
-
-            listLiveData.observe(getActivity(), new Observer<List<SeriesData>>() {
-                @Override
-                public void onChanged(List<SeriesData> seriesDataList) {
-                    mMediaDataAdapter.getAdapterData().clear();
-                    mMediaDataAdapter.addAdapterData(seriesDataList);
-
-                    Log.d(FRAGMENT_KEY, "querying database");
-                }
-            });
+                //if media data is series
+            } else if (mMediaType == MasterActivity.MEDIA_TYPE_SERIES) {
+                viewModel.getAllSeriesInUserList().observe(this, new Observer<List<SeriesData>>() {
+                    @Override
+                    public void onChanged(List<SeriesData> mediaDataList) {
+                        populateAndNotifyAdapter(mediaDataList);
+                    }
+                });
+            }
         }
     }
 
@@ -143,8 +166,30 @@ public class HomeListDisplayFragment extends Fragment implements MediaDataAdapte
         return layoutManager;
     }
 
+    private void populateAndNotifyAdapter(List mediaDataList) {
+        if (mediaDataList.size() == 0) {
+            mMediaDataAdapter.setInPlaceholderMode(true);
+
+        } else {
+            mMediaDataAdapter.setInPlaceholderMode(false);
+            mMediaDataAdapter.getAdapterData().clear();
+            mMediaDataAdapter.addAdapterData(mediaDataList);
+        }
+    }
     @Override
     public void onItemClick(int position) {
+        if (mMediaDataAdapter.inPlaceholderMode()) {
+            SearchParentFragment searchParentFragment = SearchParentFragment.newInstance();
+
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.slide_down_entry, android.R.animator.fade_out)
+                    .add(R.id.master_fragments_container,searchParentFragment,
+                            SearchParentFragment.FRAGMENT_KEY)
+                    .commit();
+
+            return;
+        }
+
         String[] detailUrls = getContext().getResources().getStringArray(R.array.details_urls);
         String detailUrl = null;
         MediaData selectedData = mMediaDataAdapter.getAdapterData().get(position);
@@ -177,13 +222,5 @@ public class HomeListDisplayFragment extends Fragment implements MediaDataAdapte
                 .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
                 .add(R.id.detail_fragments_container, detailsFragment, DetailsFragment.FRAGMENT_KEY)
                 .commit();
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        outState.putParcelable(ADAPTER_DATA_LIST_KEY, Parcels.wrap(mMediaDataAdapter.getAdapterData()));
-
     }
 }
