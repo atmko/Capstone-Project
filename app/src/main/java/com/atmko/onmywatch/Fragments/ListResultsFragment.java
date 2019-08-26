@@ -126,27 +126,19 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
         if (mListType == ListsParentFragment.LIST_TYPE_WATCH) {
             //if media data is movie
             if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
-                viewModel.getAllMoviesInWatchList().observe(this,
-                        new Observer<List<MovieData>>() {
+                viewModel.getAllMoviesInWatchList().observe(this, new Observer<List<MovieData>>() {
                     @Override
-                    public void onChanged(List<MovieData> movieDataList) {
-                        mDataAdapter.getAdapterData().clear();
-                        mDataAdapter.addAdapterData(movieDataList);
-
-                        if (mDataAdapter.getAdapterData().size() > 0 ) loadDetailFragment();
+                    public void onChanged(List<MovieData> mediaDataList) {
+                        populateAndNotifyAdapter(mediaDataList);
                     }
                 });
 
                 //if media data is series
             } else if (mMediaType == MasterActivity.MEDIA_TYPE_SERIES) {
-                viewModel.getAllSeriesInWatchList().observe(this,
-                        new Observer<List<SeriesData>>() {
+                viewModel.getAllSeriesInWatchList().observe(this, new Observer<List<SeriesData>>() {
                     @Override
-                    public void onChanged(List<SeriesData> seriesDataList) {
-                        mDataAdapter.getAdapterData().clear();
-                        mDataAdapter.addAdapterData(seriesDataList);
-
-                        if (mDataAdapter.getAdapterData().size() > 0 ) loadDetailFragment();
+                    public void onChanged(List<SeriesData> mediaDataList) {
+                        populateAndNotifyAdapter(mediaDataList);
                     }
                 });
             }
@@ -158,11 +150,8 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
             if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
                 viewModel.getAllMoviesInUserList().observe(this, new Observer<List<MovieData>>() {
                     @Override
-                    public void onChanged(List<MovieData> movieDataList) {
-                        mDataAdapter.getAdapterData().clear();
-                        mDataAdapter.addAdapterData(movieDataList);
-
-                        if (mDataAdapter.getAdapterData().size() > 0 ) loadDetailFragment();
+                    public void onChanged(List<MovieData> mediaDataList) {
+                        populateAndNotifyAdapter(mediaDataList);
                     }
                 });
 
@@ -170,11 +159,8 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
             } else if (mMediaType == MasterActivity.MEDIA_TYPE_SERIES) {
                 viewModel.getAllSeriesInUserList().observe(this, new Observer<List<SeriesData>>() {
                     @Override
-                    public void onChanged(List<SeriesData> seriesDataList) {
-                        mDataAdapter.getAdapterData().clear();
-                        mDataAdapter.addAdapterData(seriesDataList);
-
-                        if (mDataAdapter.getAdapterData().size() > 0 ) loadDetailFragment();
+                    public void onChanged(List<SeriesData> mediaDataList) {
+                        populateAndNotifyAdapter(mediaDataList);
                     }
                 });
             }
@@ -187,6 +173,19 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
 
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         return layoutManager;
+    }
+
+    private void populateAndNotifyAdapter(List mediaDataList) {
+        if (mediaDataList.size() == 0) {
+            mDataAdapter.setInPlaceholderMode(true);
+
+        } else {
+            mDataAdapter.setInPlaceholderMode(false);
+            mDataAdapter.getAdapterData().clear();
+            mDataAdapter.addAdapterData(mediaDataList);
+
+            if (mDataAdapter.getAdapterData().size() > 0 ) loadDetailFragment();
+        }
     }
 
     //loads detail fragment:
@@ -216,6 +215,18 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
 
     @Override
     public void onItemClick(int position) {
+        if (mDataAdapter.inPlaceholderMode()) {
+            SearchParentFragment searchParentFragment = SearchParentFragment.newInstance();
+
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.slide_down_entry, android.R.animator.fade_out)
+                    .add(R.id.master_fragments_container,searchParentFragment,
+                            SearchParentFragment.FRAGMENT_KEY)
+                    .commit();
+
+            return;
+        }
+
         MediaData selectedData = mDataAdapter.getAdapterData().get(position);
 
         startDetailsFragment(selectedData);
@@ -255,11 +266,5 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
                 .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
                 .add(R.id.detail_fragments_container, detailsFragment, DetailsFragment.FRAGMENT_KEY)
                 .commit();
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-
     }
 }
