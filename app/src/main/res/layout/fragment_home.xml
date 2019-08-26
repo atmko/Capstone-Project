@@ -7,92 +7,103 @@
     android:orientation="vertical"
     android:background="@color/background"
     tools:context=".MasterActivity">
-    <!--TODO: create UI-->
 
-    <androidx.appcompat.widget.Toolbar
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorAccent">
+        android:layout_height="?attr/actionBarSize">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:background="@color/colorAccent">
 
-            <Button
-                android:id="@+id/media_type_text_view"
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:background="@null"
-                android:fontFamily="sans-serif-medium"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
-                android:text="Movies"
-                android:textAlignment="textStart"
-                android:textAllCaps="false"
-                android:textColor="@android:color/black"
-                android:textSize="18dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
 
-            <ImageButton
-                android:id="@+id/spinner_arrow_image_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:background="@null"
-                android:src="@drawable/ic_spinner_arrow"
-                app:layout_constraintBottom_toBottomOf="@+id/media_type_text_view"
-                app:layout_constraintStart_toEndOf="@id/media_type_text_view" />
+                <Button
+                    android:id="@+id/media_type_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginStart="@dimen/x1_layout_margin"
+                    android:layout_marginLeft="@dimen/x1_layout_margin"
+                    android:layout_marginTop="@dimen/x1_layout_margin"
+                    android:layout_marginBottom="@dimen/x1_layout_margin"
+                    android:background="@null"
+                    android:fontFamily="sans-serif-medium"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    tools:text="@string/media_type_movies_text"
+                    android:textAlignment="textStart"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/appbar_headline_18_text_size"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <Button
-                android:id="@+id/lists_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="32dp"
-                android:layout_marginLeft="32dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:minHeight="0dp"
-                android:minWidth="0dp"
-                android:textAllCaps="false"
-                android:fontFamily="sans-serif-medium"
-                android:background="@null"
-                android:text="Lists"
-                android:textColor="@android:color/black"
-                android:textSize="18dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/spinner_arrow_image_button"
-                app:layout_constraintTop_toTopOf="parent" />
+                <ImageView
+                    android:id="@+id/spinner_arrow_image_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/x1_layout_margin"
+                    android:layout_marginLeft="@dimen/x1_layout_margin"
+                    android:background="@null"
+                    android:src="@drawable/ic_spinner_arrow"
+                    app:layout_constraintBottom_toBottomOf="@+id/media_type_text_view"
+                    app:layout_constraintStart_toEndOf="@id/media_type_text_view"
+                    android:contentDescription="@string/content_description_media_type_button"/>
 
-            <ImageButton
-                android:id="@+id/search_image_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
-                android:background="@null"
-                android:padding="16dp"
-                android:src="@drawable/ic_manual_search"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                <Button
+                    android:id="@+id/lists_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/x4_layout_margin"
+                    android:layout_marginLeft="@dimen/x4_layout_margin"
+                    android:layout_marginTop="@dimen/x1_layout_margin"
+                    android:layout_marginBottom="@dimen/x1_layout_margin"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:textAllCaps="false"
+                    android:fontFamily="sans-serif-medium"
+                    android:background="@null"
+                    android:text="@string/lists_text_literal"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/appbar_headline_18_text_size"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/spinner_arrow_image_button"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:contentDescription="@string/content_description_lists_button"/>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <ImageButton
+                    android:id="@+id/search_image_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginTop="@dimen/x1_layout_margin"
+                    android:layout_marginEnd="@dimen/x1_layout_margin"
+                    android:layout_marginRight="@dimen/x1_layout_margin"
+                    android:layout_marginBottom="@dimen/x1_layout_margin"
+                    android:background="@null"
+                    android:padding="@dimen/x2_layout_margin"
+                    android:src="@drawable/ic_manual_search"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:contentDescription="@string/content_description_search_button"/>
 
-    </androidx.appcompat.widget.Toolbar>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.appcompat.widget.Toolbar>
+
+
+    </com.google.android.material.appbar.AppBarLayout>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -100,64 +111,48 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
-                android:textStyle="bold"
-                android:text="Spotlight"
-                android:textSize="18dp"
-                android:textColor="@android:color/white" />
+                style="@style/home_list_display_heading_style"
+                android:text="@string/spotlight_heading_text" />
 
             <FrameLayout
+                style="@style/style_home_list_display_container"
                 android:id="@+id/spotlight_container"
-                android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:layout_marginTop="8dp"
-                android:background="#7C7C7C"/>
+                android:layout_height="@dimen/spotlight_poster_height"
+                tools:background="@color/color_subtext"/>
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
-                android:textStyle="bold"
-                android:text="Watching"
-                android:textSize="18dp"
-                android:textColor="@android:color/white" />
+                style="@style/home_list_display_heading_style"
+                android:text="@string/watch_status_watching_title" />
 
             <FrameLayout
+                style="@style/style_home_list_display_container"
                 android:id="@+id/watching_list_container"
-                android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:layout_marginTop="8dp"
-                android:background="#7C7C7C" />
+                tools:background="@color/color_subtext"/>
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
-                android:textStyle="bold"
-                android:text="To Watch"
-                android:textSize="18dp"
-                android:textColor="@android:color/white" />
+                style="@style/home_list_display_heading_style"
+                android:text="@string/watch_status_to_watch_title" />
 
             <FrameLayout
+                style="@style/style_home_list_display_container"
                 android:id="@+id/to_watch_list_container"
-                android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:layout_marginTop="8dp"
-                android:background="#7C7C7C"/>
+                tools:background="@color/color_subtext"/>
+
+            <TextView
+                style="@style/home_list_display_heading_style"
+                android:text="@string/watch_status_watched_title" />
+
+            <FrameLayout
+                style="@style/style_home_list_display_container"
+                android:id="@+id/watched_list_container"
+                tools:background="@color/color_subtext"/>
 
         </LinearLayout>
+
     </ScrollView>
 
 </LinearLayout>

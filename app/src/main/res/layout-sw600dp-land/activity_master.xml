@@ -2,8 +2,10 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/top_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".MasterActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:background="@color/design_default_color_primary"
-            android:layout_weight="1"/>
+            android:layout_weight="@integer/master_fragment_layout_weight"/>
 
         <View
             android:layout_width="1dp"
@@ -27,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:background="@color/colorPrimaryDark"
-            android:layout_weight="1"/>
+            android:layout_weight="@integer/detail_fragment_layout_weight"/>
 
     </LinearLayout>
 
@@ -36,7 +38,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:background="@color/colorAccent"
-        android:visibility="gone"
-        android:layout_weight="1"/>
+        android:visibility="gone"/>
 
 </FrameLayout>

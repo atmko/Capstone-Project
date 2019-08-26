@@ -17,4 +17,13 @@
     <!--TABLET FRAGMENT LAYOUT WEIGHTS-->
     <integer name="master_fragment_layout_weight">1</integer>
     <integer name="detail_fragment_layout_weight">0</integer>
+
+    <!--widget values-->
+    <integer name="widget_refresh_rate">1800000</integer>
+
+    <!--STACK INTEGERS-->
+    <integer name="stack_pages_per_block">3</integer>
+    <integer name="stack_block_limit">2</integer>
+    <!--STACK INTEGERS-->
+
 </resources>

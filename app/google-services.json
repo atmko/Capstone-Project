@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "815334132299",
+    "firebase_url": "https://on-my-watch-17e16.firebaseio.com",
+    "project_id": "on-my-watch-17e16",
+    "storage_bucket": "on-my-watch-17e16.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:815334132299:android:ada42a4693b22c20",
+        "android_client_info": {
+          "package_name": "com.atmko.onmywatch"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "815334132299-bodu8ql19g6bisimbktecvma32q05vt0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaYxxYQbSLomcVP_ZnaDtzmvcm1S9qm0k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "815334132299-bodu8ql19g6bisimbktecvma32q05vt0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

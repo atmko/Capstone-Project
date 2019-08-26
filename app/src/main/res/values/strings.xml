@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">On My Watch</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!--options menu titles-->
+    <string name="options_settings_title">Settings</string>
+    <!--options menu titles-->
 
-    <string name="settings_action_bar_label">Settings</string>
-
+    <!--settings titles-->
     <string name="settings_review_title">Review this app</string>
     <string name="settings_contact_developer_title">Contact Developer</string>
     <string name="settings_default_media_title">Default media</string>
@@ -14,7 +14,9 @@
     <string name="settings_auto_sync_title">Automatic sync</string>
     <string name="settings_manual_backup_title">Backup</string>
     <string name="settings_about_app_title">About App</string>
+    <!--settings titles-->
 
+    <!--settings summary-->
     <string name="settings_review_summary">This app is developed by a single individual. Please consider leaving a 5 star review if you like the app. It does more than you know and means a whole lot. Thanks!"</string>
     <string name="settings_contact_developer_summary">I would like to know what you think about the app</string>
     <string name="settings_default_media_summary">Change the default media type to be opened on all screens."</string>
@@ -23,15 +25,92 @@
     <string name="settings_auto_sync_summary">Create automatic backups</string>
     <string name="settings_manual_backup_summary">Create a manual backup</string>
     <string name="settings_about_app_summary">On My Watch Version 1.0.0</string>
+    <!--settings summary-->
 
     <!--CONTENT DESCRIPTIONS-->
     <string name="poster_description">poster image</string>
+    <string name="appwidget_text">!#error#!</string>
+    <string name="configure">Configure</string>
+    <string name="add_widget">Add widget</string>
+    <string name="content_description_backdrop_image">backdrop image</string>
+    <string name="content_description_notify_button">notify button</string>
+    <string name="content_description_share_button">share button</string>
+    <string name="content_description_rate_button">rate button</string>
+    <string name="content_description_show_more_button">show more button</string>
+    <string name="content_description_media_type_button">media type button</string>
+    <string name="content_description_lists_button">lists button</string>
+    <string name="content_description_search_button">search button</string>
+    <string name="content_description_back_button">back button</string>
+    <string name="content_description_widget_settings_button">widget settings button</string>
+    <!--CONTENT DESCRIPTIONS-->
 
-    <!--<string name="search_preset_movie_url_format">https://api.themoviedb.org/3/movie/{sort}?api_key={api_key}&amp;language={lang}&amp;page={page}&amp;region={region}</string>-->
-    <!--<string name="search_manual_movie_url_format">https://api.themoviedb.org/3/search/movie/?api_key={api_key}&amp;query={query}&amp;language={lang}&amp;page={page}&amp;include_adult={include_adult}&amp;region={region}&amp;year={year}&amp;primary_release_year={primary_release_year}</string>-->
+    <!--VIEW TEXT-->
+        <!--general text-->
+        <string name="search_text_box_hint">Search</string>
+        <string name="name_text_box_hint">Name</string>
+        <string name="save_button_text">Save</string>
+        <string name="cancel_button_text">Cancel</string>
+        <string name="delete_button_text">Delete</string>
+        <!--general text-->
 
-    <!--<string name="search_preset_tv_url_format">https://api.themoviedb.org/3/tv/{sort}?api_key={api_key}&amp;language={lang}&amp;page={page}</string>-->
-    <!--<string name="search_manual_tv_url_format">https://api.themoviedb.org/3/search/tv/?api_key={api_key}&amp;query={query}&amp;language={lang}&amp;page={page}&amp;include_adult={include_adult}&amp;region={region}&amp;year={year}&amp;primary_release_year={primary_release_year}</string>-->
+        <!--media type text-->
+        <string name="media_type_movies_text">Movies</string>
+        <string name="media_type_series_text">Series</string>
+        <string name="media_type_people_text">People</string>
+        <!--media type text-->
 
+        <!--home text-->
+        <string name="spotlight_heading_text">Spotlight</string>
+        <!--home text-->
+
+        <!--lists text-->
+        <string name="lists_text_literal">Lists</string>
+        <!--lists text-->
+
+        <!--details text-->
+        <string name="detail_trailer_text_title">Trailer</string>
+        <string name="detail_notify_text_title">Notify</string>
+        <string name="detail_share_text_title">Share</string>
+        <string name="detail_rate_text_title">Rate</string>
+
+        <string name="detail_extra_cast_text_literal">Cast</string>
+        <string name="detail_extra_seasons_text_literal">Seasons</string>
+        <string name="detail_extra_reviews_text_literal">Reviews</string>
+        <!--details text-->
+
+        <!--watch_status text-->
+        <string name="watch_status_none_title">None</string>
+        <string name="watch_status_to_watch_title">To Watch</string>
+        <string name="watch_status_watching_title">Watching</string>
+        <string name="watch_status_watched_title">Watched</string>
+        <string name="watch_status_dropped_title">Dropped</string>
+        <string name="watch_status_other_title">Other</string>
+        <!--add to list text-->
+    <!--VIEW TEXT-->
+
+    <!--SNACK BAR MESSAGES-->
+    <string name="spotlight_fetch_error_message">Error loading spotlight</string>
+    <string name="search_results_fetch_error_message">Error loading search results</string>
+    <string name="no_created_lists_message">You have\'t created any lists</string>
+    <string name="new_list_created_message">New list created</string>
+    <string name="details_error_message">Error fetching media details</string>
+    <string name="list_already_exists_error_message">A list with that name already exists</string>
+    <!--SNACK BAR MESSAGES-->
+
+    <!--PLACEHOLDER TEXT-->
+    <string name="maturity_rating_placeholder">PG-13</string>
+    <!--PLACEHOLDER TEXT-->
+
+    <!--NOTIFICATION TEXT-->
+    <string name="notification_new_release_title">New Release</string>
+    <string name="notification_new_release_content_suffix"> has been released</string>
+    <string name="notification_channel_releases">Releases</string>
+    <string name="notification_channel_releases_description">Notifications for new releases</string>
+
+    <string name="notification_new_trailer_title">New Trailer</string>
+    <string name="notification_new_trailer_content_suffix">A {replace} trailer has been released</string>
+    <string name="notification_channel_videos">Videos</string>
+    <string name="notification_channel_videos_description">Notifications for videos</string>
+    <!--NOTIFICATION TEXT-->
 
 </resources>

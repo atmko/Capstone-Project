@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <array name="media_types">
+        <item>@string/media_type_series_text</item>
+        <item>@string/media_type_movies_text</item>
+        <item>@string/media_type_people_text</item>
+    </array>
+
     <array name="search_preset_media_types">
-        <item>series</item>
-        <item>movies</item>
+        <item>@string/media_type_series_text</item>
+        <item>@string/media_type_movies_text</item>
     </array>
 
     <array name="list_media_types">
-        <item>series</item>
-        <item>movies</item>
+        <item>@string/media_type_series_text</item>
+        <item>@string/media_type_movies_text</item>
     </array>
 
     <array name="search_manual_media_types">
-        <item>series</item>
-        <item>movies</item>
-        <item>people</item>
+        <item>@string/media_type_series_text</item>
+        <item>@string/media_type_movies_text</item>
+        <item>@string/media_type_people_text</item>
     </array>
 
     <array name="preset_movie_search_titles">
-        <!--<item>latest</item>-->
         <item>now playing</item>
         <item>popular</item>
         <item>top rated</item>
@@ -33,7 +38,7 @@
 
 <!--___________________________________________-->
 
-    <array name="preset_tv_search_titles">
+    <array name="preset_series_search_titles">
         <!--<item>latest</item>-->
         <item>airing today</item>
         <item>on the air</item>
@@ -41,7 +46,7 @@
         <item>top rated</item>
     </array>
 
-    <array name="preset_tv_search_urls">
+    <array name="preset_series_search_urls">
         <item>https://api.themoviedb.org/3/tv/airing_today?api_key={api_key}&amp;language={lang}&amp;page={page}</item>
         <item>https://api.themoviedb.org/3/tv/on_the_air?api_key={api_key}&amp;language={lang}&amp;page={page}</item>
         <item>https://api.themoviedb.org/3/tv/popular?api_key={api_key}&amp;language={lang}&amp;page={page}</item>
@@ -61,14 +66,14 @@
     </array>
 
     <array name="detail_tv_extras_titles">
-        <item>cast</item>
-        <item>seasons</item>
-        <item>reviews</item>
+        <item>@string/detail_extra_cast_text_literal</item>
+        <item>@string/detail_extra_seasons_text_literal</item>
+        <item>@string/detail_extra_reviews_text_literal</item>
     </array>
 
     <array name="detail_movie_extras_titles">
-        <item>cast</item>
-        <item>reviews</item>
+        <item>@string/detail_extra_cast_text_literal</item>
+        <item>@string/detail_extra_reviews_text_literal</item>
     </array>
 
     <array name="preference_key_checklist">
@@ -84,13 +89,12 @@
 
     <!--DATABASE-->
 
-    <array name="watch_status_movies_titles">
+    <array name="watch_status_movie_titles">
         <item>none</item>
         <item>to watch</item>
         <item>watching</item>
         <item>watched</item>
         <item>dropped</item>
-        <item>other</item>
     </array>
 
     <array name="watch_status_movies_values">
@@ -99,7 +103,6 @@
         <item>2</item>    <!--WATCHING-->
         <item>3</item>    <!--WATCHED-->
         <item>4</item>    <!--DROPPED-->
-        <item>5</item>    <!--OTHER-->
     </array>
 
     <array name="watch_status_series_titles">
@@ -108,7 +111,6 @@
         <item>watching</item>
         <item>watched</item>
         <item>dropped</item>
-        <item>other</item>
     </array>
 
     <array name="watch_status_series_values">
@@ -117,18 +119,90 @@
         <item>2</item>    <!--WATCHING-->
         <item>3</item>    <!--WATCHED-->
         <item>4</item>    <!--DROPPED-->
-        <item>5</item>    <!--OTHER-->
+    </array>
+
+    <array name="watch_status_shorthand_titles">
+        <item>No</item>
+        <item>Tw</item>
+        <item>Wg</item>
+        <item>Wd</item>
+        <item>Dr</item>
+        <item>Ot</item>
     </array>
 
     <array name="options_spinner_titles">
         <item>edit list</item>
-        <item>delete</item>
+        <item>@string/delete_button_text</item>
         <item>null</item>
     </array>
 
     <array name="spotlight_url">
-        <item>https://api.themoviedb.org/3/movie/popular?api_key={api_key}&amp;language={lang}&amp;page={page}&amp;region={region}</item>
         <item>https://api.themoviedb.org/3/tv/popular?api_key={api_key}&amp;language={lang}&amp;page={page}</item>
+        <item>https://api.themoviedb.org/3/movie/popular?api_key={api_key}&amp;language={lang}&amp;page={page}&amp;region={region}</item>
+    </array>
+
+    <array name="genre_id_key">
+        <item>"28"</item>
+        <item>"12"</item>
+        <item>"16"</item>
+        <item>"35"</item>
+        <item>"80"</item>
+        <item>"99"</item>
+        <item>"18"</item>
+        <item>"10751"</item>
+        <item>"14"</item>
+        <item>"36"</item>
+        <item>"27"</item>
+        <item>"10402"</item>
+        <item>"9648"</item>
+        <item>"10749"</item>
+        <item>"878"</item>
+        <item>"10770"</item>
+        <item>"53"</item>
+        <item>"10752"</item>
+        <item>"37"</item>
+    </array>
+
+    <array name="genre_id_value">
+        <item>Action</item>
+        <item>Adventure</item>
+        <item>Animation</item>
+        <item>Comedy</item>
+        <item>Crime</item>
+        <item>Documentary</item>
+        <item>Drama</item>
+        <item>Family</item>
+        <item>Fantasy</item>
+        <item>History</item>
+        <item>Horror</item>
+        <item>Music</item>
+        <item>Mystery</item>
+        <item>Romance</item>
+        <item>Science Fiction</item>
+        <item>TV Movie</item>
+        <item>Thriller</item>
+        <item>War</item>
+        <item>Western</item>
+    </array>
+
+    <array name="notifier_movies_keys">
+        <item>on_release</item>
+        <item>new_trailer</item>
+    </array>
+
+    <array name="notifier_movies_condition_titles">
+        <item>On Release</item>
+        <item>New Trailer</item>
+    </array>
+
+    <array name="notifier_series_keys">
+        <item>on_release</item>
+        <item>new_trailer</item>
+    </array>
+
+    <array name="notifier_series_condition_titles">
+        <item>On Release</item>
+        <item>New Trailer</item>
     </array>
 
 </resources>

@@ -1,30 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
-    
-    <ImageView
-        android:id="@+id/photo_image_view"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:background="#7C7C7C"
-        android:contentDescription="cast member" />
+
+    <include layout="@layout/object_media_data" />
 
     <TextView
         android:id="@+id/name_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/x1_layout_margin"
         android:layout_gravity="center_horizontal"
-        android:text="Edris Elba"/>
+        tools:text="Edris Elba"/>
 
     <TextView
         android:id="@+id/role_text_view"
         android:layout_width="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="@dimen/x1_layout_margin"
+        android:layout_marginBottom="@dimen/x1_layout_margin"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="John Luther"/>
+        tools:text="John Luther"/>
 
 </LinearLayout>

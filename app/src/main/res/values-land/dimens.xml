@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--VIEW DIMENSIONS-->
+        <!--floating action button dimensions-->
+        <dimen name="fab_top_margin">187dp</dimen>
+        <!--floating action button dimensions-->
+    <!--VIEW DIMENSIONS-->
+
+</resources>

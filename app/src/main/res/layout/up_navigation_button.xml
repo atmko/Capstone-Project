@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ImageButton xmlns:android="http://schemas.android.com/apk/res/android"
+<ImageButton
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/up_navigation_button"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:paddingTop="20dp"
-    android:paddingEnd="20dp"
-    android:paddingStart="20dp"
-    android:paddingBottom="20dp"
+    android:layout_gravity="top|start"
+    android:paddingTop="@dimen/up_button_padding"
+    android:paddingStart="@dimen/up_button_padding"
+    android:paddingEnd="@dimen/up_button_padding"
+    android:paddingBottom="@dimen/up_button_padding"
     android:src="@drawable/ic_up_nav_btn"
     android:background="@null"
+    android:contentDescription="@string/content_description_back_button"
     tools:showIn="@layout/fragment_details" />

@@ -1,84 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MasterActivity"
-    android:background="#232323">
-
-    <!--TODO: create UI-->
+    android:background="@color/background"
+    tools:context=".MasterActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp">
+            android:layout_height="?attr/actionBarSize">
 
-            <ImageButton
-                android:id="@+id/up_navigation_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="12dp"
-                android:paddingEnd="16dp"
-                android:paddingStart="16dp"
-                android:paddingBottom="12dp"
-                android:src="@drawable/ic_up_nav_btn"
-                android:background="@null" />
+            <include layout="@layout/search_box_standard" />
 
-            <EditText
-                android:id="@+id/search_edit_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginEnd="16dp"
-                android:hint="Search"
-                android:textColorHint="@android:color/white"
-                android:textColor="@android:color/white"
-                android:padding="8dp"
-                android:inputType="text"
-                android:background="@drawable/background_searchbox"
-                android:imeOptions="actionSearch|flagNoExtractUi|flagNoFullscreen" />
-
-        </LinearLayout>
+        </FrameLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp">
+            android:layout_height="?attr/actionBarSize">
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="0.43dp"
-                android:layout_marginBottom="1.45dp"
+                android:layout_height="@dimen/indicator_cross_line_height"
+                android:layout_marginBottom="@dimen/indicator_cross_line_margin_from_bottom"
                 android:layout_gravity="bottom"
                 android:background="@color/colorAccent"/>
 
             <com.google.android.material.tabs.TabLayout
+                style="@style/tab_style"
                 android:id="@+id/media_type_tab_layout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:tabIndicatorColor="@color/colorAccent"
-                app:tabTextColor="@android:color/white"
-                app:tabIndicatorFullWidth="true"
-                app:tabIndicatorHeight="3dp"
                 app:tabMode="fixed">
 
                 <!--TODO these are for test purposes only. apply programmatically instead-->
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="movies"/>
+                    tools:text="@string/media_type_movies_text"/>
 
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="series"/>
+                    tools:text="@string/media_type_series_text"/>
             </com.google.android.material.tabs.TabLayout>
 
         </FrameLayout>
@@ -90,17 +58,11 @@
 
     </LinearLayout>
 
+    <include layout="@layout/up_navigation_button" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        style="@style/fab_style"
         android:id="@+id/search_list_fab"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_gravity="bottom|end"
-        android:layout_marginBottom="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
-        android:src="@drawable/ic_manual_search"
-        app:fabCustomSize="70dp"
-        app:maxImageSize="28dp"
-        app:backgroundTint="@color/colorAccent"/>
+        android:src="@drawable/ic_manual_search"/>
 
 </FrameLayout>

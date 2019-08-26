@@ -1,0 +1,77 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/widget_list_provider"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:color/white">
+
+    <LinearLayout
+        android:id="@+id/widget_heading_linear_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/x6_layout_margin"
+        android:orientation="horizontal"
+        android:elevation="@dimen/app_bar_elevation"
+        android:background="@color/colorAccent">
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2">
+
+            <TextView
+                android:id="@+id/media_type_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/x2_layout_margin"
+                android:layout_marginStart="@dimen/x2_layout_margin"
+                android:layout_gravity="start|center"
+                android:textStyle="bold"
+                tools:text="Series"
+                android:textSize="@dimen/appbar_headline_18_text_size"
+                android:textColor="@android:color/black" />
+
+            <ImageButton
+                android:id="@+id/spinner_arrow_image_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/x10_layout_margin"
+                android:layout_marginLeft="@dimen/x10_layout_margin"
+                android:layout_marginBottom="@dimen/x2_layout_margin"
+                android:layout_gravity="bottom"
+                android:background="@null"
+                android:src="@drawable/ic_spinner_arrow"
+                tools:ignore="ContentDescription" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/list_title_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:layout_gravity="center"
+            android:textAlignment="center"
+            android:textStyle="bold"
+            tools:text="List Name"
+            android:textSize="@dimen/appbar_headline_18_text_size"
+            android:textColor="@android:color/black" />
+
+        <ImageView
+            android:id="@+id/widget_settings_button"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:padding="@dimen/x1_layout_margin"
+            android:layout_weight="1"
+            android:src="@drawable/settings_cog"
+            android:background="@color/background"
+            android:contentDescription="@string/content_description_widget_settings_button"/>
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/list_item_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background"/>
+
+</LinearLayout>

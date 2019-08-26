@@ -25,6 +25,7 @@ public class Stack extends RecyclerView.OnScrollListener {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private SparseArray<PagingBlock> pagingBlockMap;
+    private boolean mIsIdle;
 
     public Stack(boolean pageZeroStart, int blockLimit, PagingBlockTemplate pagingBlockTemplate,
                  RecyclerView recyclerView, RecyclerView.Adapter adapter) {
@@ -35,6 +36,7 @@ public class Stack extends RecyclerView.OnScrollListener {
         this.recyclerView = recyclerView;
         this.adapter = adapter;
         this.pagingBlockMap = new SparseArray<>();
+        mIsIdle = true;
     }
 
 
@@ -66,6 +68,10 @@ public class Stack extends RecyclerView.OnScrollListener {
         return pagingBlockMap;
     }
 
+    public boolean isIdle() {
+        return mIsIdle;
+    }
+
     public int[] saveBlockStructure() {
         int[] blockIndexRange = new int[2];
 
@@ -94,10 +100,6 @@ public class Stack extends RecyclerView.OnScrollListener {
         }
     }
 
-    public void setPagingBlockMap(SparseArray<PagingBlock> pagingBlockMap) {
-        this.pagingBlockMap = pagingBlockMap;
-    }
-
     private int getTotalPages() {
         return this.totalPages;
     }
@@ -108,6 +110,9 @@ public class Stack extends RecyclerView.OnScrollListener {
 
     //initial setup paging block
     public void initialize() {
+        //stack is not idle
+        mIsIdle = false;
+
         //clear values
         pagingBlockMap.clear();
         getAdapterData().clear();
@@ -141,6 +146,8 @@ public class Stack extends RecyclerView.OnScrollListener {
             } else if (stackOperation == GO_UP_ONE_BLOCK){
                 addItemsBackwardsIntoAdapter(pagingBlock);
             }
+            
+            mIsIdle = true;
         }
     }
 
@@ -193,6 +200,9 @@ public class Stack extends RecyclerView.OnScrollListener {
     }
 
     private void removeTopBlock() {
+        //stack is not idle
+        mIsIdle = false;
+
         int firstKey = pagingBlockMap.keyAt(0);
         int listSize = pagingBlockMap.get(firstKey).getFullDataCount();
 
@@ -205,9 +215,15 @@ public class Stack extends RecyclerView.OnScrollListener {
         }
 
         pagingBlockMap.remove(firstKey);
+
+        //stack is idle
+        mIsIdle = true;
     }
 
     private void removeBottomBlock() {
+        //stack is not idle
+        mIsIdle = false;
+
         int lastKey = pagingBlockMap.keyAt(pagingBlockMap.size() - 1);
         int listSize = pagingBlockMap.get(lastKey).getFullDataCount();
 
@@ -220,10 +236,16 @@ public class Stack extends RecyclerView.OnScrollListener {
         }
 
         pagingBlockMap.remove(lastKey);
+
+        //stack is idle
+        mIsIdle = true;
     }
 
     private void addTopBlock() {
-        int firstKey = pagingBlockMap.keyAt(0);
+        //stack is not idle
+        mIsIdle = false;
+
+        mIsIdle = false;int firstKey = pagingBlockMap.keyAt(0);
         int newKey = firstKey - 1;
 
         loadPreviousBlock(newKey);
@@ -251,6 +273,9 @@ public class Stack extends RecyclerView.OnScrollListener {
     }
 
     private void addBottomBlock() {
+        //stack is not idle
+        mIsIdle = false;
+
         int lastKey = pagingBlockMap.keyAt(pagingBlockMap.size() - 1);
         int newKey = lastKey + 1;
 
@@ -353,7 +378,7 @@ public class Stack extends RecyclerView.OnScrollListener {
         // ...because lastItem is considered true
         boolean emptyAdapter = isAdapterEmpty();
 
-        try {
+        try {//catches error if paging block maps's size is 0
             boolean morePagesAhead = getLastPageInStack() < availablePages;
 
             //if at lastItem && if morePagesAhead && if adapter not empty
@@ -363,7 +388,7 @@ public class Stack extends RecyclerView.OnScrollListener {
             atListEnd = false;
         }
 
-        try {
+        try {//catches error if paging block maps's size is 0
             boolean morePagesBehind = getFirstPageInStack() > getFirstPage();
 
             //if at firstItem && if morePagesBehind && if adapter not empty

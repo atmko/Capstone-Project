@@ -11,7 +11,7 @@
         android:id="@+id/poster_replacement_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/double_layout_margin"
+        android:layout_margin="@dimen/x2_layout_margin"
         android:layout_gravity="center"
         tools:text="movie title"
         android:textAlignment="center"

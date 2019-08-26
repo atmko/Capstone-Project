@@ -1,0 +1,31 @@
+package com.atmko.onmywatch.database.daos;
+
+import androidx.lifecycle.LiveData;
+import androidx.room.Dao;
+import androidx.room.Delete;
+import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
+import androidx.room.Query;
+import androidx.room.Update;
+
+import com.atmko.onmywatch.models.WatchListModel;
+
+import java.util.List;
+
+@Dao
+public interface WatchListsDao {
+    @Insert()
+    void addList(WatchListModel watchListModel);
+
+    @Query("SELECT * FROM watch_lists")
+    LiveData<List<WatchListModel>> getAllLists();
+
+    @Query("SELECT * FROM watch_lists WHERE id = :name")
+    LiveData<WatchListModel> getListByName(String name);
+
+    @Query("SELECT * FROM watch_lists WHERE id LIKE :name")
+    LiveData<List<WatchListModel>> getListsWithNameLike(String name);
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    void updateListConfiguration(WatchListModel watchListModel);
+}

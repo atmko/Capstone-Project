@@ -1,6 +1,6 @@
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_weight="@integer/details_extras_layout_weight"
@@ -9,40 +9,37 @@
     <FrameLayout
         android:id="@+id/detail_extras_frame_layout"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="?android:attr/actionBarSize"
         app:layout_constraintTop_toTopOf="parent">
 
-        <View
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="0.43dp"
-            android:layout_marginBottom="1.45dp"
+            android:layout_height="@dimen/indicator_cross_line_height"
+            android:layout_marginBottom="@dimen/indicator_cross_line_margin_from_bottom"
             android:layout_gravity="bottom"
             android:background="@color/colorAccent"/>
 
         <com.google.android.material.tabs.TabLayout
+            style="@style/tab_style"
             android:id="@+id/detail_extras_tab_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:tabIndicatorColor="@color/colorAccent"
-            app:tabTextColor="@android:color/white"
-            app:tabIndicatorFullWidth="true"
-            app:tabIndicatorHeight="3dp"
             app:tabMode="fixed">
 
+            <!--tabs handled programmatically-->
+            <!--these are for visualization purposes only-->
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="cast" />
+                tools:text="@string/detail_extra_cast_text_literal" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="seasons" />
+                tools:text="@string/detail_extra_seasons_text_literal" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="reviews" />
+                tools:text="@string/detail_extra_reviews_text_literal" />
 
         </com.google.android.material.tabs.TabLayout>
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.upkipp.onmywatch">
+    package="com.atmko.onmywatch">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -11,12 +11,38 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <receiver android:name="com.atmko.onmywatch.widget.ListWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/list_widget_provider_info" />
+        </receiver>
+
+        <activity android:name="com.atmko.onmywatch.widget.ListWidgetProviderConfigureActivity">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
+        <receiver android:name="com.atmko.onmywatch.widget.ListWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/list_widget_provider_info" />
+        </receiver>
+
         <activity
-            android:name=".SettingsActivity"
-            android:label="@string/settings_action_bar_label"
+            android:name="com.atmko.onmywatch.SettingsActivity"
+            android:label="@string/options_settings_title"
             android:theme="@style/preferences_theme" />
         <activity
-            android:name=".MasterActivity"
+            android:name="com.atmko.onmywatch.MasterActivity"
             android:windowSoftInputMode="stateVisible|adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,6 +50,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name="com.atmko.onmywatch.widget.ListRemoteViewFactoryService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
     </application>
 
 </manifest>

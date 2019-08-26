@@ -1,10 +1,18 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        capstone_sign_config {
+            keyAlias 'capstone_key'
+            keyPassword 'kwdrFHHi4HHnFz#vxJ2B7fVA!p*06iLK9p8YdJZv'
+            storeFile file("$rootDir/keystore.jks")
+            storePassword '1rkbvFuh%D173IvU%mG$DJSap!msp4WHLT5F*E%g'
+        }
+    }
     compileSdkVersion 28
     buildToolsVersion "29.0.0"
     defaultConfig {
-        applicationId "com.upkipp.onmywatch"
+        applicationId "com.atmko.onmywatch"
         minSdkVersion 16
         targetSdkVersion 28
         versionCode 1
@@ -21,6 +29,7 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField "String", "apiKey", Api_Key
+            signingConfig signingConfigs.capstone_sign_config
         }
     }
 }
@@ -58,4 +67,13 @@ dependencies {
 
     //preference fragment
     implementation "androidx.preference:preference:1.1.0-rc01"
+
+    apply plugin: 'com.google.gms.google-services'  // Google Play services Gradle plugin
+
+    //firebase analytics
+    implementation 'com.google.firebase:firebase-analytics:17.1.0'
+
+    // (WorkManager)
+    implementation "androidx.work:work-runtime:2.2.0"
+
 }
