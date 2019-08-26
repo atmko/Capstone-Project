@@ -26,9 +26,6 @@ public class SeriesData extends MediaData{
     ArrayList<String> mCountryOfOrigin;
     @Ignore ArrayList<String> mReviews;
 
-    //detail attributes
-    @Ignore ArrayList<Season> mSeasons;
-
     //constructor for parceler
     @Ignore
     public SeriesData() {
@@ -105,14 +102,6 @@ public class SeriesData extends MediaData{
 
     public void setReleaseDate(String releaseDate) {
         this.mReleaseDate = releaseDate;
-    }
-
-    public ArrayList<Season> getSeasons() {
-        return mSeasons;
-    }
-
-    public void setSeasons(ArrayList<Season> seasons) {
-        mSeasons = seasons;
     }
 
     @Override

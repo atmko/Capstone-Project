@@ -6,11 +6,9 @@ package com.atmko.onmywatch.utils;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.ANRequest;
-import com.atmko.onmywatch.models.Genre;
 import com.atmko.stack.Stack;
 import com.google.gson.Gson;
 import com.atmko.onmywatch.models.CastData;
-import com.atmko.onmywatch.models.Season;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 import com.atmko.onmywatch.utils.network_utils.PeopleApiConstants;
@@ -18,10 +16,7 @@ import com.atmko.onmywatch.utils.network_utils.SeriesApiConstants;
 
 import org.json.JSONException;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -136,25 +131,6 @@ public class SeriesDataParser {
         }
 
         detailsSeriesData.setCast(castList);
-
-        //parse seasons
-        ArrayList<Season> seasonList = new ArrayList<>();
-
-        ArrayList<Map> seasonMapList = (ArrayList<Map>) returnedMap.get(SeriesApiConstants.SEASONS_KEY);
-        for (Map seasonMap: seasonMapList) {
-            String airDate = (String) seasonMap.get(SeriesApiConstants.AIR_DATE_KEY);
-            String episodeCount = checkAndConvertNumber(seasonMap.get(SeriesApiConstants.EPISODE_COUNT_KEY));
-            String id = checkAndConvertNumber(seasonMap.get(SeriesApiConstants.ID_KEY));
-            String name = (String) seasonMap.get(SeriesApiConstants.NAME_KEY);
-            String overview = (String) seasonMap.get(SeriesApiConstants.OVERVIEW_KEY);
-            String posterPath = (String) seasonMap.get(SeriesApiConstants.POSTER_PATH_KEY);
-            String seasonNumber = checkAndConvertNumber(((Double) seasonMap.get(SeriesApiConstants.SEASON_NUMBER_KEY)).intValue());
-
-            Season season = new Season(id, name, airDate, seasonNumber, posterPath, overview, episodeCount);
-            seasonList.add(season);
-        }
-
-        detailsSeriesData.setSeasons(seasonList);
 
         String releaseStatus = ((String) returnedMap.get(ApiConstants.RELEASE_STATUS_KEY));
         detailsSeriesData.setReleaseStatus(releaseStatus);

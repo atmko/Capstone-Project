@@ -9,9 +9,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import com.atmko.onmywatch.Fragments.CastFragment;
 import com.atmko.onmywatch.Fragments.ReviewsFragment;
-import com.atmko.onmywatch.Fragments.SeasonsFragment;
 import com.atmko.onmywatch.models.CastData;
-import com.atmko.onmywatch.models.Season;
 import com.atmko.onmywatch.models.SeriesData;
 
 import org.parceler.Parcels;
@@ -40,11 +38,6 @@ public class DetailSeriesExtrasAdapter extends FragmentStatePagerAdapter {
                 return CastFragment.newInstance(parceledCastList);
 
             case 1:
-                ArrayList<Season> seasons = mSeriesData.getSeasons();
-                Parcelable parceledSeasons = Parcels.wrap(seasons);
-                return SeasonsFragment.newInstance(parceledSeasons);
-
-            case 2:
                 return ReviewsFragment.newInstance(null);
 
             default:

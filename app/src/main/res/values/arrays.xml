@@ -67,7 +67,6 @@
 
     <array name="detail_tv_extras_titles">
         <item>@string/detail_extra_cast_text_literal</item>
-        <item>@string/detail_extra_seasons_text_literal</item>
         <item>@string/detail_extra_reviews_text_literal</item>
     </array>
 
