@@ -4,10 +4,13 @@
 
 package com.atmko.onmywatch.models;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 
+import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 
 import org.parceler.Parcel;
@@ -110,5 +113,10 @@ public class SeriesData extends MediaData{
 
     public void setSeasons(ArrayList<Season> seasons) {
         mSeasons = seasons;
+    }
+
+    @Override
+    public String getMediaUrl(Context context, String mediaId) {
+        return context.getString(R.string.series_base_url) + "/" + mediaId;
     }
 }

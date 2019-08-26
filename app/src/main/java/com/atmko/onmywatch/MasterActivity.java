@@ -6,7 +6,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.work.Constraints;
 import androidx.work.OneTimeWorkRequest;
-import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
 import android.os.Bundle;
@@ -15,11 +14,8 @@ import com.atmko.onmywatch.Fragments.AddToListFragment;
 import com.atmko.onmywatch.Fragments.CreateListFragment;
 import com.atmko.onmywatch.Fragments.HomeFragment;
 import com.atmko.onmywatch.Fragments.ListResultsParentFragment;
-import com.atmko.onmywatch.models.MovieNotifier;
 import com.atmko.onmywatch.utils.UpdateMediaWorker;
 import com.google.firebase.analytics.FirebaseAnalytics;
-
-import java.util.concurrent.TimeUnit;
 
 public class MasterActivity extends AppCompatActivity implements
         AddToListFragment.OnSavePressedActionListener,
@@ -66,9 +62,6 @@ public class MasterActivity extends AppCompatActivity implements
     }
 
     private void startWorkers() {
-        MovieNotifier.createReleaseNotificationChannel(this);
-        MovieNotifier.createVideoNotificationChannel(this);
-
         Constraints constraints = new Constraints.Builder().build();
 
         OneTimeWorkRequest updateMediaDataRequest =

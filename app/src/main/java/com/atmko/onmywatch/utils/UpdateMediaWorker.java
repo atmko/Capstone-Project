@@ -14,7 +14,6 @@ import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
-import com.atmko.onmywatch.models.MovieNotifier;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.utils.network_utils.NetworkFunctions;
@@ -108,8 +107,6 @@ public class UpdateMediaWorker extends Worker {
 
                             mDatabase.movieDataDao().updateMovieData(((MovieData) newMediaData));
 
-                            checkForMovieNotifiers((MovieData) oldMediaData, (MovieData) newMediaData);
-
                         } else {
                             newMediaData =
                                     SeriesDataParser.parseDetails(returnedJSONString, ((SeriesData) oldMediaData));
@@ -118,8 +115,6 @@ public class UpdateMediaWorker extends Worker {
                             newMediaData.setWatchStatus(oldMediaData.getWatchStatus());
 
                             mDatabase.seriesDataDao().updateSeriesData(((SeriesData) newMediaData));
-
-                            //checkForSeriesNotifications((SeriesData) oldMediaData, (SeriesData) newMediaData);
 
                         }
 
@@ -138,33 +133,5 @@ public class UpdateMediaWorker extends Worker {
 
             }
         });
-    }
-
-    private void checkForMovieNotifiers(MovieData oldMovieData, MovieData newMovieData) {
-        //get media notifications
-        MovieNotifier mediaNotifier =
-                mDatabase.movieNotifierDao()
-                        .getNotifierByIdAlt(newMovieData.getId());
-
-        //check if null
-        if (mediaNotifier == null) {
-            Log.d(TAG, oldMovieData.getTitle() + ": no notifier found");
-            return;
-        }
-
-        Log.d(TAG, oldMovieData.getTitle() + ": notifier found");
-
-        //iterate through conditions
-        //if true condition, prepareNotification
-        for (int index = 0; index < mediaNotifier.getConditionValues().size(); index++) {
-            int conditionKey = mediaNotifier.getConditionValues().keyAt(index);
-            boolean isTrueCondition = mediaNotifier.getConditionValues().valueAt(index);
-
-            if (isTrueCondition) {
-                Log.d(TAG, mediaNotifier.getConditionTitles().get(index)
-                        + " notifier setting is: " + true);
-                mediaNotifier.prepareNotification(mContext, oldMovieData, newMovieData, conditionKey);
-            }
-        }
     }
 }

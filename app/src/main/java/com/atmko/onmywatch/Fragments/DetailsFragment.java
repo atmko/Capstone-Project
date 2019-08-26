@@ -18,6 +18,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ShareCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentStatePagerAdapter;
@@ -32,7 +33,6 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.database.AppDatabase;
-import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 import com.atmko.onmywatch.view_models.DetailsViewModel;
 import com.atmko.onmywatch.view_models.DetailsViewModelFactory;
@@ -77,6 +77,7 @@ public class DetailsFragment extends Fragment {
     private Bundle mSavedInstanceState;
 
     private FloatingActionButton fab;
+    private ImageButton shareButton;
 
     //details views
     private TabLayout detailExtrasTabLayout;
@@ -234,6 +235,20 @@ public class DetailsFragment extends Fragment {
             }
         });
 
+        //configure share button
+        shareButton = getView().findViewById(R.id.share_button);
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ShareCompat.IntentBuilder
+                        .from(getActivity())
+                        .setType("text/plain")
+                        .setChooserTitle(getString(R.string.detail_share_title))
+                        .setText(mMediaData.getMediaUrl(getContext(), mMediaData.getId()))
+                        .startChooser();
+            }
+        });
+
         //define views dependent on retrieving details
         detailExtrasTabLayout = getView().findViewById(R.id.detail_extras_tab_layout);
         detailExtrasViewPager = getView().findViewById(R.id.details_extra_view_pager);
@@ -286,7 +301,7 @@ public class DetailsFragment extends Fragment {
         includeDetailsExtras.setLayoutParams(detailExtrasParams);
     }
 
-    //observe view models to get watch status, lists containing this media and media notifiers
+    //observe view models to get watch status, lists containing this media
     private void observeViewModel() {
         AppDatabase database = AppDatabase.getInstance(getContext());
         DetailsViewModelFactory viewModelFactory =
@@ -326,26 +341,6 @@ public class DetailsFragment extends Fragment {
                 //set counts text
                 ((TextView) getView().findViewById(R.id.list_counts_text))
                         .setText(String.valueOf(containingListsCount));
-            }
-        });
-
-        LiveData mediaNotifierLiveData =  viewModel.getMediaNotifier();
-        mediaNotifierLiveData.observe(this, new Observer() {
-            @Override
-            public void onChanged(Object mediaNotifier) {
-                ImageButton notifyButton = getView().findViewById(R.id.notify_button);
-
-                if (mediaNotifier != null) {
-                    if (((MediaNotifier) mediaNotifier).notificationItemsExist()) {
-                        notifyButton.setImageDrawable(getResources()
-                                .getDrawable(R.drawable.ic_notify_accent));
-                    }
-
-                } else {
-                    notifyButton.setImageDrawable(getResources()
-                            .getDrawable(R.drawable.ic_notify_white));
-                    Log.d(FRAGMENT_KEY, "no media notifiers found");
-                }
             }
         });
     }

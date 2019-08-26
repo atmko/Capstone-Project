@@ -4,12 +4,15 @@
 
 package com.atmko.onmywatch.models;
 
+import android.content.Context;
+
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 
 import androidx.annotation.NonNull;
 
+import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 
 import org.parceler.Parcel;
@@ -105,5 +108,10 @@ public class MovieData extends MediaData{
 
     public List<Map<String, String>> getVideos() {
         return mVideos;
+    }
+
+    @Override
+    public String getMediaUrl(Context context, String mediaId) {
+        return context.getString(R.string.movie_base_url) + "/" + mediaId;
     }
 }

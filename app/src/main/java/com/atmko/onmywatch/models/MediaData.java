@@ -151,4 +151,6 @@ abstract public class MediaData {
 
         return mediaTypeTitles[mediaType];
     }
+
+    public abstract String getMediaUrl(Context context, String mediaId);
 }

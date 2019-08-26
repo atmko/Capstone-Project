@@ -28,13 +28,10 @@ import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.AddToListAdapter;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MediaData;
-import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.MovieDataRecord;
-import com.atmko.onmywatch.models.MovieNotifier;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesDataRecord;
-import com.atmko.onmywatch.models.SeriesNotifier;
 import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.view_models.AddToListViewModel;
@@ -305,23 +302,6 @@ AddToListAdapter.OnListCheckListener{
 
                 }
 
-                MediaNotifier mediaNotifier = getMediaNotifier();
-
-                if (newWatchStatus == MediaData.WATCH_STATUS_TO_WATCH
-                        || newWatchStatus == MediaData.WATCH_STATUS_WATCHING
-                        || newWatchStatus == MediaData.WATCH_STATUS_WATCHED) {
-
-                    if (mediaNotifier == null) {
-                        createMediaNotifier();
-                    }
-
-                } else if (newWatchStatus == MediaData.WATCH_STATUS_NONE
-                        || newWatchStatus == MediaData.WATCH_STATUS_DROPPED){
-                    if (mediaNotifier != null) {
-                        deleteMediaNotifier(mediaNotifier);
-                    }
-                }
-
                 //TODO observe user list counts by view model instead of manually through netCountChange
                 int netCountChange = updateUserListRecords();
                 int newContainingListValue = mOriginalContainingLists.size() + netCountChange;
@@ -371,45 +351,6 @@ AddToListAdapter.OnListCheckListener{
             Log.d(FRAGMENT_KEY, "creating new media data");
             return newSeriesData.getWatchStatus();
         }
-    }
-
-    private MediaNotifier getMediaNotifier() {
-        MediaNotifier mediaNotifier;
-
-        if (mMediaType == MEDIA_TYPE_MOVIE) {
-            mediaNotifier = mDatabase.movieNotifierDao().getNotifierByIdAlt(mMediaData.getId());
-
-        } else {
-            mediaNotifier = mDatabase.seriesNotifierDao().getNotifierByIdAlt(mMediaData.getId());
-        }
-
-        return mediaNotifier;
-    }
-
-    private MediaNotifier createMediaNotifier() {
-        MediaNotifier mediaNotifier;
-
-        if (mMediaType == MEDIA_TYPE_MOVIE) {
-            mediaNotifier =
-                    new MovieNotifier(getContext(), mMediaData.getId());
-            mediaNotifier.setConditionValue(MediaNotifier.CONDITION_ON_RELEASE_KEY, true);
-            mediaNotifier.setConditionValue(MediaNotifier.CONDITION_NEW_TRAILER_KEY, true);
-
-            mDatabase.movieNotifierDao().addMovieNotifier(((MovieNotifier) mediaNotifier));
-
-        } else {
-            mediaNotifier =
-                    new SeriesNotifier(getContext(), mMediaData.getId());
-            mediaNotifier.setConditionValue(MediaNotifier.CONDITION_ON_RELEASE_KEY, true);
-            mediaNotifier.setConditionValue(MediaNotifier.CONDITION_NEW_TRAILER_KEY, true);
-
-            mDatabase.seriesNotifierDao().addSeriesNotifier(((SeriesNotifier) mediaNotifier));
-        }
-
-        Log.d(FRAGMENT_KEY, "media notifier created");
-
-        return mediaNotifier;
-
     }
 
     private int updateUserListRecords() {
@@ -493,18 +434,6 @@ AddToListAdapter.OnListCheckListener{
 
             }
         }
-    }
-
-    private void deleteMediaNotifier(MediaNotifier mediaNotifier) {
-        if (mMediaType == MEDIA_TYPE_MOVIE) {
-            mDatabase.movieNotifierDao().deleteMovieNotifier(((MovieNotifier) mediaNotifier));
-
-        } else if (mMediaType == MEDIA_TYPE_SERIES) {
-            mDatabase.seriesNotifierDao().deleteSeriesNotifier(((SeriesNotifier) mediaNotifier));
-
-        }
-
-        Log.d(FRAGMENT_KEY, "media notifier deleted");
     }
 
     @Override

@@ -113,4 +113,15 @@
     <string name="notification_channel_videos_description">Notifications for videos</string>
     <!--NOTIFICATION TEXT-->
 
+    <!--SHARE TEXT-->
+    <string name="detail_share_title">Choose App</string>
+    <!--SHARE TEXT-->
+
+    <!--URLS-->
+    <!--the movie db movie base url-->
+    <string name="movie_base_url" translatable="false">https://www.themoviedb.org/movie</string>
+    <!--the movie db series base url-->
+    <string name="series_base_url" translatable="false">https://www.themoviedb.org/tv</string>
+    <!--URLS-->
+
 </resources>

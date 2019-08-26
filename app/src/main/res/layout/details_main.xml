@@ -167,18 +167,6 @@
         tools:text="drama" />
 
     <ImageButton
-        android:id="@+id/notify_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/x2_layout_margin"
-        android:background="@null"
-        android:src="@drawable/ic_notify_white"
-        app:layout_constraintEnd_toEndOf="@+id/notify_text_view"
-        app:layout_constraintStart_toStartOf="@+id/notify_text_view"
-        app:layout_constraintTop_toBottomOf="@id/date_text_view"
-        android:contentDescription="@string/content_description_notify_button"/>
-
-    <ImageButton
         android:id="@+id/share_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -205,30 +193,17 @@
     <!--______________________________________________-->
 
     <TextView
-        android:id="@+id/notify_text_view"
+        android:id="@+id/share_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/x2_layout_margin"
         android:layout_marginLeft="@dimen/x2_layout_margin"
         android:layout_marginTop="@dimen/x2_layout_margin"
-        android:text="@string/detail_notify_text_title"
-        android:textColor="@color/color_subtext"
-        android:textSize="@dimen/caption_12_text_size"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/notify_button" />
-
-    <TextView
-        android:id="@+id/share_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/x4_layout_margin"
-        android:layout_marginLeft="@dimen/x4_layout_margin"
-        android:layout_marginTop="@dimen/x2_layout_margin"
         android:text="@string/detail_share_text_title"
         android:textColor="@color/color_subtext"
         android:textSize="@dimen/caption_12_text_size"
-        app:layout_constraintStart_toEndOf="@+id/notify_text_view"
-        app:layout_constraintTop_toBottomOf="@id/notify_button" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/share_button" />
 
     <TextView
         android:id="@+id/rate_text_view"
@@ -241,7 +216,7 @@
         android:textColor="@color/color_subtext"
         android:textSize="@dimen/caption_12_text_size"
         app:layout_constraintStart_toEndOf="@+id/share_text_view"
-        app:layout_constraintTop_toBottomOf="@id/notify_button" />
+        app:layout_constraintTop_toBottomOf="@id/share_button" />
 
     <TextView
         android:id="@+id/rating_text_view"
@@ -275,7 +250,7 @@
         android:textColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/notify_text_view" />
+        app:layout_constraintTop_toBottomOf="@id/share_text_view" />
 
     <ImageButton
         android:id="@+id/show_more_button"
