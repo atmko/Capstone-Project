@@ -42,7 +42,10 @@ public class PersonDataParser {
         Double totalPages = (double) returnedMap.get(ApiConstants.TOTAL_PAGES_KEY);
 
         searchPreferences.setTotalPages(totalPages.intValue());
-        stack.setTotalPages(totalPages.intValue());
+
+        if (stack != null) {
+            stack.setTotalPages(totalPages.intValue());
+        }
 
         //use RESULTS_KEY to get results as JSONArray
         ArrayList results = (ArrayList) returnedMap.get(ApiConstants.RESULTS_KEY);

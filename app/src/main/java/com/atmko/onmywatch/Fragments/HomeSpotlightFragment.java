@@ -1,9 +1,7 @@
 package com.atmko.onmywatch.Fragments;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +9,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,10 +17,6 @@ import com.androidnetworking.common.ANRequest;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.atmko.onmywatch.MasterActivity;
-import com.atmko.onmywatch.adapters.MediaDataAdapter;
-import com.atmko.onmywatch.adapters.PeopleDataAdapter;
-import com.atmko.onmywatch.utils.network_utils.ApiConstants;
-import com.atmko.stack.Stack;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.HomeSpotlightAdapter;
 import com.atmko.onmywatch.models.MediaData;
@@ -39,7 +32,6 @@ import org.parceler.Parcels;
 import java.util.List;
 
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
-import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_PEOPLE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
 
 public class HomeSpotlightFragment extends Fragment implements
@@ -59,7 +51,6 @@ public class HomeSpotlightFragment extends Fragment implements
     private static final String PAGING_BLOCK_MAP_KEY = "paging_block_map";
 
     private HomeSpotlightAdapter mDataAdapter;
-    private Stack stack;
     private SearchPreferences mSearchPreferences;
 
     public HomeSpotlightFragment() {
@@ -102,7 +93,8 @@ public class HomeSpotlightFragment extends Fragment implements
         defineViews();
 
         if (savedInstanceState == null) {
-            loadSearch();
+            mSearchPreferences.setTargetPage(1);
+            executeSearch();
 
         } else {
             //get saved adapter data list
@@ -110,13 +102,6 @@ public class HomeSpotlightFragment extends Fragment implements
                     savedInstanceState.getParcelable(ADAPTER_DATA_LIST_KEY));
 
             mDataAdapter.addAdapterData(mediaDataList);
-
-            //get saved paging block map
-            int[] pagingBlockRange = savedInstanceState.getIntArray(PAGING_BLOCK_MAP_KEY);
-            stack.restorePagingBlockStructure(pagingBlockRange);
-
-            //set total pages
-            stack.setTotalPages(mSearchPreferences.getTotalPages());
 
             loadDetailFragment();
         }
@@ -127,39 +112,18 @@ public class HomeSpotlightFragment extends Fragment implements
         super.onResume();
 
         if (mDataAdapter.getAdapterData().size() == 0) {
-            loadSearch();
+            executeSearch();
         }
     }
 
     private void defineViews() {
-        Stack.PagingBlockTemplate pagingBlockTemplate =
-                new Stack.PagingBlockTemplate(new Stack.PagingBlockTemplate.OnCreatePageLoader() {
-            @Override
-            public void onPageEndReached(int blockNumber, int targetPage) {
-                mSearchPreferences.setTargetPage(targetPage);
-                executeSearch(blockNumber, targetPage, Stack.GO_DOWN_ONE_BLOCK);
-            }
-
-            @Override
-            public void onPageStartReached(int blockNumber, int targetPage) {
-                mSearchPreferences.setTargetPage(targetPage);
-                executeSearch(blockNumber, targetPage, Stack.GO_UP_ONE_BLOCK);
-            }
-        }, ApiConstants.RESULTS_PER_PAGE, getResources().getInteger(R.integer.stack_pages_per_block));
-
         RecyclerView recyclerView = getView().findViewById(R.id.search_results_recycler_view);
         recyclerView.setLayoutManager(configureLayoutManager());
 
         mDataAdapter = new HomeSpotlightAdapter(this);
 
         recyclerView.setAdapter(mDataAdapter);
-        stack = new Stack(false, getResources().getInteger(R.integer.stack_block_limit),
-                pagingBlockTemplate, recyclerView, mDataAdapter);
-        recyclerView.addOnScrollListener(stack);
-    }
 
-    private void loadSearch() {
-        stack.initialize();
     }
 
     private GridLayoutManager configureLayoutManager() {
@@ -168,9 +132,10 @@ public class HomeSpotlightFragment extends Fragment implements
         return layoutManager;
     }
 
-    private void executeSearch(final int blockNumber, final int targetPage, final int stackOperation) {
+    private void executeSearch() {
         //build AN request
-        ANRequest request = NetworkFunctions.agnosticSearchRequest(mSearchUrl, mSearchPreferences, getParentFragment().getActivity());
+        ANRequest request = NetworkFunctions.agnosticSearchRequest(mSearchUrl,
+                mSearchPreferences, getParentFragment().getActivity());
 
         request.getAsString(new StringRequestListener() {
             @Override
@@ -181,15 +146,19 @@ public class HomeSpotlightFragment extends Fragment implements
 
                     if (mMediaType == MEDIA_TYPE_MOVIE) {
                         dataList =
-                                MovieDataParser.parseData(returnedJSONString, stack, mSearchPreferences);
+                                MovieDataParser.parseData(returnedJSONString,
+                                        null, mSearchPreferences);
 
                     } else if (mMediaType == MEDIA_TYPE_SERIES) {
                         dataList =
-                                SeriesDataParser.parseData(returnedJSONString, stack, mSearchPreferences);
+                                SeriesDataParser.parseData(returnedJSONString,
+                                        null, mSearchPreferences);
 
                     }
 
-                    stack.stackPage(blockNumber, targetPage, dataList, stackOperation);
+                    //refresh adapter data
+                    mDataAdapter.getAdapterData().clear();
+                    mDataAdapter.addAdapterData(dataList);
 
                     loadDetailFragment();
 
@@ -203,8 +172,6 @@ public class HomeSpotlightFragment extends Fragment implements
                 //prepareNotification error
                 Snackbar.make(getActivity().findViewById(R.id.top_layout),
                         getString(R.string.spotlight_fetch_error_message), Snackbar.LENGTH_LONG).show();
-
-                Toast.makeText(getContext(), String.valueOf(anError.getErrorCode()), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -212,14 +179,14 @@ public class HomeSpotlightFragment extends Fragment implements
     //loads detail fragment:
     //if tablet is landscape
     // && detail fragment container has no fragment
-    // && stack is not currently waiting for more pages to load
     // && is containing fragment on top in fragment detail container
     private void loadDetailFragment() {
         MasterActivity masterActivity = ((MasterActivity) getParentFragment().getActivity());
 
         if (masterActivity == null) return;
 
-        Fragment activeFragment = masterActivity.getSupportFragmentManager().findFragmentById(R.id.master_fragments_container);
+        Fragment activeFragment = masterActivity.getSupportFragmentManager()
+                .findFragmentById(R.id.master_fragments_container);
         String activeClassName = activeFragment.getClass().getName();
         String parentClassName = getParentFragment().getClass().getName();
 
@@ -227,7 +194,6 @@ public class HomeSpotlightFragment extends Fragment implements
 
         if (masterActivity.isTabletLandscape()
                 && !masterActivity.hasFragment(R.id.detail_fragments_container)
-                && stack.isIdle()
                 //TODO consider detaching fragments to disable background updates instead of "isParentActive"//fixes
                 //fixes bug where media data of bottom fragments get loaded into details container
                 // instead of topmost fragment
@@ -254,9 +220,12 @@ public class HomeSpotlightFragment extends Fragment implements
         Parcelable parceledSharedPreferences = Parcels.wrap(mSearchPreferences);
 
         DetailsFragment detailsFragment =
-                DetailsFragment.newInstance(mMediaType, detailUrl, parceledData, parceledSharedPreferences);
+                DetailsFragment
+                        .newInstance(mMediaType, detailUrl, parceledData, parceledSharedPreferences);
 
-        Fragment detailContainerFragment = getParentFragment().getActivity().getSupportFragmentManager().findFragmentById(R.id.detail_fragments_container);
+        Fragment detailContainerFragment =
+                getParentFragment().getActivity().getSupportFragmentManager()
+                        .findFragmentById(R.id.detail_fragments_container);
 
         ///remove existing fragment
         if (detailContainerFragment != null) {
@@ -288,7 +257,5 @@ public class HomeSpotlightFragment extends Fragment implements
         getArguments().putParcelable(SEARCH_PREFERENCES_KEY, Parcels.wrap(mSearchPreferences));
 
         outState.putParcelable(ADAPTER_DATA_LIST_KEY, Parcels.wrap(mDataAdapter.getAdapterData()));
-
-        outState.putIntArray(PAGING_BLOCK_MAP_KEY, stack.saveBlockStructure());
     }
 }
