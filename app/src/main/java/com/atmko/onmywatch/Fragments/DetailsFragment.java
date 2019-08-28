@@ -2,7 +2,9 @@ package com.atmko.onmywatch.Fragments;
 
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
+import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.DisplayMetrics;
@@ -54,6 +56,7 @@ import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
@@ -282,6 +285,23 @@ public class DetailsFragment extends Fragment {
             }
         });
 
+        //configure trailer button
+        getView().findViewById(R.id.trailer_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Map<String, String> videoData = mMediaData.getVideos().get(0);
+                String path = videoData.get(ApiConstants.VIDEO_PATH_KEY);
+
+                Uri fullVideoPath = Uri.parse((ApiConstants.YOUTUBE_INTENT_BASE_URL + path));
+
+                Intent videoIntent = new Intent(Intent.ACTION_VIEW, fullVideoPath);
+                if (videoIntent.resolveActivity(getContext().getPackageManager()) != null) {
+                    startActivity(videoIntent);
+
+                }
+            }
+        });
+
         //define views dependent on retrieving details
         detailExtrasTabLayout = getView().findViewById(R.id.detail_extras_tab_layout);
         detailExtrasViewPager = getView().findViewById(R.id.details_extra_view_pager);
@@ -505,6 +525,16 @@ public class DetailsFragment extends Fragment {
 
     private void setDetailViewValues() {
         releaseStatusTextView.setText(mMediaData.getReleaseStatus());
+
+        //set trailer button visibility
+        try {
+            mMediaData.getVideos().get(0);
+            getView().findViewById(R.id.trailer_button).setVisibility(View.VISIBLE);
+
+        } catch (IndexOutOfBoundsException e) {
+            getView().findViewById(R.id.trailer_button).setVisibility(View.GONE);
+
+        }
 
         //set Genres
         ArrayList<String> genres = mMediaData.getGenres();

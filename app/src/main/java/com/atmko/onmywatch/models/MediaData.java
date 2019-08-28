@@ -44,6 +44,7 @@ abstract public class MediaData {
 
     //secondary attributes(details)
     @Ignore ArrayList<CastData> mCast;
+    @Ignore ArrayList<Map<String, String>> mVideos;
     @ColumnInfo(name = "release_status") String mReleaseStatus;
 
     @ColumnInfo(name = "watch_status") int mWatchStatus;
@@ -129,6 +130,14 @@ abstract public class MediaData {
 
     public void setCast(ArrayList<CastData> cast) {
         this.mCast = cast;
+    }
+
+    public ArrayList<Map<String, String>> getVideos() {
+        return mVideos;
+    }
+
+    public void setVideos(ArrayList<Map<String, String>> videoList) {
+        this.mVideos = videoList;
     }
 
     public int getWatchStatus() {

@@ -138,6 +138,7 @@ public class SeriesDataParser {
         }
 
         detailsSeriesData.setCast(castList);
+        detailsSeriesData.setVideos(parseVideos(((Map) returnedMap.get(ApiConstants.VIDEOS_KEY))));
 
         String releaseStatus = ((String) returnedMap.get(ApiConstants.RELEASE_STATUS_KEY));
         detailsSeriesData.setReleaseStatus(replaceText(releaseStatus, context));
@@ -209,21 +210,18 @@ public class SeriesDataParser {
     }
 
     @SuppressWarnings("ConstantConditions")
-    public static ArrayList<Map<String, String>> parseVideos(String returnedJSONString) {
+    private static ArrayList<Map<String, String>> parseVideos(Map videoMap) {
         //video data will be stored as Map<String, ArrayList<String>>
         ArrayList<Map<String, String>> videos = new ArrayList<>();
         //skips code below if returnedJSONString null or empty
-        if (returnedJSONString == null || returnedJSONString.equals("")){
+        if (videoMap == null){
             return videos;
         }
 
-        Gson gson = new Gson();
-        Map returnedMap = gson.fromJson(returnedJSONString, Map.class);
-
         //use RESULTS_KEY to get results as JSONArray
-        ArrayList results = (ArrayList) returnedMap.get(ApiConstants.RESULTS_KEY);
+        ArrayList results = (ArrayList) videoMap.get(ApiConstants.RESULTS_KEY);
 
-//        iterate through each video in results
+        //iterate through each video in results
         assert results != null;//null checking occurs in above if statement
         for (int index = 0; index < results.size() ; index++) {
             Map currentResult = (Map) results.get(index);//get current review

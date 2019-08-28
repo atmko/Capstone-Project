@@ -42,6 +42,8 @@
         android:background="@color/background"
         android:text="@string/detail_trailer_text_title"
         android:textColor="@android:color/white"
+        android:visibility="gone"
+        tools:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/backdrop_image_view"
         app:layout_constraintStart_toStartOf="@+id/backdrop_image_view" />
 

@@ -38,6 +38,7 @@ public class ApiConstants {
     public static final String TOTAL_PAGES_KEY = "total_pages";
 
     //for videos
+    public static final String VIDEOS_KEY = "videos";
     public static final String VIDEO_TYPE_KEY = "type";
     public static final String VIDEO_PATH_KEY = "key";
     public static final String VIDEO_NAME_KEY = "name";
