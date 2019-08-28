@@ -4,6 +4,7 @@
 
 package com.atmko.onmywatch.utils;
 
+import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 import com.atmko.stack.Stack;
 import com.google.gson.Gson;
@@ -46,7 +47,7 @@ public class PersonDataParser {
         if (stack != null) {
             stack.setTotalPages(totalPages.intValue());
         }
-        
+
         //use RESULTS_KEY to get results as JSONArray
         ArrayList results = (ArrayList) returnedMap.get(ApiConstants.RESULTS_KEY);
 
@@ -85,8 +86,8 @@ public class PersonDataParser {
         return personData;
     }
 
-    private static ArrayList<Object> parseKnownForObjects(ArrayList<Map> mediaList) {
-        ArrayList<Object> knownForList = new ArrayList<>();
+    private static ArrayList<MediaData> parseKnownForObjects(ArrayList<Map> mediaList) {
+        ArrayList<MediaData> knownForList = new ArrayList<>();
 
         if (mediaList == null) {
             return knownForList;

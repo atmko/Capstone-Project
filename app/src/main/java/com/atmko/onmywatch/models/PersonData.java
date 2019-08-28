@@ -9,13 +9,17 @@ import androidx.room.Ignore;
 
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 
+import org.parceler.Parcel;
+
+import java.util.ArrayList;
 import java.util.List;
 
+@Parcel
 public class PersonData {
 
     String mId;//
     String mProfilePath;
-    List<Object> mKnownFor;
+    ArrayList<MediaData> mKnownFor;
     String mName;
     double mPopularity;//
     boolean mAdult;
@@ -27,7 +31,7 @@ public class PersonData {
     }
 
     @Ignore
-    public PersonData(@NonNull String id, String profilePath, List<Object> knownFor, String name,
+    public PersonData(@NonNull String id, String profilePath, ArrayList<MediaData> knownFor, String name,
                       double popularity, boolean adult) {
 
         this.mId = id;
@@ -53,7 +57,7 @@ public class PersonData {
         return mProfilePath;
     }
 
-    public List<Object> getKnownFor() {
+    public List<MediaData> getKnownFor() {
         return mKnownFor;
     }
 
