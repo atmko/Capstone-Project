@@ -45,6 +45,7 @@ public class ApiConstants {
     public static final String VIDEO_SITE_KEY = "site";
 
     //for reviews
+    public static final String REVIEWS_KEY = "reviews";
     public static final String REVIEW_AUTHOR_KEY = "author";
     public static final String REVIEW_CONTENT_KEY = "content";
 

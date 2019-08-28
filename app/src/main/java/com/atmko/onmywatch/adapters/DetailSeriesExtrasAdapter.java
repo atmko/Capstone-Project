@@ -38,8 +38,9 @@ public class DetailSeriesExtrasAdapter extends FragmentStatePagerAdapter {
                 return CastFragment.newInstance(parceledCastList);
 
             case 1:
-                return ReviewsFragment.newInstance(null);
-
+                ArrayList reviewList = mSeriesData.getReviews();
+                Parcelable parceledReviewList = Parcels.wrap(reviewList);
+                return ReviewsFragment.newInstance(parceledReviewList);
             default:
                 return fragment;
         }

@@ -102,10 +102,6 @@ public class MovieData extends MediaData{
         return mAdult;
     }
 
-    public List<String> getReviews() {
-        return mReviews;
-    }
-
     @Override
     public String getMediaUrl(Context context, String mediaId) {
         return context.getString(R.string.movie_base_url) + "/" + mediaId;

@@ -5,24 +5,28 @@ import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.atmko.onmywatch.R;
-import com.atmko.onmywatch.models.SeriesData;
-import com.atmko.onmywatch.utils.network_utils.NetworkFunctions;
+import com.atmko.onmywatch.adapters.ReviewDataAdapter;
 
 import org.parceler.Parcels;
 
-public class ReviewsFragment extends Fragment {
+import java.util.ArrayList;
+import java.util.Map;
+
+public class ReviewsFragment extends Fragment implements ReviewDataAdapter.OnListItemClickListener {
     public static String FRAGMENT_KEY = "reviews_fragment";
 
     public static String REVIEWS_PARCELABLE_KEY = "reviews_parcelable";
 
-    private SeriesData mReviews;
+    private ArrayList<Map<String, String>> mReviewList;
+    private RecyclerView.Adapter mAdapter;
 
     public ReviewsFragment() {
         // Required empty public constructor
@@ -40,7 +44,7 @@ public class ReviewsFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mReviews = Parcels.unwrap(getArguments().getParcelable(REVIEWS_PARCELABLE_KEY));
+            mReviewList = Parcels.unwrap(getArguments().getParcelable(REVIEWS_PARCELABLE_KEY));
         }
     }
 
@@ -55,6 +59,29 @@ public class ReviewsFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        //todo get reviews
+        loadSearch();
+    }
+
+    private void loadSearch() {
+        RecyclerView recyclerView = getView().findViewById(R.id.reviews_recycler_view);
+        recyclerView.setLayoutManager(configureLayoutManager());
+
+        mAdapter = new ReviewDataAdapter(this);
+        recyclerView.setAdapter(mAdapter);
+
+        ((ReviewDataAdapter) mAdapter).addAdapterData(mReviewList);
+    }
+
+    private LinearLayoutManager configureLayoutManager() {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+
+        layoutManager.setOrientation(RecyclerView.VERTICAL);
+        return layoutManager;
+    }
+
+    //TODO implement reviews details page launcher
+    @Override
+    public void onItemClick(int position) {
+
     }
 }

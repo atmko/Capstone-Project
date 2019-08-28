@@ -60,8 +60,8 @@
     </array>
 
     <array name="details_urls">
-        <item>https://api.themoviedb.org/3/tv/{id}?api_key={api_key}&amp;language={language}&amp;append_to_response=credits,videos</item>
-        <item>https://api.themoviedb.org/3/movie/{id}?api_key={api_key}&amp;language={language}&amp;append_to_response=credits,videos</item>
+        <item>https://api.themoviedb.org/3/tv/{id}?api_key={api_key}&amp;language={language}&amp;append_to_response=credits,videos,reviews</item>
+        <item>https://api.themoviedb.org/3/movie/{id}?api_key={api_key}&amp;language={language}&amp;append_to_response=credits,videos,reviews</item>
         <item></item>
     </array>
 

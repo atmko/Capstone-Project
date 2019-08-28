@@ -81,6 +81,8 @@ public class DetailsFragment extends Fragment {
     private SearchPreferences mSearchPreferences;
 
 
+    public static final int REVIEW_CUT_OFF_INDEX = 100;
+
     private Bundle mSavedInstanceState;
     private int mWatchStatus;
 

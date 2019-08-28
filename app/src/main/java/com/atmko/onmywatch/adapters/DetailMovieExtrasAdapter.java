@@ -38,7 +38,9 @@ public class DetailMovieExtrasAdapter extends FragmentStatePagerAdapter {
                 return CastFragment.newInstance(parceledCastList);
 
             case 1:
-                return ReviewsFragment.newInstance(null);
+                ArrayList reviewList = mMovieData.getReviews();
+                Parcelable parceledReviewList = Parcels.wrap(reviewList);
+                return ReviewsFragment.newInstance(parceledReviewList);
 
             default:
                 return fragment;
