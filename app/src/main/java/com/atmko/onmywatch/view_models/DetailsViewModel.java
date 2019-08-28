@@ -14,18 +14,18 @@ import java.util.List;
 public class DetailsViewModel extends ViewModel {
     private static final String TAG = DetailsViewModel.class.getSimpleName();
 
-    private LiveData<Integer> watchStatus;
+    private LiveData mediaData;
     private LiveData<List<String>> containingUserLists;
 
     public DetailsViewModel(@NonNull AppDatabase database, int mediaType, String mediaId) {
 
         if (mediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
-            watchStatus = database.movieDataDao().getMoviesWatchStatus(mediaId);
+            mediaData = database.movieDataDao().getMovieById(mediaId);
             containingUserLists =
                     database.movieDataRecordsDao().getAllListNamesContainingMedia(mediaId);
 
         } else if (mediaType == MasterActivity.MEDIA_TYPE_SERIES) {
-            watchStatus = database.seriesDataDao().getSeriesWatchStatus(mediaId);
+            mediaData = database.seriesDataDao().getSeriesById(mediaId);
             containingUserLists =
                     database.seriesDataRecordsDao().getAllListNamesContainingMedia(mediaId);
 
@@ -36,8 +36,8 @@ public class DetailsViewModel extends ViewModel {
         Log.d(TAG, "fetching user containing lists from the database");
     }
 
-    public LiveData<Integer> getWatchStatus() {
-        return watchStatus;
+    public LiveData getMediaData() {
+        return mediaData;
     }
 
     public LiveData<List<String>> getContainingLists() {

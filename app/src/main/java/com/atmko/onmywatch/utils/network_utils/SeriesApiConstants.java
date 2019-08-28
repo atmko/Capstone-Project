@@ -24,4 +24,7 @@ public class SeriesApiConstants {
     public static final String EPISODE_COUNT_KEY = "episode_count";
     public static final String SEASON_NUMBER_KEY = "season_number";
 
+    //text replacement
+    public static final String RELEASE_STATUS_RETURNING_SERIES = "Returning Series";
+    public static final String RELEASE_STATUS_IN_PRODUCTION = "In Production";
 }

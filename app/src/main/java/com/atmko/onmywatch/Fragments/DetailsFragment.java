@@ -57,6 +57,9 @@ import java.util.List;
 
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
+import static com.atmko.onmywatch.models.MediaData.WATCH_STATUS_DROPPED;
+import static com.atmko.onmywatch.models.MediaData.WATCH_STATUS_WATCHED;
+import static com.atmko.onmywatch.models.MediaData.WATCH_STATUS_WATCHING;
 
 //import com.upkipp.onmywatch.HomeActivity;
 
@@ -74,17 +77,18 @@ public class DetailsFragment extends Fragment {
     private MediaData mMediaData;
     private SearchPreferences mSearchPreferences;
 
+
     private Bundle mSavedInstanceState;
+    private int mWatchStatus;
 
     private FloatingActionButton fab;
     private ImageButton shareButton;
+    private ImageButton rateButton;
 
     //details views
     private TabLayout detailExtrasTabLayout;
     private ViewPager detailExtrasViewPager;
-
     private TextView releaseStatusTextView;
-
 
     public DetailsFragment() {
         // Required empty public constructor
@@ -249,6 +253,35 @@ public class DetailsFragment extends Fragment {
             }
         });
 
+        //configure rate button
+        rateButton = getView().findViewById(R.id.rate_button);
+        rateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mWatchStatus != WATCH_STATUS_WATCHING
+                        && mWatchStatus != WATCH_STATUS_WATCHED
+                        && mWatchStatus != WATCH_STATUS_DROPPED) {
+
+                    Snackbar.make(getActivity().findViewById(R.id.top_layout),
+                            getString(R.string.rating_disallowed_message),
+                            Snackbar.LENGTH_LONG).show();
+
+                    return;
+
+                }
+
+                getActivity().findViewById(R.id.popup_container).setVisibility(View.VISIBLE);
+
+                RateFragment rateFragment =
+                        RateFragment.newInstance(mMediaType, mMediaData.getId());
+
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .add(R.id.popup_container, rateFragment, RateFragment.FRAGMENT_KEY)
+                        .commit();
+            }
+        });
+
         //define views dependent on retrieving details
         detailExtrasTabLayout = getView().findViewById(R.id.detail_extras_tab_layout);
         detailExtrasViewPager = getView().findViewById(R.id.details_extra_view_pager);
@@ -312,22 +345,41 @@ public class DetailsFragment extends Fragment {
                 .get(DetailsViewModel.class);
 
 
-        LiveData<Integer> watchStatus = viewModel.getWatchStatus();
-        watchStatus.observe(this, new Observer<Integer>() {
+        LiveData mediaDataLiveData = viewModel.getMediaData();
+        mediaDataLiveData.observe(this, new Observer<Object>() {
             @Override
-            public void onChanged(Integer watchStatusValue) {
+            public void onChanged(Object mediaData) {
+                MediaData castedMediaData = ((MediaData) mediaData);
+
+                mWatchStatus = mediaData != null ? castedMediaData.getWatchStatus() : 0;
+
                 //get array of watch status title shorthand
                 String[] watchStatusShorthandList =
                         getContext().getResources().getStringArray(R.array.watch_status_shorthand_titles);
 
                 //get shorthand using watch status as index
-                String shorthand = watchStatusValue != null
-                        ? watchStatusShorthandList[watchStatusValue]
+                String shorthand = mediaData != null
+                        ? watchStatusShorthandList[mWatchStatus]
                         : watchStatusShorthandList[0];
 
                 //set shorthand text
                 ((TextView) getView().findViewById(R.id.watch_status_shorthand_text))
                         .setText(shorthand);
+
+
+
+
+                //configure user rating related UI
+                int userRating = mediaData != null ? castedMediaData.getUserRating() : 0;
+                if (userRating != 0) {
+                    TextView userRatingTextView = getView().findViewById(R.id.user_rating_text);
+                    userRatingTextView.setVisibility(View.VISIBLE);
+                    userRatingTextView.setText(userRating + ".0");
+
+                } else {
+                    getView().findViewById(R.id.user_rating_text).setVisibility(View.GONE);
+
+                }
             }
         });
 
@@ -361,7 +413,8 @@ public class DetailsFragment extends Fragment {
 
                 } else {
                     mMediaData =
-                        SeriesDataParser.parseDetails(returnedJSONString, ((SeriesData) mMediaData));
+                        SeriesDataParser.parseDetails(returnedJSONString,
+                                ((SeriesData) mMediaData), getContext());
 
                 }
 

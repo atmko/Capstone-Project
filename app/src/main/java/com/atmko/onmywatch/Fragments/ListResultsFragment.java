@@ -51,6 +51,9 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
     private MediaDataAdapter mDataAdapter;
     private SearchPreferences mSearchPreferences;
 
+    //interfaces
+    private AddToListFragment.OnSavePressedActionListener mSaveActionListener;
+
     public ListResultsFragment() {
         // Required empty public constructor
     }

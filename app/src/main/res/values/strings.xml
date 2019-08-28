@@ -73,9 +73,15 @@
         <string name="detail_share_text_title">Share</string>
         <string name="detail_rate_text_title">Rate</string>
 
+        <string name="detail_text_replacement_running_series">Running</string>
+        <string name="detail_text_replacement_in_production">Production</string>
+
         <string name="detail_extra_cast_text_literal">Cast</string>
         <string name="detail_extra_seasons_text_literal">Seasons</string>
         <string name="detail_extra_reviews_text_literal">Reviews</string>
+
+        <string name="rate_divider">/</string>
+        <string name="rate_default_overall_rating">10</string>
         <!--details text-->
 
         <!--watch_status text-->
@@ -95,6 +101,7 @@
     <string name="new_list_created_message">New list created</string>
     <string name="details_error_message">Error fetching media details</string>
     <string name="list_already_exists_error_message">A list with that name already exists</string>
+    <string name="rating_disallowed_message">Rating only allowed if item has \"Watching\", \"Watched\" or \"Dropped\" watch status.</string>
     <!--SNACK BAR MESSAGES-->
 
     <!--PLACEHOLDER TEXT-->

@@ -292,13 +292,13 @@ AddToListAdapter.OnListCheckListener{
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                int newWatchStatus;
+                MediaData newMediaData;
 
                 if (mMediaType == MEDIA_TYPE_MOVIE) {
-                    newWatchStatus = updateMovieData();
+                    newMediaData = updateMovieData();
 
                 } else {
-                    newWatchStatus = updateSeriesData();
+                    newMediaData = updateSeriesData();
 
                 }
 
@@ -306,12 +306,12 @@ AddToListAdapter.OnListCheckListener{
                 int netCountChange = updateUserListRecords();
                 int newContainingListValue = mOriginalContainingLists.size() + netCountChange;
 
-                deleteMediaDataIfDataNotUsed(newWatchStatus, newContainingListValue);
+                deleteMediaDataIfDataNotUsed(newMediaData.getWatchStatus(), newContainingListValue);
             }
         });
     }
 
-    private int updateMovieData() {
+    private MovieData updateMovieData() {
         //check if movie exists in db
         MovieData movieData = mDatabase.movieDataDao().getMovieByIdAlt(mMediaData.getId());
 
@@ -320,7 +320,7 @@ AddToListAdapter.OnListCheckListener{
             movieData.setWatchStatus(mSelectedWatchStatus);
             mDatabase.movieDataDao().updateMovieData(movieData);
             Log.d(FRAGMENT_KEY, "update media data");
-            return movieData.getWatchStatus();
+            return movieData;
 
         } else {
             //create new movie data
@@ -328,11 +328,11 @@ AddToListAdapter.OnListCheckListener{
             newMovieData.setWatchStatus(mSelectedWatchStatus);
             mDatabase.movieDataDao().addMovieData(newMovieData);
             Log.d(FRAGMENT_KEY, "creating new media data");
-            return newMovieData.getWatchStatus();
+            return newMovieData;
         }
     }
 
-    private int updateSeriesData() {
+    private SeriesData updateSeriesData() {
         //check if series exists in db
         SeriesData seriesData = mDatabase.seriesDataDao().getSeriesByIdAlt(mMediaData.getId());
 
@@ -341,7 +341,7 @@ AddToListAdapter.OnListCheckListener{
             seriesData.setWatchStatus(mSelectedWatchStatus);
             mDatabase.seriesDataDao().updateSeriesData(seriesData);
             Log.d(FRAGMENT_KEY, "update media data");
-            return seriesData.getWatchStatus();
+            return seriesData;
 
         } else {
             //create new series data
@@ -349,7 +349,7 @@ AddToListAdapter.OnListCheckListener{
             newSeriesData.setWatchStatus(mSelectedWatchStatus);
             mDatabase.seriesDataDao().addSeriesData(newSeriesData);
             Log.d(FRAGMENT_KEY, "creating new media data");
-            return newSeriesData.getWatchStatus();
+            return newSeriesData;
         }
     }
 
@@ -422,7 +422,8 @@ AddToListAdapter.OnListCheckListener{
 
     private void deleteMediaDataIfDataNotUsed(int newWatchStatus, int newContainingListValue) {
         //if watch status is none and if there are no lists containing this media
-        if (newWatchStatus == MediaData.WATCH_STATUS_NONE && newContainingListValue == 0) {
+        if (newWatchStatus == MediaData.WATCH_STATUS_NONE
+                && newContainingListValue == 0) {
             //delete the media from the database
             Log.d(FRAGMENT_KEY, "deleting empty media data");
 

@@ -102,14 +102,16 @@ public class UpdateMediaWorker extends Worker {
                             newMediaData =
                                     MovieDataParser.parseDetails(returnedJSONString, ((MovieData) oldMediaData));
 
-                            //preserve the overwritten watch status
+                            //preserve the overwritten watch status and user rating
                             newMediaData.setWatchStatus(oldMediaData.getWatchStatus());
+                            newMediaData.setUserRating(oldMediaData.getUserRating());
 
                             mDatabase.movieDataDao().updateMovieData(((MovieData) newMediaData));
 
                         } else {
                             newMediaData =
-                                    SeriesDataParser.parseDetails(returnedJSONString, ((SeriesData) oldMediaData));
+                                    SeriesDataParser
+                                            .parseDetails(returnedJSONString, ((SeriesData) oldMediaData), mContext);
 
                             //preserve the over written watch status
                             newMediaData.setWatchStatus(oldMediaData.getWatchStatus());

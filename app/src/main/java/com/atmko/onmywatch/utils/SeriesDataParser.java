@@ -4,8 +4,11 @@
 
 package com.atmko.onmywatch.utils;
 
+import android.content.Context;
+
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.ANRequest;
+import com.atmko.onmywatch.R;
 import com.atmko.stack.Stack;
 import com.google.gson.Gson;
 import com.atmko.onmywatch.models.CastData;
@@ -101,7 +104,8 @@ public class SeriesDataParser {
         return seriesData;
     }
 
-    public static SeriesData parseDetails(String returnedJSONString, SeriesData seriesData) {
+    public static SeriesData parseDetails(String returnedJSONString, SeriesData seriesData,
+                                          Context context) {
         //skips code below if returnedJSONString null or empty
         if (returnedJSONString == null || returnedJSONString.equals("")){
             //return same series data
@@ -136,9 +140,21 @@ public class SeriesDataParser {
         detailsSeriesData.setCast(castList);
 
         String releaseStatus = ((String) returnedMap.get(ApiConstants.RELEASE_STATUS_KEY));
-        detailsSeriesData.setReleaseStatus(releaseStatus);
+        detailsSeriesData.setReleaseStatus(replaceText(releaseStatus, context));
 
         return detailsSeriesData;
+    }
+
+    static private String replaceText(String originalText, Context context) {
+        if (originalText.equals(SeriesApiConstants.RELEASE_STATUS_RETURNING_SERIES)) {
+            return (context.getResources().getString(R.string.detail_text_replacement_running_series));
+
+        } else if (originalText.equals(SeriesApiConstants.RELEASE_STATUS_IN_PRODUCTION)) {
+            return (context.getResources().getString(R.string.detail_text_replacement_in_production));
+
+        } else {
+            return originalText;
+        }
     }
 
     private static ArrayList<String> convertToGenres(ArrayList<Map> rawGenreArray) {

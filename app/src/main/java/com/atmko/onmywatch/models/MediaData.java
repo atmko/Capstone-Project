@@ -47,6 +47,7 @@ abstract public class MediaData {
     @ColumnInfo(name = "release_status") String mReleaseStatus;
 
     @ColumnInfo(name = "watch_status") int mWatchStatus;
+    @ColumnInfo(name = "user_rating") int mUserRating;
 
     public String getId() {
         return mId;
@@ -136,6 +137,14 @@ abstract public class MediaData {
 
     public void setWatchStatus(int watchStatus) {
         this.mWatchStatus = watchStatus;
+    }
+
+    public int getUserRating() {
+        return mUserRating;
+    }
+
+    public void setUserRating(int userRating) {
+        this.mUserRating = userRating;
     }
 
     public static String getWatchStatusTitle(int watchStatus, Context context) {

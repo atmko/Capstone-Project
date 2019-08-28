@@ -61,7 +61,8 @@
         <dimen name="appbar_headline_18_text_size">18sp</dimen>
         <dimen name="caption_12_text_size">12sp</dimen>
         <dimen name="headline_24_text_size">24sp</dimen>
-        <dimen name="headline_48_text_size">48sp</dimen>
+    <dimen name="headline_36_text_size">36sp</dimen>
+    <dimen name="headline_48_text_size">48sp</dimen>
     <!--TEXT DIMENSIONS-->
 
 </resources>
