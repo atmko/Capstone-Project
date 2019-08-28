@@ -489,7 +489,8 @@ public class DetailsFragment extends Fragment {
         NetworkFunctions.loadImage(getContext(), mMediaData.getBackdropPath(),
                 ((ImageView) getView().findViewById(R.id.backdrop_image_view)));
 
-        ((TextView) getView().findViewById(R.id.title_text_view)).setText(mMediaData.getTitle());
+        ((TextView) getView().findViewById(R.id.title_text_view))
+                .setText(mMediaData.getFormattedTitle());
 
         ((TextView) getView().findViewById(R.id.date_text_view)).setText(mMediaData.getReleaseDate());
 
