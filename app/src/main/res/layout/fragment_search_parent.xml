@@ -19,8 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize">
 
-            <include layout="@layout/search_box_standard" />
-
+            <include layout="@layout/toolbar_general" />
         </FrameLayout>
 
         <FrameLayout
@@ -100,12 +99,5 @@
             android:layout_height="match_parent"/>
 
     </LinearLayout>
-
-    <include layout="@layout/up_navigation_button" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        style="@style/fab_style"
-        android:id="@+id/manual_search_fab"
-        android:src="@drawable/ic_manual_search"/>
 
 </FrameLayout>

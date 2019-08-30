@@ -3,13 +3,4 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/style_standard_search_box"
     android:id="@+id/search_edit_text_view"
-    android:layout_height="match_parent"
-    android:layout_width="match_parent"
-    android:layout_marginLeft="@dimen/x8_layout_margin"
-    android:layout_marginStart="@dimen/x8_layout_margin"
-    android:layout_marginRight="@dimen/x3_layout_margin"
-    android:layout_marginEnd="@dimen/x3_layout_margin"
-    android:layout_marginTop="@dimen/x1_layout_margin"
-    android:layout_marginBottom="@dimen/x1_layout_margin"
-    android:hint="@string/search_text_box_hint"
     android:importantForAutofill="no"/>

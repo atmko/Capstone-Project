@@ -94,16 +94,23 @@
     </style>
 
     <style name="style_standard_search_box">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
         <item name="android:layout_marginTop">@dimen/x1_layout_margin</item>
+        <item name="android:layout_marginLeft">0dp</item>
+        <item name="android:layout_marginStart">0dp</item>
+        <item name="android:layout_marginRight">@dimen/x1_layout_margin</item>
+        <item name="android:layout_marginEnd">@dimen/x1_layout_margin</item>
         <item name="android:layout_marginBottom">@dimen/x1_layout_margin</item>
         <item name="android:hint">@string/search_text_box_hint</item>
-        <item name="android:textColorHint">@android:color/white</item>
-        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColorHint">@android:color/black</item>
+        <item name="android:textColor">@android:color/black</item>
         <item name="android:paddingLeft">@dimen/search_box_padding</item>
         <item name="android:paddingStart">@dimen/search_box_padding</item>
         <item name="android:paddingRight">@dimen/search_box_padding</item>
         <item name="android:paddingEnd">@dimen/search_box_padding</item>
         <item name="android:inputType">text</item>
+        <item name="android:textCursorDrawable">@drawable/toolbar_searchbox_cursor</item>
         <item name="android:background">@drawable/background_searchbox</item>
         <item name="android:imeOptions">actionSearch|flagNoExtractUi|flagNoFullscreen</item>
     </style>

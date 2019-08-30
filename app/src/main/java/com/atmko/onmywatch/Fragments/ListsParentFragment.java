@@ -2,23 +2,25 @@ package com.atmko.onmywatch.Fragments;
 
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.ListWatchAndUserAdapter;
-
-import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
+import com.google.android.material.tabs.TabLayout;
 
 
 public class ListsParentFragment extends Fragment {
@@ -52,6 +54,11 @@ public class ListsParentFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setHasOptionsMenu(true);
+        Toolbar toolbar = getView().findViewById(R.id.toolbar);
+
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //save saveInstanceState value for onCreateAnimator to check if this is the first instance
         mSavedInstanceState = savedInstanceState;
@@ -107,9 +114,64 @@ public class ListsParentFragment extends Fragment {
     }
 
     private void defineViews() {
+        final TextView listNameText = getView().findViewById(R.id.title_text_view);
+        listNameText.setText(getString(R.string.lists_text_literal));
+
+        final EditText searchEditText = getView().findViewById(R.id.search_edit_text_view);
+        final ImageButton searchImageButton = getView().findViewById(R.id.search_image_button);
+        searchImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (searchEditText.getVisibility() == View.VISIBLE) {
+                    searchEditText.setVisibility(View.GONE);
+                    listNameText.setVisibility(View.VISIBLE);
+
+                } else {
+                    searchEditText.setVisibility(View.VISIBLE);
+                    searchEditText.requestFocus();
+                    listNameText.setVisibility(View.GONE);
+                }
+            }
+        });
+
+
+        TabLayout mMediaTypeTabLayout = getView().findViewById(R.id.list_type_tab_layout);
+        final ViewPager mListsViewPager = getView().findViewById(R.id.lists_view_pager);
+
+        //remove old tabs
+        mMediaTypeTabLayout.removeAllTabs();
+
+        //add new tabs
+        String[] listTypeNames = getContext().getResources().getStringArray(R.array.list_type_titles);
+
+        for (String type : listTypeNames) {
+            mMediaTypeTabLayout.addTab(mMediaTypeTabLayout.newTab().setText(type));
+        }
+
+        mListsViewPager.setOffscreenPageLimit(listTypeNames.length - 1);
+
         mViewPager = getView().findViewById(R.id.lists_view_pager);
         mListWatchAndUserAdapter = new ListWatchAndUserAdapter(getChildFragmentManager(),
                 FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         mViewPager.setAdapter(mListWatchAndUserAdapter);
+
+        //configure listeners
+        mListsViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mMediaTypeTabLayout));
+        mMediaTypeTabLayout.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                mListsViewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
 }

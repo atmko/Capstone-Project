@@ -59,13 +59,24 @@
         <string name="media_type_people_text">People</string>
         <!--media type text-->
 
+        <!--list type text-->
+        <string name="list_type_watch_text">Watch Lists</string>
+        <string name="list_type_user_text">User Lists</string>
+        <!--list type text-->
+
         <!--home text-->
         <string name="spotlight_heading_text">Spotlight</string>
         <!--home text-->
 
         <!--lists text-->
         <string name="lists_text_literal">Lists</string>
+        <string name="user_lists_literal">User Lists</string>
+        <string name="watch_lists_literal">Watch Lists</string>
         <!--lists text-->
+
+        <!--search text-->
+        <string name="search_text_literal">Search</string>
+        <!--search text-->
 
         <!--details text-->
         <string name="detail_trailer_text_title">Trailer</string>

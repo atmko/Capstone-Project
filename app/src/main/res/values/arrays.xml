@@ -16,6 +16,11 @@
         <item>@string/media_type_movies_text</item>
     </array>
 
+    <array name="list_type_titles">
+        <item>@string/list_type_watch_text</item>
+        <item>@string/list_type_user_text</item>
+    </array>
+
     <array name="search_manual_media_types">
         <item>@string/media_type_series_text</item>
         <item>@string/media_type_movies_text</item>

@@ -13,13 +13,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize">
-
-            <include layout="@layout/search_box_standard" />
-
-        </FrameLayout>
+        <include layout="@layout/toolbar_general" />
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -52,17 +46,15 @@
         </FrameLayout>
 
         <androidx.viewpager.widget.ViewPager
-            android:id="@+id/lists_view_pager"
+            android:id="@+id/lists_results_view_pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
     </LinearLayout>
 
-    <include layout="@layout/up_navigation_button" />
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         style="@style/fab_style"
         android:id="@+id/search_list_fab"
-        android:src="@drawable/ic_manual_search"/>
+        android:src="@drawable/ic_fab_add_to_list"/>
 
 </FrameLayout>

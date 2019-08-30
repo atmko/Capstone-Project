@@ -1,7 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.viewpager.widget.ViewPager
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/lists_view_pager"
-    android:layout_height="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/background" />
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar_general" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/indicator_cross_line_height"
+            android:layout_marginBottom="@dimen/indicator_cross_line_margin_from_bottom"
+            android:layout_gravity="bottom"
+            android:background="@color/colorAccent"/>
+
+        <com.google.android.material.tabs.TabLayout
+            style="@style/tab_style"
+            android:id="@+id/list_type_tab_layout"
+            app:tabMode="fixed">
+
+            <!--TODO these are for test purposes only. apply programmatically instead-->
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="@string/watch_lists_literal"/>
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="@string/user_lists_literal"/>
+        </com.google.android.material.tabs.TabLayout>
+
+    </FrameLayout>
+
+    <androidx.viewpager.widget.ViewPager
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/lists_view_pager"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:background="@color/background" />
+
+</LinearLayout>

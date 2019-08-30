@@ -7,6 +7,8 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -21,7 +23,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,7 +61,7 @@ public class SearchParentFragment extends Fragment {
     private TabLayout mediaTypeTabLayout;
     private FrameLayout searchPresetsTopLayout;
     private TabLayout searchPresetsTabLayout;
-    private FloatingActionButton manualSearchFab;
+    private ImageButton searchImageButton;
     private ViewPager searchResultsViewPager;
 
     private SearchViewModel searchViewModel;
@@ -83,6 +87,11 @@ public class SearchParentFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setHasOptionsMenu(true);
+        Toolbar toolbar = getView().findViewById(R.id.toolbar);
+
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //save savedInstanceState value for onCreateAnimator to check if this is the first instance
         mSavedInstanceState = savedInstanceState;
@@ -152,24 +161,38 @@ public class SearchParentFragment extends Fragment {
     }
 
     private void defineViews() {
+        final TextView titleText = getView().findViewById(R.id.title_text_view);
+        titleText.setText(getString(R.string.search_text_literal));
+
+        final EditText searchEditText = getView().findViewById(R.id.search_edit_text_view);
+        searchImageButton = getView().findViewById(R.id.search_image_button);
+        searchImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (searchEditText.getVisibility() == View.VISIBLE) {
+                    searchEditText.setVisibility(View.GONE);
+                    titleText.setVisibility(View.VISIBLE);
+
+                } else {
+                    searchEditText.setVisibility(View.VISIBLE);
+                    searchEditText.requestFocus();
+                    titleText.setVisibility(View.GONE);
+                }
+
+                if (searchMode.equals(SEARCH_MODE_PRESET)) {
+
+                } else if (searchMode.equals(SEARCH_MODE_MANUAL)) {
+                    loadPresetSearchUi();
+                }
+            }
+        });
+
         mediaTypeTabLayout = getView().findViewById(R.id.media_type_tab_layout);
         searchPresetsTopLayout = getView().findViewById(R.id.search_presets_top_layout);
         searchPresetsTabLayout = getView().findViewById(R.id.search_presets_tab_layout);
         searchResultsViewPager = getView().findViewById(R.id.search_results_view_pager);
 
-        configureUpNavigationButton();
         configureSearchBox();
-        configureFab();
-    }
-
-    private void configureUpNavigationButton() {
-        getView().findViewById(R.id.up_navigation_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                fragmentManager.popBackStack();
-            }
-        });
     }
 
     private void configureSearchBox() {
@@ -198,35 +221,11 @@ public class SearchParentFragment extends Fragment {
         });
     }
 
-
-    private void configureFab() {
-        manualSearchFab = getView().findViewById(R.id.manual_search_fab);
-
-        manualSearchFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (searchMode.equals(SEARCH_MODE_PRESET)) {
-                    if (searchFrameLayout.getVisibility() == View.VISIBLE) {
-                        searchFrameLayout.setVisibility(View.GONE);
-
-                    } else {
-                        searchFrameLayout.setVisibility(View.VISIBLE);
-
-                    }
-
-                } else if (searchMode.equals(SEARCH_MODE_MANUAL)) {
-                    loadPresetSearchUi();
-                    searchFrameLayout.setVisibility(View.GONE);
-                }
-            }
-        });
-    }
-
     private void loadPresetSearchUi() {
         searchPresetsTopLayout.setVisibility(View.VISIBLE);
 
         searchMode = SEARCH_MODE_PRESET;
-        manualSearchFab.setImageResource(R.drawable.ic_manual_search);
+        searchImageButton.setImageResource(R.drawable.ic_manual_search);
 
         configurePresetMediaTypeTabLayout();
         loadPresetTabAndPager();
@@ -330,7 +329,7 @@ public class SearchParentFragment extends Fragment {
         searchPresetsTopLayout.setVisibility(View.GONE);
 
         searchMode = SEARCH_MODE_MANUAL;
-        manualSearchFab.setImageResource(R.drawable.ic_cancel_manual_search);
+        searchImageButton.setImageResource(R.drawable.ic_cancel_manual_search);
 
         configureManualMediaTypeTabLayout();
         loadManualPager(searchEditTextView.getText().toString());

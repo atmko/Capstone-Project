@@ -114,8 +114,6 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
 
         mRecyclerView.setAdapter(mAdapter);
 
-        configureUpNavigationButton();
-
         mFab = getView().findViewById(R.id.new_list_fab);
         if (mListType == ListsParentFragment.LIST_TYPE_WATCH) {
             mFab.hide();
@@ -146,17 +144,6 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
         } else if (mAdapter instanceof UserListsAdapter) {
             loadUserLists(viewModel);
         }
-    }
-
-    private void configureUpNavigationButton() {
-        getView().findViewById(R.id.up_navigation_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                FragmentManager fragmentManager = getParentFragment().getActivity().getSupportFragmentManager();
-                fragmentManager.popBackStack();
-            }
-        });
     }
 
     private void loadWatchLists(final ListsViewModel viewModel) {

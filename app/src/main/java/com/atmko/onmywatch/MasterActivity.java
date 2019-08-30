@@ -9,6 +9,7 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import com.atmko.onmywatch.Fragments.AddToListFragment;
 import com.atmko.onmywatch.Fragments.CreateListFragment;
@@ -78,6 +79,19 @@ public class MasterActivity extends AppCompatActivity implements
 
         outState.putInt(ADD_TO_LIST_VISIBILITY_KEY,
                 findViewById(R.id.popup_container).getVisibility());
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+
+            return true;
+
+        }else {
+            return super.onOptionsItemSelected(item);
+
+        }
     }
 
     @Override

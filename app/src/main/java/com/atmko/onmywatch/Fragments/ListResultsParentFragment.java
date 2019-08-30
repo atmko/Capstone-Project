@@ -2,10 +2,11 @@ package com.atmko.onmywatch.Fragments;
 
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentStatePagerAdapter;
@@ -14,7 +15,9 @@ import androidx.viewpager.widget.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.google.android.material.tabs.TabLayout;
 import com.atmko.onmywatch.R;
@@ -64,6 +67,11 @@ public class ListResultsParentFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setHasOptionsMenu(true);
+        Toolbar toolbar = getView().findViewById(R.id.toolbar);
+
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //save save instanceState value for onCreateAnimator to check if this is the first instance
         mSavedInstanceState = savedInstanceState;
@@ -119,8 +127,28 @@ public class ListResultsParentFragment extends Fragment {
     }
 
     private void defineViews() {
+        final TextView listNameText = getView().findViewById(R.id.title_text_view);
+        listNameText.setText(mListName);
+
+        final EditText searchEditText = getView().findViewById(R.id.search_edit_text_view);
+        final ImageButton searchImageButton = getView().findViewById(R.id.search_image_button);
+        searchImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (searchEditText.getVisibility() == View.VISIBLE) {
+                    searchEditText.setVisibility(View.GONE);
+                    listNameText.setVisibility(View.VISIBLE);
+
+                } else {
+                    searchEditText.setVisibility(View.VISIBLE);
+                    searchEditText.requestFocus();
+                    listNameText.setVisibility(View.GONE);
+                }
+            }
+        });
+
         TabLayout mMediaTypeTabLayout = getView().findViewById(R.id.media_type_tab_layout);
-        final ViewPager mListsViewPager = getView().findViewById(R.id.lists_view_pager);
+        final ViewPager mListsViewPager = getView().findViewById(R.id.lists_results_view_pager);
 
         //remove old tabs
         mMediaTypeTabLayout.removeAllTabs();
