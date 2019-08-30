@@ -48,74 +48,6 @@
         app:layout_constraintStart_toStartOf="@+id/backdrop_image_view" />
 
     <TextView
-        android:id="@+id/watch_status_shorthand_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/x1_layout_margin"
-        android:layout_marginStart="@dimen/x2_layout_margin"
-        android:layout_marginLeft="@dimen/x4_layout_margin"
-        android:background="@drawable/background_searchbox"
-        android:paddingStart="@dimen/x1_layout_margin"
-        android:paddingTop="@dimen/half_layout_margin"
-        android:paddingEnd="@dimen/x1_layout_margin"
-        android:paddingBottom="@dimen/half_layout_margin"
-        android:text="Tw"
-        android:textColor="@android:color/white"
-        app:layout_constraintStart_toStartOf="@+id/backdrop_image_view"
-        app:layout_constraintTop_toBottomOf="@id/trailer_button" />
-
-    <TextView
-        android:id="@+id/list_counts_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/x1_layout_margin"
-        android:layout_marginStart="@dimen/x2_layout_margin"
-        android:layout_marginLeft="@dimen/x4_layout_margin"
-        android:background="@drawable/background_searchbox"
-        android:paddingStart="@dimen/x1_layout_margin"
-        android:paddingTop="@dimen/half_layout_margin"
-        android:paddingEnd="@dimen/x1_layout_margin"
-        android:paddingBottom="@dimen/half_layout_margin"
-        android:text="5"
-        android:textColor="@android:color/white"
-        app:layout_constraintStart_toEndOf="@+id/watch_status_shorthand_text"
-        app:layout_constraintTop_toBottomOf="@id/trailer_button" />
-
-    <TextView
-        android:id="@+id/release_status_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/x1_layout_margin"
-        android:layout_marginStart="@dimen/x2_layout_margin"
-        android:layout_marginLeft="@dimen/x4_layout_margin"
-        android:background="@drawable/background_searchbox"
-        android:paddingStart="@dimen/x1_layout_margin"
-        android:paddingTop="@dimen/half_layout_margin"
-        android:paddingEnd="@dimen/x1_layout_margin"
-        android:paddingBottom="@dimen/half_layout_margin"
-        tools:text="Unreleased"
-        android:textColor="@android:color/white"
-        app:layout_constraintStart_toEndOf="@+id/list_counts_text"
-        app:layout_constraintTop_toBottomOf="@id/trailer_button" />
-
-    <TextView
-        android:id="@+id/user_rating_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/x1_layout_margin"
-        android:layout_marginStart="@dimen/x2_layout_margin"
-        android:layout_marginLeft="@dimen/x4_layout_margin"
-        android:background="@drawable/background_searchbox"
-        android:paddingStart="@dimen/x1_layout_margin"
-        android:paddingTop="@dimen/half_layout_margin"
-        android:paddingEnd="@dimen/x1_layout_margin"
-        android:paddingBottom="@dimen/half_layout_margin"
-        tools:text="7.5"
-        android:textColor="@android:color/white"
-        app:layout_constraintStart_toEndOf="@+id/release_status_text"
-        app:layout_constraintTop_toBottomOf="@id/trailer_button" />
-
-    <TextView
         android:id="@+id/title_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -130,7 +62,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/watch_status_shorthand_text" />
+        app:layout_constraintTop_toBottomOf="@id/trailer_button" />
+
+
+
+
 
     <!--______________________________________________-->
     <TextView
@@ -185,6 +121,74 @@
         app:layout_constraintTop_toBottomOf="@+id/title_text_view"
         tools:text="drama" />
 
+    <TextView
+        android:id="@+id/watch_status_shorthand_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/x1_layout_margin"
+        android:layout_marginStart="@dimen/x2_layout_margin"
+        android:layout_marginLeft="@dimen/x4_layout_margin"
+        android:background="@drawable/background_searchbox"
+        android:paddingStart="@dimen/x1_layout_margin"
+        android:paddingTop="@dimen/half_layout_margin"
+        android:paddingEnd="@dimen/x1_layout_margin"
+        android:paddingBottom="@dimen/half_layout_margin"
+        android:text="Tw"
+        android:textColor="@android:color/white"
+        app:layout_constraintStart_toStartOf="@+id/backdrop_image_view"
+        app:layout_constraintTop_toBottomOf="@id/date_text_view" />
+
+    <TextView
+        android:id="@+id/list_counts_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/x1_layout_margin"
+        android:layout_marginStart="@dimen/x2_layout_margin"
+        android:layout_marginLeft="@dimen/x4_layout_margin"
+        android:background="@drawable/background_searchbox"
+        android:paddingStart="@dimen/x1_layout_margin"
+        android:paddingTop="@dimen/half_layout_margin"
+        android:paddingEnd="@dimen/x1_layout_margin"
+        android:paddingBottom="@dimen/half_layout_margin"
+        android:text="5"
+        android:textColor="@android:color/white"
+        app:layout_constraintStart_toEndOf="@+id/watch_status_shorthand_text"
+        app:layout_constraintTop_toBottomOf="@id/date_text_view" />
+
+    <TextView
+        android:id="@+id/release_status_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/x1_layout_margin"
+        android:layout_marginStart="@dimen/x2_layout_margin"
+        android:layout_marginLeft="@dimen/x4_layout_margin"
+        android:background="@drawable/background_searchbox"
+        android:paddingStart="@dimen/x1_layout_margin"
+        android:paddingTop="@dimen/half_layout_margin"
+        android:paddingEnd="@dimen/x1_layout_margin"
+        android:paddingBottom="@dimen/half_layout_margin"
+        tools:text="Unreleased"
+        android:textColor="@android:color/white"
+        app:layout_constraintStart_toEndOf="@+id/list_counts_text"
+        app:layout_constraintTop_toBottomOf="@id/date_text_view" />
+
+    <TextView
+        android:id="@+id/user_rating_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/x1_layout_margin"
+        android:layout_marginStart="@dimen/x2_layout_margin"
+        android:layout_marginLeft="@dimen/x4_layout_margin"
+        android:background="@drawable/background_searchbox"
+        android:paddingStart="@dimen/x1_layout_margin"
+        android:paddingTop="@dimen/half_layout_margin"
+        android:paddingEnd="@dimen/x1_layout_margin"
+        android:paddingBottom="@dimen/half_layout_margin"
+        tools:text="7.5"
+        android:textColor="@android:color/white"
+        app:layout_constraintStart_toEndOf="@+id/release_status_text"
+        app:layout_constraintTop_toBottomOf="@id/date_text_view" />
+
     <ImageButton
         android:id="@+id/share_button"
         android:layout_width="wrap_content"
@@ -194,7 +198,7 @@
         android:src="@drawable/ic_share_white"
         app:layout_constraintEnd_toEndOf="@+id/share_text_view"
         app:layout_constraintStart_toStartOf="@+id/share_text_view"
-        app:layout_constraintTop_toBottomOf="@id/date_text_view"
+        app:layout_constraintTop_toBottomOf="@id/watch_status_shorthand_text"
         android:contentDescription="@string/content_description_share_button"/>
 
     <ImageButton
@@ -206,7 +210,7 @@
         android:src="@drawable/ic_rate"
         app:layout_constraintEnd_toEndOf="@+id/rate_text_view"
         app:layout_constraintStart_toStartOf="@+id/rate_text_view"
-        app:layout_constraintTop_toBottomOf="@id/date_text_view"
+        app:layout_constraintTop_toBottomOf="@id/watch_status_shorthand_text"
         android:contentDescription="@string/content_description_rate_button"/>
 
     <!--______________________________________________-->
