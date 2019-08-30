@@ -115,6 +115,7 @@ public class UpdateMediaWorker extends Worker {
 
                             //preserve the over written watch status
                             newMediaData.setWatchStatus(oldMediaData.getWatchStatus());
+                            newMediaData.setUserRating(oldMediaData.getUserRating());
 
                             mDatabase.seriesDataDao().updateSeriesData(((SeriesData) newMediaData));
 
