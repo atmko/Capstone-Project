@@ -222,6 +222,13 @@ public class DetailsFragment extends Fragment {
     private void defineViews() {
         //if mIsTablet landscape (2-pane), remove up navigation button from details layout
         ImageButton upNavigationButton = getView().findViewById(R.id.up_navigation_button);
+        upNavigationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().onBackPressed();
+            }
+        });
+
         if (((MasterActivity) getActivity()).isTabletLandscape()) {
             upNavigationButton.setVisibility(View.GONE);
         }
