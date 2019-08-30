@@ -130,6 +130,20 @@ public class ListResultsParentFragment extends Fragment {
         final TextView listNameText = getView().findViewById(R.id.title_text_view);
         listNameText.setText(mListName);
 
+        //configure floating action button
+        getView().findViewById(R.id.search_list_fab).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SearchParentFragment searchParentFragment = SearchParentFragment.newInstance();
+
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.slide_down_entry, android.R.animator.fade_out)
+                        .add(R.id.master_fragments_container,searchParentFragment,
+                                SearchParentFragment.FRAGMENT_KEY)
+                        .commit();
+            }
+        });
+
         final EditText searchEditText = getView().findViewById(R.id.search_edit_text_view);
         final ImageButton searchImageButton = getView().findViewById(R.id.search_image_button);
         searchImageButton.setOnClickListener(new View.OnClickListener() {
