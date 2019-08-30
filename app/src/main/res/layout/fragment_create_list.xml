@@ -10,12 +10,19 @@
     android:clickable="true"
     tools:context=".Fragments.AddToListFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        style="@style/popup_style"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/background_fragment_overlay"
-        android:focusable="true">
+        android:background="@color/background"
+        android:alpha="0.5"/>
+
+    <LinearLayout
+        style="@style/popup_style"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/background_fragment_overlay">
 
         <EditText
             android:id="@+id/name_edit_text_view"
@@ -35,17 +42,18 @@
             android:id="@+id/save_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/x6_layout_margin"
             android:layout_marginRight="@dimen/x2_layout_margin"
             android:layout_marginEnd="@dimen/x2_layout_margin"
             android:layout_marginBottom="@dimen/x2_layout_margin"
             android:background="@null"
+            android:gravity="end"
+            android:layout_gravity="end"
             android:minWidth="0dp"
             android:minHeight="0dp"
             android:text="@string/save_button_text"
-            android:textColor="@android:color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent" />
+            android:textColor="@android:color/white" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
 </FrameLayout>
