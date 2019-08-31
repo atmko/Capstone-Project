@@ -143,9 +143,13 @@ public class DetailsFragment extends Fragment {
             //startup code moved to onCreateAnimator
 
         } else {
-            setDetailViewValues();
-            configureDetailExtrasAdapter();
+            try {
+                setDetailViewValues();
+                configureDetailExtrasAdapter();
 
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
         }
 
         //basic values as opposed to values retrieved by getting details
@@ -170,7 +174,12 @@ public class DetailsFragment extends Fragment {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     //run code after entry animation is complete
-                    getMediaDetails();
+                    try {
+                        getMediaDetails();
+
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 @Override
@@ -435,23 +444,28 @@ public class DetailsFragment extends Fragment {
         request.getAsString(new StringRequestListener() {
             @Override
             public void onResponse(String returnedJSONString) {
-                //parse and populate retrieved data
-                if (mMediaType == MEDIA_TYPE_MOVIE) {
-                    mMediaData =
-                            MovieDataParser.parseDetails(returnedJSONString, ((MovieData) mMediaData));
+                try {
+                    //parse and populate retrieved data
+                    if (mMediaType == MEDIA_TYPE_MOVIE) {
+                        mMediaData =
+                                MovieDataParser.parseDetails(returnedJSONString, ((MovieData) mMediaData));
 
-                } else {
-                    mMediaData =
-                        SeriesDataParser.parseDetails(returnedJSONString,
-                                ((SeriesData) mMediaData), getContext());
+                    } else {
+                        mMediaData =
+                                SeriesDataParser.parseDetails(returnedJSONString,
+                                        ((SeriesData) mMediaData), getContext());
 
+                    }
+
+                    //todo implement get details for people data
+
+                    setDetailViewValues();
+
+                    configureDetailExtrasAdapter();
+
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
                 }
-
-                //todo implement get details for people data
-
-                setDetailViewValues();
-
-                configureDetailExtrasAdapter();
             }
 
             @Override
