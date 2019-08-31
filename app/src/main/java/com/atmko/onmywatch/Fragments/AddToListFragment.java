@@ -140,7 +140,6 @@ AddToListAdapter.OnListCheckListener{
         mRecyclerView = getView().findViewById(R.id.lists_recycler_view);
         mRecyclerView.setLayoutManager(configureLayoutManager());
         mAdapter = new AddToListAdapter(this, mMediaData.getId());
-        mRecyclerView.setAdapter(mAdapter);
 
         //configure search box
         mSearchEditTextView = getView().findViewById(R.id.search_edit_text_view);
@@ -266,6 +265,10 @@ AddToListAdapter.OnListCheckListener{
                                         Parcels.unwrap(mSavedInstanceState
                                                 .getParcelable(NEW_CONTAINING_LIST_KEY));
                             }
+
+                            //setting adapter here avoids null pointer crash when restoring app...
+                            // after app is killed
+                            mRecyclerView.setAdapter(mAdapter);
 
                             //update list so onCheckDatabaseRecords function can run
                             mAdapter.getAdapterData().clear();
