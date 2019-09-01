@@ -40,7 +40,7 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.User
     }
 
     public interface OnSpinnerItemClickListener {
-        void onEditClick();
+        void onEditClick(UserListModel userListModel);
         void onDeleteClick(UserListModel userListModel);
     }
 
@@ -74,7 +74,7 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.User
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     if (position == 0) {
-                        mOnSpinnerItemClickListener.onEditClick();
+                        mOnSpinnerItemClickListener.onEditClick(mAdapterData.get(getAdapterPosition()));
                         optionsSpinner.setSelection(optionsTitles.length - 1, false);
 
                     } else if (position == 1) {

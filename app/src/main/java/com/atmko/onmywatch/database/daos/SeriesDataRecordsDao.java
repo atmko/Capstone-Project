@@ -24,6 +24,9 @@ public interface SeriesDataRecordsDao {
     @Query("SELECT * FROM series INNER JOIN series_data_records ON series.id = series_data_records.series_id WHERE series_data_records.list_id = :listId")
     LiveData<List<SeriesData>> getAllSeriesInList(String listId);
 
+    @Query("SELECT * FROM series_data_records WHERE list_id = :listId")
+    List<SeriesDataRecord> getAllRecordsOfList(String listId);
+    
     @Query("SELECT list_id FROM series_data_records WHERE series_id = :seriesId")
     LiveData<List<String>> getAllListNamesContainingMedia(String seriesId);
 

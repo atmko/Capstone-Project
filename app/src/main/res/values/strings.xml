@@ -110,6 +110,7 @@
     <string name="search_results_fetch_error_message">Error loading search results</string>
     <string name="no_created_lists_message">You have\'t created any lists</string>
     <string name="new_list_created_message">New list created</string>
+    <string name="list_updated_message">List Configuration Updated</string>
     <string name="details_error_message">Error fetching media details</string>
     <string name="list_already_exists_error_message">A list with that name already exists</string>
     <string name="rating_disallowed_message">Rating only allowed if item has \"Watching\", \"Watched\" or \"Dropped\" watch status.</string>

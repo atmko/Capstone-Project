@@ -122,7 +122,7 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
             mFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    launchCreateListFragment();
+                    launchCreateListFragment(CreateListFragment.MODE_CREATE, "", 0);
                 }
             });
         }
@@ -204,11 +204,11 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
         });
     }
 
-    private void launchCreateListFragment() {
+    private void launchCreateListFragment(int mode, String listName, int itemCount) {
         getParentFragment().getActivity().findViewById(R.id.popup_container).setVisibility(View.VISIBLE);
 
         CreateListFragment createListFragment =
-                CreateListFragment.newInstance();
+                CreateListFragment.newInstance(mode, listName, itemCount);
 
         getParentFragment().getActivity().getSupportFragmentManager().beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
@@ -237,8 +237,9 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
     }
 
     @Override
-    public void onEditClick() {
-        launchCreateListFragment();
+    public void onEditClick(UserListModel userListModel) {
+        launchCreateListFragment(CreateListFragment.MODE_EDIT,
+                userListModel.getName(), userListModel.getItemCount());
     }
 
     @Override

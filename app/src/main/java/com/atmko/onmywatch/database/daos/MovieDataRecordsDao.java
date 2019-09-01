@@ -24,6 +24,9 @@ public interface MovieDataRecordsDao {
     @Query("SELECT * FROM movies INNER JOIN movie_data_records ON movies.id = movie_data_records.movie_id WHERE movie_data_records.list_id = :listId")
     LiveData<List<MovieData>> getAllMoviesInList(String listId);
 
+    @Query("SELECT * FROM movie_data_records WHERE list_id = :listId")
+    List<MovieDataRecord> getAllRecordsOfList(String listId);
+
     @Query("SELECT list_id FROM movie_data_records WHERE movie_id = :movieId")
     LiveData<List<String>> getAllListNamesContainingMedia(String movieId);
 
