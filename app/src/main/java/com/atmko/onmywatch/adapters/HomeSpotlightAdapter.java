@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.utils.network_utils.NetworkFunctions;
@@ -48,9 +50,14 @@ public class HomeSpotlightAdapter extends RecyclerView.Adapter<HomeSpotlightAdap
         FrameLayout topFrameLayout;
         ImageView moviePosterImageView;
         TextView posterReplacementTextView;
+        ImageButton addButton;
 
         private HomeSpotlightAdapterViewHolder(@NonNull View itemView, int viewType) {
             super(itemView);
+
+            topFrameLayout = itemView.findViewById(R.id.top_frame_layout);
+
+            itemView.setOnClickListener(this);
 
             if (viewType == NO_POSTER_LAYOUT) {
                 posterReplacementTextView = itemView.findViewById(R.id.poster_replacement_text_view);
@@ -58,10 +65,15 @@ public class HomeSpotlightAdapter extends RecyclerView.Adapter<HomeSpotlightAdap
                 moviePosterImageView = itemView.findViewById(R.id.posterImageView);
             }
 
-            topFrameLayout = itemView.findViewById(R.id.top_frame_layout);
-
-            itemView.setOnClickListener(this);
-
+            addButton =
+                    itemView.findViewById(R.id.add_to_list_button);
+            addButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((MasterActivity) mFragment.getActivity())
+                            .launchAddToListFragment(mAdapterData.get(getAdapterPosition()));
+                }
+            });
         }
 
         @Override

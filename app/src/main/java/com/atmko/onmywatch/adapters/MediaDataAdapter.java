@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
@@ -70,15 +72,10 @@ public class MediaDataAdapter extends RecyclerView.Adapter<MediaDataAdapter.Medi
         FrameLayout topFrameLayout;
         ImageView moviePosterImageView;
         TextView posterReplacementTextView;
+        ImageButton addButton;
 
         private MediaDataAdapterViewHolder(@NonNull View itemView, int viewType) {
             super(itemView);
-
-            if (viewType == NO_POSTER_LAYOUT) {
-                posterReplacementTextView = itemView.findViewById(R.id.poster_replacement_text_view);
-            } else {
-                moviePosterImageView = itemView.findViewById(R.id.posterImageView);
-            }
 
             topFrameLayout = itemView.findViewById(R.id.top_frame_layout);
             topFrameLayout.setLayoutParams(getPosterDimensions(topFrameLayout));
@@ -86,6 +83,23 @@ public class MediaDataAdapter extends RecyclerView.Adapter<MediaDataAdapter.Medi
 
             itemView.setOnClickListener(this);
 
+            if (viewType == EMPTY_ADAPTER_ID) return;
+
+            if (viewType == NO_POSTER_LAYOUT) {
+                posterReplacementTextView = itemView.findViewById(R.id.poster_replacement_text_view);
+            } else {
+                moviePosterImageView = itemView.findViewById(R.id.posterImageView);
+            }
+
+            addButton =
+                    itemView.findViewById(R.id.add_to_list_button);
+            addButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((MasterActivity) mFragment.getActivity())
+                            .launchAddToListFragment(mAdapterData.get(getAdapterPosition()));
+                }
+            });
         }
 
         @Override

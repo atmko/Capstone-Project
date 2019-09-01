@@ -15,4 +15,18 @@
         android:contentDescription="@string/poster_description"
         android:scaleType="center"/>
 
+    <ImageButton
+        android:id="@+id/add_to_list_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/x3_layout_margin"
+        android:paddingLeft="@dimen/x3_layout_margin"
+        android:paddingStart="@dimen/x3_layout_margin"
+        android:paddingRight="@dimen/x2_layout_margin"
+        android:paddingEnd="@dimen/x2_layout_margin"
+        android:paddingBottom="@dimen/x2_layout_margin"
+        android:src="@drawable/ic_fab_add_to_list_poster"
+        android:background="@null"
+        android:layout_gravity="bottom|right"/>
+
 </FrameLayout>

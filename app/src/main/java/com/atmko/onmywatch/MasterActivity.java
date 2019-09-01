@@ -9,14 +9,20 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.atmko.onmywatch.Fragments.AddToListFragment;
 import com.atmko.onmywatch.Fragments.CreateListFragment;
 import com.atmko.onmywatch.Fragments.HomeFragment;
 import com.atmko.onmywatch.Fragments.ListResultsParentFragment;
+import com.atmko.onmywatch.models.MediaData;
+import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.utils.UpdateMediaWorker;
 import com.google.firebase.analytics.FirebaseAnalytics;
+
+import org.parceler.Parcels;
 
 public class MasterActivity extends AppCompatActivity implements
         AddToListFragment.OnSavePressedActionListener,
@@ -146,6 +152,21 @@ public class MasterActivity extends AppCompatActivity implements
         Fragment fragment = getSupportFragmentManager().findFragmentById(containerId);
 
         return fragment != null;
+    }
+
+    public void launchAddToListFragment(MediaData mediaData) {
+        findViewById(R.id.popup_container).setVisibility(View.VISIBLE);
+
+        Parcelable mMediaDataParcelable = Parcels.wrap(mediaData);
+        int mediaType = mediaData instanceof MovieData ? MEDIA_TYPE_MOVIE : MEDIA_TYPE_SERIES;
+
+        AddToListFragment addToListFragment =
+                AddToListFragment.newInstance(mediaType, mMediaDataParcelable);
+
+        getSupportFragmentManager().beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .add(R.id.popup_container, addToListFragment, AddToListFragment.FRAGMENT_KEY)
+                .commit();
     }
 
     @Override
