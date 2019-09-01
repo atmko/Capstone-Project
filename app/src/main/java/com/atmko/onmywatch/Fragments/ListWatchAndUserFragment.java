@@ -82,21 +82,7 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
 
         defineViews();
 
-        if (savedInstanceState == null) {
-            observeData();
-
-        } else {
-            List<UserListModel> userListModels =
-                    Parcels.unwrap(savedInstanceState.getParcelable(ADAPTER_DATA_LIST_KEY));
-
-            if (mAdapter instanceof WatchListsAdapter) {
-                ((WatchListsAdapter) mAdapter).addAdapterData(userListModels);
-
-            } else if (mAdapter instanceof UserListsAdapter) {
-                ((UserListsAdapter) mAdapter).addAdapterData(userListModels);
-
-            }
-        }
+        observeData();
     }
 
     private void defineViews() {

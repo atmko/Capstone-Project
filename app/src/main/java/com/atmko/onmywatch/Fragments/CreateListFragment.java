@@ -177,10 +177,10 @@ public class CreateListFragment extends Fragment {
     }
 
     private void setViewValues(Bundle savedInstanceState) {
-        mListName =
+        String editTextString =
                 savedInstanceState == null ? mListName : savedInstanceState.getString(LIST_NAME_KEY);
 
-        nameEditTextView.setText(mListName);
+        nameEditTextView.setText(editTextString);
     }
 
     @Override
