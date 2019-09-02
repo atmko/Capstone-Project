@@ -91,7 +91,7 @@ public class HomeListDisplayFragment extends Fragment implements MediaDataAdapte
 
         AppDatabase database = AppDatabase.getInstance(getContext());
         ListResultsViewModelFactory resultsViewModelFactory =
-                new ListResultsViewModelFactory(database, ListsParentFragment.LIST_TYPE_WATCH,
+                new ListResultsViewModelFactory(database, ListsWatchAndUserParentFragment.LIST_TYPE_WATCH,
                         mMediaType, titleList, mListName);
 
         final ListsResultsViewModel viewModel =
@@ -116,7 +116,7 @@ public class HomeListDisplayFragment extends Fragment implements MediaDataAdapte
 
     private void observeData(ListsResultsViewModel viewModel) {
         //if this is a watch list
-        if (mListType == ListsParentFragment.LIST_TYPE_WATCH) {
+        if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
             //if media data is movie
             if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
                 viewModel.getAllMoviesInWatchList().observe(this, new Observer<List<MovieData>>() {
@@ -138,7 +138,7 @@ public class HomeListDisplayFragment extends Fragment implements MediaDataAdapte
         }
 
         //if this is a user list
-        if (mListType == ListsParentFragment.LIST_TYPE_USER) {
+        if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_USER) {
             //if media data is movie
             if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
                 viewModel.getAllMoviesInUserList().observe(this, new Observer<List<MovieData>>() {

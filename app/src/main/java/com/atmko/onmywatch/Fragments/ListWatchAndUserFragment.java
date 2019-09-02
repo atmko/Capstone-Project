@@ -1,6 +1,5 @@
 package com.atmko.onmywatch.Fragments;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
@@ -11,7 +10,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
@@ -90,10 +88,10 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
         mRecyclerView = getView().findViewById(R.id.lists_recycler_view);
         mRecyclerView.setLayoutManager(configureLayoutManager());
 
-        if (mListType == ListsParentFragment.LIST_TYPE_WATCH) {
+        if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
             mAdapter = new WatchListsAdapter(this);
 
-        } else if (mListType == ListsParentFragment.LIST_TYPE_USER) {
+        } else if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_USER) {
             mAdapter = new UserListsAdapter(this);
 
         }
@@ -101,7 +99,7 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
         mRecyclerView.setAdapter(mAdapter);
 
         mFab = getView().findViewById(R.id.new_list_fab);
-        if (mListType == ListsParentFragment.LIST_TYPE_WATCH) {
+        if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
             mFab.hide();
 
         } else {

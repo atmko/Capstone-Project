@@ -23,7 +23,7 @@ import com.atmko.onmywatch.SettingsActivity;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.utils.SearchPreferences;
 
-import static com.atmko.onmywatch.Fragments.ListsParentFragment.LIST_TYPE_WATCH;
+import static com.atmko.onmywatch.Fragments.ListsWatchAndUserParentFragment.LIST_TYPE_WATCH;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
 
@@ -99,12 +99,12 @@ public class HomeFragment extends Fragment {
         listsTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ListsParentFragment listsParentFragment = ListsParentFragment.newInstance();
+                ListsWatchAndUserParentFragment listsParentFragment = ListsWatchAndUserParentFragment.newInstance();
 
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.slide_down_entry, android.R.animator.fade_out)
                         .add(R.id.master_fragments_container, listsParentFragment,
-                                ListsParentFragment.FRAGMENT_KEY)
+                                ListsWatchAndUserParentFragment.FRAGMENT_KEY)
                         .commit();
             }
         });

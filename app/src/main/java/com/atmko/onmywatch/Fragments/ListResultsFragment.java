@@ -97,8 +97,6 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
         return inflater.inflate(R.layout.fragment_list_results, container, false);
     }
 
-
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -180,7 +178,7 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
 
     private void observeData(ListsResultsViewModel viewModel, final Bundle savedInstanceState) {
         //if this is a watch list
-        if (mListType == ListsParentFragment.LIST_TYPE_WATCH) {
+        if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
             //if media data is movie
             if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
                 viewModel.getAllMoviesInWatchList().observe(this, new Observer<List<MovieData>>() {
@@ -218,7 +216,7 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
         }
 
         //if this is a user list
-        if (mListType == ListsParentFragment.LIST_TYPE_USER) {
+        if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_USER) {
             //if media data is movie
             if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
                 viewModel.getAllMoviesInUserList().observe(this, new Observer<List<MovieData>>() {
@@ -262,7 +260,7 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
         String mediaTitle = searchText.toString();
         mediaTitle = "%" + mediaTitle + "%";
 
-        if (mListType == ListsParentFragment.LIST_TYPE_WATCH) {
+        if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
             //if media data is movie
             if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
                 final LiveData<List<MovieData>> listLiveData = database.movieDataDao()
@@ -291,7 +289,7 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
             }
         }
 
-        if (mListType == ListsParentFragment.LIST_TYPE_USER) {
+        if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_USER) {
             if (mMediaType == MEDIA_TYPE_MOVIE) {
                 //observe lists with searched name then remove observer
                 final LiveData<List<MovieData>> listLiveData = database.movieDataRecordsDao()

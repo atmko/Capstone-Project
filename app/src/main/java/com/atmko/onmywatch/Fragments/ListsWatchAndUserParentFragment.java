@@ -23,8 +23,8 @@ import com.atmko.onmywatch.adapters.ListWatchAndUserAdapter;
 import com.google.android.material.tabs.TabLayout;
 
 
-public class ListsParentFragment extends Fragment {
-    public static String FRAGMENT_KEY = "lists_parent_fragment";
+public class ListsWatchAndUserParentFragment extends Fragment {
+    public static String FRAGMENT_KEY = "lists_watch_and_user_parent_fragment";
     public static final int LIST_TYPE_WATCH = 0;
     public static final int LIST_TYPE_USER = 1;
 
@@ -32,13 +32,13 @@ public class ListsParentFragment extends Fragment {
     private ViewPager mViewPager;
     private ListWatchAndUserAdapter mListWatchAndUserAdapter;
 
-    public ListsParentFragment() {
+    public ListsWatchAndUserParentFragment() {
         // Required empty public constructor
     }
 
     // TODO: Rename and change types and number of parameters
-    public static ListsParentFragment newInstance() {
-        ListsParentFragment fragment = new ListsParentFragment();
+    public static ListsWatchAndUserParentFragment newInstance() {
+        ListsWatchAndUserParentFragment fragment = new ListsWatchAndUserParentFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -48,7 +48,7 @@ public class ListsParentFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.fragment_lists_parent, container, false);
+        return inflater.inflate(R.layout.fragment_lists_watch_and_user_parent, container, false);
     }
 
     @Override

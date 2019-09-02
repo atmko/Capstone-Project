@@ -6,7 +6,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import com.atmko.onmywatch.Fragments.ListWatchAndUserFragment;
-import com.atmko.onmywatch.Fragments.ListsParentFragment;
+import com.atmko.onmywatch.Fragments.ListsWatchAndUserParentFragment;
 
 public class ListWatchAndUserAdapter extends FragmentStatePagerAdapter {
     private static final int TAB_COUNT = 2;
@@ -19,10 +19,10 @@ public class ListWatchAndUserAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
 
-        if (position == ListsParentFragment.LIST_TYPE_WATCH) {
-            return ListWatchAndUserFragment.newInstance(ListsParentFragment.LIST_TYPE_WATCH);
+        if (position == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
+            return ListWatchAndUserFragment.newInstance(ListsWatchAndUserParentFragment.LIST_TYPE_WATCH);
         } else  {
-            return ListWatchAndUserFragment.newInstance(ListsParentFragment.LIST_TYPE_USER);
+            return ListWatchAndUserFragment.newInstance(ListsWatchAndUserParentFragment.LIST_TYPE_USER);
         }
     }
 

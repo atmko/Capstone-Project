@@ -4,14 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.atmko.onmywatch.Fragments.ListsParentFragment;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.database.AppDatabase;
-import com.atmko.onmywatch.models.MediaData;
-import com.atmko.onmywatch.models.MovieData;
-import com.atmko.onmywatch.models.SeriesData;
-
-import java.util.List;
 
 public class RateViewModel extends ViewModel {
     private static final String TAG = RateViewModel.class.getSimpleName();
