@@ -7,7 +7,7 @@
 
     <ImageView
         android:id="@+id/posterImageView"
-        android:src="@drawable/ic_fab_add_to_list_white"
+        android:src="@drawable/ic_discover_white"
         android:background="@drawable/poster_image_placeholder"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -91,7 +91,7 @@
                     android:layout_marginBottom="@dimen/x1_layout_margin"
                     android:background="@null"
                     android:padding="@dimen/x2_layout_margin"
-                    android:src="@drawable/ic_fab_add_to_list"
+                    android:src="@drawable/ic_discover"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
