@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,8 +31,6 @@ import com.atmko.onmywatch.models.WatchListModel;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.view_models.ListsViewModel;
 
-import org.parceler.Parcels;
-
 import java.util.List;
 
 public class ListWatchAndUserFragment extends Fragment implements WatchListsAdapter.OnListItemClickListener,
@@ -43,7 +40,6 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
 
     //fragment initialization parameters
     private static final String LIST_TYPE_KEY = "list_type";
-    private static final String ADAPTER_DATA_LIST_KEY = "adapter_data_list";
     private int mListType;
 
     //post initialization parameters
@@ -339,15 +335,6 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-
-        //TODO restoring obsolete due to view model and database reading
-        if (mAdapter instanceof WatchListsAdapter) {
-            outState.putParcelable(ADAPTER_DATA_LIST_KEY, Parcels.wrap(((WatchListsAdapter) mAdapter).getAdapterData()));
-
-        } else if (mAdapter instanceof UserListsAdapter) {
-            outState.putParcelable(ADAPTER_DATA_LIST_KEY, Parcels.wrap(((UserListsAdapter) mAdapter).getAdapterData()));
-
-        }
 
         //save search bar text
         outState.putString(SEARCH_TEXT_KEY, mSearchTextView.getText().toString());
