@@ -9,7 +9,6 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import com.atmko.onmywatch.models.MovieData;
-import com.atmko.onmywatch.models.UserListModel;
 
 import java.util.List;
 
@@ -41,6 +40,9 @@ public interface MovieDataDao {
     //alternate method without live data
     @Query("SELECT * FROM movies WHERE watch_status = :watchStatus")
     List<MovieData> getMoviesByWatchStatusAlt(int watchStatus);
+
+    @Query("SELECT * FROM movies WHERE watch_status = :watchStatus AND title LIKE :mediaTitle")
+    LiveData<List<MovieData>> getMoviesByWatchStatusLike(int watchStatus, String mediaTitle);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateMovieData(MovieData movieData);

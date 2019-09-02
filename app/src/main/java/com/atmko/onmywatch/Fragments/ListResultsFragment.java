@@ -5,15 +5,19 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Parcelable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
@@ -44,12 +48,19 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
     private static final String LIST_NAME_KEY = "list_name";
 
     // TODO: Rename and change types of parameters
+    //check for restoring state
+    boolean mFirstInit = true;
     private int mListType;
     private int mMediaType;
     private String mListName;
 
+    //post initialization parameters
+    private static final String SEARCH_TEXT_KEY = "search_text";
+    private static final String SEARCH_BAR_VISIBILITY_KEY = "visible_search_bar";
+
     private MediaDataAdapter mDataAdapter;
     private SearchPreferences mSearchPreferences;
+    private EditText mSearchTextView;
 
     //interfaces
     private AddToListFragment.OnSavePressedActionListener mSaveActionListener;
@@ -86,6 +97,8 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
         return inflater.inflate(R.layout.fragment_list_results, container, false);
     }
 
+
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -104,13 +117,19 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
                 ViewModelProviders.of(this, resultsViewModelFactory)
                 .get(ListsResultsViewModel.class);
 
-        observeData(viewModel);
+        //state restoration done after ViewModel onChanged method
+        observeData(viewModel, savedInstanceState);
+    }
 
-        if (savedInstanceState == null) {
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
 
-        } else {
+        //save search bar text
+        outState.putString(SEARCH_TEXT_KEY, mSearchTextView.getText().toString());
 
-        }
+        //save search bar visibility
+        outState.putInt(SEARCH_BAR_VISIBILITY_KEY, mSearchTextView.getVisibility());
     }
 
     private void defineViews() {
@@ -122,9 +141,44 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
         mDataAdapter = new MediaDataAdapter(this);
         mListResultsRecyclerView.setAdapter(mDataAdapter);
         mSearchPreferences = new SearchPreferences();
+
+        //get search bar from parent fragment
+        mSearchTextView =
+                getParentFragment().getView().findViewById(R.id.search_edit_text_view);
+        //configure search bar
+        mSearchTextView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                onSearchTextChanged(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
-    private void observeData(ListsResultsViewModel viewModel) {
+    //value restore convenience method
+    private void restoreSavedSearch(Bundle savedInstanceState) {
+        mFirstInit = false;
+
+        String savedSearchText = savedInstanceState.getString(SEARCH_TEXT_KEY);
+        int savedBarVisibility = savedInstanceState.getInt(SEARCH_BAR_VISIBILITY_KEY);
+        if (savedBarVisibility == View.VISIBLE) {
+            getParentFragment()
+                    .getView().findViewById(R.id.title_text_view).setVisibility(View.GONE);
+        }
+        mSearchTextView.setText(savedSearchText);
+        mSearchTextView.setVisibility(savedBarVisibility);
+    }
+
+    private void observeData(ListsResultsViewModel viewModel, final Bundle savedInstanceState) {
         //if this is a watch list
         if (mListType == ListsParentFragment.LIST_TYPE_WATCH) {
             //if media data is movie
@@ -133,6 +187,14 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
                     @Override
                     public void onChanged(List<MovieData> mediaDataList) {
                         populateAndNotifyAdapter(mediaDataList);
+
+                        //restore values to views but only
+                        //if saved state exists
+                        //&& if this is the first run
+                        if (savedInstanceState != null && mFirstInit) {
+                            restoreSavedSearch(savedInstanceState);
+
+                        }
                     }
                 });
 
@@ -142,6 +204,14 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
                     @Override
                     public void onChanged(List<SeriesData> mediaDataList) {
                         populateAndNotifyAdapter(mediaDataList);
+
+                        //restore values to views but only
+                        //if saved state exists
+                        //&& if this is the first run
+                        if (savedInstanceState != null && mFirstInit) {
+                            restoreSavedSearch(savedInstanceState);
+
+                        }
                     }
                 });
             }
@@ -155,6 +225,14 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
                     @Override
                     public void onChanged(List<MovieData> mediaDataList) {
                         populateAndNotifyAdapter(mediaDataList);
+
+                        //restore values to views but only
+                        //if saved state exists
+                        //&& if this is the first run
+                        if (savedInstanceState != null && mFirstInit) {
+                            restoreSavedSearch(savedInstanceState);
+
+                        }
                     }
                 });
 
@@ -164,8 +242,81 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
                     @Override
                     public void onChanged(List<SeriesData> mediaDataList) {
                         populateAndNotifyAdapter(mediaDataList);
+
+                        //restore values to views but only
+                        //if saved state exists
+                        //&& if this is the first run
+                        if (savedInstanceState != null && mFirstInit) {
+                            restoreSavedSearch(savedInstanceState);
+
+                        }
                     }
                 });
+            }
+        }
+    }
+
+    private void onSearchTextChanged(CharSequence searchText) {
+        final AppDatabase database = AppDatabase.getInstance(getContext());
+
+        String mediaTitle = searchText.toString();
+        mediaTitle = "%" + mediaTitle + "%";
+
+        if (mListType == ListsParentFragment.LIST_TYPE_WATCH) {
+            //if media data is movie
+            if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
+                final LiveData<List<MovieData>> listLiveData = database.movieDataDao()
+                        .getMoviesByWatchStatusLike(1, mediaTitle);
+
+                listLiveData.observe(getParentFragment(), new Observer<List<MovieData>>() {
+                    @Override
+                    public void onChanged(List<MovieData> movieDataList) {
+                        listLiveData.removeObserver(this);
+                        populateAndNotifyAdapter(movieDataList);
+                    }
+                });
+
+                //if media data is series
+            } else if (mMediaType == MasterActivity.MEDIA_TYPE_SERIES) {
+                final LiveData<List<SeriesData>> listLiveData = database.seriesDataDao()
+                        .getSeriesByWatchStatusLike(1, mediaTitle);
+
+                listLiveData.observe(getParentFragment(), new Observer<List<SeriesData>>() {
+                    @Override
+                    public void onChanged(List<SeriesData> seriesDataList) {
+                        listLiveData.removeObserver(this);
+                        populateAndNotifyAdapter(seriesDataList);
+                    }
+                });
+            }
+        }
+
+        if (mListType == ListsParentFragment.LIST_TYPE_USER) {
+            if (mMediaType == MEDIA_TYPE_MOVIE) {
+                //observe lists with searched name then remove observer
+                final LiveData<List<MovieData>> listLiveData = database.movieDataRecordsDao()
+                        .getMoviesWithNameLike(mListName, mediaTitle);
+                listLiveData.observe(getParentFragment(),
+                        new Observer<List<MovieData>>() {
+                            @Override
+                            public void onChanged(List<MovieData> movieDataList) {
+                                listLiveData.removeObserver(this);
+                                populateAndNotifyAdapter(movieDataList);
+                            }
+                        });
+
+            } else {
+                //observe lists with searched name then remove observer
+                final LiveData<List<SeriesData>> listLiveData = database.seriesDataRecordsDao()
+                        .getSeriesWithNameLike(mListName, mediaTitle);
+                listLiveData.observe(getParentFragment(),
+                        new Observer<List<SeriesData>>() {
+                            @Override
+                            public void onChanged(List<SeriesData> seriesDataList) {
+                                listLiveData.removeObserver(this);
+                                populateAndNotifyAdapter(seriesDataList);
+                            }
+                        });
             }
         }
     }
