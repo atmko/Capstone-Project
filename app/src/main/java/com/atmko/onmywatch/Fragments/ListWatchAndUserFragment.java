@@ -1,11 +1,15 @@
 package com.atmko.onmywatch.Fragments;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,15 +41,25 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
 
     public static String FRAGMENT_KEY = "list_watch_and_user_fragment";
 
+    //fragment initialization parameters
     private static final String LIST_TYPE_KEY = "list_type";
-
     private static final String ADAPTER_DATA_LIST_KEY = "adapter_data_list";
     private int mListType;
+
+    //post initialization parameters
+    private static final String SEARCH_TEXT_KEY = "search_text";
+    private static final String SEARCH_BAR_VISIBILITY_KEY = "visible_search_bar";
+
+    //check for restoring state
+    private boolean mFirstInit = true;
+    private Bundle mSavedInstanceState;
     private AppDatabase mDatabase;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView mRecyclerView;
 
     private FloatingActionButton mFab;
+    private EditText mSearchTextView;
+
 
     public ListWatchAndUserFragment() {
         // Required empty public constructor
@@ -77,6 +91,8 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        mSavedInstanceState = savedInstanceState;
 
         defineViews();
 
@@ -110,6 +126,41 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
                 }
             });
         }
+
+        //get search bar from parent fragment
+        mSearchTextView =
+                getParentFragment().getView().findViewById(R.id.search_edit_text_view);
+        //configure search bar
+        mSearchTextView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                onSearchTextChanged(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+
+    //value restore convenience method
+    private void restoreSavedSearch(Bundle savedInstanceState) {
+        mFirstInit = false;
+
+        String savedSearchText = savedInstanceState.getString(SEARCH_TEXT_KEY);
+        int savedBarVisibility = savedInstanceState.getInt(SEARCH_BAR_VISIBILITY_KEY);
+        if (savedBarVisibility == View.VISIBLE) {
+            getParentFragment()
+                    .getView().findViewById(R.id.title_text_view).setVisibility(View.GONE);
+        }
+        mSearchTextView.setText(savedSearchText);
+        mSearchTextView.setVisibility(savedBarVisibility);
     }
 
     private GridLayoutManager configureLayoutManager() {
@@ -138,6 +189,14 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
                 ((WatchListsAdapter) mAdapter).addAdapterData(watchListModels);
 
                 observeWatchListCounts(viewModel);
+
+                //restore values to views but only
+                //if saved state exists
+                //&& if this is the first run
+                if (mSavedInstanceState != null && mFirstInit) {
+                    restoreSavedSearch(mSavedInstanceState);
+
+                }
 
                 Log.d(FRAGMENT_KEY, "update watch lists");
             }
@@ -183,9 +242,50 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
                 ((UserListsAdapter) mAdapter).getAdapterData().clear();
                 ((UserListsAdapter) mAdapter).addAdapterData(userListModels);
 
+                //restore values to views but only
+                //if saved state exists
+                //&& if this is the first run
+                if (mSavedInstanceState != null && mFirstInit) {
+                    restoreSavedSearch(mSavedInstanceState);
+
+                }
+
                 Log.d(FRAGMENT_KEY, "update user lists");
             }
         });
+    }
+
+    private void onSearchTextChanged(CharSequence searchText) {
+        String listName = searchText.toString();
+        listName = "%" + listName + "%";
+
+        if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
+            //observe lists with searched name then remove observer
+            final LiveData<List<WatchListModel>> listLiveData = mDatabase.watchListsDao().getListsWithNameLike(listName);
+            listLiveData.observe(getParentFragment(), new Observer<List<WatchListModel>>() {
+                @Override
+                public void onChanged(List<WatchListModel> watchListModels) {
+                    listLiveData.removeObserver(this);
+
+                    ((WatchListsAdapter) mAdapter).getAdapterData().clear();
+                    ((WatchListsAdapter) mAdapter).addAdapterData(watchListModels);
+                }
+            });
+        }
+
+        if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_USER) {
+            //observe lists with searched name then remove observer
+            final LiveData<List<UserListModel>> listLiveData = mDatabase.userListsDao().getListsWithNameLike(listName);
+            listLiveData.observe(getParentFragment(), new Observer<List<UserListModel>>() {
+                @Override
+                public void onChanged(List<UserListModel> userListModels) {
+                    listLiveData.removeObserver(this);
+
+                    ((UserListsAdapter) mAdapter).getAdapterData().clear();
+                    ((UserListsAdapter) mAdapter).addAdapterData(userListModels);
+                }
+            });
+        }
     }
 
     private void launchCreateListFragment(int mode, String listName, int itemCount) {
@@ -240,6 +340,7 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
+        //TODO restoring obsolete due to view model and database reading
         if (mAdapter instanceof WatchListsAdapter) {
             outState.putParcelable(ADAPTER_DATA_LIST_KEY, Parcels.wrap(((WatchListsAdapter) mAdapter).getAdapterData()));
 
@@ -247,6 +348,12 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
             outState.putParcelable(ADAPTER_DATA_LIST_KEY, Parcels.wrap(((UserListsAdapter) mAdapter).getAdapterData()));
 
         }
+
+        //save search bar text
+        outState.putString(SEARCH_TEXT_KEY, mSearchTextView.getText().toString());
+
+        //save search bar visibility
+        outState.putInt(SEARCH_BAR_VISIBILITY_KEY, mSearchTextView.getVisibility());
     }
 }
 
