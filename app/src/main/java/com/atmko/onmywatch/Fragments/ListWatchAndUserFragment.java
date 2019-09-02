@@ -95,6 +95,17 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
         observeData();
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        //save search bar text
+        outState.putString(SEARCH_TEXT_KEY, mSearchTextView.getText().toString());
+
+        //save search bar visibility
+        outState.putInt(SEARCH_BAR_VISIBILITY_KEY, mSearchTextView.getVisibility());
+    }
+
     private void defineViews() {
         mDatabase = AppDatabase.getInstance(getContext());
         mRecyclerView = getView().findViewById(R.id.lists_recycler_view);
@@ -167,36 +178,47 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
     }
 
     private void observeData() {
-        ListsViewModel viewModel = ViewModelProviders.of(this).get(ListsViewModel.class);
+        final ListsViewModel viewModel = ViewModelProviders.of(this).get(ListsViewModel.class);
 
         if (mAdapter instanceof WatchListsAdapter) {
-            loadWatchLists(viewModel);
+            viewModel.getWatchLists().observe(getViewLifecycleOwner(), new Observer<List<WatchListModel>>() {
+                @Override
+                public void onChanged(List<WatchListModel> watchListModels) {
+                    ((WatchListsAdapter) mAdapter).getAdapterData().clear();
+                    ((WatchListsAdapter) mAdapter).addAdapterData(watchListModels);
+
+                    observeWatchListCounts(viewModel);
+
+                    //restore values to views but only
+                    //if saved state exists
+                    //&& if this is the first run
+                    if (mSavedInstanceState != null && mFirstInit) {
+                        restoreSavedSearch(mSavedInstanceState);
+
+                    }
+
+                    Log.d(FRAGMENT_KEY, "update watch lists");
+                }
+            });
 
         } else if (mAdapter instanceof UserListsAdapter) {
-            loadUserLists(viewModel);
-        }
-    }
+            viewModel.getUserLists().observe(getViewLifecycleOwner(), new Observer<List<UserListModel>>() {
+                @Override
+                public void onChanged(List<UserListModel> userListModels) {
+                    ((UserListsAdapter) mAdapter).getAdapterData().clear();
+                    ((UserListsAdapter) mAdapter).addAdapterData(userListModels);
 
-    private void loadWatchLists(final ListsViewModel viewModel) {
-        viewModel.getWatchLists().observe(getViewLifecycleOwner(), new Observer<List<WatchListModel>>() {
-            @Override
-            public void onChanged(List<WatchListModel> watchListModels) {
-                ((WatchListsAdapter) mAdapter).getAdapterData().clear();
-                ((WatchListsAdapter) mAdapter).addAdapterData(watchListModels);
+                    //restore values to views but only
+                    //if saved state exists
+                    //&& if this is the first run
+                    if (mSavedInstanceState != null && mFirstInit) {
+                        restoreSavedSearch(mSavedInstanceState);
 
-                observeWatchListCounts(viewModel);
+                    }
 
-                //restore values to views but only
-                //if saved state exists
-                //&& if this is the first run
-                if (mSavedInstanceState != null && mFirstInit) {
-                    restoreSavedSearch(mSavedInstanceState);
-
+                    Log.d(FRAGMENT_KEY, "update user lists");
                 }
-
-                Log.d(FRAGMENT_KEY, "update watch lists");
-            }
-        });
+            });        }
     }
 
     private void observeWatchListCounts(ListsViewModel viewModel) {
@@ -229,26 +251,6 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
                 }
             });
         }
-    }
-
-    private void loadUserLists(ListsViewModel viewModel) {
-        viewModel.getUserLists().observe(getViewLifecycleOwner(), new Observer<List<UserListModel>>() {
-            @Override
-            public void onChanged(List<UserListModel> userListModels) {
-                ((UserListsAdapter) mAdapter).getAdapterData().clear();
-                ((UserListsAdapter) mAdapter).addAdapterData(userListModels);
-
-                //restore values to views but only
-                //if saved state exists
-                //&& if this is the first run
-                if (mSavedInstanceState != null && mFirstInit) {
-                    restoreSavedSearch(mSavedInstanceState);
-
-                }
-
-                Log.d(FRAGMENT_KEY, "update user lists");
-            }
-        });
     }
 
     private void onSearchTextChanged(CharSequence searchText) {
@@ -327,20 +329,9 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                    mDatabase.userListsDao().deleteList(new UserListModel(userListModel.getName()));
+                mDatabase.userListsDao().deleteList(new UserListModel(userListModel.getName()));
             }
         });
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        //save search bar text
-        outState.putString(SEARCH_TEXT_KEY, mSearchTextView.getText().toString());
-
-        //save search bar visibility
-        outState.putInt(SEARCH_BAR_VISIBILITY_KEY, mSearchTextView.getVisibility());
     }
 }
 
