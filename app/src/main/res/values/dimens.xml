@@ -12,6 +12,7 @@
         <dimen name="x6_layout_margin">48dp</dimen>
         <dimen name="x8_layout_margin">64dp</dimen>
         <dimen name="x10_layout_margin">80dp</dimen>
+        <dimen name="list_margin">0dp</dimen>
     <!--MARGINS-->
 
     <!--ELEVATION DIMENSIONS-->
@@ -19,6 +20,8 @@
     <!--ELEVATION DIMENSIONS-->
 
     <!--VIEW DIMENSIONS-->
+        <dimen name="list_height">85dp</dimen>
+
         <!--image_dimensions-->
         <dimen name="search_box_padding">12dp</dimen>
         <dimen name="up_button_padding">20dp</dimen>

@@ -124,4 +124,8 @@
         <item name="android:paddingBottom">@dimen/x1_layout_margin</item>
     </style>
 
+    <style name="ListStyle" parent="android:Widget.ActionButton.Overflow">
+        <item name="android:background">@drawable/ic_list_options</item>
+    </style>
+
 </resources>

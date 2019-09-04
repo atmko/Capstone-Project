@@ -5,4 +5,5 @@
     <color name="colorAccent">#FFFF00</color>
     <color name="background">#232323</color>
     <color name="color_subtext">#A8A8A8</color>
+    <color name="list_divider_color">#474747</color>
 </resources>
