@@ -85,20 +85,7 @@ public class HomeListDisplayFragment extends Fragment implements MediaDataAdapte
 
         defineViews();
 
-        final String[] watchStatusMoviesTitles = getContext().getResources()
-                .getStringArray(R.array.watch_status_movie_titles);
-        List<String> titleList = Arrays.asList(watchStatusMoviesTitles);
-
-        AppDatabase database = AppDatabase.getInstance(getContext());
-        ListResultsViewModelFactory resultsViewModelFactory =
-                new ListResultsViewModelFactory(database, ListsWatchAndUserParentFragment.LIST_TYPE_WATCH,
-                        mMediaType, titleList, mListName);
-
-        final ListsResultsViewModel viewModel =
-                ViewModelProviders.of(this, resultsViewModelFactory)
-                        .get(ListsResultsViewModel.class);
-
-        observeData(viewModel);
+        observeData();
 
         if (savedInstanceState == null) {
 
@@ -114,7 +101,20 @@ public class HomeListDisplayFragment extends Fragment implements MediaDataAdapte
         mRecyclerView.setAdapter(mMediaDataAdapter);
     }
 
-    private void observeData(ListsResultsViewModel viewModel) {
+    private void observeData() {
+        final String[] watchStatusMoviesTitles = getContext().getResources()
+                .getStringArray(R.array.watch_status_movie_titles);
+        List<String> titleList = Arrays.asList(watchStatusMoviesTitles);
+
+        AppDatabase database = AppDatabase.getInstance(getContext());
+        ListResultsViewModelFactory resultsViewModelFactory =
+                new ListResultsViewModelFactory(database, ListsWatchAndUserParentFragment.LIST_TYPE_WATCH,
+                        mMediaType, titleList, mListName);
+
+        final ListsResultsViewModel viewModel =
+                ViewModelProviders.of(this, resultsViewModelFactory)
+                        .get(ListsResultsViewModel.class);
+
         //if this is a watch list
         if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
             //if media data is movie
