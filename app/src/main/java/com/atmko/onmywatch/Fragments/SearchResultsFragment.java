@@ -272,8 +272,13 @@ public class SearchResultsFragment extends Fragment implements
         }
     }
 
+    //uses the saved selected tab position to get the corresponding url
+    //if the corresponding url = this fragment's url(mSearchUrl), returns true
+    //compares the url list of each tab to checks if this fragment is the currently selected tab
     private boolean isCurrentTab() {
+        //if this is a manual search
         if (mSearchType.equals(SearchParentFragment.SEARCH_MODE_MANUAL)) {
+            //get the list of manual search urls and compare to this fragment's mSearchUrl
             String[] manualUrls =
                     getParentFragment().getActivity().getResources()
                             .getStringArray(R.array.manual_search_urls);
@@ -282,8 +287,9 @@ public class SearchResultsFragment extends Fragment implements
 
             return manualUrlList.indexOf(mSearchUrl) == searchViewModel.getCurrentTabPosition();
 
-
+        //if this is a preset search
         } else {
+            //get the list of preset search urls and compare it to the this fragment's mSearchUrl
             String[] presetUrls;
 
             if (mMediaType == MEDIA_TYPE_MOVIE) {
