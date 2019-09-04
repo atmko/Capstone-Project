@@ -198,11 +198,12 @@ AddToListAdapter.OnListCheckListener{
 
     private void observeViewModel() {
         //create view model
-        AddToListViewModelFactory detailsViewModelFactory =
+        AddToListViewModelFactory addToListViewModelFactory =
                 new AddToListViewModelFactory(mDatabase, mMediaType, mMediaData.getId());
 
-        final AddToListViewModel viewModel = ViewModelProviders.of(this, detailsViewModelFactory)
-                .get(AddToListViewModel.class);
+        final AddToListViewModel viewModel =
+                ViewModelProviders.of(this, addToListViewModelFactory)
+                        .get(AddToListViewModel.class);
 
         //observe live data of media's watch status
         final LiveData<Integer> watchStatusLiveData = viewModel.getWatchStatus();
