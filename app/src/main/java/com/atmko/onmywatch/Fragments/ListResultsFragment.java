@@ -103,20 +103,8 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
 
         defineViews();
 
-        final String[] watchStatusMoviesTitles = getContext().getResources()
-                .getStringArray(R.array.watch_status_movie_titles);
-        List<String> titleList = Arrays.asList(watchStatusMoviesTitles);
-
-        AppDatabase database = AppDatabase.getInstance(getContext());
-        ListResultsViewModelFactory resultsViewModelFactory =
-                new ListResultsViewModelFactory(database, mListType, mMediaType, titleList, mListName);
-
-        final ListsResultsViewModel viewModel =
-                ViewModelProviders.of(this, resultsViewModelFactory)
-                .get(ListsResultsViewModel.class);
-
         //state restoration done after ViewModel onChanged method
-        observeData(viewModel, savedInstanceState);
+        observeData(savedInstanceState);
     }
 
     @Override
@@ -176,7 +164,19 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
         mSearchTextView.setVisibility(savedBarVisibility);
     }
 
-    private void observeData(ListsResultsViewModel viewModel, final Bundle savedInstanceState) {
+    private void observeData(final Bundle savedInstanceState) {
+        final String[] watchStatusMoviesTitles = getContext().getResources()
+                .getStringArray(R.array.watch_status_movie_titles);
+        List<String> titleList = Arrays.asList(watchStatusMoviesTitles);
+
+        AppDatabase database = AppDatabase.getInstance(getContext());
+        ListResultsViewModelFactory resultsViewModelFactory =
+                new ListResultsViewModelFactory(database, mListType, mMediaType, titleList, mListName);
+
+        final ListsResultsViewModel viewModel =
+                ViewModelProviders.of(this, resultsViewModelFactory)
+                        .get(ListsResultsViewModel.class);
+
         //if this is a watch list
         if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
             //if media data is movie
