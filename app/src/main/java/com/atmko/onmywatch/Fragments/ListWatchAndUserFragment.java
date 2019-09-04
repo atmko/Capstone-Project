@@ -29,7 +29,7 @@ import com.atmko.onmywatch.models.ListCounts;
 import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.models.WatchListModel;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
-import com.atmko.onmywatch.view_models.ListsViewModel;
+import com.atmko.onmywatch.view_models.ListsWatchAndUserViewModel;
 
 import java.util.List;
 
@@ -178,7 +178,8 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
     }
 
     private void observeData() {
-        final ListsViewModel viewModel = ViewModelProviders.of(this).get(ListsViewModel.class);
+        final ListsWatchAndUserViewModel viewModel =
+                ViewModelProviders.of(this).get(ListsWatchAndUserViewModel.class);
 
         if (mAdapter instanceof WatchListsAdapter) {
             viewModel.getWatchLists().observe(getViewLifecycleOwner(), new Observer<List<WatchListModel>>() {
@@ -221,7 +222,7 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
             });        }
     }
 
-    private void observeWatchListCounts(ListsViewModel viewModel) {
+    private void observeWatchListCounts(ListsWatchAndUserViewModel viewModel) {
         SparseArray<LiveData<ListCounts>> countsLiveDataList = viewModel.getWatchStatusCountList();
 
         for (int index = 0; index< countsLiveDataList.size(); index++) {

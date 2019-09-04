@@ -16,15 +16,15 @@ import com.atmko.onmywatch.models.WatchListModel;
 
 import java.util.List;
 
-public class ListsViewModel extends AndroidViewModel {
-    private static final String TAG = ListsViewModel.class.getSimpleName();
+public class ListsWatchAndUserViewModel extends AndroidViewModel {
+    private static final String TAG = ListsWatchAndUserViewModel.class.getSimpleName();
 
     private LiveData<List<UserListModel>> userLists;
     private LiveData<List<WatchListModel>> watchLists;
 
     private SparseArray<LiveData<ListCounts>> watchStatusCountsList;
 
-    public ListsViewModel(@NonNull Application application) {
+    public ListsWatchAndUserViewModel(@NonNull Application application) {
         super(application);
 
         AppDatabase database = AppDatabase.getInstance(this.getApplication());

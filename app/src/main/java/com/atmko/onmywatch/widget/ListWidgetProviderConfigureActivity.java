@@ -1,7 +1,6 @@
 package com.atmko.onmywatch.widget;
 
 import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,7 +8,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,12 +20,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.WatchListsAdapter;
-import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.ListCounts;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.WatchListModel;
 import com.atmko.onmywatch.utils.GeneralUtils;
-import com.atmko.onmywatch.view_models.ListsViewModel;
+import com.atmko.onmywatch.view_models.ListsWatchAndUserViewModel;
 
 import java.util.List;
 
@@ -180,7 +177,8 @@ public class ListWidgetProviderConfigureActivity extends AppCompatActivity imple
     }
 
     private void observeData() {
-        ListsViewModel viewModel = ViewModelProviders.of(this).get(ListsViewModel.class);
+        ListsWatchAndUserViewModel viewModel =
+                ViewModelProviders.of(this).get(ListsWatchAndUserViewModel.class);
 
 //        if (mAdapter instanceof WatchListsAdapter) {
         loadWatchLists(viewModel);
@@ -202,7 +200,7 @@ public class ListWidgetProviderConfigureActivity extends AppCompatActivity imple
         return defaultMediaType;
     }
 
-    private void loadWatchLists(final ListsViewModel viewModel) {
+    private void loadWatchLists(final ListsWatchAndUserViewModel viewModel) {
         viewModel.getWatchLists().observe(this, new Observer<List<WatchListModel>>() {
             @Override
             public void onChanged(List<WatchListModel> watchListModels) {
@@ -216,7 +214,7 @@ public class ListWidgetProviderConfigureActivity extends AppCompatActivity imple
         });
     }
 
-    private void observeWatchListCounts(ListsViewModel viewModel) {
+    private void observeWatchListCounts(ListsWatchAndUserViewModel viewModel) {
         SparseArray<LiveData<ListCounts>> countsLiveDataList = viewModel.getWatchStatusCountList();
 
         for (int index = 0; index< countsLiveDataList.size(); index++) {
