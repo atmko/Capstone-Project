@@ -197,8 +197,6 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
                         restoreSavedSearch(mSavedInstanceState);
 
                     }
-
-                    Log.d(FRAGMENT_KEY, "update watch lists");
                 }
             });
 
@@ -216,10 +214,9 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
                         restoreSavedSearch(mSavedInstanceState);
 
                     }
-
-                    Log.d(FRAGMENT_KEY, "update user lists");
                 }
-            });        }
+            });
+        }
     }
 
     private void observeWatchListCounts(ListsWatchAndUserViewModel viewModel) {
