@@ -18,6 +18,8 @@ public class DetailsViewModel extends ViewModel {
     private LiveData<List<String>> containingUserLists;
 
     public DetailsViewModel(@NonNull AppDatabase database, int mediaType, String mediaId) {
+        Log.d(TAG, "fetching media from the database");
+        Log.d(TAG, "fetching user containing lists from the database");
 
         if (mediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
             mediaData = database.movieDataDao().getMovieById(mediaId);
@@ -30,10 +32,6 @@ public class DetailsViewModel extends ViewModel {
                     database.seriesDataRecordsDao().getAllListNamesContainingMedia(mediaId);
 
         }
-
-        Log.d(TAG, "fetching watch status from the database");
-
-        Log.d(TAG, "fetching user containing lists from the database");
     }
 
     public LiveData getMediaData() {

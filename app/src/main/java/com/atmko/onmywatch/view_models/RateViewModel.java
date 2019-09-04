@@ -1,5 +1,7 @@
 package com.atmko.onmywatch.view_models;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
@@ -13,6 +15,7 @@ public class RateViewModel extends ViewModel {
     private LiveData mMediaData;
 
     public RateViewModel(@NonNull AppDatabase database, int mediaType, String mediaId) {
+        Log.d(TAG, "fetching media from the database");
         if (mediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
             mMediaData = database.movieDataDao()
                     .getMovieById(mediaId);

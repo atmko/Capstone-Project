@@ -1,5 +1,7 @@
 package com.atmko.onmywatch.view_models;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
@@ -22,6 +24,7 @@ public class ListsResultsViewModel extends ViewModel {
                                  List<String> watchStatusTitleList, String listName) {
 
         if (listType == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
+            Log.d(TAG, "fetching media in watch list");
             if (mediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
                 allMoviesInWatchList = database.movieDataDao()
                         .getMoviesByWatchStatus(watchStatusTitleList.indexOf(listName));
@@ -33,6 +36,7 @@ public class ListsResultsViewModel extends ViewModel {
             }
 
         } else if (listType == ListsWatchAndUserParentFragment.LIST_TYPE_USER){
+            Log.d(TAG, "fetching media in user list");
             if (mediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
                 allMoviesInUserList = database.movieDataRecordsDao().getAllMoviesInList(listName);
 
