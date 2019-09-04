@@ -174,14 +174,14 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
                 new ListResultsViewModelFactory(database, mListType, mMediaType, titleList, mListName);
 
         final ListsResultsViewModel viewModel =
-                ViewModelProviders.of(this, resultsViewModelFactory)
+                ViewModelProviders.of(getParentFragment(), resultsViewModelFactory)
                         .get(ListsResultsViewModel.class);
 
         //if this is a watch list
         if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
             //if media data is movie
             if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
-                viewModel.getAllMoviesInWatchList().observe(this, new Observer<List<MovieData>>() {
+                viewModel.getAllMoviesInWatchList().observe(getParentFragment(), new Observer<List<MovieData>>() {
                     @Override
                     public void onChanged(List<MovieData> mediaDataList) {
                         populateAndNotifyAdapter(mediaDataList);

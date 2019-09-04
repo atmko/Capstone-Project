@@ -179,10 +179,10 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
 
     private void observeData() {
         final ListsWatchAndUserViewModel viewModel =
-                ViewModelProviders.of(this).get(ListsWatchAndUserViewModel.class);
+                ViewModelProviders.of(getParentFragment()).get(ListsWatchAndUserViewModel.class);
 
         if (mAdapter instanceof WatchListsAdapter) {
-            viewModel.getWatchLists().observe(getViewLifecycleOwner(), new Observer<List<WatchListModel>>() {
+            viewModel.getWatchLists().observe(getParentFragment(), new Observer<List<WatchListModel>>() {
                 @Override
                 public void onChanged(List<WatchListModel> watchListModels) {
                     ((WatchListsAdapter) mAdapter).getAdapterData().clear();
@@ -203,7 +203,7 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
             });
 
         } else if (mAdapter instanceof UserListsAdapter) {
-            viewModel.getUserLists().observe(getViewLifecycleOwner(), new Observer<List<UserListModel>>() {
+            viewModel.getUserLists().observe(getParentFragment(), new Observer<List<UserListModel>>() {
                 @Override
                 public void onChanged(List<UserListModel> userListModels) {
                     ((UserListsAdapter) mAdapter).getAdapterData().clear();

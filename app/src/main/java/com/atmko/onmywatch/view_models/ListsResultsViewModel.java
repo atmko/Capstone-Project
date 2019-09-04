@@ -25,25 +25,16 @@ public class ListsResultsViewModel extends ViewModel {
 
         if (listType == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
             Log.d(TAG, "fetching media in watch list");
-            if (mediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
-                allMoviesInWatchList = database.movieDataDao()
-                        .getMoviesByWatchStatus(watchStatusTitleList.indexOf(listName));
+            allMoviesInWatchList = database.movieDataDao()
+                    .getMoviesByWatchStatus(watchStatusTitleList.indexOf(listName));
 
-            } else if (mediaType == MasterActivity.MEDIA_TYPE_SERIES) {
-                allSeriesInWatchList = database.seriesDataDao()
-                        .getSeriesByWatchStatus(watchStatusTitleList.indexOf(listName));
-
-            }
+            allSeriesInWatchList = database.seriesDataDao()
+                    .getSeriesByWatchStatus(watchStatusTitleList.indexOf(listName));
 
         } else if (listType == ListsWatchAndUserParentFragment.LIST_TYPE_USER){
             Log.d(TAG, "fetching media in user list");
-            if (mediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
                 allMoviesInUserList = database.movieDataRecordsDao().getAllMoviesInList(listName);
-
-            } else if (mediaType == MasterActivity.MEDIA_TYPE_SERIES) {
                 allSeriesInUserList = database.seriesDataRecordsDao().getAllSeriesInList(listName);
-
-            }
         }
     }
 
