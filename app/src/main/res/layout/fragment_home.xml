@@ -125,20 +125,20 @@
 
             <TextView
                 style="@style/home_list_display_heading_style"
-                android:text="@string/watch_status_watching_title" />
-
-            <FrameLayout
-                style="@style/style_home_list_display_container"
-                android:id="@+id/watching_list_container"
-                tools:background="@color/color_subtext"/>
-
-            <TextView
-                style="@style/home_list_display_heading_style"
                 android:text="@string/watch_status_to_watch_title" />
 
             <FrameLayout
                 style="@style/style_home_list_display_container"
                 android:id="@+id/to_watch_list_container"
+                tools:background="@color/color_subtext"/>
+
+            <TextView
+                style="@style/home_list_display_heading_style"
+                android:text="@string/watch_status_watching_title" />
+
+            <FrameLayout
+                style="@style/style_home_list_display_container"
+                android:id="@+id/watching_list_container"
                 tools:background="@color/color_subtext"/>
 
             <TextView
