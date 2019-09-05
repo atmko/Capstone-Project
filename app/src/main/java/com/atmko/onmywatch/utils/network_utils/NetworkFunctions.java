@@ -17,37 +17,43 @@ import com.atmko.onmywatch.utils.SearchPreferences;
 public class NetworkFunctions {
     //agnostic search request
     public static ANRequest agnosticSearchRequest(String urlFormat, SearchPreferences searchPreferences, Context context) {
-        //build request using Fast Android Networking
-        ANRequest.GetRequestBuilder requestBuilder = AndroidNetworking.get(urlFormat);
-        requestBuilder.addQueryParameter(ApiConstants.API_KEY_KEY, ApiConstants.API_KEY);
+        String finalUrl = ""+urlFormat;
 
         String[] preferenceKeyCheckList = context.getResources().getStringArray(R.array.preference_key_checklist);
         String[] preferenceValueList = searchPreferences.getPreferenceValueList();
 
+        //replace format keys with related values
         for (int index = 0; index < preferenceKeyCheckList.length; index++) {
-            requestBuilder.addQueryParameter(preferenceKeyCheckList[index], preferenceValueList[index]);
+            String formattedKey = "{" + preferenceKeyCheckList[index] + "}";
+            if (preferenceValueList[index] != null && urlFormat.contains(formattedKey)) {
+                finalUrl = finalUrl.replace(formattedKey, preferenceValueList[index]);
+            }
         }
+
+        //build request using Fast Android Networking
+        ANRequest.GetRequestBuilder requestBuilder = AndroidNetworking.get(finalUrl);
 
         return requestBuilder.build();
     }
 
     //agnostic search request
     public static ANRequest agnosticDetailRequestById(String urlFormat, String id, SearchPreferences searchPreferences, Context context) {
-        //build request using Fast Android Networking
-        ANRequest.GetRequestBuilder requestBuilder = AndroidNetworking.get(urlFormat);
-        requestBuilder.addQueryParameter(ApiConstants.API_KEY_KEY, ApiConstants.API_KEY);
-        requestBuilder.addPathParameter(MovieApiConstants.MOVIE_ID_KEY, id);
+        String finalUrl = ""+urlFormat;
 
         String[] preferenceKeyCheckList = context.getResources().getStringArray(R.array.preference_key_checklist);
         String[] preferenceValueList = searchPreferences.getPreferenceValueList();
 
         for (int index = 0; index < preferenceKeyCheckList.length; index++) {
-            String pattern = "{"+preferenceKeyCheckList[index]+"}";
-            if (urlFormat.contains(pattern)) {
-
-                requestBuilder.addQueryParameter(preferenceKeyCheckList[index], preferenceValueList[index]);
+            String formattedKey = "{" + preferenceKeyCheckList[index] + "}";
+            if (preferenceValueList[index] != null && urlFormat.contains(formattedKey)) {
+                finalUrl = finalUrl.replace(formattedKey, preferenceValueList[index]);
             }
         }
+
+        //build request using Fast Android Networking
+        ANRequest.GetRequestBuilder requestBuilder = AndroidNetworking.get(finalUrl);
+        //add media id path parameter
+        requestBuilder.addPathParameter(MovieApiConstants.MOVIE_ID_KEY, id);
 
         return requestBuilder.build();
     }

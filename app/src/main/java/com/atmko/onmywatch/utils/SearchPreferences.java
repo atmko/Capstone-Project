@@ -4,7 +4,11 @@
 
 package com.atmko.onmywatch.utils;
 
+import com.atmko.onmywatch.utils.network_utils.ApiConstants;
+
 import org.parceler.Parcel;
+
+import java.util.Arrays;
 
 @Parcel
 public final class SearchPreferences {
@@ -54,15 +58,16 @@ public final class SearchPreferences {
     }
 
     public String[] getPreferenceValueList(){
-        String[] preferenceList = new String[8];
-        preferenceList[0] = getLanguageValue();
-        preferenceList[1] = getQuery();
-        preferenceList[2] = String.valueOf(getTargetPage());
-        preferenceList[3] = Boolean.toString(getIncludeAdult());
-        preferenceList[4] = getRegion();
-        preferenceList[5] = getYear();
-        preferenceList[6] = getPrimaryReleaseYear();
-        preferenceList[7] = getFirstAirDateYear();
+        String[] preferenceList = new String[9];
+        preferenceList[0] = ApiConstants.API_KEY;
+        preferenceList[1] = getLanguageValue();
+        preferenceList[2] = getQuery();
+        preferenceList[3] = String.valueOf(getTargetPage());
+        preferenceList[4] = Boolean.toString(getIncludeAdult());
+        preferenceList[5] = getRegion();
+        preferenceList[6] = getYear();
+        preferenceList[7] = getPrimaryReleaseYear();
+        preferenceList[8] = getFirstAirDateYear();
 
         return preferenceList;
     }

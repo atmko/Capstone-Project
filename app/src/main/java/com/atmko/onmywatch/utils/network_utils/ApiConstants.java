@@ -8,7 +8,7 @@ import com.atmko.onmywatch.BuildConfig;
 
 public class ApiConstants {
     //api key
-    static final String API_KEY = BuildConfig.apiKey;
+    public static final String API_KEY = BuildConfig.apiKey;
 
     public static final String MEDIA_TYPE_MOVIE = "movie";
     public static final String MEDIA_TYPE_TV = "tv";

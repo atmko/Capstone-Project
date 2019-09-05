@@ -35,10 +35,10 @@
     </array>
 
     <array name="preset_movie_search_urls">
-        <item>https://api.themoviedb.org/3/movie/now_playing?api_key={api_key}&amp;language={lang}&amp;page={page}&amp;region={region}</item>
-        <item>https://api.themoviedb.org/3/movie/popular?api_key={api_key}&amp;language={lang}&amp;page={page}&amp;region={region}</item>
-        <item>https://api.themoviedb.org/3/movie/top_rated?api_key={api_key}&amp;language={lang}&amp;page={page}&amp;region={region}</item>
-        <item>https://api.themoviedb.org/3/movie/upcoming?api_key={api_key}&amp;language={lang}&amp;page={page}&amp;region={region}</item>
+        <item>https://api.themoviedb.org/3/movie/now_playing?api_key={api_key}&amp;language={language}&amp;page={page}&amp;region={region}</item>
+        <item>https://api.themoviedb.org/3/movie/popular?api_key={api_key}&amp;language={language}&amp;page={page}&amp;region={region}</item>
+        <item>https://api.themoviedb.org/3/movie/top_rated?api_key={api_key}&amp;language={language}&amp;page={page}&amp;region={region}</item>
+        <item>https://api.themoviedb.org/3/movie/upcoming?api_key={api_key}&amp;language={language}&amp;page={page}&amp;region={region}</item>
     </array>
 
 <!--___________________________________________-->
@@ -52,10 +52,10 @@
     </array>
 
     <array name="preset_series_search_urls">
-        <item>https://api.themoviedb.org/3/tv/airing_today?api_key={api_key}&amp;language={lang}&amp;page={page}</item>
-        <item>https://api.themoviedb.org/3/tv/on_the_air?api_key={api_key}&amp;language={lang}&amp;page={page}</item>
-        <item>https://api.themoviedb.org/3/tv/popular?api_key={api_key}&amp;language={lang}&amp;page={page}</item>
-        <item>https://api.themoviedb.org/3/tv/top_rated?api_key={api_key}&amp;language={lang}&amp;page={page}</item>
+        <item>https://api.themoviedb.org/3/tv/airing_today?api_key={api_key}&amp;language={language}&amp;page={page}</item>
+        <item>https://api.themoviedb.org/3/tv/on_the_air?api_key={api_key}&amp;language={language}&amp;page={page}</item>
+        <item>https://api.themoviedb.org/3/tv/popular?api_key={api_key}&amp;language={language}&amp;page={page}</item>
+        <item>https://api.themoviedb.org/3/tv/top_rated?api_key={api_key}&amp;language={language}&amp;page={page}</item>
     </array>
 
     <array name="manual_search_urls">
@@ -81,6 +81,7 @@
     </array>
 
     <array name="preference_key_checklist">
+        <item>api_key</item>
         <item>language</item>
         <item>query</item>
         <item>page</item>
@@ -141,8 +142,8 @@
     </array>
 
     <array name="spotlight_url">
-        <item>https://api.themoviedb.org/3/tv/popular?api_key={api_key}&amp;language={lang}&amp;page={page}</item>
-        <item>https://api.themoviedb.org/3/movie/popular?api_key={api_key}&amp;language={lang}&amp;page={page}&amp;region={region}</item>
+        <item>https://api.themoviedb.org/3/tv/popular?api_key={api_key}&amp;language={language}&amp;page={page}</item>
+        <item>https://api.themoviedb.org/3/movie/popular?api_key={api_key}&amp;language={language}&amp;page={page}&amp;region={region}</item>
     </array>
 
     <array name="genre_id_key">
