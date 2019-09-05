@@ -130,12 +130,19 @@ public class MasterActivity extends AppCompatActivity implements
                         .remove(fragment).commit();
 
 
+            //has fragment
+            //&&fragment is home fragment
+            } else if (hasFragment(R.id.master_fragments_container) && fragment instanceof HomeFragment) {
+                finish();
+
+
             //condition for navigation
             } else if (hasFragment(R.id.master_fragments_container)) {
                 getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.slide_down_entry, R.anim.slide_up_exit)
                         .remove(fragment)
                         .commit();
+
 
             } else {
                 super.onBackPressed();
