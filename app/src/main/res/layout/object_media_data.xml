@@ -3,14 +3,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/top_frame_layout"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/search_poster_height">
+    android:layout_height="@dimen/search_poster_height"
+    android:nextFocusDown="@id/add_to_list_button">
 
     <ImageView
         android:id="@+id/posterImageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@string/poster_description"
-        android:scaleType="center"/>
+        android:scaleType="center"
+        android:focusable="false"/>
 
     <ImageButton
         android:id="@+id/add_to_list_button"
@@ -24,6 +26,9 @@
         android:paddingBottom="@dimen/x1_layout_margin"
         android:src="@drawable/ic_fab_add_to_list_poster"
         android:background="@null"
-        android:layout_gravity="bottom|right"/>
+        android:layout_gravity="bottom|right"
+        android:nextFocusUp="@id/top_frame_layout"
+        android:nextFocusLeft="@id/add_to_list_button"
+        android:nextFocusRight="@id/add_to_list_button" />
 
 </FrameLayout>
