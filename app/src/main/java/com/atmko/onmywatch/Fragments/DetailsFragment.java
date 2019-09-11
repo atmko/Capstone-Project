@@ -472,12 +472,12 @@ public class DetailsFragment extends Fragment {
 
         if (mMediaType == MEDIA_TYPE_MOVIE) {
             titleList = getContext().getResources().getStringArray(R.array.detail_movie_extras_titles);
-            extrasAdapter = new DetailMovieExtrasAdapter(getFragmentManager(),
+            extrasAdapter = new DetailMovieExtrasAdapter(getChildFragmentManager(),
                     FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, ((MovieData) mMediaData));
 
         } else if (mMediaType == MEDIA_TYPE_SERIES){
             titleList = getContext().getResources().getStringArray(R.array.detail_tv_extras_titles);
-            extrasAdapter = new DetailSeriesExtrasAdapter(getFragmentManager(),
+            extrasAdapter = new DetailSeriesExtrasAdapter(getChildFragmentManager(),
                     FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, ((SeriesData) mMediaData));
         }
 
