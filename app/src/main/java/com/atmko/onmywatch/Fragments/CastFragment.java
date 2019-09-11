@@ -65,7 +65,8 @@ public class CastFragment extends Fragment implements CastDataAdapter.OnListItem
         RecyclerView recyclerView = getView().findViewById(R.id.cast_recycler_view);
         recyclerView.setLayoutManager(configureLayoutManager());
 
-        mAdapter = new CastDataAdapter(this);
+        mAdapter = new CastDataAdapter(this,
+                getActivity().getApplicationContext());
         recyclerView.setAdapter(mAdapter);
 
         ((CastDataAdapter) mAdapter).addAdapterData(mCastList);

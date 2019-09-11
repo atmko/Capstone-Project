@@ -164,10 +164,12 @@ public class SearchResultsFragment extends Fragment implements
         recyclerView.setLayoutManager(configureLayoutManager());
 
         if (mMediaType == MEDIA_TYPE_PEOPLE) {
-            mDataAdapter = new PeopleDataAdapter(this);
+            mDataAdapter = new PeopleDataAdapter(this,
+                    getActivity().getApplicationContext());
 
         } else {
-            mDataAdapter = new MediaDataAdapter(this);
+            mDataAdapter = new MediaDataAdapter(this,
+                    getActivity().getApplicationContext());
         }
 
         recyclerView.setAdapter(mDataAdapter);

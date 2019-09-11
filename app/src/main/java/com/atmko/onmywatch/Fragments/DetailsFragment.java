@@ -529,7 +529,7 @@ public class DetailsFragment extends Fragment {
     }
 
     private void setBasicViewValues() {
-        NetworkFunctions.loadImage(getContext(), mMediaData.getBackdropPath(),
+        NetworkFunctions.loadImage(getActivity().getApplicationContext(), mMediaData.getBackdropPath(),
                 ((ImageView) getView().findViewById(R.id.backdrop_image_view)));
 
         ((TextView) getView().findViewById(R.id.title_text_view))

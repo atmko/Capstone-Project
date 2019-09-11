@@ -31,24 +31,26 @@ public class PeopleDataAdapter extends RecyclerView.Adapter<PeopleDataAdapter.Pe
     private final Fragment mFragment;
     private final List<PersonData> mAdapterData;
     private final OnListItemClickListener mOnListItemClickListener;
+    Context mContext;
 
     //layout ids
     @SuppressWarnings("FieldCanBeLocal")
     private final int STANDARD_LAYOUT_ID = 1;
     private final int NO_POSTER_LAYOUT = 2;
 
-    public PeopleDataAdapter(OnListItemClickListener clickListener) {
+    public PeopleDataAdapter(OnListItemClickListener clickListener, Context context) {
         mFragment = ((Fragment) clickListener);
         mOnListItemClickListener = clickListener;
         mAdapterData = new ArrayList<>();
+        mContext = context;
     }
 
     public interface OnListItemClickListener {
         void onItemClick(int position);
     }
 
-   public class PeopleDataAdapterViewHolder extends RecyclerView.ViewHolder
-             implements View.OnClickListener{
+    public class PeopleDataAdapterViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener{
 
         FrameLayout topFrameLayout;
         ImageView peoplePosterImageView;
@@ -133,8 +135,7 @@ public class PeopleDataAdapter extends RecyclerView.Adapter<PeopleDataAdapter.Pe
     @NonNull
     @Override
     public PeopleDataAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-        Context context = viewGroup.getContext();
-        LayoutInflater layoutInflater = LayoutInflater.from(context);
+        LayoutInflater layoutInflater = LayoutInflater.from(mContext);
 
         int resourceId;
 
@@ -152,8 +153,6 @@ public class PeopleDataAdapter extends RecyclerView.Adapter<PeopleDataAdapter.Pe
 
     @Override
     public void onBindViewHolder(@NonNull PeopleDataAdapterViewHolder adapterViewHolder, int position) {
-        Context context = adapterViewHolder.topFrameLayout.getContext();
-
         //get current MediaData
         PersonData currentMediaData = mAdapterData.get(position);
 
@@ -165,7 +164,7 @@ public class PeopleDataAdapter extends RecyclerView.Adapter<PeopleDataAdapter.Pe
         } else {
             //load image with glide
             NetworkFunctions.loadImage(
-                    context,
+                    mContext,
                     currentMediaData.getProfilePath(),
                     adapterViewHolder.peoplePosterImageView);
         }

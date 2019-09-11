@@ -120,7 +120,8 @@ public class HomeSpotlightFragment extends Fragment implements
         RecyclerView recyclerView = getView().findViewById(R.id.search_results_recycler_view);
         recyclerView.setLayoutManager(configureLayoutManager());
 
-        mDataAdapter = new HomeSpotlightAdapter(this);
+        mDataAdapter = new HomeSpotlightAdapter(this,
+                getActivity().getApplicationContext());
 
         recyclerView.setAdapter(mDataAdapter);
 

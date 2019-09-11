@@ -30,24 +30,26 @@ public class CastDataAdapter extends RecyclerView.Adapter<CastDataAdapter.CastDa
     private final Fragment mFragment;
     private final List<CastData> mAdapterData;
     private final OnListItemClickListener mOnListItemClickListener;
+    Context mContext;
 
     //layout ids
     @SuppressWarnings("FieldCanBeLocal")
     private final int STANDARD_LAYOUT_ID = 1;
     private final int NO_POSTER_LAYOUT = 2;
 
-    public CastDataAdapter(OnListItemClickListener clickListener) {
+    public CastDataAdapter(OnListItemClickListener clickListener, Context context) {
         mFragment = ((Fragment) clickListener);
         mOnListItemClickListener = clickListener;
         mAdapterData = new ArrayList<>();
+        mContext = context;
     }
 
     public interface OnListItemClickListener {
         void onItemClick(int position);
     }
 
-   public class CastDataAdapterViewHolder extends RecyclerView.ViewHolder
-             implements View.OnClickListener{
+    public class CastDataAdapterViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener{
 
         FrameLayout topFrameLayout;
         ImageView castPosterImageView;
@@ -142,8 +144,7 @@ public class CastDataAdapter extends RecyclerView.Adapter<CastDataAdapter.CastDa
     @NonNull
     @Override
     public CastDataAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-        Context context = viewGroup.getContext();
-        LayoutInflater layoutInflater = LayoutInflater.from(context);
+        LayoutInflater layoutInflater = LayoutInflater.from(mContext);
 
         int resourceId;
 
@@ -161,8 +162,6 @@ public class CastDataAdapter extends RecyclerView.Adapter<CastDataAdapter.CastDa
 
     @Override
     public void onBindViewHolder(@NonNull CastDataAdapterViewHolder adapterViewHolder, int position) {
-        Context context = adapterViewHolder.topFrameLayout.getContext();
-
         //get current MediaData
         CastData currentMediaData = mAdapterData.get(position);
 
@@ -174,7 +173,7 @@ public class CastDataAdapter extends RecyclerView.Adapter<CastDataAdapter.CastDa
         } else {
             //load image with glide
             NetworkFunctions.loadImage(
-                    context,
+                    mContext,
                     currentMediaData.getProfilePath(),
                     adapterViewHolder.castPosterImageView);
         }

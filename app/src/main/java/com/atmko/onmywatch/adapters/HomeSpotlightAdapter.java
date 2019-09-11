@@ -28,16 +28,18 @@ public class HomeSpotlightAdapter extends RecyclerView.Adapter<HomeSpotlightAdap
     private final Fragment mFragment;
     private final List<MediaData> mAdapterData;
     private final OnListItemClickListener mOnListItemClickListener;
+    Context mContext;
 
     //layout ids
     @SuppressWarnings("FieldCanBeLocal")
     private final int STANDARD_LAYOUT_ID = 1;
     private final int NO_POSTER_LAYOUT = 2;
 
-    public HomeSpotlightAdapter(OnListItemClickListener clickListener) {
+    public HomeSpotlightAdapter(OnListItemClickListener clickListener, Context context) {
         mFragment = ((Fragment) clickListener);
         mOnListItemClickListener = clickListener;
         mAdapterData = new ArrayList<>();
+        mContext = context;
     }
 
     public interface OnListItemClickListener {
@@ -45,7 +47,7 @@ public class HomeSpotlightAdapter extends RecyclerView.Adapter<HomeSpotlightAdap
     }
 
     public class HomeSpotlightAdapterViewHolder extends RecyclerView.ViewHolder
-             implements View.OnClickListener{
+            implements View.OnClickListener{
 
         FrameLayout topFrameLayout;
         ImageView moviePosterImageView;
@@ -95,8 +97,7 @@ public class HomeSpotlightAdapter extends RecyclerView.Adapter<HomeSpotlightAdap
     @NonNull
     @Override
     public HomeSpotlightAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-        Context context = viewGroup.getContext();
-        LayoutInflater layoutInflater = LayoutInflater.from(context);
+        LayoutInflater layoutInflater = LayoutInflater.from(mContext);
 
         int resourceId;
 
@@ -114,8 +115,6 @@ public class HomeSpotlightAdapter extends RecyclerView.Adapter<HomeSpotlightAdap
 
     @Override
     public void onBindViewHolder(@NonNull HomeSpotlightAdapterViewHolder adapterViewHolder, int position) {
-        Context context = adapterViewHolder.topFrameLayout.getContext();
-
         //get current MediaData
         MediaData currentMediaData = mAdapterData.get(position);
 
@@ -127,7 +126,7 @@ public class HomeSpotlightAdapter extends RecyclerView.Adapter<HomeSpotlightAdap
         } else {
             //load image with glide
             NetworkFunctions.loadImage(
-                    context,
+                    mContext,
                     currentMediaData.getSpotlightPosterPath(),
                     adapterViewHolder.moviePosterImageView);
         }

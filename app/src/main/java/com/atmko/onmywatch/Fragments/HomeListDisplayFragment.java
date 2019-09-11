@@ -97,7 +97,8 @@ public class HomeListDisplayFragment extends Fragment implements MediaDataAdapte
     private void defineViews() {
         mRecyclerView = getView().findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(configureLayoutManager());
-        mMediaDataAdapter = new MediaDataAdapter(this);
+        mMediaDataAdapter = new MediaDataAdapter(this,
+                getActivity().getApplicationContext());
         mRecyclerView.setAdapter(mMediaDataAdapter);
     }
 

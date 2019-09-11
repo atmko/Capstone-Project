@@ -34,6 +34,7 @@ public class MediaDataAdapter extends RecyclerView.Adapter<MediaDataAdapter.Medi
     private final List<MediaData> mAdapterData;
     private final OnListItemClickListener mOnListItemClickListener;
     private boolean mInPlaceholderMode;
+    Context mContext;
 
     //layout ids
     @SuppressWarnings("FieldCanBeLocal")
@@ -41,11 +42,12 @@ public class MediaDataAdapter extends RecyclerView.Adapter<MediaDataAdapter.Medi
     private final int NO_POSTER_LAYOUT = 2;
     private final int EMPTY_ADAPTER_ID = 3;
 
-    public MediaDataAdapter(OnListItemClickListener clickListener) {
+    public MediaDataAdapter(OnListItemClickListener clickListener, Context context) {
         mFragment = ((Fragment) clickListener);
         mOnListItemClickListener = clickListener;
         mAdapterData = new ArrayList<>();
         mInPlaceholderMode = false;
+        mContext = context;
     }
 
     public interface OnListItemClickListener {
@@ -67,7 +69,7 @@ public class MediaDataAdapter extends RecyclerView.Adapter<MediaDataAdapter.Medi
     }
 
     public class MediaDataAdapterViewHolder extends RecyclerView.ViewHolder
-             implements View.OnClickListener{
+            implements View.OnClickListener{
 
         FrameLayout topFrameLayout;
         ImageView moviePosterImageView;
@@ -98,6 +100,7 @@ public class MediaDataAdapter extends RecyclerView.Adapter<MediaDataAdapter.Medi
                 public void onClick(View v) {
                     ((MasterActivity) mFragment.getActivity())
                             .launchAddToListFragment(mAdapterData.get(getAdapterPosition()));
+
                 }
             });
         }
@@ -167,8 +170,7 @@ public class MediaDataAdapter extends RecyclerView.Adapter<MediaDataAdapter.Medi
     @NonNull
     @Override
     public MediaDataAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-        Context context = viewGroup.getContext();
-        LayoutInflater layoutInflater = LayoutInflater.from(context);
+        LayoutInflater layoutInflater = LayoutInflater.from(mContext);
 
         int resourceId;
 
@@ -193,8 +195,6 @@ public class MediaDataAdapter extends RecyclerView.Adapter<MediaDataAdapter.Medi
 
     @Override
     public void onBindViewHolder(@NonNull MediaDataAdapterViewHolder adapterViewHolder, int position) {
-        Context context = adapterViewHolder.topFrameLayout.getContext();
-
         if (adapterViewHolder.getItemViewType() == EMPTY_ADAPTER_ID) return;
 
         //get current MediaData
@@ -208,7 +208,7 @@ public class MediaDataAdapter extends RecyclerView.Adapter<MediaDataAdapter.Medi
         } else {
             //load image with glide
             NetworkFunctions.loadImage(
-                    context,
+                    mContext,
                     currentMediaData.getPosterPath(),
                     adapterViewHolder.moviePosterImageView);
         }

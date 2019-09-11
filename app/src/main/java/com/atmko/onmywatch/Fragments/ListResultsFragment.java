@@ -124,7 +124,7 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
 
         mListResultsRecyclerView.setLayoutManager(configureLayoutManager());
 
-        mDataAdapter = new MediaDataAdapter(this);
+        mDataAdapter = new MediaDataAdapter(this, getActivity().getApplicationContext());
         mListResultsRecyclerView.setAdapter(mDataAdapter);
         mSearchPreferences = new SearchPreferences();
 
