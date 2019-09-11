@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.SettingsActivity;
 import com.atmko.onmywatch.models.MediaData;
@@ -73,6 +74,18 @@ public class HomeFragment extends Fragment {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (!(getActivity().getSupportFragmentManager().findFragmentById(R.id.master_fragments_container)
+                instanceof HomeFragment)) {
+
+            //hide background fragment to reserve keyboard focus for newly loaded fragment
+            getView().findViewById(R.id.top_layout).setVisibility(View.GONE);
+        }
+    }
+
     private void defineViews() {
         setHasOptionsMenu(true);
 
@@ -106,6 +119,10 @@ public class HomeFragment extends Fragment {
                         .add(R.id.master_fragments_container, listsParentFragment,
                                 ListsWatchAndUserParentFragment.FRAGMENT_KEY)
                         .commit();
+
+                //save focusable views and remove focus to reserve keyboard focus for newly loaded fragment
+                ((MasterActivity) getActivity()).onFragmentPause(
+                        HomeFragment.this, getView().findViewById(R.id.top_layout));
             }
         });
 
@@ -120,6 +137,10 @@ public class HomeFragment extends Fragment {
                             .add(R.id.master_fragments_container,searchParentFragment,
                                     SearchParentFragment.FRAGMENT_KEY)
                             .commit();
+
+                //save focusable views and remove focus to reserve keyboard focus for newly loaded fragment
+                ((MasterActivity) getActivity()).onFragmentPause(
+                        HomeFragment.this, getView().findViewById(R.id.top_layout));
             }
         });
     }

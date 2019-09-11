@@ -376,6 +376,11 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
                             SearchParentFragment.FRAGMENT_KEY)
                     .commit();
 
+            //save focusable views and remove focus to reserve keyboard focus for newly loaded fragment
+            ((MasterActivity) getActivity()).onFragmentPause(
+                    ListResultsFragment.this,
+                    getParentFragment().getView().findViewById(R.id.top_layout));
+
             return;
         }
 
