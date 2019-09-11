@@ -41,21 +41,14 @@ public class CreateListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_list);
 
-        boolean isPhone = getResources().getBoolean(R.bool.isPhone);
-
+        //configure percentage of display dialog activity takes
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
 
-        int height;
-        int width;
+        int height = displayMetrics.heightPixels *
+                getResources().getInteger(R.integer.create_list_activity_popup_screen_percent) / 100;
 
-        if (isPhone) {
-            height = displayMetrics.heightPixels * 80/100;
-            width = displayMetrics.widthPixels * 80/100;
-
-        } else {
-            height = displayMetrics.heightPixels * 50/100;
-            width = displayMetrics.widthPixels * 50/100;
-        }
+        int width = displayMetrics.widthPixels *
+                getResources().getInteger(R.integer.create_list_activity_popup_screen_percent) / 100;
 
         getWindow().setLayout(width, height);
 

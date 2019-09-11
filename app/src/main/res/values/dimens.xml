@@ -2,70 +2,69 @@
 <resources>
 
     <!--MARGINS-->
-        <dimen name="search_image_spacing">4dp</dimen>
-        <dimen name="half_layout_margin">4dp</dimen>
-        <dimen name="x1_layout_margin">8dp</dimen>
-        <dimen name="x2_layout_margin">16dp</dimen>
-        <dimen name="x3_layout_margin">24dp</dimen>
-        <dimen name="x4_layout_margin">32dp</dimen>
-        <dimen name="x5_layout_margin">40dp</dimen>
-        <dimen name="x6_layout_margin">48dp</dimen>
-        <dimen name="x8_layout_margin">64dp</dimen>
-        <dimen name="x10_layout_margin">80dp</dimen>
-        <dimen name="list_margin">0dp</dimen>
+    <dimen name="search_image_spacing">4dp</dimen>
+    <dimen name="half_layout_margin">4dp</dimen>
+    <dimen name="x1_layout_margin">8dp</dimen>
+    <dimen name="x2_layout_margin">16dp</dimen>
+    <dimen name="x3_layout_margin">24dp</dimen>
+    <dimen name="x4_layout_margin">32dp</dimen>
+    <dimen name="x5_layout_margin">40dp</dimen>
+    <dimen name="x6_layout_margin">48dp</dimen>
+    <dimen name="x8_layout_margin">64dp</dimen>
+    <dimen name="x10_layout_margin">80dp</dimen>
+    <dimen name="list_margin">0dp</dimen>
     <!--MARGINS-->
 
     <!--ELEVATION DIMENSIONS-->
-        <dimen name="app_bar_elevation">4dp</dimen>
+    <dimen name="app_bar_elevation">4dp</dimen>
     <!--ELEVATION DIMENSIONS-->
 
     <!--VIEW DIMENSIONS-->
-        <dimen name="list_height">85dp</dimen>
+    <dimen name="list_height">85dp</dimen>
 
-        <!--image_dimensions-->
-        <dimen name="search_box_padding">12dp</dimen>
-        <dimen name="up_button_padding">20dp</dimen>
+    <!--image_dimensions-->
+    <dimen name="search_box_padding">12dp</dimen>
+    <dimen name="up_button_padding">20dp</dimen>
 
-        <dimen name="search_poster_height">160dp</dimen>
-        <dimen name="spotlight_poster_height">300dp</dimen>
-        <dimen name="spotlight_poster_width">200dp</dimen>
+    <dimen name="search_poster_height">160dp</dimen>
+    <dimen name="spotlight_poster_height">300dp</dimen>
+    <dimen name="spotlight_poster_width">200dp</dimen>
 
-        <!--todo define this in detail fragment programmatically depending on screen size-->
-        <dimen name="detail_backdrop_placeholder_height">215dp</dimen>
-        <!--image_dimensions-->
+    <!--todo define this in detail fragment programmatically depending on screen size-->
+    <dimen name="detail_backdrop_placeholder_height">215dp</dimen>
+    <!--image_dimensions-->
 
-        <!--tab indicator dimensions-->
-        <dimen name="indicator_height">3dp</dimen>
-        <dimen name="indicator_cross_line_height">0.5dp</dimen>
-        <dimen name="indicator_cross_line_margin_from_bottom">1.45dp</dimen>
-        <!--tab indicator dimensions-->
+    <!--tab indicator dimensions-->
+    <dimen name="indicator_height">3dp</dimen>
+    <dimen name="indicator_cross_line_height">0.5dp</dimen>
+    <dimen name="indicator_cross_line_margin_from_bottom">1.45dp</dimen>
+    <!--tab indicator dimensions-->
 
-        <!--floating action button dimensions-->
-        <dimen name="fab_size">70dp</dimen>
-        <dimen name="fab_max_image_size">28dp</dimen>
+    <!--floating action button dimensions-->
+    <dimen name="fab_size">70dp</dimen>
+    <dimen name="fab_max_image_size">28dp</dimen>
 
-        <dimen name="fab_top_margin">180dp</dimen>
-        <!--floating action button dimensions-->
+    <dimen name="fab_top_margin">180dp</dimen>
+    <!--floating action button dimensions-->
     <!--VIEW DIMENSIONS-->
 
     <!--WIDGET DIMENSIONS-->
-        <dimen name="widget_margin">8dp</dimen>
-        <dimen name="widget_image_width">960</dimen>
-        <dimen name="widget_image_height">540</dimen>
+    <dimen name="widget_margin">8dp</dimen>
+    <dimen name="widget_image_width">960</dimen>
+    <dimen name="widget_image_height">540</dimen>
 
-        <!--cell formulae: dp = (70 * n) -30, where n is number of cells-->
-        <!--4cells -->
-        <dimen name="widget_minimum_width">250dp</dimen>
-        <!--2cells-->
-        <dimen name="widget_minimum_height">110dp</dimen>
+    <!--cell formulae: dp = (70 * n) -30, where n is number of cells-->
+    <!--4cells -->
+    <dimen name="widget_minimum_width">250dp</dimen>
+    <!--2cells-->
+    <dimen name="widget_minimum_height">110dp</dimen>
     <!--WIDGET DIMENSIONS-->
 
     <!--TEXT DIMENSIONS-->
-        <dimen name="appbar_headline_18_text_size">18sp</dimen>
-        <dimen name="caption_12_text_size">12sp</dimen>
-        <dimen name="headline_24_text_size">24sp</dimen>
+    <dimen name="appbar_headline_18_text_size">18sp</dimen>
+    <dimen name="caption_12_text_size">12sp</dimen>
+    <dimen name="headline_24_text_size">24sp</dimen>
     <dimen name="headline_36_text_size">36sp</dimen>
     <dimen name="headline_48_text_size">48sp</dimen>
     <!--TEXT DIMENSIONS-->
-
 </resources>
