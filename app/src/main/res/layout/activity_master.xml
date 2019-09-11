@@ -22,11 +22,4 @@
 
     </FrameLayout>
 
-    <FrameLayout
-        android:id="@+id/popup_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:background="@color/colorAccent"
-        android:visibility="gone"/>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

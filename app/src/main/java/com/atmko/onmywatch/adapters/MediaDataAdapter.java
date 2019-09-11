@@ -99,7 +99,7 @@ public class MediaDataAdapter extends RecyclerView.Adapter<MediaDataAdapter.Medi
                 @Override
                 public void onClick(View v) {
                     ((MasterActivity) mFragment.getActivity())
-                            .launchAddToListFragment(mAdapterData.get(getAdapterPosition()));
+                            .launchAddToListActivity(mAdapterData.get(getAdapterPosition()));
 
                 }
             });

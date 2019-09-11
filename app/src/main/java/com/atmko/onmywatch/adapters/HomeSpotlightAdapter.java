@@ -73,7 +73,7 @@ public class HomeSpotlightAdapter extends RecyclerView.Adapter<HomeSpotlightAdap
                 @Override
                 public void onClick(View v) {
                     ((MasterActivity) mFragment.getActivity())
-                            .launchAddToListFragment(mAdapterData.get(getAdapterPosition()));
+                            .launchAddToListActivity(mAdapterData.get(getAdapterPosition()));
                 }
             });
         }

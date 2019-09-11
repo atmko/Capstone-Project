@@ -24,7 +24,6 @@ import androidx.core.app.ShareCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -34,6 +33,7 @@ import com.androidnetworking.common.ANRequest;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.atmko.onmywatch.MasterActivity;
+import com.atmko.onmywatch.RateActivity;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 import com.atmko.onmywatch.view_models.DetailsViewModel;
@@ -246,7 +246,7 @@ public class DetailsFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MasterActivity) getActivity()).launchAddToListFragment(mMediaData);
+                ((MasterActivity) getActivity()).launchAddToListActivity(mMediaData);
             }
         });
 
@@ -281,7 +281,11 @@ public class DetailsFragment extends Fragment {
 
                 }
 
+                Intent intent = new Intent(getActivity().getApplicationContext(), RateActivity.class);
+                intent.putExtra(RateActivity.MEDIA_TYPE_KEY, mMediaType);
+                intent.putExtra(RateActivity.MEDIA_ID_KEY, Parcels.wrap(mMediaData.getId()));
 
+                startActivity(intent);
             }
         });
 

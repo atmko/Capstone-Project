@@ -1,23 +1,18 @@
-package com.atmko.onmywatch.Fragments;
+package com.atmko.onmywatch;
 
-import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.util.Log;
-import android.view.LayoutInflater;
+import android.util.DisplayMetrics;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
@@ -26,14 +21,13 @@ import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.view_models.RateViewModel;
 import com.atmko.onmywatch.view_models.RateViewModelFactory;
 
+import org.parceler.Parcels;
+
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 
-public class RateFragment extends Fragment {
-    public static final String FRAGMENT_KEY = "rate_fragment";
-
-    // fragment initialization parameters
-    private static final String MEDIA_TYPE_KEY = "media_type";
-    private static final String MEDIA_ID_KEY = "media_id";
+public class RateActivity extends AppCompatActivity {
+    public static final String MEDIA_TYPE_KEY = "media_type";
+    public static final String MEDIA_ID_KEY = "media_id";
 
     private static final int MAX_RATING = 10;
     private int mMediaType;
@@ -49,36 +43,50 @@ public class RateFragment extends Fragment {
     private TextView mRatingText;
     private Button mSaveButton;
 
-    //interfaces
-    private AddToListFragment.OnSavePressedActionListener mSaveActionListener;
-
-    public RateFragment() {
-        // Required empty public constructor
-    }
-
-    public static RateFragment newInstance(int mediaType, String mediaId) {
-        RateFragment fragment = new RateFragment();
-        Bundle args = new Bundle();
-        args.putInt(MEDIA_TYPE_KEY, mediaType);
-        args.putString(MEDIA_ID_KEY, mediaId);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mMediaType = getArguments().getInt(MEDIA_TYPE_KEY);
-            mMediaId = getArguments().getString(MEDIA_ID_KEY);
-        }
-    }
+        setContentView(R.layout.activity_rate);
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_rate, container, false);
+        boolean isPhone = getResources().getBoolean(R.bool.isPhone);
+
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+
+        int height;
+        int width;
+
+        if (isPhone) {
+            height = displayMetrics.heightPixels * 80/100;
+            width = displayMetrics.widthPixels * 80/100;
+
+        } else {
+            height = displayMetrics.heightPixels * 50/100;
+            width = displayMetrics.widthPixels * 50/100;
+        }
+
+        getWindow().setLayout(width, height);
+
+        Intent intent = getIntent();
+        mMediaType = intent.getIntExtra(MEDIA_TYPE_KEY, 0);
+        mMediaId = Parcels.unwrap(intent.getParcelableExtra(MEDIA_ID_KEY));
+
+        //save saveInstanceState value for onCreateAnimator and mNewContainingLists to check if
+        // this is the first instance
+
+        mSavedInstanceState = savedInstanceState;
+
+        defineViews();
+
+        //set up and observe view model
+        mDatabase = AppDatabase.getInstance(this);
+        RateViewModelFactory rateViewModelFactory =
+                new RateViewModelFactory(mDatabase, mMediaType, mMediaId);
+
+        final RateViewModel viewModel =
+                ViewModelProviders.of(this, rateViewModelFactory)
+                        .get(RateViewModel.class);
+
+        observeData(viewModel);
     }
 
     @Override
@@ -88,29 +96,9 @@ public class RateFragment extends Fragment {
         outState.putInt(USER_RATING_KEY, mRatingSeekBar.getProgress());
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        mSavedInstanceState = savedInstanceState;
-
-        defineViews();
-
-        //set up and observe view model
-        mDatabase = AppDatabase.getInstance(getContext());
-        RateViewModelFactory rateViewModelFactory =
-                new RateViewModelFactory(mDatabase, mMediaType, mMediaId);
-
-        final RateViewModel viewModel =
-                ViewModelProviders.of(this, rateViewModelFactory)
-                .get(RateViewModel.class);
-
-        observeData(viewModel);
-    }
-
     private void defineViews() {
-        mRatingText = getView().findViewById(R.id.rate_text_view);
-        mRatingSeekBar = getView().findViewById(R.id.rating_seek_bar);
+        mRatingText = findViewById(R.id.rate_text_view);
+        mRatingSeekBar = findViewById(R.id.rating_seek_bar);
         mRatingSeekBar.setMax(MAX_RATING);
         mRatingSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -137,7 +125,7 @@ public class RateFragment extends Fragment {
         });
 
         //configure save button action
-        mSaveButton = getView().findViewById(R.id.save_button);
+        mSaveButton = findViewById(R.id.save_button);
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,8 +137,8 @@ public class RateFragment extends Fragment {
                     }
                 });
 
-                //exit fragment
-                mSaveActionListener.onSavePressed();
+                //exit activity
+                finish();
             }
         });
     }
@@ -199,22 +187,5 @@ public class RateFragment extends Fragment {
             mDatabase.seriesDataDao().updateSeriesData((SeriesData) databaseMediaData);
 
         }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof AddToListFragment.OnSavePressedActionListener) {
-            mSaveActionListener = (AddToListFragment.OnSavePressedActionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnSavePressedAction");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mSaveActionListener = null;
     }
 }

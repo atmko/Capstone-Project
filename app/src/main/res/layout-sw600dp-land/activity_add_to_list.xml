@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/top_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_fragment_overlay">
+
+    <EditText
+        android:id="@+id/search_edit_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_rounded_search_box"
+        android:hint="@string/search_text_box_hint"
+        android:imeOptions="actionSearch|flagNoExtractUi|flagNoFullscreen"
+        android:inputType="text"
+        android:padding="@dimen/x2_layout_margin"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/lists_recycler_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/x1_layout_margin"
+        app:layout_constraintTop_toBottomOf="@id/search_edit_text_view"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/status_dividing_line"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/status_dividing_line"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:background="@color/colorAccent"
+        app:layout_constraintTop_toBottomOf="@id/search_edit_text_view"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.66"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <RadioGroup
+        android:id="@+id/watch_status_radio_group"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="@dimen/x2_layout_margin"
+        android:layout_marginRight="@dimen/x1_layout_margin"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:theme="@style/AppTheme.ActionBar"
+        app:layout_constraintBottom_toTopOf="@id/save_button"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="@id/status_dividing_line"
+        app:layout_constraintTop_toBottomOf="@id/search_edit_text_view">
+        <!--TODO make button additions programmatically instead-->
+        <androidx.appcompat.widget.AppCompatRadioButton
+            style="@style/radio_button_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/watch_status_none_title" />
+
+        <androidx.appcompat.widget.AppCompatRadioButton
+            style="@style/radio_button_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/watch_status_to_watch_title" />
+
+        <androidx.appcompat.widget.AppCompatRadioButton
+            style="@style/radio_button_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/watch_status_watching_title" />
+
+        <androidx.appcompat.widget.AppCompatRadioButton
+            style="@style/radio_button_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/watch_status_watched_title" />
+
+        <androidx.appcompat.widget.AppCompatRadioButton
+            style="@style/radio_button_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/watch_status_dropped_title" />
+
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/save_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/x2_layout_margin"
+        android:layout_marginEnd="@dimen/x2_layout_margin"
+        android:layout_marginBottom="@dimen/x2_layout_margin"
+        android:background="@null"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:text="@string/save_button_text"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

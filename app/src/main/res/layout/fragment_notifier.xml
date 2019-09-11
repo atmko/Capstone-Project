@@ -17,7 +17,6 @@
         android:alpha="0.5"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        style="@style/popup_style"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/background_fragment_overlay"

@@ -1,30 +1,25 @@
-package com.atmko.onmywatch.Fragments;
+package com.atmko.onmywatch;
 
-import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatCheckBox;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.atmko.onmywatch.MasterActivity;
-import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.AddToListAdapter;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MediaData;
@@ -46,23 +41,20 @@ import java.util.List;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
 
-public class AddToListFragment extends Fragment implements AddToListAdapter.OnListItemClickListener,
-AddToListAdapter.OnListCheckListener{
-    public static String FRAGMENT_KEY = "add_to_list_fragment";
+public class AddToListActivity extends AppCompatActivity implements AddToListAdapter.OnListItemClickListener,
+        AddToListAdapter.OnListCheckListener{
+    public static String TAG = "add_to_list_activity";
 
-    // the fragment initialization parameter keys
-    private static final String MEDIA_TYPE_KEY = "media_type";
-    private static final String MEDIA_DATA_KEY = "media_data";
+    public static final String MEDIA_TYPE_KEY = "media_type";
+    public static final String MEDIA_DATA_KEY = "media_data";
 
     //save instance keys
     private static final String NEW_CONTAINING_LIST_KEY = "new_containing_list";
     private static final String SELECTED_WATCH_STATUS_KEY = "selected_watch_status";
 
-    // the fragment initialization parameters
     private int mMediaType;
     private MediaData mMediaData;
 
-    //fragment values
     private Bundle mSavedInstanceState;
     private AppDatabase mDatabase;
     private AddToListAdapter mAdapter;
@@ -75,53 +67,32 @@ AddToListAdapter.OnListCheckListener{
     private RadioGroup mWatchStatusRadioGroup;
     private Button mSaveButton;
 
-    //interfaces
-    private OnSavePressedActionListener mSaveActionListener;
-
-    public AddToListFragment() {
-        // Required empty public constructor
-    }
-
-    public interface OnSavePressedActionListener {
-        void onSavePressed();
-    }
-
     @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        outState.putParcelable(NEW_CONTAINING_LIST_KEY, Parcels.wrap(mNewContainingLists));
-        outState.putInt(SELECTED_WATCH_STATUS_KEY, mSelectedWatchStatus);
-    }
-
-    public static AddToListFragment newInstance(int mediaType, Parcelable mediaDataParcelable) {
-        AddToListFragment fragment = new AddToListFragment();
-        Bundle args = new Bundle();
-        args.putInt(MEDIA_TYPE_KEY, mediaType);
-        args.putParcelable(MEDIA_DATA_KEY, mediaDataParcelable);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mMediaType = getArguments().getInt(MEDIA_TYPE_KEY);
-            mMediaData = Parcels.unwrap(getArguments().getParcelable(MEDIA_DATA_KEY));
+        setContentView(R.layout.activity_add_to_list);
+
+        boolean isPhone = getResources().getBoolean(R.bool.isPhone);
+
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+
+        int height;
+        int width;
+
+        if (isPhone) {
+            height = displayMetrics.heightPixels * 80/100;
+            width = displayMetrics.widthPixels * 80/100;
+
+        } else {
+            height = displayMetrics.heightPixels * 50/100;
+            width = displayMetrics.widthPixels * 50/100;
         }
-    }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_to_list, container, false);
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+        getWindow().setLayout(width, height);
+        
+        Intent intent = getIntent();
+        mMediaType = intent.getIntExtra(MEDIA_TYPE_KEY, 0);
+        mMediaData = Parcels.unwrap(intent.getParcelableExtra(MEDIA_DATA_KEY));
 
         //save saveInstanceState value for onCreateAnimator and mNewContainingLists to check if
         // this is the first instance
@@ -133,16 +104,24 @@ AddToListAdapter.OnListCheckListener{
         observeViewModel();
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelable(NEW_CONTAINING_LIST_KEY, Parcels.wrap(mNewContainingLists));
+        outState.putInt(SELECTED_WATCH_STATUS_KEY, mSelectedWatchStatus);
+    }
+
     private void defineViews() {
-        mDatabase = AppDatabase.getInstance(getContext());
+        mDatabase = AppDatabase.getInstance(this);
 
         //configure recycler view
-        mRecyclerView = getView().findViewById(R.id.lists_recycler_view);
+        mRecyclerView = findViewById(R.id.lists_recycler_view);
         mRecyclerView.setLayoutManager(configureLayoutManager());
         mAdapter = new AddToListAdapter(this, mMediaData.getId());
 
         //configure search box
-        mSearchEditTextView = getView().findViewById(R.id.search_edit_text_view);
+        mSearchEditTextView = findViewById(R.id.search_edit_text_view);
         mSearchEditTextView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -156,7 +135,7 @@ AddToListAdapter.OnListCheckListener{
 
                 //observe lists with searched name then remove observer
                 final LiveData<List<UserListModel>> listLiveData = mDatabase.userListsDao().getListsWithNameLike(listName);
-                listLiveData.observe(AddToListFragment.this, new Observer<List<UserListModel>>() {
+                listLiveData.observe(AddToListActivity.this, new Observer<List<UserListModel>>() {
                     @Override
                     public void onChanged(List<UserListModel> userListModels) {
                         listLiveData.removeObserver(this);
@@ -174,24 +153,24 @@ AddToListAdapter.OnListCheckListener{
         });
 
         //configure watch status selector
-        mWatchStatusRadioGroup = getView().findViewById(R.id.watch_status_radio_group);
+        mWatchStatusRadioGroup = findViewById(R.id.watch_status_radio_group);
         mWatchStatusRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                mSelectedWatchStatus = mWatchStatusRadioGroup.indexOfChild(getView().findViewById(checkedId));
+                mSelectedWatchStatus = mWatchStatusRadioGroup.indexOfChild(findViewById(checkedId));
 
-                Log.d(FRAGMENT_KEY , "selected watchStatus:  " + String.valueOf(MediaData.getWatchStatusTitle(mSelectedWatchStatus, getContext())));
             }
         });
 
         //configure save button
-        mSaveButton = getView().findViewById(R.id.save_button);
+        mSaveButton = findViewById(R.id.save_button);
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 updateData();
 
-                mSaveActionListener.onSavePressed();
+                //exit activity
+                finish();
             }
         });
     }
@@ -245,7 +224,7 @@ AddToListAdapter.OnListCheckListener{
                     final LiveData<List<UserListModel>> containingUserListLiveData =
                             viewModel.getContainingLists();
 
-                    containingUserListLiveData.observe(AddToListFragment.this, new Observer<List<UserListModel>>() {
+                    containingUserListLiveData.observe(AddToListActivity.this, new Observer<List<UserListModel>>() {
                         @Override
                         public void onChanged(List<UserListModel> containingLists) {
                             //if media is contained in user list(s)
@@ -276,9 +255,9 @@ AddToListAdapter.OnListCheckListener{
                             mAdapter.addAdapterData(allUserLists);
                         }
                     });
-                //else if no user list(s) exist
+                    //else if no user list(s) exist
                 } else {
-                    Snackbar.make(getActivity().findViewById(R.id.top_layout),
+                    Snackbar.make(findViewById(R.id.top_layout),
                             getString(R.string.no_created_lists_message), Snackbar.LENGTH_LONG).show();
                 }
             }
@@ -286,7 +265,7 @@ AddToListAdapter.OnListCheckListener{
     }
 
     private LinearLayoutManager configureLayoutManager() {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         return layoutManager;
@@ -323,7 +302,7 @@ AddToListAdapter.OnListCheckListener{
         if (movieData != null) {
             movieData.setWatchStatus(mSelectedWatchStatus);
             mDatabase.movieDataDao().updateMovieData(movieData);
-            Log.d(FRAGMENT_KEY, "update media data");
+            Log.d(TAG, "update media data");
             return movieData;
 
         } else {
@@ -331,7 +310,7 @@ AddToListAdapter.OnListCheckListener{
             MovieData newMovieData = ((MovieData) mMediaData);
             newMovieData.setWatchStatus(mSelectedWatchStatus);
             mDatabase.movieDataDao().addMovieData(newMovieData);
-            Log.d(FRAGMENT_KEY, "creating new media data");
+            Log.d(TAG, "creating new media data");
             return newMovieData;
         }
     }
@@ -344,7 +323,7 @@ AddToListAdapter.OnListCheckListener{
         if (seriesData != null) {
             seriesData.setWatchStatus(mSelectedWatchStatus);
             mDatabase.seriesDataDao().updateSeriesData(seriesData);
-            Log.d(FRAGMENT_KEY, "update media data");
+            Log.d(TAG, "update media data");
             return seriesData;
 
         } else {
@@ -352,7 +331,7 @@ AddToListAdapter.OnListCheckListener{
             SeriesData newSeriesData = ((SeriesData) mMediaData);
             newSeriesData.setWatchStatus(mSelectedWatchStatus);
             mDatabase.seriesDataDao().addSeriesData(newSeriesData);
-            Log.d(FRAGMENT_KEY, "creating new media data");
+            Log.d(TAG, "creating new media data");
             return newSeriesData;
         }
     }
@@ -363,7 +342,7 @@ AddToListAdapter.OnListCheckListener{
         for (UserListModel userListModel : mNewContainingLists) {
             if (!mOriginalContainingLists.contains(userListModel)) {
                 //add the media to the list
-                Log.d(FRAGMENT_KEY, "adding to list");
+                Log.d(TAG, "adding to list");
                 addToList(userListModel);
                 updateListCount(userListModel, +1);
 
@@ -374,7 +353,7 @@ AddToListAdapter.OnListCheckListener{
         for (UserListModel userListModel : mOriginalContainingLists) {
             if (!mNewContainingLists.contains(userListModel)) {
                 //remove the media from the list
-                Log.d(FRAGMENT_KEY, "removing from list");
+                Log.d(TAG, "removing from list");
                 removeFromList(userListModel);
                 updateListCount(userListModel, -1);
 
@@ -398,7 +377,7 @@ AddToListAdapter.OnListCheckListener{
 
         }
 
-        Log.d(FRAGMENT_KEY, "deleted record");
+        Log.d(TAG, "deleted record");
     }
 
     private void addToList(final UserListModel userListModel) {
@@ -414,14 +393,14 @@ AddToListAdapter.OnListCheckListener{
 
         }
 
-        Log.d(FRAGMENT_KEY, "add record");
+        Log.d(TAG, "add record");
     }
 
     private void updateListCount(UserListModel userListModel, int factor) {
         //update list count
         userListModel.setItemCount(userListModel.getItemCount() + factor);
         mDatabase.userListsDao().updateListConfiguration(userListModel);
-        Log.d(FRAGMENT_KEY, "update list count");
+        Log.d(TAG, "update list count");
     }
 
     private void deleteMediaDataIfDataNotUsed(int newWatchStatus, int newContainingListValue) {
@@ -429,7 +408,7 @@ AddToListAdapter.OnListCheckListener{
         if (newWatchStatus == MediaData.WATCH_STATUS_NONE
                 && newContainingListValue == 0) {
             //delete the media from the database
-            Log.d(FRAGMENT_KEY, "deleting empty media data");
+            Log.d(TAG, "deleting empty media data");
 
             if (mMediaType == MEDIA_TYPE_MOVIE) {
                 mDatabase.movieDataDao().deleteMovieData(((MovieData) mMediaData));
@@ -451,24 +430,6 @@ AddToListAdapter.OnListCheckListener{
         }
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnSavePressedActionListener) {
-            mSaveActionListener = (OnSavePressedActionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnSavePressedAction");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mSaveActionListener = null;
-    }
-
-    //toggles checkbox and updates mNewContainingLists membership
     //avoids inconsistent checks when recycler view recycles views
     @Override
     public void onItemClick(final UserListModel userListModel, AppCompatCheckBox checkBox) {

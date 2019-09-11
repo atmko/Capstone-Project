@@ -1,30 +1,26 @@
-package com.atmko.onmywatch.Fragments;
+package com.atmko.onmywatch;
 
-import android.content.Context;
+import android.content.Intent;
 import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.util.DisplayMetrics;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
 
-import com.atmko.onmywatch.models.MovieData;
+import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MovieDataRecord;
 import com.atmko.onmywatch.models.SeriesDataRecord;
-import com.google.android.material.snackbar.Snackbar;
-import com.atmko.onmywatch.R;
-import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 
-public class CreateListFragment extends Fragment {
+public class CreateListActivity extends AppCompatActivity {
     public static String FRAGMENT_KEY = "create_list_fragment";
 
     public static final String MODE_KEY = "mode";
@@ -36,45 +32,41 @@ public class CreateListFragment extends Fragment {
 
     private int mMode, mItemCount;
     private String mListName;
-    private OnSavePressedActionListener mSaveActionListener;
+    private CreateListFragment.OnSavePressedActionListener mSaveActionListener;
 
     private EditText nameEditTextView;
     private Button mSaveButton;
 
-
-    public CreateListFragment() {
-        // Required empty public constructor
-    }
-
-    public interface OnSavePressedActionListener {
-        void onSavePressed();
-    }
-
-    public static CreateListFragment newInstance(int mode, String listName, int itemCount) {
-        CreateListFragment fragment = new CreateListFragment();
-        Bundle args = new Bundle();
-        args.putInt(MODE_KEY, mode);
-        args.putString(LIST_NAME_KEY, listName);
-        args.putInt(ITEM_COUNT_KEY, itemCount);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mMode = getArguments().getInt(MODE_KEY);
-            mListName = getArguments().getString(LIST_NAME_KEY);
-            mItemCount = getArguments().getInt(ITEM_COUNT_KEY);
-        }
-    }
+        setContentView(R.layout.activity_create_list);
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_create_list, container, false);
+        boolean isPhone = getResources().getBoolean(R.bool.isPhone);
+
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+
+        int height;
+        int width;
+
+        if (isPhone) {
+            height = displayMetrics.heightPixels * 80/100;
+            width = displayMetrics.widthPixels * 80/100;
+
+        } else {
+            height = displayMetrics.heightPixels * 50/100;
+            width = displayMetrics.widthPixels * 50/100;
+        }
+
+        getWindow().setLayout(width, height);
+
+        Intent intent = getIntent();
+        mMode = intent.getIntExtra(MODE_KEY, 0);
+        mListName = intent.getStringExtra(LIST_NAME_KEY);
+        mItemCount = intent.getIntExtra(ITEM_COUNT_KEY, 0);
+
+        defineViews();
+        setViewValues(savedInstanceState);
     }
 
     @Override
@@ -84,18 +76,10 @@ public class CreateListFragment extends Fragment {
         outState.putString(LIST_NAME_KEY, nameEditTextView.getText().toString());
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        defineViews();
-        setViewValues(savedInstanceState);
-    }
-
     private void defineViews() {
-        nameEditTextView = getView().findViewById(R.id.name_edit_text_view);
+        nameEditTextView = findViewById(R.id.name_edit_text_view);
 
-        mSaveButton = getView().findViewById(R.id.save_button);
+        mSaveButton = findViewById(R.id.save_button);
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -109,9 +93,10 @@ public class CreateListFragment extends Fragment {
                     public void run() {
                         try {
                             UserListModel newUserListModel = new UserListModel(
-                                        nameEditTextView.getText().toString(), mItemCount);
+                                    nameEditTextView.getText().toString(), mItemCount);
 
-                            final AppDatabase appDatabase = AppDatabase.getInstance(getContext());
+                            final AppDatabase appDatabase =
+                                    AppDatabase.getInstance(CreateListActivity.this);
                             String snackBarMessage;
                             if (mMode == MODE_EDIT) {
                                 //can't update list directly because name is changing and table id == list name
@@ -157,16 +142,16 @@ public class CreateListFragment extends Fragment {
                                 snackBarMessage = getString(R.string.new_list_created_message);
                             }
 
-                            Snackbar.make(getActivity().findViewById(R.id.top_layout),
+                            Snackbar.make(findViewById(R.id.top_layout),
                                     snackBarMessage, Snackbar.LENGTH_LONG).show();
 
-                            //exit fragment
-                            mSaveActionListener.onSavePressed();
+                            //exit activity
+                            finish();
 
                         } catch (SQLiteConstraintException e) {
                             e.printStackTrace();
 
-                            Snackbar.make(getActivity().findViewById(R.id.top_layout),
+                            Snackbar.make(findViewById(R.id.top_layout),
                                     getString(R.string.list_already_exists_error_message),
                                     Snackbar.LENGTH_LONG).show();
                         }
@@ -181,22 +166,5 @@ public class CreateListFragment extends Fragment {
                 savedInstanceState == null ? mListName : savedInstanceState.getString(LIST_NAME_KEY);
 
         nameEditTextView.setText(editTextString);
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnSavePressedActionListener) {
-            mSaveActionListener = (OnSavePressedActionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnSavePressedAction");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mSaveActionListener = null;
     }
 }

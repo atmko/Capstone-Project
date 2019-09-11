@@ -1,9 +1,9 @@
 package com.atmko.onmywatch.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,13 +13,13 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.atmko.onmywatch.CreateListActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.UserListsAdapter;
@@ -129,7 +129,7 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
             mFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    launchCreateListFragment(CreateListFragment.MODE_CREATE, "", 0);
+                    launchCreateListActivity(CreateListActivity.MODE_CREATE, "", 0);
                 }
             });
         }
@@ -284,16 +284,13 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
         }
     }
 
-    private void launchCreateListFragment(int mode, String listName, int itemCount) {
-        getParentFragment().getActivity().findViewById(R.id.popup_container).setVisibility(View.VISIBLE);
+    private void launchCreateListActivity(int mode, String listName, int itemCount) {
+        Intent intent = new Intent(getActivity().getApplicationContext(), CreateListActivity.class);
+        intent.putExtra(CreateListActivity.MODE_KEY, mode);
+        intent.putExtra(CreateListActivity.LIST_NAME_KEY, listName);
+        intent.putExtra(CreateListActivity.ITEM_COUNT_KEY, itemCount);
 
-        CreateListFragment createListFragment =
-                CreateListFragment.newInstance(mode, listName, itemCount);
-
-        getParentFragment().getActivity().getSupportFragmentManager().beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .add(R.id.popup_container, createListFragment, CreateListFragment.FRAGMENT_KEY)
-                .commit();
+        startActivity(intent);
     }
 
     @Override
@@ -318,7 +315,7 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
 
     @Override
     public void onEditClick(UserListModel userListModel) {
-        launchCreateListFragment(CreateListFragment.MODE_EDIT,
+        launchCreateListActivity(CreateListActivity.MODE_EDIT,
                 userListModel.getName(), userListModel.getItemCount());
     }
 
@@ -332,5 +329,3 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
         });
     }
 }
-
-
