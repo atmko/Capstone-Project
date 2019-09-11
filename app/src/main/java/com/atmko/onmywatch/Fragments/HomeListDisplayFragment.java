@@ -190,37 +190,9 @@ public class HomeListDisplayFragment extends Fragment implements MediaDataAdapte
             return;
         }
 
-        String[] detailUrls = getContext().getResources().getStringArray(R.array.details_urls);
-        String detailUrl = null;
         MediaData selectedData = mMediaDataAdapter.getAdapterData().get(position);
 
-        if (mMediaType == MEDIA_TYPE_MOVIE) {
-            detailUrl = detailUrls[MEDIA_TYPE_MOVIE];
-
-        } else if (mMediaType == MEDIA_TYPE_SERIES) {
-            detailUrl = detailUrls[MEDIA_TYPE_SERIES];
-        }
-
-        SearchPreferences searchPreferences =  new SearchPreferences();
-        Parcelable parceledData = Parcels.wrap(selectedData);
-        Parcelable parceledSharedPreferences = Parcels.wrap(searchPreferences);
-
-        DetailsFragment detailsFragment =
-                DetailsFragment.newInstance(mMediaType, detailUrl, parceledData, parceledSharedPreferences);
-
-        Fragment detailContainerFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.detail_fragments_container);
-
-        ///remove existing fragment
-        if (detailContainerFragment != null) {
-            getActivity().getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
-                    .remove(detailContainerFragment).commit();
-
-        }
-
-        getActivity().getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
-                .add(R.id.detail_fragments_container, detailsFragment, DetailsFragment.FRAGMENT_KEY)
-                .commit();
+        ((MasterActivity) getActivity())
+                .launchDetailsFragment(HomeListDisplayFragment.this, selectedData);
     }
 }

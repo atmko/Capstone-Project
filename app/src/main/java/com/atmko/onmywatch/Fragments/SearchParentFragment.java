@@ -29,6 +29,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.view_models.SearchViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -119,6 +120,14 @@ public class SearchParentFragment extends Fragment {
                 loadManualSearchUi();
             }
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        ((MasterActivity) getActivity()).onResumeMasterContainerFragment(this);
+
     }
 
     @Nullable

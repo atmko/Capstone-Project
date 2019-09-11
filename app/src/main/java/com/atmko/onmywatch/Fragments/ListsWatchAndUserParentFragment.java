@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.ListWatchAndUserAdapter;
 import com.google.android.material.tabs.TabLayout;
@@ -70,6 +71,14 @@ public class ListsWatchAndUserParentFragment extends Fragment {
             defineViews();
 
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        ((MasterActivity) getActivity()).onResumeMasterContainerFragment(this);
+
     }
 
     @Nullable

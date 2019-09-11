@@ -206,40 +206,8 @@ public class HomeSpotlightFragment extends Fragment implements
     }
 
     private void startDetailsFragment(MediaData selectedData) {
-        String[] detailUrls = getContext().getResources().getStringArray(R.array.details_urls);
-        String detailUrl = null;
-
-        if (mMediaType == MEDIA_TYPE_MOVIE) {
-            detailUrl = detailUrls[MEDIA_TYPE_MOVIE];
-
-        } else if (mMediaType == MEDIA_TYPE_SERIES) {
-            detailUrl = detailUrls[MEDIA_TYPE_SERIES];
-        }
-
-        Parcelable parceledData = Parcels.wrap(selectedData);
-        Parcelable parceledSharedPreferences = Parcels.wrap(mSearchPreferences);
-
-        DetailsFragment detailsFragment =
-                DetailsFragment
-                        .newInstance(mMediaType, detailUrl, parceledData, parceledSharedPreferences);
-
-        Fragment detailContainerFragment =
-                getParentFragment().getActivity().getSupportFragmentManager()
-                        .findFragmentById(R.id.detail_fragments_container);
-
-        ///remove existing fragment
-        if (detailContainerFragment != null) {
-            getParentFragment().getActivity().getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
-                    .remove(detailContainerFragment).commit();
-
-        }
-
-        //launch detail fragment
-        getParentFragment().getActivity().getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
-                .add(R.id.detail_fragments_container, detailsFragment, DetailsFragment.FRAGMENT_KEY)
-                .commit();
+        ((MasterActivity) getActivity())
+                .launchDetailsFragment(HomeSpotlightFragment.this, selectedData);
     }
 
     @Override

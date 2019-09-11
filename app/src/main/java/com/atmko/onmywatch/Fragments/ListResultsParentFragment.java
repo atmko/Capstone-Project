@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.atmko.onmywatch.MasterActivity;
 import com.google.android.material.tabs.TabLayout;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.ListResultsUserPagerAdapter;
@@ -85,6 +86,14 @@ public class ListResultsParentFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        ((MasterActivity) getActivity()).onResumeMasterContainerFragment(this);
+
+    }
+
     @Nullable
     @Override
     public Animator onCreateAnimator(int transit, final boolean enter, int nextAnim) {
@@ -141,6 +150,12 @@ public class ListResultsParentFragment extends Fragment {
                         .add(R.id.master_fragments_container,searchParentFragment,
                                 SearchParentFragment.FRAGMENT_KEY)
                         .commit();
+
+
+                //save focusable views and remove focus to reserve keyboard focus for newly loaded fragment
+                ((MasterActivity) getActivity()).onFragmentPause(
+                        ListResultsParentFragment.this,
+                        getView().findViewById(R.id.top_layout));
             }
         });
 
