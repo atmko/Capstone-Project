@@ -246,17 +246,7 @@ public class DetailsFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().findViewById(R.id.popup_container).setVisibility(View.VISIBLE);
-
-                Parcelable mMediaDataParcelable = Parcels.wrap(mMediaData);
-
-                AddToListFragment addToListFragment =
-                        AddToListFragment.newInstance(mMediaType, mMediaDataParcelable);
-
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                        .add(R.id.popup_container, addToListFragment, AddToListFragment.FRAGMENT_KEY)
-                        .commit();
+                ((MasterActivity) getActivity()).launchAddToListFragment(mMediaData);
             }
         });
 
@@ -291,15 +281,7 @@ public class DetailsFragment extends Fragment {
 
                 }
 
-                getActivity().findViewById(R.id.popup_container).setVisibility(View.VISIBLE);
 
-                RateFragment rateFragment =
-                        RateFragment.newInstance(mMediaType, mMediaData.getId());
-
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                        .add(R.id.popup_container, rateFragment, RateFragment.FRAGMENT_KEY)
-                        .commit();
             }
         });
 
