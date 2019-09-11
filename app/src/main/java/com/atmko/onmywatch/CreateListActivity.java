@@ -32,7 +32,6 @@ public class CreateListActivity extends AppCompatActivity {
 
     private int mMode, mItemCount;
     private String mListName;
-    private CreateListFragment.OnSavePressedActionListener mSaveActionListener;
 
     private EditText nameEditTextView;
     private Button mSaveButton;

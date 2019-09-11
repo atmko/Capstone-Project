@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.atmko.onmywatch.CreateListActivity;
+import com.atmko.onmywatch.MasterActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.UserListsAdapter;
@@ -311,6 +312,11 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
                 .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
                 .add(R.id.master_fragments_container, fragment, ListResultsParentFragment.FRAGMENT_KEY)
                 .commit();
+
+        //save focusable views and remove focus to reserve keyboard focus for newly loaded fragment
+        ((MasterActivity) getActivity()).onFragmentPause(
+                ListWatchAndUserFragment.this,
+                getParentFragment().getView().findViewById(R.id.top_layout));
     }
 
     @Override
