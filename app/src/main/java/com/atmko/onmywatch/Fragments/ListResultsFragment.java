@@ -252,6 +252,10 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
     }
 
     private void onSearchTextChanged(CharSequence searchText) {
+        final String[] watchStatusMoviesTitles = getContext().getResources()
+                .getStringArray(R.array.watch_status_movie_titles);
+        List<String> titleList = Arrays.asList(watchStatusMoviesTitles);
+
         final AppDatabase database = AppDatabase.getInstance(getContext());
 
         String mediaTitle = searchText.toString();
@@ -261,7 +265,7 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
             //if media data is movie
             if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
                 final LiveData<List<MovieData>> listLiveData = database.movieDataDao()
-                        .getMoviesByWatchStatusLike(1, mediaTitle);
+                        .getMoviesByWatchStatusLike(titleList.indexOf(mListName), mediaTitle);
 
                 listLiveData.observe(getParentFragment(), new Observer<List<MovieData>>() {
                     @Override
@@ -274,7 +278,7 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
                 //if media data is series
             } else if (mMediaType == MasterActivity.MEDIA_TYPE_SERIES) {
                 final LiveData<List<SeriesData>> listLiveData = database.seriesDataDao()
-                        .getSeriesByWatchStatusLike(1, mediaTitle);
+                        .getSeriesByWatchStatusLike(titleList.indexOf(mListName), mediaTitle);
 
                 listLiveData.observe(getParentFragment(), new Observer<List<SeriesData>>() {
                     @Override
