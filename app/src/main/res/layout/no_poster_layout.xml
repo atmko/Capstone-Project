@@ -4,6 +4,7 @@
     android:id="@+id/top_frame_layout"
     android:layout_width="match_parent"
     android:layout_height="@dimen/search_poster_height"
+    android:foreground="@drawable/ripple_pressed"
     android:background="@drawable/poster_image_placeholder"
     android:contentDescription="@string/poster_description">
 
@@ -28,6 +29,7 @@
         android:paddingEnd="@dimen/x1_layout_margin"
         android:paddingBottom="@dimen/x1_layout_margin"
         android:src="@drawable/ic_fab_add_to_list_poster"
+        android:foreground="@drawable/ripple_pressed"
         android:background="@null"
         android:layout_gravity="bottom|right"/>
 

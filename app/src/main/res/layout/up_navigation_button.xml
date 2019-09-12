@@ -11,6 +11,7 @@
     android:paddingEnd="@dimen/up_button_padding"
     android:paddingBottom="@dimen/up_button_padding"
     android:src="@drawable/ic_up_nav_btn"
+    android:foreground="@drawable/ripple_pressed"
     android:background="@null"
     android:contentDescription="@string/content_description_back_button"
     tools:showIn="@layout/fragment_details" />

@@ -129,6 +129,7 @@
     </style>
 
     <style name="ListStyle" parent="android:Widget.ActionButton.Overflow">
+        <item name="android:foreground">@drawable/ripple_pressed</item>
         <item name="android:background">@drawable/ic_list_options</item>
     </style>
 
