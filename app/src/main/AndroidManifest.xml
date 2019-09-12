@@ -40,7 +40,6 @@
 
         <activity
             android:name=".MasterActivity"
-            android:windowSoftInputMode="stateVisible|adjustPan"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
