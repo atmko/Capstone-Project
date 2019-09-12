@@ -138,8 +138,8 @@ public class ListResultsParentFragment extends Fragment {
     }
 
     private void defineViews() {
-        final TextView listNameText = getView().findViewById(R.id.title_text_view);
-        listNameText.setText(mListName);
+        final TextView titleText = getView().findViewById(R.id.title_text_view);
+        titleText.setText(mListName);
 
         //configure floating action button
         getView().findViewById(R.id.search_list_fab).setOnClickListener(new View.OnClickListener() {
@@ -166,18 +166,7 @@ public class ListResultsParentFragment extends Fragment {
         searchImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (searchEditText.getVisibility() == View.VISIBLE) {
-                    searchEditText.setVisibility(View.GONE);
-                    listNameText.setVisibility(View.VISIBLE);
-
-                } else {
-                    searchEditText.setVisibility(View.VISIBLE);
-                    searchEditText.requestFocus();
-                    InputMethodManager imm = (InputMethodManager)
-                            getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.showSoftInput(searchEditText, InputMethodManager.SHOW_IMPLICIT);
-                    listNameText.setVisibility(View.GONE);
-                }
+                ((MasterActivity) getActivity()).onSearchButtonPressed(searchEditText, titleText);
             }
         });
 

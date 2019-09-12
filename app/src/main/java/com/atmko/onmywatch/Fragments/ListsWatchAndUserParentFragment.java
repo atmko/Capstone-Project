@@ -125,26 +125,16 @@ public class ListsWatchAndUserParentFragment extends Fragment {
     }
 
     private void defineViews() {
-        final TextView listNameText = getView().findViewById(R.id.title_text_view);
-        listNameText.setText(getString(R.string.lists_text_literal));
+        final TextView titleText = getView().findViewById(R.id.title_text_view);
+        titleText.setText(getString(R.string.lists_text_literal));
 
         final EditText searchEditText = getView().findViewById(R.id.search_edit_text_view);
         final ImageButton searchImageButton = getView().findViewById(R.id.search_image_button);
         searchImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (searchEditText.getVisibility() == View.VISIBLE) {
-                    searchEditText.setVisibility(View.GONE);
-                    listNameText.setVisibility(View.VISIBLE);
+                ((MasterActivity) getActivity()).onSearchButtonPressed(searchEditText, titleText);
 
-                } else {
-                    searchEditText.setVisibility(View.VISIBLE);
-                    searchEditText.requestFocus();
-                    InputMethodManager imm = (InputMethodManager)
-                            getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.showSoftInput(searchEditText, InputMethodManager.SHOW_IMPLICIT);
-                    listNameText.setVisibility(View.GONE);
-                }
             }
         });
 

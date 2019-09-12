@@ -178,18 +178,7 @@ public class SearchParentFragment extends Fragment {
         searchImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (searchEditText.getVisibility() == View.VISIBLE) {
-                    searchEditText.setVisibility(View.GONE);
-                    titleText.setVisibility(View.VISIBLE);
-
-                } else {
-                    searchEditText.setVisibility(View.VISIBLE);
-                    searchEditText.requestFocus();
-                    InputMethodManager imm = (InputMethodManager)
-                            getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.showSoftInput(searchEditText, InputMethodManager.SHOW_IMPLICIT);
-                    titleText.setVisibility(View.GONE);
-                }
+                ((MasterActivity) getActivity()).onSearchButtonPressed(searchEditText, titleText);
 
                 if (searchMode.equals(SEARCH_MODE_PRESET)) {
 

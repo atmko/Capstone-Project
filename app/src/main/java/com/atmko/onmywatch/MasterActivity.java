@@ -6,12 +6,16 @@ import androidx.work.Constraints;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.atmko.onmywatch.Fragments.DetailsFragment;
 import com.atmko.onmywatch.Fragments.HomeFragment;
@@ -192,6 +196,21 @@ public class MasterActivity extends AppCompatActivity {
 
         //show hidden background fragment
         fragment.getView().findViewById(R.id.top_layout).setVisibility(View.VISIBLE);
+    }
+
+    public void onSearchButtonPressed(EditText searchEditText, TextView toolbarTitle) {
+        if (searchEditText.getVisibility() == View.VISIBLE) {
+            searchEditText.setVisibility(View.GONE);
+            toolbarTitle.setVisibility(View.VISIBLE);
+
+        } else {
+            searchEditText.setVisibility(View.VISIBLE);
+            searchEditText.requestFocus();
+            InputMethodManager imm = (InputMethodManager)
+                    getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(searchEditText, InputMethodManager.SHOW_IMPLICIT);
+            toolbarTitle.setVisibility(View.GONE);
+        }
     }
 
     public boolean isTabletLandscape(){
