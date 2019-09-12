@@ -21,7 +21,8 @@
                 android:resource="@xml/list_widget_provider_info" />
         </receiver>
 
-        <activity android:name="com.atmko.onmywatch.widget.ListWidgetProviderConfigureActivity">
+        <activity android:name="com.atmko.onmywatch.widget.ListWidgetProviderConfigureActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
@@ -39,7 +40,8 @@
 
         <activity
             android:name=".MasterActivity"
-            android:windowSoftInputMode="stateVisible|adjustPan">
+            android:windowSoftInputMode="stateVisible|adjustPan"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -49,21 +51,25 @@
 
         <activity android:name=".CreateListActivity"
             android:excludeFromRecents="true"
-            android:theme="@style/Theme.PopupDialog" />
+            android:theme="@style/Theme.PopupDialog"
+            android:launchMode="singleTop"/>
 
         <activity android:name=".RateActivity"
             android:excludeFromRecents="true"
-            android:theme="@style/Theme.PopupDialog" />
+            android:theme="@style/Theme.PopupDialog"
+            android:launchMode="singleTop"/>
 
         <activity
             android:name=".AddToListActivity"
             android:excludeFromRecents="true"
-            android:theme="@style/Theme.PopupDialog" />
+            android:theme="@style/Theme.PopupDialog"
+            android:launchMode="singleTop"/>
 
         <activity
             android:name=".SettingsActivity"
             android:label="@string/options_settings_title"
-            android:theme="@style/preferences_theme" />
+            android:theme="@style/preferences_theme"
+            android:launchMode="singleTop"/>
 
         <service
             android:name=".widget.ListRemoteViewFactoryService"
