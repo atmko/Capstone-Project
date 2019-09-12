@@ -185,6 +185,9 @@ public class SearchParentFragment extends Fragment {
                 } else {
                     searchEditText.setVisibility(View.VISIBLE);
                     searchEditText.requestFocus();
+                    InputMethodManager imm = (InputMethodManager)
+                            getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(searchEditText, InputMethodManager.SHOW_IMPLICIT);
                     titleText.setVisibility(View.GONE);
                 }
 

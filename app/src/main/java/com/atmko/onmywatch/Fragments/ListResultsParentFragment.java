@@ -2,6 +2,7 @@ package com.atmko.onmywatch.Fragments;
 
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -15,6 +16,7 @@ import androidx.viewpager.widget.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -171,6 +173,9 @@ public class ListResultsParentFragment extends Fragment {
                 } else {
                     searchEditText.setVisibility(View.VISIBLE);
                     searchEditText.requestFocus();
+                    InputMethodManager imm = (InputMethodManager)
+                            getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(searchEditText, InputMethodManager.SHOW_IMPLICIT);
                     listNameText.setVisibility(View.GONE);
                 }
             }
