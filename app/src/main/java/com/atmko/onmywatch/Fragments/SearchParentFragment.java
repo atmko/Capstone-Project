@@ -10,29 +10,23 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
 
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.atmko.onmywatch.MasterActivity;
+import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.atmko.onmywatch.view_models.SearchViewModel;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.SearchManualPagerAdapter;
@@ -42,7 +36,8 @@ import com.atmko.onmywatch.utils.SearchPreferences;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
 
-public class SearchParentFragment extends Fragment {
+public class SearchParentFragment extends Fragment
+        implements SuperEditText.OnKeyBoardDismissListener {
     public static String FRAGMENT_KEY = "search_parent_fragment";
 
     public static final String SEARCH_MODE_PRESET = "preset_search";
@@ -58,7 +53,7 @@ public class SearchParentFragment extends Fragment {
 
     private Bundle mSavedInstanceState;
     private FrameLayout searchFrameLayout;
-    private TextView searchEditTextView;
+    private SuperEditText searchEditTextView;
     private TabLayout mediaTypeTabLayout;
     private FrameLayout searchPresetsTopLayout;
     private TabLayout searchPresetsTabLayout;
@@ -173,7 +168,7 @@ public class SearchParentFragment extends Fragment {
         final TextView titleText = getView().findViewById(R.id.title_text_view);
         titleText.setText(getString(R.string.search_text_literal));
 
-        final EditText searchEditText = getView().findViewById(R.id.search_edit_text_view);
+        final SuperEditText searchEditText = getView().findViewById(R.id.search_edit_text_view);
         searchImageButton = getView().findViewById(R.id.search_image_button);
         searchImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -199,6 +194,7 @@ public class SearchParentFragment extends Fragment {
     private void configureSearchBox() {
         searchFrameLayout = getView().findViewById(R.id.search_frame_layout);
         searchEditTextView = getView().findViewById(R.id.search_edit_text_view);
+        searchEditTextView.setKeyBoardDismissListener(this);
         //configure search box action event
         searchEditTextView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -409,5 +405,12 @@ public class SearchParentFragment extends Fragment {
         outState.putString(SEARCH_MODE_KEY, searchMode);
         outState.putInt(MEDIA_TYPE_KEY, mediaType);
         outState.putParcelable(FRAGMENT_PAGER_ADAPTER_KEY, resultsAdapter.saveState());
+    }
+
+    @Override
+    public void onKeyBoardDismiss() {
+        //set focus to top layout when keyboard dismissed
+        getView().findViewById(R.id.top_layout).requestFocus();
+
     }
 }

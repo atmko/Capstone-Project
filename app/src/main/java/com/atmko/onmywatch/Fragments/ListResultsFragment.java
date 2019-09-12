@@ -11,17 +11,16 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.MediaDataAdapter;
+import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
@@ -30,13 +29,10 @@ import com.atmko.onmywatch.utils.SearchPreferences;
 import com.atmko.onmywatch.view_models.ListResultsViewModelFactory;
 import com.atmko.onmywatch.view_models.ListsResultsViewModel;
 
-import org.parceler.Parcels;
-
 import java.util.Arrays;
 import java.util.List;
 
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
-import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
 
 public class ListResultsFragment extends Fragment implements MediaDataAdapter.OnListItemClickListener{
     public static final String FRAGMENT_KEY = "list_results_fragment";
@@ -60,7 +56,7 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
 
     private MediaDataAdapter mDataAdapter;
     private SearchPreferences mSearchPreferences;
-    private EditText mSearchTextView;
+    private SuperEditText mSearchTextView;
 
     public ListResultsFragment() {
         // Required empty public constructor

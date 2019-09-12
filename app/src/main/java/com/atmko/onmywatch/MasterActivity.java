@@ -14,12 +14,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.atmko.onmywatch.Fragments.DetailsFragment;
 import com.atmko.onmywatch.Fragments.HomeFragment;
 import com.atmko.onmywatch.Fragments.ListResultsParentFragment;
+import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.utils.SearchPreferences;
@@ -198,7 +198,7 @@ public class MasterActivity extends AppCompatActivity {
         fragment.getView().findViewById(R.id.top_layout).setVisibility(View.VISIBLE);
     }
 
-    public void onSearchButtonPressed(EditText searchEditText, TextView toolbarTitle) {
+    public void onSearchButtonPressed(SuperEditText searchEditText, TextView toolbarTitle) {
         if (searchEditText.getVisibility() == View.VISIBLE) {
             searchEditText.setVisibility(View.GONE);
             toolbarTitle.setVisibility(View.VISIBLE);

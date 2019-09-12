@@ -2,7 +2,6 @@ package com.atmko.onmywatch.Fragments;
 
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -16,17 +15,17 @@ import androidx.viewpager.widget.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.atmko.onmywatch.MasterActivity;
+import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.google.android.material.tabs.TabLayout;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.ListResultsUserPagerAdapter;
 
-public class ListResultsParentFragment extends Fragment {
+public class ListResultsParentFragment extends Fragment
+        implements SuperEditText.OnKeyBoardDismissListener {
     public static String FRAGMENT_KEY = "list_results_parent_fragment";
 
     // the fragment initialization parameters
@@ -161,7 +160,8 @@ public class ListResultsParentFragment extends Fragment {
             }
         });
 
-        final EditText searchEditText = getView().findViewById(R.id.search_edit_text_view);
+        final SuperEditText searchEditText = getView().findViewById(R.id.search_edit_text_view);
+        searchEditText.setKeyBoardDismissListener(this);
         final ImageButton searchImageButton = getView().findViewById(R.id.search_image_button);
         searchImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -209,5 +209,12 @@ public class ListResultsParentFragment extends Fragment {
 
             }
         });
+    }
+
+    @Override
+    public void onKeyBoardDismiss() {
+        //set focus to top layout when keyboard dismissed
+        getView().findViewById(R.id.top_layout).requestFocus();
+
     }
 }

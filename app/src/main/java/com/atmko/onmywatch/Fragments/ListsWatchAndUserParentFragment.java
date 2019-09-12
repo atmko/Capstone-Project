@@ -2,16 +2,12 @@ package com.atmko.onmywatch.Fragments;
 
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,10 +19,12 @@ import androidx.viewpager.widget.ViewPager;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.ListWatchAndUserAdapter;
+import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.google.android.material.tabs.TabLayout;
 
 
-public class ListsWatchAndUserParentFragment extends Fragment {
+public class ListsWatchAndUserParentFragment extends Fragment
+        implements SuperEditText.OnKeyBoardDismissListener {
     public static String FRAGMENT_KEY = "lists_watch_and_user_parent_fragment";
     public static final int LIST_TYPE_WATCH = 0;
     public static final int LIST_TYPE_USER = 1;
@@ -128,7 +126,8 @@ public class ListsWatchAndUserParentFragment extends Fragment {
         final TextView titleText = getView().findViewById(R.id.title_text_view);
         titleText.setText(getString(R.string.lists_text_literal));
 
-        final EditText searchEditText = getView().findViewById(R.id.search_edit_text_view);
+        final SuperEditText searchEditText = getView().findViewById(R.id.search_edit_text_view);
+        searchEditText.setKeyBoardDismissListener(this);
         final ImageButton searchImageButton = getView().findViewById(R.id.search_image_button);
         searchImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -177,5 +176,12 @@ public class ListsWatchAndUserParentFragment extends Fragment {
 
             }
         });
+    }
+
+    @Override
+    public void onKeyBoardDismiss() {
+        //set focus to top layout when keyboard dismissed
+        getView().findViewById(R.id.top_layout).requestFocus();
+
     }
 }
