@@ -12,7 +12,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
 
 import android.view.KeyEvent;
@@ -26,7 +25,6 @@ import android.widget.TextView;
 
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.custom_views.SuperEditText;
-import com.atmko.onmywatch.view_models.SearchViewModel;
 import com.google.android.material.tabs.TabLayout;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.SearchManualPagerAdapter;
@@ -60,7 +58,7 @@ public class SearchParentFragment extends Fragment
     private ImageButton searchImageButton;
     private ViewPager searchResultsViewPager;
 
-    private SearchViewModel searchViewModel;
+    private int mCurrentTabPosition;
 
     public SearchParentFragment() {
         // Required empty public constructor
@@ -71,6 +69,10 @@ public class SearchParentFragment extends Fragment
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public int getCurrentTabPosition() {
+        return mCurrentTabPosition;
     }
 
     @Override
@@ -91,8 +93,6 @@ public class SearchParentFragment extends Fragment
 
         //save savedInstanceState value for onCreateAnimator to check if this is the first instance
         mSavedInstanceState = savedInstanceState;
-
-        searchViewModel = ViewModelProviders.of(getActivity()).get(SearchViewModel.class);
 
         defineViews();
 
@@ -309,8 +309,8 @@ public class SearchParentFragment extends Fragment
         searchPresetsTabLayout.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                searchViewModel.setCurrentTabPosition(tab.getPosition());
                 searchResultsViewPager.setCurrentItem(tab.getPosition());
+                mCurrentTabPosition = tab.getPosition();
             }
 
             @Override
@@ -355,8 +355,8 @@ public class SearchParentFragment extends Fragment
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 mediaType = tab.getPosition();
-                searchViewModel.setCurrentTabPosition(tab.getPosition());
                 searchResultsViewPager.setCurrentItem(tab.getPosition());
+                mCurrentTabPosition = tab.getPosition();
             }
 
             @Override

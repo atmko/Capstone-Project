@@ -36,6 +36,7 @@ public class ListResultsParentFragment extends Fragment
     private String mListName;
 
     private Bundle mSavedInstanceState;
+    private int mCurrentTabPosition;
 
     public ListResultsParentFragment() {
         // Required empty public constructor
@@ -48,6 +49,10 @@ public class ListResultsParentFragment extends Fragment
         args.putString(LIST_NAME_KEY, listName);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public int getCurrentTabPosition() {
+        return mCurrentTabPosition;
     }
 
     @Override
@@ -195,6 +200,7 @@ public class ListResultsParentFragment extends Fragment
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 mListsViewPager.setCurrentItem(tab.getPosition());
+                mCurrentTabPosition =  tab.getPosition();
             }
 
             @Override

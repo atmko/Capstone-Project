@@ -340,9 +340,13 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
     //loads detail fragment:
     //if tablet is landscape
     // && detail fragment container has no fragment
+    //&& this is currently selected tab
     // && is containing fragment on top in fragment detail container
     private void loadDetailFragment() {
         MasterActivity masterActivity = ((MasterActivity) getParentFragment().getActivity());
+
+        boolean isCurrentTab =
+                mMediaType == ((ListResultsParentFragment) getParentFragment()).getCurrentTabPosition();
 
         Fragment activeFragment = masterActivity.getSupportFragmentManager()
                 .findFragmentById(R.id.master_fragments_container);
@@ -353,6 +357,7 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
 
         if (masterActivity.isTabletLandscape()
                 && !masterActivity.hasFragment(R.id.detail_fragments_container)
+                && isCurrentTab
                 //TODO consider detaching fragments to disable background updates instead of "isParentActive"
                 && isParentActive) {
 

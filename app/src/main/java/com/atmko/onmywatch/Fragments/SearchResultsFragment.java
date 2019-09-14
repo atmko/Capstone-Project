@@ -5,7 +5,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,7 +17,6 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
-import com.atmko.onmywatch.view_models.SearchViewModel;
 import com.atmko.stack.Stack;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.MediaDataAdapter;
@@ -65,8 +63,6 @@ public class SearchResultsFragment extends Fragment implements
     private Stack stack;
     private SearchPreferences mSearchPreferences;
 
-    private SearchViewModel searchViewModel;
-
     public SearchResultsFragment() {
         // Required empty public constructor
     }
@@ -106,8 +102,6 @@ public class SearchResultsFragment extends Fragment implements
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        searchViewModel = ViewModelProviders.of(getParentFragment().getActivity()).get(SearchViewModel.class);
 
         defineViews();
 
@@ -283,9 +277,10 @@ public class SearchResultsFragment extends Fragment implements
 
             List<String> manualUrlList = Arrays.asList(manualUrls);
 
-            return manualUrlList.indexOf(mSearchUrl) == searchViewModel.getCurrentTabPosition();
+            return manualUrlList.indexOf(mSearchUrl)
+                    == ((SearchParentFragment) getParentFragment()).getCurrentTabPosition();
 
-        //if this is a preset search
+            //if this is a preset search
         } else {
             //get the list of preset search urls and compare it to the this fragment's mSearchUrl
             String[] presetUrls;
@@ -307,7 +302,8 @@ public class SearchResultsFragment extends Fragment implements
 
             List<String> presetUrlList = Arrays.asList(presetUrls);
 
-            return presetUrlList.indexOf(mSearchUrl) == searchViewModel.getCurrentTabPosition();
+            return presetUrlList.indexOf(mSearchUrl) ==
+                    ((SearchParentFragment) getParentFragment()).getCurrentTabPosition();
         }
     }
 
