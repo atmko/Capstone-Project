@@ -9,7 +9,8 @@
     tools:context=".MasterActivity"
     android:background="@color/background"
     android:focusableInTouchMode="true"
-    android:focusable="true">
+    android:focusable="true"
+    android:nextFocusDown="@id/media_type_tab_layout">
 
     <LinearLayout
         android:layout_width="match_parent"
