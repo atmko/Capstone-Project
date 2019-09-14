@@ -208,7 +208,7 @@ public class SearchParentFragment extends Fragment
                     return true;
                 }
 
-                hideSoftKeyboard(searchEditTextView);
+                ((MasterActivity) getActivity()).hideSoftKeyboard(searchEditTextView);
 
                 //set focus to top layout(away from search box)
                 getView().findViewById(R.id.top_layout).requestFocus();
@@ -392,14 +392,6 @@ public class SearchParentFragment extends Fragment
                 searchPreferences);
 
         searchResultsViewPager.setAdapter(resultsAdapter);
-    }
-
-    private void hideSoftKeyboard(View view) {
-        if (view.requestFocus()) {
-            InputMethodManager imm = (InputMethodManager)
-                    getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-        }
     }
 
     @Override

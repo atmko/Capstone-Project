@@ -3,6 +3,7 @@ package com.atmko.onmywatch.Fragments;
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -131,6 +132,17 @@ public class ListsWatchAndUserParentFragment extends Fragment
         titleText.setText(getString(R.string.lists_text_literal));
 
         final SuperEditText searchEditText = getView().findViewById(R.id.search_edit_text_view);
+        searchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                ((MasterActivity) getActivity()).hideSoftKeyboard(searchEditText);
+
+                //set focus to top layout(away from search box)
+                getView().findViewById(R.id.top_layout).requestFocus();
+
+                return true;
+            }
+        });
         searchEditText.setKeyBoardDismissListener(this);
         final ImageButton searchImageButton = getView().findViewById(R.id.search_image_button);
         searchImageButton.setOnClickListener(new View.OnClickListener() {

@@ -286,4 +286,12 @@ public class MasterActivity extends AppCompatActivity {
 
         backgroundFragmentParentView.setVisibility(View.GONE);
     }
+
+    public void hideSoftKeyboard(View view) {
+        if (view.requestFocus()) {
+            InputMethodManager imm = (InputMethodManager)
+                    getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+    }
 }
