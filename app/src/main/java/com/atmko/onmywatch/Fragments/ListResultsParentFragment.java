@@ -115,6 +115,10 @@ public class ListResultsParentFragment extends Fragment
                     //run code after entry animation is complete
                     defineViews();
 
+                    //reserve focus by hiding background fragment
+                    ((MasterActivity) getActivity())
+                            .hideBackgroundFragment(ListResultsParentFragment.this);
+
                 }
 
                 @Override
@@ -151,12 +155,6 @@ public class ListResultsParentFragment extends Fragment
                         .add(R.id.master_fragments_container,searchParentFragment,
                                 SearchParentFragment.FRAGMENT_KEY)
                         .commit();
-
-
-                //save focusable views and remove focus to reserve keyboard focus for newly loaded fragment
-                ((MasterActivity) getActivity()).onFragmentPause(
-                        ListResultsParentFragment.this,
-                        getView().findViewById(R.id.top_layout));
             }
         });
 

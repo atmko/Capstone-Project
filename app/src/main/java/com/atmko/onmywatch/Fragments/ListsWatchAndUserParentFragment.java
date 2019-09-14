@@ -101,6 +101,10 @@ public class ListsWatchAndUserParentFragment extends Fragment
                     //run code after entry animation is complete
                     defineViews();
 
+                    //reserve focus by hiding background fragment
+                    ((MasterActivity) getActivity())
+                            .hideBackgroundFragment(ListsWatchAndUserParentFragment.this);
+
                 }
 
                 @Override

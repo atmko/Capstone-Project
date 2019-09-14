@@ -78,12 +78,8 @@ public class HomeFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        if (!(getActivity().getSupportFragmentManager().findFragmentById(R.id.master_fragments_container)
-                instanceof HomeFragment)) {
+        ((MasterActivity) getActivity()).onResumeMasterContainerFragment(this);
 
-            //hide background fragment to reserve keyboard focus for newly loaded fragment
-            getView().findViewById(R.id.top_layout).setVisibility(View.GONE);
-        }
     }
 
     private void defineViews() {
@@ -119,10 +115,6 @@ public class HomeFragment extends Fragment {
                         .add(R.id.master_fragments_container, listsParentFragment,
                                 ListsWatchAndUserParentFragment.FRAGMENT_KEY)
                         .commit();
-
-                //save focusable views and remove focus to reserve keyboard focus for newly loaded fragment
-                ((MasterActivity) getActivity()).onFragmentPause(
-                        HomeFragment.this, getView().findViewById(R.id.top_layout));
             }
         });
 
@@ -132,15 +124,11 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
                 SearchParentFragment searchParentFragment = SearchParentFragment.newInstance();
 
-                 getActivity().getSupportFragmentManager().beginTransaction()
-                            .setCustomAnimations(R.anim.slide_down_entry, android.R.animator.fade_out)
-                            .add(R.id.master_fragments_container,searchParentFragment,
-                                    SearchParentFragment.FRAGMENT_KEY)
-                            .commit();
-
-                //save focusable views and remove focus to reserve keyboard focus for newly loaded fragment
-                ((MasterActivity) getActivity()).onFragmentPause(
-                        HomeFragment.this, getView().findViewById(R.id.top_layout));
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.slide_down_entry, android.R.animator.fade_out)
+                        .add(R.id.master_fragments_container,searchParentFragment,
+                                SearchParentFragment.FRAGMENT_KEY)
+                        .commit();
             }
         });
     }

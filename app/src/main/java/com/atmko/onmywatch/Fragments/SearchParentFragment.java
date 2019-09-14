@@ -143,6 +143,10 @@ public class SearchParentFragment extends Fragment
                     //load default ui
                     loadPresetSearchUi();
 
+                    //reserve focus by hiding background fragment
+                    ((MasterActivity) getActivity())
+                            .hideBackgroundFragment(SearchParentFragment.this);
+
                 }
 
                 @Override

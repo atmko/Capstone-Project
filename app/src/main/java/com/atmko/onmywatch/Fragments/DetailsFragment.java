@@ -174,6 +174,13 @@ public class DetailsFragment extends Fragment {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     //run code after entry animation is complete
+
+                    //reserve focus by hiding background fragment
+                    if (!((MasterActivity) getActivity()).isTabletLandscape()) {
+                        ((MasterActivity) getActivity())
+                                .hideBackgroundFragment(DetailsFragment.this);
+                    }
+
                     try {
                         getMediaDetails();
 
@@ -365,8 +372,7 @@ public class DetailsFragment extends Fragment {
                 new DetailsViewModelFactory(database, mMediaType, mMediaData.getId());
 
         DetailsViewModel viewModel =
-                ViewModelProviders.of(this, viewModelFactory)
-                .get(DetailsViewModel.class);
+                ViewModelProviders.of(this, viewModelFactory).get(DetailsViewModel.class);
 
 
         LiveData mediaDataLiveData = viewModel.getMediaData();

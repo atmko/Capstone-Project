@@ -12,9 +12,9 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.atmko.onmywatch.Fragments.DetailsFragment;
 import com.atmko.onmywatch.Fragments.HomeFragment;
@@ -29,6 +29,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MasterActivity extends AppCompatActivity {
 
@@ -40,14 +41,6 @@ public class MasterActivity extends AppCompatActivity {
 
     private boolean mIsTabletLandscape;
     private FirebaseAnalytics mFirebaseAnalytics;
-
-    //list of focusable views to be saved for restore
-    //each index resents an added fragment
-    //nested index represents the fragment's views
-    private ArrayList<ArrayList<View>> focusableViewList;
-    //list of last focus before launching new fragment
-    //each index represents an added fragment
-    private ArrayList<View> previousFocusList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,27 +64,22 @@ public class MasterActivity extends AppCompatActivity {
     }
 
     private void setValues() {
-        focusableViewList = new ArrayList<>();
-        previousFocusList = new ArrayList<>();
+
     }
 
     //condition 1
-    //hides master fragment if details fragment is visible (only when two non two pane)
+    //hides master fragment if details fragment is loaded (only when two non two pane)
     //condition 2
     //hides fragment if its not active in master container
     public void onResumeMasterContainerFragment(Fragment fragment) {
         //condition 1
         //if not tablet landscape (not two pane)
         //&& there's a fragment in details container
-        //&& details fragment is visible
         //hide fragment
         if (!mIsTabletLandscape && hasFragment(R.id.detail_fragments_container)) {
-            if (getSupportFragmentManager().findFragmentById(R.id.detail_fragments_container)
-                    .isVisible()) {
+            //hide background fragment to reserve keyboard focus for newly loaded fragment
+            fragment.getView().findViewById(R.id.top_layout).setVisibility(View.GONE);
 
-                //hide background fragment to reserve keyboard focus for newly loaded fragment
-                fragment.getView().findViewById(R.id.top_layout).setVisibility(View.GONE);
-            }
         }
 
         //condition 2
@@ -107,7 +95,7 @@ public class MasterActivity extends AppCompatActivity {
         if (!masterContainerFragmentName.equals(resumedFragmentName)) {
 
             //hide background fragment to reserve keyboard focus for newly loaded fragment
-            fragment.getView().findViewById(R.id.top_layout).setVisibility(View.GONE);
+            hideFragment(fragment);
         }
     }
 
@@ -188,11 +176,6 @@ public class MasterActivity extends AppCompatActivity {
         //finish above transaction to prevent null data
         getSupportFragmentManager().executePendingTransactions();
         fragment = getSupportFragmentManager().findFragmentById(R.id.master_fragments_container);
-        if (focusableViewList.size() != 0) {
-            //restore fragment focus to allow keyboard focus
-            onFragmentResume(fragment, fragment.getView().findViewById(R.id.top_layout));
-
-        }
 
         //show hidden background fragment
         fragment.getView().findViewById(R.id.top_layout).setVisibility(View.VISIBLE);
@@ -266,13 +249,6 @@ public class MasterActivity extends AppCompatActivity {
                 .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
                 .add(R.id.detail_fragments_container, detailsFragment, DetailsFragment.FRAGMENT_KEY)
                 .commit();
-
-        //if not tablet landscape (two pane)
-        if (!mIsTabletLandscape) {
-            //save focusable views and remove focus to reserve keyboard focus for newly loaded fragment
-            View parentView = fragment.getParentFragment().getView().findViewById(R.id.top_layout);
-            onFragmentPause(fragment, parentView);
-        }
     }
 
     public void launchAddToListActivity(MediaData mediaData) {
@@ -285,77 +261,29 @@ public class MasterActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    //source: https://stackoverflow.com/questions/46034391/disable-focus-on-fragment
-    //user:Veljko
-    //date: Feb 7 '18
-    public void onFragmentResume(Fragment fragment, View parentView) {
-        int fragmentIndex = focusableViewList.size() - 1;
-
-        //Enable focus
+    public void hideBackgroundFragment(Fragment fragment) {
         if (fragment.getView() != null) {
+            List<Fragment> fragments = getSupportFragmentManager().getFragments();
 
-            //Enable focus
-            setEnableView((ViewGroup) parentView, true, fragmentIndex);
+            int fragmentIndex = fragments.indexOf(fragment);
+            int backgroundFragmentIndex = fragmentIndex - 1;
 
-            //Clear focusable elements
-            focusableViewList.remove(focusableViewList.get(fragmentIndex));
-        }
+            Fragment backgroundFragment = fragments.get(backgroundFragmentIndex);
 
-        //Restore previous focus
-        if (previousFocusList.get(fragmentIndex) != null) {
-            previousFocusList.get(fragmentIndex).requestFocus();
-            //clear previous focus
-            previousFocusList.remove(previousFocusList.get(fragmentIndex));
-        }
-    }
-
-    public void onFragmentPause(Fragment fragment, View parentView) {
-
-        //Disable focus and store previously focused
-        if (fragment.getView() != null) {
-
-            //Store last focused element
-            previousFocusList.add(fragment.getView().findFocus());
-
-            //add new focusableViews
-            focusableViewList.add(new ArrayList<View>());
-
-            //Clear current focus
-            fragment.getView().clearFocus();
-
-            int fragmentIndex = focusableViewList.size() - 1;
-
-            //Disable focus
-            setEnableView((ViewGroup) parentView, false, fragmentIndex);
-        }
-    }
-
-    //finds and save focusable views using parent view
-    private void findFocusableViews(ViewGroup viewGroup, int fragmentIndex) {
-
-        int childCount = viewGroup.getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            View view = viewGroup.getChildAt(i);
-            if (view.isFocusable()) {
-                if (!focusableViewList.get(fragmentIndex).contains(view)) {
-                    focusableViewList.get(fragmentIndex).add(view);
-                }
+            if (backgroundFragment instanceof DetailsFragment) {
+                backgroundFragmentIndex = backgroundFragmentIndex - 1;
+                backgroundFragment = fragments.get(backgroundFragmentIndex);
             }
-            if (view instanceof ViewGroup) {
-                findFocusableViews((ViewGroup) view, fragmentIndex);
-            }
+
+            Toast.makeText(this, backgroundFragment.getClass().getSimpleName(), Toast.LENGTH_SHORT).show();
+            hideFragment(backgroundFragment);
         }
     }
 
-    //set view enabled/focusable properties
-    private void setEnableView(ViewGroup viewGroup, boolean isEnabled, int fragmentIndex) {
+    private void hideFragment(Fragment fragment) {
+        View backgroundFragmentParentView =
+                fragment.getView().findViewById(R.id.top_layout);
 
-        //Find focusable elements
-        findFocusableViews(viewGroup, fragmentIndex);
-
-        for (View view : focusableViewList.get(fragmentIndex)) {
-            view.setEnabled(isEnabled);
-            view.setFocusable(isEnabled);
-        }
+        backgroundFragmentParentView.setVisibility(View.GONE);
     }
 }
