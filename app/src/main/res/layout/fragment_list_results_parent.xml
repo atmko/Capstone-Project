@@ -59,6 +59,6 @@
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         style="@style/fab_style"
         android:id="@+id/search_list_fab"
-        android:src="@drawable/ic_fab_add_to_list"/>
+        android:src="@drawable/ic_discover"/>
 
 </FrameLayout>
