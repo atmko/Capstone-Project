@@ -8,6 +8,7 @@ import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -173,14 +174,14 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
 
                     observeWatchListCounts(viewModel);
 
-                    //restore values to views but only
-                    //if saved state exists
-                    //&& if this is the first run
-                    if (mSavedInstanceState != null && mFirstInit) {
-                        MasterActivity masterActivity = ((MasterActivity) getActivity());
-                        masterActivity.restoreSavedSearch(ListWatchAndUserFragment.this,
-                                mFirstInit, mSavedInstanceState, mSearchTextView);
-                    }
+                    //restore search if it exists
+                    final ImageButton searchImageButton = getParentFragment().
+                            getView().findViewById(R.id.search_image_button);
+                    MasterActivity masterActivity = ((MasterActivity) getActivity());
+                    masterActivity.restoreSavedSearch(ListWatchAndUserFragment.this,
+                            mFirstInit, mSavedInstanceState, searchImageButton, mSearchTextView);
+
+                    mFirstInit = false;
                 }
             });
 
@@ -191,14 +192,14 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
                     ((UserListsAdapter) mAdapter).getAdapterData().clear();
                     ((UserListsAdapter) mAdapter).addAdapterData(userListModels);
 
-                    //restore values to views but only
-                    //if saved state exists
-                    //&& if this is the first run
-                    if (mSavedInstanceState != null && mFirstInit) {
-                        MasterActivity masterActivity = ((MasterActivity) getActivity());
-                        masterActivity.restoreSavedSearch(ListWatchAndUserFragment.this,
-                                mFirstInit, mSavedInstanceState, mSearchTextView);
-                    }
+                    //restore search if it exists
+                    final ImageButton searchImageButton = getParentFragment().
+                            getView().findViewById(R.id.search_image_button);
+                    MasterActivity masterActivity = ((MasterActivity) getActivity());
+                    masterActivity.restoreSavedSearch(ListWatchAndUserFragment.this,
+                            mFirstInit, mSavedInstanceState, searchImageButton, mSearchTextView);
+
+                    mFirstInit = false;
                 }
             });
         }

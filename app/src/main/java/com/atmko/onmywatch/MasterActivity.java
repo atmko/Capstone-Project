@@ -296,19 +296,35 @@ public class MasterActivity extends AppCompatActivity {
         }
     }
 
-    //value restore convenience method
+    //search restore convenience method
     public void restoreSavedSearch(Fragment fragment, boolean firstInit, Bundle savedInstanceState,
-                                   SuperEditText searchTextView) {
-        firstInit = false;
+                                   ImageButton searchButton, SuperEditText searchTextView) {
 
-        String savedSearchText = savedInstanceState.getString(SEARCH_TEXT_KEY);
-        int savedBarVisibility = savedInstanceState.getInt(SEARCH_BAR_VISIBILITY_KEY);
-        if (savedBarVisibility == View.VISIBLE) {
-            fragment.getParentFragment()
-                    .getView().findViewById(R.id.title_text_view).setVisibility(View.GONE);
+        String savedSearchText;
+        int savedBarVisibility;
+
+        if (savedInstanceState != null && firstInit) {
+            savedSearchText = savedInstanceState.getString(SEARCH_TEXT_KEY);
+            savedBarVisibility = savedInstanceState.getInt(SEARCH_BAR_VISIBILITY_KEY);
+
+        } else {
+            savedSearchText = searchTextView.getText().toString();
+            savedBarVisibility = searchTextView.getVisibility();
         }
+
         searchTextView.setText(savedSearchText);
         searchTextView.setVisibility(savedBarVisibility);
+
+        if (savedBarVisibility == View.VISIBLE) {
+            searchButton.setImageResource(R.drawable.ic_cancel_manual_search);
+
+            fragment.getParentFragment()
+                    .getView().findViewById(R.id.title_text_view).setVisibility(View.GONE);
+
+        } else {
+            searchButton.setImageResource(R.drawable.ic_manual_search);
+
+        }
     }
 
     public void hideSoftKeyboard(View view) {
