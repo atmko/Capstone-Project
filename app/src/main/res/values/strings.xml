@@ -93,6 +93,9 @@
 
         <string name="rate_divider">/</string>
         <string name="rate_default_overall_rating">10</string>
+
+        <string name="detail_overview_tag_show_more" translatable="false">show more</string>
+        <string name="detail_overview_tag_show_less" translatable="false">show less</string>
         <!--details text-->
 
         <!--watch_status text-->

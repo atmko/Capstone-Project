@@ -32,4 +32,8 @@
     <integer name="rate_activity_popup_screen_percent">80</integer>
     <!--POPUP PERCENTAGES-->
 
+    <!--DETAIL VALUES-->
+    <integer name="detail_overview_cutoff_index">167</integer>
+    <!--DETAIL VALUES-->
+
 </resources>

@@ -95,6 +95,9 @@ public class DetailsFragment extends Fragment {
     private ViewPager detailExtrasViewPager;
     private TextView releaseStatusTextView;
 
+    //values
+    private int mOverviewCutoffIndex;
+
     public DetailsFragment() {
         // Required empty public constructor
     }
@@ -136,6 +139,7 @@ public class DetailsFragment extends Fragment {
         mSavedInstanceState = savedInstanceState;
 
         defineViews();
+        defineValues();
 
         observeViewModel();
 
@@ -234,7 +238,6 @@ public class DetailsFragment extends Fragment {
         return result;
     }
 
-
     private void defineViews() {
         //if mIsTablet landscape (2-pane), remove up navigation button from details layout
         ImageButton upNavigationButton = getView().findViewById(R.id.up_navigation_button);
@@ -313,6 +316,15 @@ public class DetailsFragment extends Fragment {
             }
         });
 
+        //configure show more overview button
+        getView().findViewById(R.id.show_more_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((TextView) getView().findViewById(R.id.overView_text_view))
+                        .setText(limitText(mMediaData.getOverview(), mOverviewCutoffIndex));
+            }
+        });
+
         //define views dependent on retrieving details
         detailExtrasTabLayout = getView().findViewById(R.id.detail_extras_tab_layout);
         detailExtrasViewPager = getView().findViewById(R.id.details_extra_view_pager);
@@ -321,6 +333,10 @@ public class DetailsFragment extends Fragment {
 
         releaseStatusTextView = getView().findViewById(R.id.release_status_text);
 
+    }
+
+    private void defineValues() {
+        mOverviewCutoffIndex = getResources().getInteger(R.integer.detail_overview_cutoff_index);
     }
 
     private void configureDetailExtrasSize() {
@@ -535,7 +551,9 @@ public class DetailsFragment extends Fragment {
 
         ((TextView) getView().findViewById(R.id.rating_text_view)).setText(mMediaData.getVoteAverage());
 
-        ((TextView) getView().findViewById(R.id.overView_text_view)).setText(mMediaData.getOverview());
+        //set overview text
+        ((TextView) getView().findViewById(R.id.overView_text_view)).setText(
+                limitText(mMediaData.getOverview(), mOverviewCutoffIndex));
     }
 
     private void setDetailViewValues() {
@@ -575,6 +593,38 @@ public class DetailsFragment extends Fragment {
 
                 getView().findViewById(R.id.genre_1_text_view).setVisibility(View.GONE);
             }
+        }
+    }
+
+    //limit long text
+    private String limitText(String fullText, int cutOffIndex) {
+        //get show more button
+        ImageButton showMoreButton = getView().findViewById(R.id.show_more_button);
+        showMoreButton.setVisibility(View.VISIBLE);
+
+        //return reduced text if...
+        //if overview length is more than cut off index
+        //&& show more button tag is show less
+        if (fullText.length() > cutOffIndex
+                && (showMoreButton.getTag()).equals(getString(R.string.detail_overview_tag_show_less))) {
+            String reducedText = fullText.subSequence(0, cutOffIndex) + "...";
+
+            //toggle values
+            showMoreButton.setImageResource(R.drawable.ic_show_more);
+            showMoreButton.setTag(getString(R.string.detail_overview_tag_show_more));
+
+            return reducedText;
+
+
+        } else {//return full text
+            //hide show more button
+            if (fullText.length() <= cutOffIndex)showMoreButton.setVisibility(View.GONE);
+
+            //toggle values
+            showMoreButton.setImageResource(R.drawable.ic_show_less);
+            showMoreButton.setTag(getString(R.string.detail_overview_tag_show_less));
+
+            return fullText;
         }
     }
 
