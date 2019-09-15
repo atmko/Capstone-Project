@@ -11,11 +11,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import com.androidnetworking.common.ANRequest;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.atmko.onmywatch.MasterActivity;
+import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 import com.atmko.stack.Stack;
 import com.atmko.onmywatch.R;
@@ -59,9 +61,13 @@ public class SearchResultsFragment extends Fragment implements
     private static final String ADAPTER_DATA_LIST_KEY = "adapter_data_list";
     private static final String PAGING_BLOCK_MAP_KEY = "paging_block_map";
 
+    //check for restoring state
+    boolean mFirstInit = true;
     private RecyclerView.Adapter mDataAdapter;
     private Stack stack;
     private SearchPreferences mSearchPreferences;
+    private SuperEditText mSearchTextView;
+
 
     public SearchResultsFragment() {
         // Required empty public constructor
@@ -109,6 +115,15 @@ public class SearchResultsFragment extends Fragment implements
             loadSearch();
 
         } else {
+            //restore search if it exists
+            final ImageButton searchImageButton = getParentFragment().
+                    getView().findViewById(R.id.search_image_button);
+            MasterActivity masterActivity = ((MasterActivity) getActivity());
+            masterActivity.restoreSavedSearch(SearchResultsFragment.this,
+                    mFirstInit, savedInstanceState, searchImageButton, mSearchTextView);
+
+            mFirstInit = false;
+
             if (mMediaType == MEDIA_TYPE_PEOPLE) {
                 //get saved adapter data list
                 List<PersonData> mediaDataList = Parcels.unwrap(
@@ -166,6 +181,10 @@ public class SearchResultsFragment extends Fragment implements
         stack = new Stack(false,getResources().getInteger(R.integer.stack_block_limit),
                 pagingBlockTemplate, recyclerView, mDataAdapter);
         recyclerView.addOnScrollListener(stack);
+
+        //get search bar from parent fragment
+        mSearchTextView =
+                getParentFragment().getView().findViewById(R.id.search_edit_text_view);
     }
 
     private void loadSearch() {
@@ -334,5 +353,12 @@ public class SearchResultsFragment extends Fragment implements
         }
 
         outState.putIntArray(PAGING_BLOCK_MAP_KEY, stack.saveBlockStructure());
+
+        //save search bar text
+        outState.putString(MasterActivity.SEARCH_TEXT_KEY, mSearchTextView.getText().toString());
+
+        //save search bar visibility
+        outState.putInt(MasterActivity.SEARCH_BAR_VISIBILITY_KEY, mSearchTextView.getVisibility());
+
     }
 }
