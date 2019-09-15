@@ -40,6 +40,9 @@ public class MasterActivity extends AppCompatActivity {
     public static final int MEDIA_TYPE_MOVIE = 1;
     public static final int MEDIA_TYPE_PEOPLE = 2;
 
+    public static final String SEARCH_TEXT_KEY = "search_text";
+    public static final String SEARCH_BAR_VISIBILITY_KEY = "visible_search_bar";
+
     private boolean mIsTabletLandscape;
     private FirebaseAnalytics mFirebaseAnalytics;
 
@@ -182,26 +185,6 @@ public class MasterActivity extends AppCompatActivity {
         fragment.getView().findViewById(R.id.top_layout).setVisibility(View.VISIBLE);
     }
 
-    public void onSearchButtonPressed(ImageButton searchButton,
-                                      SuperEditText searchEditText, TextView toolbarTitle) {
-        if (searchEditText.getVisibility() == View.VISIBLE) {
-            searchEditText.setText("");
-            hideSoftKeyboard(searchEditText);
-            searchButton.setImageResource(R.drawable.ic_manual_search);
-            searchEditText.setVisibility(View.GONE);
-            toolbarTitle.setVisibility(View.VISIBLE);
-
-        } else {
-            searchButton.setImageResource(R.drawable.ic_cancel_manual_search);
-            searchEditText.setVisibility(View.VISIBLE);
-            searchEditText.requestFocus();
-            InputMethodManager imm = (InputMethodManager)
-                    getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(searchEditText, InputMethodManager.SHOW_IMPLICIT);
-            toolbarTitle.setVisibility(View.GONE);
-        }
-    }
-
     public boolean isTabletLandscape(){
         return mIsTabletLandscape;
     }
@@ -291,6 +274,41 @@ public class MasterActivity extends AppCompatActivity {
                 fragment.getView().findViewById(R.id.top_layout);
 
         backgroundFragmentParentView.setVisibility(View.GONE);
+    }
+
+    public void onSearchButtonPressed(ImageButton searchButton,
+                                      SuperEditText searchEditText, TextView toolbarTitle) {
+        if (searchEditText.getVisibility() == View.VISIBLE) {
+            searchEditText.setText("");
+            hideSoftKeyboard(searchEditText);
+            searchButton.setImageResource(R.drawable.ic_manual_search);
+            searchEditText.setVisibility(View.GONE);
+            toolbarTitle.setVisibility(View.VISIBLE);
+
+        } else {
+            searchButton.setImageResource(R.drawable.ic_cancel_manual_search);
+            searchEditText.setVisibility(View.VISIBLE);
+            searchEditText.requestFocus();
+            InputMethodManager imm = (InputMethodManager)
+                    getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(searchEditText, InputMethodManager.SHOW_IMPLICIT);
+            toolbarTitle.setVisibility(View.GONE);
+        }
+    }
+
+    //value restore convenience method
+    public void restoreSavedSearch(Fragment fragment, boolean firstInit, Bundle savedInstanceState,
+                                   SuperEditText searchTextView) {
+        firstInit = false;
+
+        String savedSearchText = savedInstanceState.getString(SEARCH_TEXT_KEY);
+        int savedBarVisibility = savedInstanceState.getInt(SEARCH_BAR_VISIBILITY_KEY);
+        if (savedBarVisibility == View.VISIBLE) {
+            fragment.getParentFragment()
+                    .getView().findViewById(R.id.title_text_view).setVisibility(View.GONE);
+        }
+        searchTextView.setText(savedSearchText);
+        searchTextView.setVisibility(savedBarVisibility);
     }
 
     public void hideSoftKeyboard(View view) {

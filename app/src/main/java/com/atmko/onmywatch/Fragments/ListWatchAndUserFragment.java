@@ -43,10 +43,6 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
     private static final String LIST_TYPE_KEY = "list_type";
     private int mListType;
 
-    //post initialization parameters
-    private static final String SEARCH_TEXT_KEY = "search_text";
-    private static final String SEARCH_BAR_VISIBILITY_KEY = "visible_search_bar";
-
     //check for restoring state
     private boolean mFirstInit = true;
     private Bundle mSavedInstanceState;
@@ -101,10 +97,10 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
         super.onSaveInstanceState(outState);
 
         //save search bar text
-        outState.putString(SEARCH_TEXT_KEY, mSearchTextView.getText().toString());
+        outState.putString(MasterActivity.SEARCH_TEXT_KEY, mSearchTextView.getText().toString());
 
         //save search bar visibility
-        outState.putInt(SEARCH_BAR_VISIBILITY_KEY, mSearchTextView.getVisibility());
+        outState.putInt(MasterActivity.SEARCH_BAR_VISIBILITY_KEY, mSearchTextView.getVisibility());
     }
 
     private void defineViews() {
@@ -157,20 +153,6 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
         });
     }
 
-    //value restore convenience method
-    private void restoreSavedSearch(Bundle savedInstanceState) {
-        mFirstInit = false;
-
-        String savedSearchText = savedInstanceState.getString(SEARCH_TEXT_KEY);
-        int savedBarVisibility = savedInstanceState.getInt(SEARCH_BAR_VISIBILITY_KEY);
-        if (savedBarVisibility == View.VISIBLE) {
-            getParentFragment()
-                    .getView().findViewById(R.id.title_text_view).setVisibility(View.GONE);
-        }
-        mSearchTextView.setText(savedSearchText);
-        mSearchTextView.setVisibility(savedBarVisibility);
-    }
-
     private GridLayoutManager configureLayoutManager() {
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 1);
 
@@ -195,8 +177,9 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
                     //if saved state exists
                     //&& if this is the first run
                     if (mSavedInstanceState != null && mFirstInit) {
-                        restoreSavedSearch(mSavedInstanceState);
-
+                        MasterActivity masterActivity = ((MasterActivity) getActivity());
+                        masterActivity.restoreSavedSearch(ListWatchAndUserFragment.this,
+                                mFirstInit, mSavedInstanceState, mSearchTextView);
                     }
                 }
             });
@@ -212,8 +195,9 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
                     //if saved state exists
                     //&& if this is the first run
                     if (mSavedInstanceState != null && mFirstInit) {
-                        restoreSavedSearch(mSavedInstanceState);
-
+                        MasterActivity masterActivity = ((MasterActivity) getActivity());
+                        masterActivity.restoreSavedSearch(ListWatchAndUserFragment.this,
+                                mFirstInit, mSavedInstanceState, mSearchTextView);
                     }
                 }
             });

@@ -50,10 +50,6 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
     private int mMediaType;
     private String mListName;
 
-    //post initialization parameters
-    private static final String SEARCH_TEXT_KEY = "search_text";
-    private static final String SEARCH_BAR_VISIBILITY_KEY = "visible_search_bar";
-
     private MediaDataAdapter mDataAdapter;
     private SearchPreferences mSearchPreferences;
     private SuperEditText mSearchTextView;
@@ -105,10 +101,10 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
         super.onSaveInstanceState(outState);
 
         //save search bar text
-        outState.putString(SEARCH_TEXT_KEY, mSearchTextView.getText().toString());
+        outState.putString(MasterActivity.SEARCH_TEXT_KEY, mSearchTextView.getText().toString());
 
         //save search bar visibility
-        outState.putInt(SEARCH_BAR_VISIBILITY_KEY, mSearchTextView.getVisibility());
+        outState.putInt(MasterActivity.SEARCH_BAR_VISIBILITY_KEY, mSearchTextView.getVisibility());
     }
 
     private void defineViews() {
@@ -143,20 +139,6 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
         });
     }
 
-    //value restore convenience method
-    private void restoreSavedSearch(Bundle savedInstanceState) {
-        mFirstInit = false;
-
-        String savedSearchText = savedInstanceState.getString(SEARCH_TEXT_KEY);
-        int savedBarVisibility = savedInstanceState.getInt(SEARCH_BAR_VISIBILITY_KEY);
-        if (savedBarVisibility == View.VISIBLE) {
-            getParentFragment()
-                    .getView().findViewById(R.id.title_text_view).setVisibility(View.GONE);
-        }
-        mSearchTextView.setText(savedSearchText);
-        mSearchTextView.setVisibility(savedBarVisibility);
-    }
-
     private void observeData(final Bundle savedInstanceState) {
         final String[] watchStatusMoviesTitles = getContext().getResources()
                 .getStringArray(R.array.watch_status_movie_titles);
@@ -183,7 +165,9 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
                         //if saved state exists
                         //&& if this is the first run
                         if (savedInstanceState != null && mFirstInit) {
-                            restoreSavedSearch(savedInstanceState);
+                            MasterActivity masterActivity = ((MasterActivity) getActivity());
+                            masterActivity.restoreSavedSearch(ListResultsFragment.this,
+                                    mFirstInit, savedInstanceState, mSearchTextView);
 
                         }
                     }
@@ -200,8 +184,9 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
                         //if saved state exists
                         //&& if this is the first run
                         if (savedInstanceState != null && mFirstInit) {
-                            restoreSavedSearch(savedInstanceState);
-
+                            MasterActivity masterActivity = ((MasterActivity) getActivity());
+                            masterActivity.restoreSavedSearch(ListResultsFragment.this,
+                                    mFirstInit, savedInstanceState, mSearchTextView);
                         }
                     }
                 });
@@ -221,8 +206,9 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
                         //if saved state exists
                         //&& if this is the first run
                         if (savedInstanceState != null && mFirstInit) {
-                            restoreSavedSearch(savedInstanceState);
-
+                            MasterActivity masterActivity = ((MasterActivity) getActivity());
+                            masterActivity.restoreSavedSearch(ListResultsFragment.this,
+                                    mFirstInit, savedInstanceState, mSearchTextView);
                         }
                     }
                 });
@@ -238,8 +224,9 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
                         //if saved state exists
                         //&& if this is the first run
                         if (savedInstanceState != null && mFirstInit) {
-                            restoreSavedSearch(savedInstanceState);
-
+                            MasterActivity masterActivity = ((MasterActivity) getActivity());
+                            masterActivity.restoreSavedSearch(ListResultsFragment.this,
+                                    mFirstInit, savedInstanceState, mSearchTextView);
                         }
                     }
                 });
