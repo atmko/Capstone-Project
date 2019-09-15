@@ -13,6 +13,7 @@ import android.os.Parcelable;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -181,12 +182,17 @@ public class MasterActivity extends AppCompatActivity {
         fragment.getView().findViewById(R.id.top_layout).setVisibility(View.VISIBLE);
     }
 
-    public void onSearchButtonPressed(SuperEditText searchEditText, TextView toolbarTitle) {
+    public void onSearchButtonPressed(ImageButton searchButton,
+                                      SuperEditText searchEditText, TextView toolbarTitle) {
         if (searchEditText.getVisibility() == View.VISIBLE) {
+            searchEditText.setText("");
+            hideSoftKeyboard(searchEditText);
+            searchButton.setImageResource(R.drawable.ic_manual_search);
             searchEditText.setVisibility(View.GONE);
             toolbarTitle.setVisibility(View.VISIBLE);
 
         } else {
+            searchButton.setImageResource(R.drawable.ic_cancel_manual_search);
             searchEditText.setVisibility(View.VISIBLE);
             searchEditText.requestFocus();
             InputMethodManager imm = (InputMethodManager)

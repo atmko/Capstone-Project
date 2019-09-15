@@ -148,8 +148,8 @@ public class ListsWatchAndUserParentFragment extends Fragment
         searchImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MasterActivity) getActivity()).onSearchButtonPressed(searchEditText, titleText);
-
+                ((MasterActivity) getActivity()).onSearchButtonPressed(searchImageButton,
+                        searchEditText, titleText);
             }
         });
 

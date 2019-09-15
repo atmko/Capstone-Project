@@ -181,8 +181,8 @@ public class ListResultsParentFragment extends Fragment
         searchImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MasterActivity) getActivity()).onSearchButtonPressed(searchEditText, titleText);
-            }
+                ((MasterActivity) getActivity()).onSearchButtonPressed(searchImageButton,
+                        searchEditText, titleText);            }
         });
 
         TabLayout mMediaTypeTabLayout = getView().findViewById(R.id.media_type_tab_layout);

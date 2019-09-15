@@ -177,7 +177,8 @@ public class SearchParentFragment extends Fragment
         searchImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MasterActivity) getActivity()).onSearchButtonPressed(searchEditText, titleText);
+                ((MasterActivity) getActivity()).onSearchButtonPressed(searchImageButton,
+                        searchEditText, titleText);
 
                 if (searchMode.equals(SEARCH_MODE_PRESET)) {
 
@@ -226,7 +227,6 @@ public class SearchParentFragment extends Fragment
         searchPresetsTopLayout.setVisibility(View.VISIBLE);
 
         searchMode = SEARCH_MODE_PRESET;
-        searchImageButton.setImageResource(R.drawable.ic_manual_search);
 
         configurePresetMediaTypeTabLayout();
         loadPresetTabAndPager();
@@ -330,7 +330,6 @@ public class SearchParentFragment extends Fragment
         searchPresetsTopLayout.setVisibility(View.GONE);
 
         searchMode = SEARCH_MODE_MANUAL;
-        searchImageButton.setImageResource(R.drawable.ic_cancel_manual_search);
 
         configureManualMediaTypeTabLayout();
         loadManualPager(searchEditTextView.getText().toString());
