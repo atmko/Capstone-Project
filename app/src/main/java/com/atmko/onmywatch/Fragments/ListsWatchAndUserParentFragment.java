@@ -31,8 +31,6 @@ public class ListsWatchAndUserParentFragment extends Fragment
     public static final int LIST_TYPE_USER = 1;
 
     private Bundle mSavedInstanceState;
-    private ViewPager mViewPager;
-    private ListWatchAndUserAdapter mListWatchAndUserAdapter;
 
     public ListsWatchAndUserParentFragment() {
         // Required empty public constructor
@@ -169,10 +167,10 @@ public class ListsWatchAndUserParentFragment extends Fragment
 
         mListsViewPager.setOffscreenPageLimit(listTypeNames.length - 1);
 
-        mViewPager = getView().findViewById(R.id.lists_view_pager);
-        mListWatchAndUserAdapter = new ListWatchAndUserAdapter(getChildFragmentManager(),
+        ListWatchAndUserAdapter mListWatchAndUserAdapter = new ListWatchAndUserAdapter(getChildFragmentManager(),
                 FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
-        mViewPager.setAdapter(mListWatchAndUserAdapter);
+
+        mListsViewPager.setAdapter(mListWatchAndUserAdapter);
 
         //configure listeners
         mListsViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mMediaTypeTabLayout));

@@ -201,7 +201,7 @@ public class ListResultsParentFragment extends Fragment
         mListsViewPager.setOffscreenPageLimit(listMediaTypes.length - 1);
 
         FragmentStatePagerAdapter resultsAdapter = new ListResultsUserPagerAdapter(getChildFragmentManager(),
-                FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT,getContext(),
+                FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, getContext(),
                 mListType, mListName);
 
         mListsViewPager.setAdapter(resultsAdapter);
