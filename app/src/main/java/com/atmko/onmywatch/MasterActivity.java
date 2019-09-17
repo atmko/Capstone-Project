@@ -1,5 +1,6 @@
 package com.atmko.onmywatch;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -30,7 +31,6 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.parceler.Parcels;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MasterActivity extends AppCompatActivity {
@@ -41,9 +41,13 @@ public class MasterActivity extends AppCompatActivity {
     public static final int MEDIA_TYPE_MOVIE = 1;
     public static final int MEDIA_TYPE_PEOPLE = 2;
 
+    public static final String KEYBOARD_VISIBILITY_KEY = "keyboard_visibility";
+
     public static final String SEARCH_TEXT_KEY = "search_text";
     public static final String SEARCH_BAR_VISIBILITY_KEY = "visible_search_bar";
 
+    //for restoring keyboard visibility upon configuration change
+    private boolean mIsKeyboardVisible;
     private boolean mIsTabletLandscape;
     private FirebaseAnalytics mFirebaseAnalytics;
 
@@ -53,7 +57,7 @@ public class MasterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_master);
 
         //set / restore values
-        setValues();
+        setValues(savedInstanceState);
 
         mIsTabletLandscape = getResources().getBoolean(R.bool.isTabletLandscape);
 
@@ -68,8 +72,20 @@ public class MasterActivity extends AppCompatActivity {
         }
     }
 
-    private void setValues() {
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
 
+        //save keyboard visibility value
+        outState.putBoolean(KEYBOARD_VISIBILITY_KEY, mIsKeyboardVisible);
+    }
+
+    private void setValues(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            //restore keyboard visibility value
+            mIsKeyboardVisible =
+                    savedInstanceState.getBoolean(KEYBOARD_VISIBILITY_KEY);
+        }
     }
 
     //condition 1
@@ -188,6 +204,19 @@ public class MasterActivity extends AppCompatActivity {
         //set toolbar
         Toolbar toolbar = fragment.getView().findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //restore search bar visibility if title is hidden
+        //exclude fragments that don't have search bar
+        if (!(fragment instanceof HomeFragment)) {
+            TextView titleTextView =
+                    fragment.getView().findViewById(R.id.title_text_view);
+
+            if (titleTextView.getVisibility() != View.VISIBLE) {
+                SuperEditText searchTextView =
+                        fragment.getView().findViewById(R.id.search_edit_text_view);
+                showSearchBar(searchTextView);
+            }
+        }
     }
 
     public boolean isTabletLandscape(){
@@ -271,6 +300,14 @@ public class MasterActivity extends AppCompatActivity {
 
             Toast.makeText(this, backgroundFragment.getClass().getSimpleName(), Toast.LENGTH_SHORT).show();
             hideFragment(backgroundFragment);
+
+            //hide search bar and dismiss keyboard
+            //exclude fragments that don't have search bar
+            if (!(backgroundFragment instanceof HomeFragment)) {
+                SuperEditText searchTextView =
+                backgroundFragment.getView().findViewById(R.id.search_edit_text_view);
+                hideSearchBar(searchTextView);
+            }
         }
     }
 
@@ -285,18 +322,15 @@ public class MasterActivity extends AppCompatActivity {
                                       SuperEditText searchEditText, TextView toolbarTitle) {
         if (searchEditText.getVisibility() == View.VISIBLE) {
             searchEditText.setText("");
-            hideSoftKeyboard(searchEditText);
             searchButton.setImageResource(R.drawable.ic_manual_search);
-            searchEditText.setVisibility(View.GONE);
+            hideSearchBar(searchEditText);
             toolbarTitle.setVisibility(View.VISIBLE);
 
         } else {
             searchButton.setImageResource(R.drawable.ic_cancel_manual_search);
             searchEditText.setVisibility(View.VISIBLE);
             searchEditText.requestFocus();
-            InputMethodManager imm = (InputMethodManager)
-                    getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(searchEditText, InputMethodManager.SHOW_IMPLICIT);
+            showSoftKeyboard(searchEditText);
             toolbarTitle.setVisibility(View.GONE);
         }
     }
@@ -304,6 +338,15 @@ public class MasterActivity extends AppCompatActivity {
     //search restore convenience method
     public void restoreSavedSearch(Fragment fragment, boolean firstInit, Bundle savedInstanceState,
                                    ImageButton searchButton, SuperEditText searchTextView) {
+
+        //show keyboard if restore value is true
+        //else hide it
+        if (mIsKeyboardVisible) {
+            showSoftKeyboard(searchTextView);
+
+        } else {
+            hideSoftKeyboard(searchTextView);
+        }
 
         String savedSearchText;
         int savedBarVisibility;
@@ -332,11 +375,36 @@ public class MasterActivity extends AppCompatActivity {
         }
     }
 
+    //hide soft keyboard and update keyboard visibility property
     public void hideSoftKeyboard(View view) {
         if (view.requestFocus()) {
             InputMethodManager imm = (InputMethodManager)
                     getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
+            mIsKeyboardVisible = false;
         }
+    }
+
+    //show soft keyboard and update keyboard visibility property
+    private void showSoftKeyboard(View view) {
+        if (view.requestFocus()) {
+            InputMethodManager imm = (InputMethodManager)
+                    getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+
+            mIsKeyboardVisible = true;
+        }
+    }
+
+    //convenience method for hiding search bar edit text
+    public void hideSearchBar(SuperEditText searchEditText) {
+        hideSoftKeyboard(searchEditText);
+        searchEditText.setVisibility(View.GONE);
+    }
+
+    //convenience method for showing search bar edit text
+    public void showSearchBar(SuperEditText searchEditText) {
+        searchEditText.setVisibility(View.VISIBLE);
     }
 }
