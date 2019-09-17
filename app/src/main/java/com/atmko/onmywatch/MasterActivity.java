@@ -1,6 +1,7 @@
 package com.atmko.onmywatch;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.work.Constraints;
 import androidx.work.OneTimeWorkRequest;
@@ -183,6 +184,10 @@ public class MasterActivity extends AppCompatActivity {
 
         //show hidden background fragment
         fragment.getView().findViewById(R.id.top_layout).setVisibility(View.VISIBLE);
+
+        //set toolbar
+        Toolbar toolbar = fragment.getView().findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
     }
 
     public boolean isTabletLandscape(){
