@@ -67,18 +67,6 @@
         <item name="maxImageSize">@dimen/fab_max_image_size</item>
     </style>
 
-    <style name="fab_detail_style">
-        <item name="android:layout_width">@dimen/fab_size</item>
-        <item name="android:layout_height">@dimen/fab_size</item>
-        <item name="android:layout_marginTop">@dimen/fab_top_margin</item>
-        <item name="android:layout_marginBottom">@dimen/x4_layout_margin</item>
-        <item name="android:layout_marginEnd">@dimen/x4_layout_margin</item>
-        <item name="android:layout_marginRight">@dimen/x4_layout_margin</item>
-        <item name="layout_constraintHorizontal_bias">1.0</item>
-        <item name="fabCustomSize">@dimen/fab_size</item>
-        <item name="maxImageSize">@dimen/fab_max_image_size</item>
-    </style>
-
     <style name="style_home_list_display_container">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/search_poster_height</item>
