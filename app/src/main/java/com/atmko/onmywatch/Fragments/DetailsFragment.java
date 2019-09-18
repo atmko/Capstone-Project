@@ -329,6 +329,7 @@ public class DetailsFragment extends Fragment {
         detailExtrasTabLayout = getView().findViewById(R.id.detail_extras_tab_layout);
         detailExtrasViewPager = getView().findViewById(R.id.details_extra_view_pager);
 
+        configureBackDropDimensions();
         configureDetailExtrasSize();
 
         releaseStatusTextView = getView().findViewById(R.id.release_status_text);
@@ -554,6 +555,48 @@ public class DetailsFragment extends Fragment {
         //set overview text
         ((TextView) getView().findViewById(R.id.overView_text_view)).setText(
                 limitText(mMediaData.getOverview(), mOverviewCutoffIndex));
+    }
+
+    private void configureBackDropDimensions() {
+        ImageView backdropImageView = getView().findViewById(R.id.backdrop_image_view);
+
+        DisplayMetrics displayMetrics = Resources.getSystem().getDisplayMetrics();
+        int pixelWidth = displayMetrics.widthPixels;
+
+        int masterContainerWeight;
+        int detailContainerWeight;
+
+        if (!getResources().getBoolean(R.bool.isPhoneLandscape)) {
+            masterContainerWeight = getResources().getInteger(R.integer.master_fragment_layout_weight);
+            detailContainerWeight = getResources().getInteger(R.integer.detail_fragment_layout_weight);
+
+        } else {
+            masterContainerWeight = getResources().getInteger(R.integer.details_main_layout_weight);
+            detailContainerWeight = getResources().getInteger(R.integer.details_extras_layout_weight);
+
+        }
+
+        int weightTotal = masterContainerWeight + detailContainerWeight;
+
+        int weightedWidth;
+
+        //get total weightedWidth
+        if (((MasterActivity) getActivity()).isTabletLandscape()
+                || getResources().getBoolean(R.bool.isPhoneLandscape)) {
+
+            weightedWidth = pixelWidth * detailContainerWeight/weightTotal;
+
+        } else {
+            weightedWidth = pixelWidth;
+
+        }
+
+        Long backdropHeight = Math.round(weightedWidth * ApiConstants.BACKDROP_HEIGHT_FACTOR);
+
+        ConstraintLayout.LayoutParams params =
+                new ConstraintLayout.LayoutParams(weightedWidth, backdropHeight.intValue());
+
+        backdropImageView.setLayoutParams(params);
     }
 
     private void setDetailViewValues() {

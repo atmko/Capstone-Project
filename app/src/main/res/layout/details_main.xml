@@ -25,7 +25,8 @@
         android:src="@drawable/ic_fab_add_to_list"
         app:layout_constraintEnd_toEndOf="@+id/rating_text_view"
         app:layout_constraintStart_toStartOf="@+id/rating_text_view"
-        app:layout_constraintTop_toTopOf="@+id/backdrop_image_view" />
+        app:layout_constraintTop_toBottomOf="@+id/backdrop_image_view"
+        app:layout_constraintBottom_toBottomOf="@id/backdrop_image_view"/>
 
     <Button
         android:id="@+id/trailer_button"

@@ -29,6 +29,7 @@ public class ApiConstants {
     public static final String SPOTLIGHT_POSTER_IMAGE_SIZE = "/w342";
     public static final String BACKDROP_IMAGE_SIZE = "/w780";
     public static final Double POSTER_ASPECT_RATIO = 1.5;
+    public static final Double BACKDROP_HEIGHT_FACTOR = 0.5625;
 
     //RESULTS KEYS
     public static final String RESULTS_KEY = "results";
