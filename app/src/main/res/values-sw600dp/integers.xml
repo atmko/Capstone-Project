@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--COLUMN SPAN-->
+    <integer name="search_column_span">4</integer>
+    <integer name="cast_column_span">4</integer>
+    <!--COLUMN SPAN-->
+
     <!--POPUP PERCENTAGES-->
     <integer name="add_to_list_activity_popup_screen_percent">50</integer>
     <integer name="create_list_activity_popup_screen_percent">50</integer>
