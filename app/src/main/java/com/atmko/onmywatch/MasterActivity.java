@@ -10,6 +10,8 @@ import androidx.work.WorkManager;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.MenuItem;
@@ -27,6 +29,7 @@ import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.utils.SearchPreferences;
 import com.atmko.onmywatch.utils.UpdateMediaWorker;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.parceler.Parcels;
@@ -56,6 +59,8 @@ public class MasterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_master);
 
+        initializeAdMob();
+
         //set / restore values
         setValues(savedInstanceState);
 
@@ -78,6 +83,23 @@ public class MasterActivity extends AppCompatActivity {
 
         //save keyboard visibility value
         outState.putBoolean(KEYBOARD_VISIBILITY_KEY, mIsKeyboardVisible);
+    }
+
+    private void initializeAdMob() {
+        try {
+            String adMobIdKey = getString(R.string.ad_mob_application_id_key);
+
+            ApplicationInfo applicationInfo = getPackageManager().getApplicationInfo(getPackageName(),
+                    PackageManager.GET_META_DATA);
+            Bundle applicationMetaData = applicationInfo.metaData;
+
+            String adMobId = applicationMetaData.getString(adMobIdKey);
+
+            MobileAds.initialize(this, adMobId);
+
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     private void setValues(Bundle savedInstanceState) {

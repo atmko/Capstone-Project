@@ -23,6 +23,8 @@ import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.SettingsActivity;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.utils.SearchPreferences;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import static com.atmko.onmywatch.Fragments.ListsWatchAndUserParentFragment.LIST_TYPE_WATCH;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
@@ -89,6 +91,8 @@ public class HomeFragment extends Fragment {
 
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 
+        loadAds();
+
         TextView mediaTypeTextView = getView().findViewById(R.id.media_type_text_view);
         mediaTypeTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,6 +135,14 @@ public class HomeFragment extends Fragment {
                         .commit();
             }
         });
+    }
+
+    private void loadAds() {
+        AdView mAdView = getView().findViewById(R.id.banner_ad);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+        mAdView.loadAd(adRequest);
     }
 
     private void loadMediaLabel() {

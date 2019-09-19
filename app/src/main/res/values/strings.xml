@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">On My Watch</string>
 
+    <string name="ad_mob_application_id_key" translatable="false">com.google.android.gms.ads.APPLICATION_ID</string>
+    <string name="ad_test_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
+
     <!--options menu titles-->
     <string name="options_settings_title">Settings</string>
     <!--options menu titles-->
