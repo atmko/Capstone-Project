@@ -73,6 +73,10 @@
         <service
             android:name=".widget.ListRemoteViewFactoryService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <service android:name=".widget.ListWidgetService" android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
+
     </application>
 
 </manifest>

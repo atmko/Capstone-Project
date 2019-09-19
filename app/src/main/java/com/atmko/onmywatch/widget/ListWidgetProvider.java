@@ -9,10 +9,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.RemoteViews;
 
-import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.utils.GeneralUtils;
+
+import static com.atmko.onmywatch.widget.ListRemoteViewFactoryService.APP_WIDGET_ID_KEY;
 
 /**
  * Implementation of App Widget functionality.
@@ -44,7 +45,7 @@ public class ListWidgetProvider extends AppWidgetProvider {
         //create intent extras
         Bundle intentExtras = new Bundle();
         //put media type value
-        intentExtras.putInt(ListRemoteViewFactoryService.APP_WIDGET_ID_KEY, appWidgetId);
+        intentExtras.putInt(APP_WIDGET_ID_KEY, appWidgetId);
 
         //set intent extras
         widgetFactoryIntent.putExtras(intentExtras);
@@ -70,14 +71,20 @@ public class ListWidgetProvider extends AppWidgetProvider {
 
         views.setOnClickPendingIntent(R.id.widget_settings_button, widgetSettingsPendingIntent);
 
+        Intent switchMediaIntent = new Intent(context, ListWidgetProvider.class);
+        Bundle extras = new Bundle();
+        extras.putInt(ListWidgetService.MEDIA_TYPE_KEY, widgetMediaType);
+        extras.putInt(APP_WIDGET_ID_KEY, appWidgetId);
+        switchMediaIntent.putExtras(extras);
+        switchMediaIntent.setAction(ListWidgetService.ACTION_SWITCH_MEDIA_TYPE);
+        PendingIntent switchMediaPendingIntent =
+                PendingIntent.getBroadcast(context, 1, switchMediaIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
+
+        views.setOnClickPendingIntent(R.id.media_type_text_view, switchMediaPendingIntent);
+
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
-
-
-//        Intent mediaTypeIntent = new Intent(context, ListWidgetService.class)
-//        PendingIntent mediaTypePendingIntent = PendingIntent.getService();
-//
-//        views.setOnClickPendingIntent(R.id.media_type_text_view, );
     }
 
     @Override
@@ -105,6 +112,13 @@ public class ListWidgetProvider extends AppWidgetProvider {
     @Override
     public void onDisabled(Context context) {
         // Enter relevant functionality for when the last widget is disabled
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        super.onReceive(context, intent);
+
+        ListWidgetService.enqueueWork(context, intent);
     }
 }
 
