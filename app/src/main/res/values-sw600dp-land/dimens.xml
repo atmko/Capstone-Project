@@ -3,5 +3,4 @@
     <!--MARGINS-->
     <dimen name="list_margin">32dp</dimen>
     <!--MARGINS-->
-    <dimen name="body_text_size">16sp</dimen>
 </resources>
