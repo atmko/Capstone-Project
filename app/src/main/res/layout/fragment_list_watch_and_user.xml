@@ -13,7 +13,7 @@
         android:layout_height="match_parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        style="@style/fab_style"
+        style="@style/fab_general_style"
         android:id="@+id/new_list_fab"
         android:src="@drawable/ic_fab_add_to_list" />
 
