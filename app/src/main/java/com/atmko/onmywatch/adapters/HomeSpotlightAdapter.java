@@ -102,7 +102,7 @@ public class HomeSpotlightAdapter extends RecyclerView.Adapter<HomeSpotlightAdap
         int resourceId;
 
         if (viewType == NO_POSTER_LAYOUT) {
-            resourceId = R.layout.no_poster_layout;
+            resourceId = R.layout.object_spotlight_no_poster_layout;
 
         } else {
             resourceId = R.layout.object_spotlight;
