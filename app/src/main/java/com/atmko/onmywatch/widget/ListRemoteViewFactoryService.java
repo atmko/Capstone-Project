@@ -87,24 +87,18 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         final List<String> titleList = Arrays.asList(watchStatusMoviesTitles);
 
         mListName = ListWidgetProviderConfigureActivity.loadTitlePref(mContext, mAppWidgetId);
-        Log.d(TAG, "listName: " + mListName);
-
         mMediaType = ListWidgetProviderConfigureActivity.loadMediaTypePref(mContext, mAppWidgetId);
-        Log.d(TAG, "media type: " + mMediaType);
 
         //if media data is movie
         if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
             mMovieDataList = mDatabase.movieDataDao()
                     .getMoviesByWatchStatusAlt(titleList.indexOf(mListName));
 
-            Log.d(TAG, "mMovieDataList size: " + mMovieDataList.size());
-
         //if media data is series
         } else if (mMediaType == MasterActivity.MEDIA_TYPE_SERIES) {
             mSeriesDataList = mDatabase.seriesDataDao()
                     .getSeriesByWatchStatusAlt(titleList.indexOf(mListName));
 
-            Log.d(TAG, "mSeriesDataList: " + mSeriesDataList.size());
         }
     }
 
@@ -116,13 +110,11 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     @Override
     public int getCount() {
         if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
-            Log.d(TAG, "getCount: " + mMovieDataList.size());
             if (mMovieDataList == null) return 0;
 
             return mMovieDataList.size();
 
         } else if (mMediaType == MasterActivity.MEDIA_TYPE_SERIES){
-            Log.d(TAG, "getCount: " + mSeriesDataList.size());
             if (mSeriesDataList == null) return 0;
 
             return mSeriesDataList.size();
@@ -148,9 +140,6 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
             backdropUrl = mSeriesDataList.get(position).getBackdropPath();
 
         }
-
-        Log.d(TAG, "title: " + title);
-        Log.d(TAG, "backdropUrl: " + backdropUrl);
 
         remoteViews.setTextViewText(R.id.title_text_view, title);
 
