@@ -22,7 +22,8 @@
         </receiver>
 
         <activity android:name="com.atmko.onmywatch.widget.ListWidgetProviderConfigureActivity"
-            android:launchMode="singleInstance">
+            android:launchMode="singleInstance"
+            android:taskAffinity=".widget_setup">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
