@@ -62,14 +62,13 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     int mMediaType;
     List<MovieData> mMovieDataList;
     List<SeriesData> mSeriesDataList;
-    List<SeriesData> mSeriesData;
 
     public ListRemoteViewsFactory(Context applicationContext, int appWidgetId) {
         mContext = applicationContext;
         mDatabase = AppDatabase.getInstance(mContext);
         mAppWidgetId = appWidgetId;
         mMovieDataList = new ArrayList<>();
-        mSeriesData = new ArrayList<>();
+        mSeriesDataList = new ArrayList<>();
     }
 
     @Override
@@ -124,9 +123,9 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
         } else if (mMediaType == MasterActivity.MEDIA_TYPE_SERIES){
             Log.d(TAG, "getCount: " + mSeriesDataList.size());
-            if (mSeriesData == null) return 0;
+            if (mSeriesDataList == null) return 0;
 
-            return mSeriesData.size();
+            return mSeriesDataList.size();
 
         } else {
             return 0;
@@ -145,8 +144,8 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
             backdropUrl = mMovieDataList.get(position).getBackdropPath();
 
         } else {
-            title = mSeriesData.get(position).getTitle();
-            backdropUrl = mSeriesData.get(position).getBackdropPath();
+            title = mSeriesDataList.get(position).getTitle();
+            backdropUrl = mSeriesDataList.get(position).getBackdropPath();
 
         }
 
