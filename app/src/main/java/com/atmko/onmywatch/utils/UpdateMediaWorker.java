@@ -1,6 +1,7 @@
 package com.atmko.onmywatch.utils;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -15,6 +16,7 @@ import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.SeriesData;
+import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.utils.network_utils.NetworkFunctions;
 
@@ -22,6 +24,7 @@ import java.util.List;
 
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
+import static com.atmko.onmywatch.utils.GeneralUtils.MILLISECOND_CONVERSION;
 
 public class UpdateMediaWorker extends Worker {
     private static final String TAG = UpdateMediaWorker.class.getSimpleName();
@@ -80,8 +83,8 @@ public class UpdateMediaWorker extends Worker {
         }
     }
 
-    private void updateSavedMedia(final MediaData oldMediaData, String detailUrl,
-                                  SearchPreferences searchPreferences) {
+    private void updateSavedMedia(final MediaData oldMediaData, final String detailUrl,
+                                  final SearchPreferences searchPreferences) {
         String id = oldMediaData.getId();
 
         //build AN request
@@ -134,7 +137,25 @@ public class UpdateMediaWorker extends Worker {
 
                 Log.d(TAG, oldMediaData.getTitle() + " update data failed");
 
+                if (anError.getErrorCode() == ApiConstants.TOO_MANY_REQUESTS) {
+                    retryAfterCoolDOwn(anError, oldMediaData, detailUrl, searchPreferences);
+                }
             }
         });
+    }
+
+    private void retryAfterCoolDOwn(ANError anError, final MediaData mediaData,
+                                    final String detailUrl, final SearchPreferences searchPreferences) {
+        int coolDown = Integer.valueOf(anError.getResponse().header(ApiConstants.RETRY_AFTER_KEY));
+        int coolDownInMilliSecs = coolDown * MILLISECOND_CONVERSION;
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                updateSavedMedia(mediaData, detailUrl, searchPreferences);
+
+            }
+        }, coolDownInMilliSecs);
     }
 }

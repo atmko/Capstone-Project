@@ -56,4 +56,10 @@ public class ApiConstants {
     public static final String GENRE_ID_KEY = "id";
     public static final String GENRE_NAME = "name";
 
+    //HEADER VALUES
+    public static final String RETRY_AFTER_KEY = "Retry-After";
+
+    //ERROR CODES
+    public static final int TOO_MANY_REQUESTS = 429;
+
 }

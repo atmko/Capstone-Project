@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class GeneralUtils {
+    public static final int MILLISECOND_CONVERSION = 1000;
+
     public static String convertToDisplayText(String text) {
         String displayText = "";
 
