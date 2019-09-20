@@ -131,7 +131,7 @@ public class UpdateMediaWorker extends Worker {
             public void onError(ANError anError) {
                 //TODO implement different error messages based upon received error codes
                 //prepareNotification error
-                Log.d(TAG, anError.getMessage());
+
                 Log.d(TAG, oldMediaData.getTitle() + " update data failed");
 
             }
