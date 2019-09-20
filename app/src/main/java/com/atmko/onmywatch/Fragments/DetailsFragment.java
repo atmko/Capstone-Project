@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -63,6 +64,7 @@ import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
 import static com.atmko.onmywatch.models.MediaData.WATCH_STATUS_DROPPED;
 import static com.atmko.onmywatch.models.MediaData.WATCH_STATUS_WATCHED;
 import static com.atmko.onmywatch.models.MediaData.WATCH_STATUS_WATCHING;
+import static com.atmko.onmywatch.utils.GeneralUtils.MILLISECOND_CONVERSION;
 
 //import com.upkipp.onmywatch.HomeActivity;
 
@@ -484,8 +486,25 @@ public class DetailsFragment extends Fragment {
                 Snackbar.make(getActivity().findViewById(R.id.top_layout),
                         getString(R.string.details_error_message), Snackbar.LENGTH_LONG).show();
 
+                if (anError.getErrorCode() == ApiConstants.TOO_MANY_REQUESTS) {
+                    retryAfterCoolDOwn(anError);
+                }
             }
         });
+    }
+
+    private void retryAfterCoolDOwn(ANError anError) {
+        int coolDown = Integer.valueOf(anError.getResponse().header(ApiConstants.RETRY_AFTER_KEY));
+        int coolDownInMilliSecs = coolDown * MILLISECOND_CONVERSION;
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                getMediaDetails();
+
+            }
+        }, coolDownInMilliSecs);
     }
 
     private void configureDetailExtrasAdapter() {
