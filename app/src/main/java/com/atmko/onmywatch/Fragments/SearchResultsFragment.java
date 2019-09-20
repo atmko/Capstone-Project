@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +42,7 @@ import java.util.List;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_PEOPLE;
+import static com.atmko.onmywatch.utils.GeneralUtils.MILLISECOND_CONVERSION;
 
 public class SearchResultsFragment extends Fragment implements
         MediaDataAdapter.OnListItemClickListener,
@@ -242,8 +244,26 @@ public class SearchResultsFragment extends Fragment implements
                         getString(R.string.search_results_fetch_error_message),
                         Snackbar.LENGTH_LONG).show();
 
+                if (anError.getErrorCode() == ApiConstants.TOO_MANY_REQUESTS) {
+                    retryAfterCoolDOwn(anError, blockNumber, targetPage, stackOperation);
+                }
             }
         });
+    }
+
+    private void retryAfterCoolDOwn(ANError anError, final int blockNumber, final int targetPage,
+                                    final int stackOperation) {
+        int coolDown = Integer.valueOf(anError.getResponse().header(ApiConstants.RETRY_AFTER_KEY));
+        int coolDownInMilliSecs = coolDown * MILLISECOND_CONVERSION;
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                executeSearch(blockNumber, targetPage, stackOperation);
+
+            }
+        }, coolDownInMilliSecs);
     }
 
     //loads detail fragment:
