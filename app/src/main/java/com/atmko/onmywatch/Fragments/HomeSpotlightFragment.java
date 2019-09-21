@@ -3,6 +3,7 @@ package com.atmko.onmywatch.Fragments;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -187,6 +188,8 @@ public class HomeSpotlightFragment extends Fragment implements
     }
 
     private void retryAfterCoolDOwn(ANError anError) {
+        Log.d(FRAGMENT_KEY, "retrying spotlight fetch");
+
         int coolDown = Integer.valueOf(anError.getResponse().header(ApiConstants.RETRY_AFTER_KEY));
         int coolDownInMilliSecs = coolDown * MILLISECOND_CONVERSION;
 

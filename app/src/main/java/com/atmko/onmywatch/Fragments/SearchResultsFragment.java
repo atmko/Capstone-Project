@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -255,6 +256,8 @@ public class SearchResultsFragment extends Fragment implements
 
     private void retryAfterCoolDOwn(ANError anError, final int blockNumber, final int targetPage,
                                     final int stackOperation) {
+        Log.d(FRAGMENT_KEY, "retry fetching search results");
+
         int coolDown = Integer.valueOf(anError.getResponse().header(ApiConstants.RETRY_AFTER_KEY));
         int coolDownInMilliSecs = coolDown * MILLISECOND_CONVERSION;
 

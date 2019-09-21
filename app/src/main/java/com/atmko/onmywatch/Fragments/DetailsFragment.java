@@ -491,12 +491,13 @@ public class DetailsFragment extends Fragment {
                 //prepareNotification error
                 Snackbar.make(getActivity().findViewById(R.id.top_layout),
                         getString(R.string.details_error_message), Snackbar.LENGTH_LONG).show();
-
             }
         });
     }
 
     private void retryAfterCoolDOwn(ANError anError) {
+        Log.d(FRAGMENT_KEY, "retrying details fetch");
+
         int coolDown = Integer.valueOf(anError.getResponse().header(ApiConstants.RETRY_AFTER_KEY));
         int coolDownInMilliSecs = coolDown * MILLISECOND_CONVERSION;
 

@@ -146,6 +146,8 @@ public class UpdateMediaWorker extends Worker {
 
     private void retryAfterCoolDOwn(ANError anError, final MediaData mediaData,
                                     final String detailUrl, final SearchPreferences searchPreferences) {
+        Log.d(TAG, mediaData.getTitle() + " retrying update");
+
         int coolDown = Integer.valueOf(anError.getResponse().header(ApiConstants.RETRY_AFTER_KEY));
         int coolDownInMilliSecs = coolDown * MILLISECOND_CONVERSION;
 
