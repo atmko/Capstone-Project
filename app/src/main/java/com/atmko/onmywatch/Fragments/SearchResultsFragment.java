@@ -246,6 +246,8 @@ public class SearchResultsFragment extends Fragment implements
             @Override
             public void onResponse(String returnedJSONString) {
                 try {
+                    stack.setIsFrozen(false);
+
                     //parse and populate retrieved data
 
                     List dataList = null;
@@ -276,10 +278,13 @@ public class SearchResultsFragment extends Fragment implements
             @Override
             public void onError(ANError anError) {
                 if (anError.getErrorCode() == ApiConstants.TOO_MANY_REQUESTS) {
+                    stack.setIsFrozen(true);
                     retryAfterCoolDOwn(anError, blockNumber, targetPage, stackOperation);
 
                     return;
                 }
+
+                stack.setIsFrozen(false);
 
                 //notify user of error
                 Snackbar.make(getActivity().findViewById(R.id.top_layout),

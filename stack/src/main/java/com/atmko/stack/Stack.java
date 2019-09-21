@@ -127,6 +127,11 @@ public class Stack extends RecyclerView.OnScrollListener {
         return firstPage;
     }
 
+    public void setIsFrozen(boolean isFrozen) {
+        this.recyclerView.setLayoutFrozen(isFrozen);
+
+    }
+
     //this method is called as many times as the value of blockPageCapacity
     public void stackPage(int blockNumber, int pageNumber, List dataList, int stackOperation) {
         //get blocks for stacking
