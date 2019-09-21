@@ -179,7 +179,6 @@ public class Stack extends RecyclerView.OnScrollListener {
             adapter.notifyItemChanged(currentInsertPosition);
         }
 
-        recyclerView.setLayoutFrozen(false);
         //TODO data still in paging data now useless now that its been added to adapter.
     }
 
@@ -424,18 +423,12 @@ public class Stack extends RecyclerView.OnScrollListener {
                 removeTopBlock();
             }
 
-            //prevents crash when simultaneously scrolling and updating adapter data
-            this.recyclerView.setLayoutFrozen(true);
-
             addBottomBlock();
 
         } else if (atListStart && newState == RecyclerView.SCROLL_STATE_IDLE) {
             if (pagingBlockMap.size() == blockLimit) {
                 removeBottomBlock();
             }
-
-            //prevents crash when simultaneously scrolling and updating adapter data
-            this.recyclerView.setLayoutFrozen(true);
 
             addTopBlock();
         }
