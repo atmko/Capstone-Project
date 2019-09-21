@@ -1,6 +1,7 @@
 package com.atmko.onmywatch.Fragments;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,7 @@ import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.utils.MovieDataParser;
 import com.atmko.onmywatch.utils.SearchPreferences;
 import com.atmko.onmywatch.utils.SeriesDataParser;
+import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 import com.atmko.onmywatch.utils.network_utils.NetworkFunctions;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -33,6 +35,7 @@ import java.util.List;
 
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
+import static com.atmko.onmywatch.utils.GeneralUtils.MILLISECOND_CONVERSION;
 
 public class HomeSpotlightFragment extends Fragment implements
         HomeSpotlightAdapter.OnListItemClickListener {
@@ -173,8 +176,26 @@ public class HomeSpotlightFragment extends Fragment implements
                 //prepareNotification error
                 Snackbar.make(getActivity().findViewById(R.id.top_layout),
                         getString(R.string.spotlight_fetch_error_message), Snackbar.LENGTH_LONG).show();
+
+                if (anError.getErrorCode() == ApiConstants.TOO_MANY_REQUESTS) {
+                    retryAfterCoolDOwn(anError);
+                }
             }
         });
+    }
+
+    private void retryAfterCoolDOwn(ANError anError) {
+        int coolDown = Integer.valueOf(anError.getResponse().header(ApiConstants.RETRY_AFTER_KEY));
+        int coolDownInMilliSecs = coolDown * MILLISECOND_CONVERSION;
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                executeSearch();
+
+            }
+        }, coolDownInMilliSecs);
     }
 
     //loads detail fragment:
