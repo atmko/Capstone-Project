@@ -46,6 +46,7 @@ import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_PEOPLE;
 import static com.atmko.onmywatch.utils.GeneralUtils.MILLISECOND_CONVERSION;
+import static com.atmko.onmywatch.utils.UpdateMediaWorker.REQUEST_COOL_DOWN;
 
 public class SearchResultsFragment extends Fragment implements
         MediaDataAdapter.OnListItemClickListener,
@@ -159,15 +160,33 @@ public class SearchResultsFragment extends Fragment implements
         Stack.PagingBlockTemplate pagingBlockTemplate =
                 new Stack.PagingBlockTemplate(new Stack.PagingBlockTemplate.OnCreatePageLoader() {
             @Override
-            public void onPageEndReached(int blockNumber, int targetPage) {
-                mSearchPreferences.setTargetPage(targetPage);
-                executeSearch(blockNumber, targetPage, Stack.GO_DOWN_ONE_BLOCK);
+            public void onPageEndReached(final int blockNumber, final int targetPage) {
+                if (targetPage == stack.getFirstPage()) {
+                    mSearchPreferences.setTargetPage(targetPage);
+                    executeSearch(blockNumber, targetPage, Stack.GO_DOWN_ONE_BLOCK);
+
+                } else {
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mSearchPreferences.setTargetPage(targetPage);
+                            executeSearch(blockNumber, targetPage, Stack.GO_DOWN_ONE_BLOCK);
+                        }
+                    }, REQUEST_COOL_DOWN);
+                }
             }
 
             @Override
-            public void onPageStartReached(int blockNumber, int targetPage) {
-                mSearchPreferences.setTargetPage(targetPage);
-                executeSearch(blockNumber, targetPage, Stack.GO_UP_ONE_BLOCK);
+            public void onPageStartReached(final int blockNumber, final int targetPage) {
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mSearchPreferences.setTargetPage(targetPage);
+                        executeSearch(blockNumber, targetPage, Stack.GO_UP_ONE_BLOCK);
+                    }
+                }, REQUEST_COOL_DOWN);
             }
         }, ApiConstants.RESULTS_PER_PAGE, getResources().getInteger(R.integer.stack_pages_per_block));
 

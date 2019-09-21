@@ -123,7 +123,7 @@ public class Stack extends RecyclerView.OnScrollListener {
         loadNextBlock(0);
     }
 
-    private int getFirstPage() {
+    public int getFirstPage() {
         return firstPage;
     }
 

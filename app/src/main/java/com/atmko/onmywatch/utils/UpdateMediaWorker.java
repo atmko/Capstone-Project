@@ -29,7 +29,7 @@ import static com.atmko.onmywatch.utils.GeneralUtils.MILLISECOND_CONVERSION;
 
 public class UpdateMediaWorker extends Worker {
     private static final String TAG = UpdateMediaWorker.class.getSimpleName();
-    private static final int REQUEST_COOL_DOWN = 1000;
+    public static final int REQUEST_COOL_DOWN = 1000;
 
     Context mContext;
     AppDatabase mDatabase;
