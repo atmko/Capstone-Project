@@ -180,7 +180,7 @@ public class HomeSpotlightFragment extends Fragment implements
                     return;
                 }
 
-                //prepareNotification error
+                //notify user of error
                 Snackbar.make(getActivity().findViewById(R.id.top_layout),
                         getString(R.string.spotlight_fetch_error_message), Snackbar.LENGTH_LONG).show();
             }

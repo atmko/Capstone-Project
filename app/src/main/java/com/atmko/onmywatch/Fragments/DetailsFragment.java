@@ -481,14 +481,13 @@ public class DetailsFragment extends Fragment {
 
             @Override
             public void onError(ANError anError) {
-                //TODO implement different error messages based upon received error codes
                 if (anError.getErrorCode() == ApiConstants.TOO_MANY_REQUESTS) {
                     retryAfterCoolDOwn(anError);
 
                     return;
                 }
 
-                //prepareNotification error
+                //notify user of error
                 Snackbar.make(getActivity().findViewById(R.id.top_layout),
                         getString(R.string.details_error_message), Snackbar.LENGTH_LONG).show();
             }

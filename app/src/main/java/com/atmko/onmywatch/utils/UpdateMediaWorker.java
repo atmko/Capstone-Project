@@ -132,11 +132,9 @@ public class UpdateMediaWorker extends Worker {
 
             @Override
             public void onError(ANError anError) {
-                //TODO implement different error messages based upon received error codes
-                //prepareNotification error
-
                 Log.d(TAG, oldMediaData.getTitle() + " update data failed");
 
+                //notify user of error
                 if (anError.getErrorCode() == ApiConstants.TOO_MANY_REQUESTS) {
                     retryAfterCoolDOwn(anError, oldMediaData, detailUrl, searchPreferences);
                 }
