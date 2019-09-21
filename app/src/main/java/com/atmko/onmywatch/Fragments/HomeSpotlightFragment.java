@@ -173,13 +173,15 @@ public class HomeSpotlightFragment extends Fragment implements
 
             @Override
             public void onError(ANError anError) {
+                if (anError.getErrorCode() == ApiConstants.TOO_MANY_REQUESTS) {
+                    retryAfterCoolDOwn(anError);
+
+                    return;
+                }
+
                 //prepareNotification error
                 Snackbar.make(getActivity().findViewById(R.id.top_layout),
                         getString(R.string.spotlight_fetch_error_message), Snackbar.LENGTH_LONG).show();
-
-                if (anError.getErrorCode() == ApiConstants.TOO_MANY_REQUESTS) {
-                    retryAfterCoolDOwn(anError);
-                }
             }
         });
     }
