@@ -4,13 +4,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.util.SparseArray;
-
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Stack extends RecyclerView.OnScrollListener {
@@ -21,6 +18,7 @@ public class Stack extends RecyclerView.OnScrollListener {
     private int firstPage;
     private int totalPages;
     private int blockLimit;
+    private Object mPreloadObject;
     private PagingBlockTemplate pagingBlockTemplate;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
@@ -28,11 +26,12 @@ public class Stack extends RecyclerView.OnScrollListener {
     private boolean mIsIdle;
 
     public Stack(boolean pageZeroStart, int blockLimit, PagingBlockTemplate pagingBlockTemplate,
-                 RecyclerView recyclerView, RecyclerView.Adapter adapter) {
+                 Object preloadObject, RecyclerView recyclerView, RecyclerView.Adapter adapter) {
 
         this.firstPage = pageZeroStart ? 0 : 1;
         this.blockLimit = blockLimit;
         this.pagingBlockTemplate = pagingBlockTemplate;
+        this.mPreloadObject = preloadObject;
         this.recyclerView = recyclerView;
         this.adapter = adapter;
         this.pagingBlockMap = new SparseArray<>();
@@ -133,70 +132,55 @@ public class Stack extends RecyclerView.OnScrollListener {
         //get blocks for stacking
         PagingBlock pagingBlock = pagingBlockMap.get(blockNumber);
 
+        //do not stack page if null
+        //user has scrolled to a point where original requesting paging block has been removed
+        //this is caused by scrolling quickly where a more recent paging block has replaced an older...
+        //one before its results could be stacked
+        if (pagingBlock == null) {
+            return;
+        }
+
         //set data lists
         pagingBlock.setDataListByPage(pageNumber, dataList);
 
-        //make sure all data lists have been set before continuing
-        if (pagingBlock.getPageList().size() == pagingBlock.getBlockPageCapacity()) {
-            //if we're moving down a block
-            if (stackOperation == GO_DOWN_ONE_BLOCK) {
-                addItemsForwardsIntoAdapter(pagingBlock);
+        //if we're moving down a block
+        if (stackOperation == GO_DOWN_ONE_BLOCK) {
+            addItemsIntoAdapter(pagingBlock, pageNumber, dataList);
 
-                //if we're moving up a block
-            } else if (stackOperation == GO_UP_ONE_BLOCK){
-                addItemsBackwardsIntoAdapter(pagingBlock);
-            }
+            //if we're moving up a block
+        } else if (stackOperation == GO_UP_ONE_BLOCK){
+            addItemsIntoAdapter(pagingBlock, pageNumber, dataList);
+        }
             
-            mIsIdle = true;
-        }
+        mIsIdle = true;
     }
 
-    private void addItemsForwardsIntoAdapter(PagingBlock pagingBlock) {
-        //iterate forwards through number of pages
-        for (int index = 0; index < pagingBlock.getPageList().size(); index++) {
-            int page = pagingBlock.getPageList().keyAt(index);
+    private void addItemsIntoAdapter(PagingBlock pagingBlock, int pageNumber, List dataList) {
+        int pagingBlockIndex = pagingBlockMap.indexOfValue(pagingBlock);
 
-            //use page to get corresponding page list
-            List pageList = pagingBlock.getDataListByPage(page);
+        //get index of the paging block's first item its the first page
+        int blockStartingIndex = pagingBlockIndex
+                * pagingBlockTemplate.pageCapacity
+                * pagingBlockTemplate.blockPageCapacity;
 
-            //iterate forwards through list
-            for (int i = 0; i < pageList.size(); i++) {
-                //add each item to back of list
-                getAdapterData().add(pageList.get(i));
+        //use page number to find the index the page relative to existing pages currently in the block
+        int pageIndex = pageNumber - pagingBlock.getFirstPageInBlock();
+        //define first adapter position loop should begin.
+        int firstInsertPosition = blockStartingIndex + (pageIndex * pagingBlockTemplate.pageCapacity);
 
-                //update item at last position
-                adapter.notifyItemInserted(getAdapterData().size() - 1);
-            }
+        for (int index = 0; index < dataList.size(); index++) {
+            //increase value with each iteration through zero index
+            int currentInsertPosition = firstInsertPosition + index;
 
-            //TODO data still in paging data now useless now that its been added to adapter.
-            // consider deleting it
+            //replace preload object and update adapter
+            getAdapterData().remove(currentInsertPosition);
+            getAdapterData().add(currentInsertPosition, dataList.get(index));
+
+            adapter.notifyItemChanged(currentInsertPosition);
         }
 
         recyclerView.setLayoutFrozen(false);
-    }
-
-    private void addItemsBackwardsIntoAdapter(PagingBlock pagingBlock) {
-        //iterate backwards through number of pages
-        for (int index = pagingBlock.getPageList().size() - 1; index >= 0; index--) {
-            int page = pagingBlock.getPageList().keyAt(index);
-
-            //use page to get corresponding page list
-            List pageList = pagingBlock.getDataListByPage(page);
-
-            //iterate backwards through list
-            for (int i = pageList.size() - 1; i >= 0; i--) {
-                //add each item to front of list
-                getAdapterData().add(0, pageList.get(i));
-
-                //update item at first position
-                adapter.notifyItemInserted(0);
-            }
-
-            //TODO data still in paging data now useless now that its been added to adapter.
-            // consider deleting it
-        }
-
-        recyclerView.setLayoutFrozen(false);
+        //TODO data still in paging data now useless now that its been added to adapter.
     }
 
     private void removeTopBlock() {
@@ -262,6 +246,11 @@ public class Stack extends RecyclerView.OnScrollListener {
         //define first targetPage
         int targetPage = pagingBlock.getFirstPageInBlock();
 
+        //add placeholder objects till real stacking begins
+        for (int i = 0; i < pagingBlockTemplate.getBlockPageCapacity(); i++) {
+            prestackPageBackWards();
+        }
+
         //iterate through block page capacity
         for (int i = 0; i < pagingBlockTemplate.getBlockPageCapacity(); i++) {
             //fetch page data
@@ -270,6 +259,17 @@ public class Stack extends RecyclerView.OnScrollListener {
             //increase targetPage value
             targetPage += 1;
         }
+    }
+
+    private void prestackPageBackWards() {
+        for (int i = pagingBlockTemplate.pageCapacity - 1; i >= 0; i--) {
+            //add item to front
+            getAdapterData().add(0, mPreloadObject);
+
+        }
+
+        adapter.notifyItemRangeInserted(0,
+                0 + pagingBlockTemplate.pageCapacity - 1);
     }
 
     private void addBottomBlock() {
@@ -284,13 +284,19 @@ public class Stack extends RecyclerView.OnScrollListener {
 
     private void loadNextBlock(int blockNumber) {
         //initialize paging block
-        PagingBlock pagingBlock = new PagingBlock(getFirstPage(), blockNumber, pagingBlockTemplate.blockPageCapacity);
+        PagingBlock pagingBlock =
+                new PagingBlock(getFirstPage(), blockNumber, pagingBlockTemplate.blockPageCapacity);
 
         //add block to list
         pagingBlockMap.put(blockNumber, pagingBlock);
 
         //define first targetPage
         int targetPage = pagingBlock.getFirstPageInBlock();
+
+        //add placeholder objects till real stacking begins
+        for (int i = 0; i < pagingBlockTemplate.getBlockPageCapacity(); i++) {
+            prestackPageForwards();
+        }
 
         //TODO if number of pages ahead is < getBlockPageCapacity then extra api queries are a wasted
         //iterate through block page capacity
@@ -301,6 +307,17 @@ public class Stack extends RecyclerView.OnScrollListener {
             //increase targetPage value
             targetPage += 1;
         }
+    }
+
+    private void prestackPageForwards() {
+        for (int i = 0; i < pagingBlockTemplate.pageCapacity; i++) {
+            //add item to end
+            getAdapterData().add(mPreloadObject);
+        }
+
+        adapter.notifyItemRangeInserted(
+                (getAdapterData().size()-1) - (pagingBlockTemplate.pageCapacity-1),
+                getAdapterData().size() - 1);
     }
 
     private int getFirstPageInStack() throws IndexOutOfBoundsException {

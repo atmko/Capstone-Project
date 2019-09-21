@@ -20,6 +20,8 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.custom_views.SuperEditText;
+import com.atmko.onmywatch.models.MovieData;
+import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 import com.atmko.stack.Stack;
 import com.atmko.onmywatch.R;
@@ -154,7 +156,8 @@ public class SearchResultsFragment extends Fragment implements
     }
 
     private void defineViews() {
-        Stack.PagingBlockTemplate pagingBlockTemplate = new Stack.PagingBlockTemplate(new Stack.PagingBlockTemplate.OnCreatePageLoader() {
+        Stack.PagingBlockTemplate pagingBlockTemplate =
+                new Stack.PagingBlockTemplate(new Stack.PagingBlockTemplate.OnCreatePageLoader() {
             @Override
             public void onPageEndReached(int blockNumber, int targetPage) {
                 mSearchPreferences.setTargetPage(targetPage);
@@ -180,9 +183,22 @@ public class SearchResultsFragment extends Fragment implements
                     getActivity().getApplicationContext());
         }
 
+        Object preloadObject = null;
+        if (mMediaType == MEDIA_TYPE_MOVIE) {
+            preloadObject = new MovieData();
+
+        } else if (mMediaType == MEDIA_TYPE_SERIES) {
+            preloadObject = new SeriesData();
+
+
+        } else if (mMediaType == MEDIA_TYPE_PEOPLE) {
+            preloadObject = new PersonData();
+
+        }
+
         recyclerView.setAdapter(mDataAdapter);
-        stack = new Stack(false,getResources().getInteger(R.integer.stack_block_limit),
-                pagingBlockTemplate, recyclerView, mDataAdapter);
+        stack = new Stack(false,getResources().getInteger(R.integer.stack_block_limit), pagingBlockTemplate,
+                preloadObject, recyclerView, mDataAdapter);
         recyclerView.addOnScrollListener(stack);
 
         //get search bar from parent fragment
