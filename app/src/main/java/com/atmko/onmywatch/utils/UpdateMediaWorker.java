@@ -2,6 +2,7 @@ package com.atmko.onmywatch.utils;
 
 import android.content.Context;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -28,6 +29,8 @@ import static com.atmko.onmywatch.utils.GeneralUtils.MILLISECOND_CONVERSION;
 
 public class UpdateMediaWorker extends Worker {
     private static final String TAG = UpdateMediaWorker.class.getSimpleName();
+    private static final int REQUEST_COOL_DOWN = 1000;
+
     Context mContext;
     AppDatabase mDatabase;
 
@@ -61,6 +64,7 @@ public class UpdateMediaWorker extends Worker {
 
         //iterate through movie list with this watch status
         for (MovieData movieData: movieDataList) {
+            SystemClock.sleep(REQUEST_COOL_DOWN);
             updateSavedMedia(movieData, detailUrl, searchPreferences);
         }
     }
@@ -79,6 +83,7 @@ public class UpdateMediaWorker extends Worker {
 
         //iterate through series list with this watch status
         for (SeriesData seriesData: seriesDataList) {
+            SystemClock.sleep(REQUEST_COOL_DOWN);
             updateSavedMedia(seriesData, detailUrl, searchPreferences);
         }
     }
