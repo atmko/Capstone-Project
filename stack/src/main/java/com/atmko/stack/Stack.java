@@ -199,6 +199,18 @@ public class Stack extends RecyclerView.OnScrollListener {
 
         adapter.notifyItemRangeChanged(firstInsertPosition, dataList.size());
 
+        //TODO add method that remove extra data BEFORE items are stacked to avoid late clean up
+        //if incoming data < page capacity, remove extraneous empty data
+        if (dataList.size() < pagingBlockTemplate.pageCapacity) {
+            int correctionDifference = pagingBlockTemplate.pageCapacity - dataList.size();
+
+            for (int i = 0; i < correctionDifference; i++) {
+                getAdapterData().remove(getAdapterData().size() - 1);
+                adapter.notifyItemRemoved(getAdapterData().size() - 1);
+
+            }
+        }
+
         //TODO data still in paging data now useless now that its been added to adapter.
     }
 
