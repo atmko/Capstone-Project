@@ -130,16 +130,18 @@ public class SearchResultsFragment extends Fragment implements
 
             mFirstInit = false;
 
+            List mediaDataList;
+
             if (mMediaType == MEDIA_TYPE_PEOPLE) {
                 //get saved adapter data list
-                List<PersonData> mediaDataList = Parcels.unwrap(
+                mediaDataList = Parcels.unwrap(
                         savedInstanceState.getParcelable(ADAPTER_DATA_LIST_KEY));
 
                 ((PeopleDataAdapter) mDataAdapter).addAdapterData(mediaDataList);
 
             } else {
                 //get saved adapter data list
-                List<MediaData> mediaDataList = Parcels.unwrap(
+                mediaDataList = Parcels.unwrap(
                         savedInstanceState.getParcelable(ADAPTER_DATA_LIST_KEY));
 
                 ((MediaDataAdapter) mDataAdapter).addAdapterData(mediaDataList);
@@ -147,7 +149,7 @@ public class SearchResultsFragment extends Fragment implements
 
             //get saved paging block map
             int[] pagingBlockRange = savedInstanceState.getIntArray(PAGING_BLOCK_MAP_KEY);
-            stack.restorePagingBlockStructure(pagingBlockRange);
+            stack.restorePagingBlockStructure(pagingBlockRange, mediaDataList);
 
             //set total pages
             stack.setTotalPages(mSearchPreferences.getTotalPages());

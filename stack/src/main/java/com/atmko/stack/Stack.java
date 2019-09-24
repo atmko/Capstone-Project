@@ -87,7 +87,7 @@ public class Stack extends RecyclerView.OnScrollListener {
         return blockIndexRange;
     }
 
-    public void restorePagingBlockStructure(int[] blockIndexRange) {
+    public void restorePagingBlockStructure(int[] blockIndexRange, List fullDataList) {
         //index range[1] not inclusive in operation.
         //e.g range of: 1, 4 generates 3 values (1, 2, 3)
         int iterationSize = blockIndexRange[1] - blockIndexRange[0];
@@ -96,8 +96,41 @@ public class Stack extends RecyclerView.OnScrollListener {
             int blockIndex = blockIndexRange[0] + index;
             PagingBlock pagingBlock = new PagingBlock(getFirstPage(), blockIndex, pagingBlockTemplate.getBlockPageCapacity());
 
+            pagingBlock = restorePagingBlockPages(pagingBlock, fullDataList);
+
             pagingBlockMap.put(blockIndex, pagingBlock);
         }
+    }
+
+    private PagingBlock restorePagingBlockPages(PagingBlock pagingBlock, List fullDataList) {
+        int firstPageInBlock = pagingBlock.getFirstPageInBlock();
+
+        //iterate through pageCapacity size
+        for (int i = 0; i < pagingBlock.getBlockPageCapacity(); i++) {
+            int pageNumber = firstPageInBlock + i;
+
+            int iterationSize;
+
+            if (fullDataList.size() >= pagingBlockTemplate.pageCapacity) {
+                iterationSize =  pagingBlockTemplate.pageCapacity;
+
+            } else {
+                iterationSize = fullDataList.size();
+            }
+
+            List dataList = new ArrayList();
+
+            //populate dataList for this page
+            for (int x = 0; x < iterationSize; x++) {
+                dataList.add(fullDataList.get(0));
+                fullDataList.remove(0);
+
+            }
+
+            pagingBlock.setDataListByPage(pageNumber, dataList);
+        }
+
+        return pagingBlock;
     }
 
     private int getTotalPages() {
