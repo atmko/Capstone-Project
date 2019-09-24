@@ -408,12 +408,12 @@ public class Stack extends RecyclerView.OnScrollListener {
 
         @SuppressWarnings("ConstantConditions")
         //error caught in throw when invoking findLastCompletelyVisibleItemPosition()
-                int lastShown = ((GridLayoutManager)recyclerView.getLayoutManager())
-                .findLastCompletelyVisibleItemPosition();
+        int lastShown = ((GridLayoutManager)recyclerView.getLayoutManager())
+                .findLastVisibleItemPosition();
 
         //error caught in throw when invoking findFirstCompletelyVisibleItemPosition()
         int firstShownIndex = ((GridLayoutManager)recyclerView.getLayoutManager())
-                .findFirstCompletelyVisibleItemPosition();
+                .findFirstVisibleItemPosition();
 
         //isLastItem makes sure we are at the end of list
         boolean isLastItem = lastShown == adapter.getItemCount() - 1;
