@@ -188,6 +188,11 @@ public class SearchResultsFragment extends Fragment implements
                     }
                 }, REQUEST_COOL_DOWN);
             }
+
+            @Override
+            public boolean onCustomScrollCondition() {
+                return NetworkFunctions.isOnline();
+            }
         }, ApiConstants.RESULTS_PER_PAGE, getResources().getInteger(R.integer.stack_pages_per_block));
 
         RecyclerView recyclerView = getView().findViewById(R.id.search_results_recycler_view);

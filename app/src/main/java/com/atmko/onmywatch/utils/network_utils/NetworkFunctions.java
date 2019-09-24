@@ -1,7 +1,6 @@
 package com.atmko.onmywatch.utils.network_utils;
 
 import android.content.Context;
-import android.util.Log;
 import android.widget.ImageView;
 
 import com.androidnetworking.AndroidNetworking;
@@ -14,7 +13,23 @@ import com.bumptech.glide.request.RequestOptions;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.utils.SearchPreferences;
 
+import java.io.IOException;
+
 public class NetworkFunctions {
+    private static final String EXEC_COMMAND = "/system/bin/ping -c 1 8.8.8.8";
+    public static boolean isOnline() {
+        Runtime runtime = Runtime.getRuntime();
+        try {
+            Process ipProcess = runtime.exec(EXEC_COMMAND);
+            int     exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+        }
+        catch (IOException e)          { e.printStackTrace(); }
+        catch (InterruptedException e) { e.printStackTrace(); }
+
+        return false;
+    }
+
     //agnostic search request
     public static ANRequest agnosticSearchRequest(String urlFormat, SearchPreferences searchPreferences, Context context) {
         String finalUrl = ""+urlFormat;
