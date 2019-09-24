@@ -180,9 +180,9 @@ public class Stack extends RecyclerView.OnScrollListener {
             //replace preload object and update adapter
             getAdapterData().remove(currentInsertPosition);
             getAdapterData().add(currentInsertPosition, dataList.get(index));
-
-            adapter.notifyItemChanged(currentInsertPosition);
         }
+
+        adapter.notifyItemRangeChanged(firstInsertPosition, dataList.size());
 
         //TODO data still in paging data now useless now that its been added to adapter.
     }
@@ -272,8 +272,7 @@ public class Stack extends RecyclerView.OnScrollListener {
 
         }
 
-        adapter.notifyItemRangeInserted(0,
-                0 + pagingBlockTemplate.pageCapacity - 1);
+        adapter.notifyItemRangeInserted(0, pagingBlockTemplate.pageCapacity);
     }
 
     private void addBottomBlock() {
@@ -321,7 +320,7 @@ public class Stack extends RecyclerView.OnScrollListener {
 
         adapter.notifyItemRangeInserted(
                 (getAdapterData().size()-1) - (pagingBlockTemplate.pageCapacity-1),
-                getAdapterData().size() - 1);
+                pagingBlockTemplate.pageCapacity);
     }
 
     private int getFirstPageInStack() throws IndexOutOfBoundsException {
