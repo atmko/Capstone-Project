@@ -289,6 +289,10 @@ public class SearchResultsFragment extends Fragment implements
                     return;
                 }
 
+                //stack page on failure to include empty results in recycler view,
+                //also so stack can keep counts for when to remove a block
+                stack.stackPage(blockNumber, targetPage, null, stackOperation);
+
                 stack.setIsFrozen(false);
 
                 //notify user of error

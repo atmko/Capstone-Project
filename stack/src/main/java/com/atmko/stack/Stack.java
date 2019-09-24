@@ -8,6 +8,7 @@ import android.util.SparseArray;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Stack extends RecyclerView.OnScrollListener {
@@ -140,16 +141,27 @@ public class Stack extends RecyclerView.OnScrollListener {
         //get blocks for stacking
         PagingBlock pagingBlock = pagingBlockMap.get(blockNumber);
 
+        //if data list is null
+        //define data list as a list of preload objects so they can be stacked without incident
+        if (dataList == null) {
+            dataList = new ArrayList();
+            for (int i = 0; i < pagingBlockTemplate.pageCapacity ; i++) {
+                dataList.add(mPreloadObject);
+            }
+        }
+
         //do not stack page if null
         //user has scrolled to a point where original requesting paging block has been removed
         //this is caused by scrolling quickly where a more recent paging block has replaced an older...
         //one before its results could be stacked
-        if (pagingBlock == null) {
-            return;
-        }
+        if (pagingBlock != null) {
+            //set data lists
+            pagingBlock.setDataListByPage(pageNumber, dataList);
 
-        //set data lists
-        pagingBlock.setDataListByPage(pageNumber, dataList);
+        }else {
+            return;
+
+        }
 
         //if we're moving down a block
         if (stackOperation == GO_DOWN_ONE_BLOCK) {
