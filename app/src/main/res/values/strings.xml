@@ -43,6 +43,7 @@
     <string name="content_description_media_type_button">media type button</string>
     <string name="content_description_lists_button">lists button</string>
     <string name="content_description_search_button">search button</string>
+    <string name="content_description_discover_button">discover button</string>
     <string name="content_description_back_button">back button</string>
     <string name="content_description_widget_settings_button">widget settings button</string>
     <!--CONTENT DESCRIPTIONS-->
