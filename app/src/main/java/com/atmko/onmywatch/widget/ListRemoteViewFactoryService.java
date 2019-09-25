@@ -55,6 +55,9 @@ public class ListRemoteViewFactoryService extends RemoteViewsService {
 class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     private static final String TAG = "ListRemoteViewsFactory";
 
+    private static final int WIDGET_BACKDROP_WIDTH = 780;
+    private static final int WIDGET_BACKDROP_HEIGHT = 439;
+
     Context mContext;
     AppDatabase mDatabase;
     int mAppWidgetId;
@@ -151,11 +154,9 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     private void loadImageForListItem(
             Context context, String pathName, RemoteViews remoteViews) {
 
-        int width  = 780;
-        int height = 439;
-
         FutureTarget futureTarget =
-                NetworkFunctions.loadWidgetImage(context, pathName, width, height);
+                NetworkFunctions.loadWidgetImage(context, pathName, WIDGET_BACKDROP_WIDTH,
+                        WIDGET_BACKDROP_HEIGHT);
 
         try {
             remoteViews.setImageViewBitmap(R.id.backdrop_image_view, (Bitmap) futureTarget.get());
