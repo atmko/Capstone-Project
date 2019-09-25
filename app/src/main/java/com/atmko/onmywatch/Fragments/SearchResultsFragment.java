@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,7 @@ import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
+import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.stack.Stack;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.MediaDataAdapter;
@@ -163,37 +165,36 @@ public class SearchResultsFragment extends Fragment implements
                 new Stack.PagingBlockTemplate(new Stack.PagingBlockTemplate.OnCreatePageLoader() {
             @Override
             public void onPageEndReached(final int blockNumber, final int targetPage) {
-                if (targetPage == stack.getFirstPage()) {
-                    mSearchPreferences.setTargetPage(targetPage);
-                    executeSearch(blockNumber, targetPage, Stack.GO_DOWN_ONE_BLOCK);
-
-                } else {
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
+                AppExecutors.getInstance().networkIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (NetworkFunctions.isOnline()) {
                             mSearchPreferences.setTargetPage(targetPage);
-                            executeSearch(blockNumber, targetPage, Stack.GO_DOWN_ONE_BLOCK);
+
+                            if (targetPage == stack.getFirstPage()) {
+                                executeSearch(blockNumber, targetPage, Stack.GO_DOWN_ONE_BLOCK);
+
+                            } else {
+                                SystemClock.sleep(REQUEST_COOL_DOWN);
+                                executeSearch(blockNumber, targetPage, Stack.GO_DOWN_ONE_BLOCK);
+                            }
                         }
-                    }, REQUEST_COOL_DOWN);
-                }
+                    }
+                });
             }
 
             @Override
             public void onPageStartReached(final int blockNumber, final int targetPage) {
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
+                AppExecutors.getInstance().networkIO().execute(new Runnable() {
                     @Override
                     public void run() {
-                        mSearchPreferences.setTargetPage(targetPage);
-                        executeSearch(blockNumber, targetPage, Stack.GO_UP_ONE_BLOCK);
+                        if (NetworkFunctions.isOnline()) {
+                            SystemClock.sleep(REQUEST_COOL_DOWN);
+                            mSearchPreferences.setTargetPage(targetPage);
+                            executeSearch(blockNumber, targetPage, Stack.GO_UP_ONE_BLOCK);
+                        }
                     }
-                }, REQUEST_COOL_DOWN);
-            }
-
-            @Override
-            public boolean onCustomScrollCondition() {
-                return NetworkFunctions.isOnline();
+                });
             }
         }, ApiConstants.RESULTS_PER_PAGE, getResources().getInteger(R.integer.stack_pages_per_block));
 

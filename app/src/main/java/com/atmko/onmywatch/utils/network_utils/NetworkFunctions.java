@@ -14,20 +14,31 @@ import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.utils.SearchPreferences;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
 
 public class NetworkFunctions {
-    private static final String EXEC_COMMAND = "/system/bin/ping -c 1 8.8.8.8";
-    public static boolean isOnline() {
-        Runtime runtime = Runtime.getRuntime();
-        try {
-            Process ipProcess = runtime.exec(EXEC_COMMAND);
-            int     exitValue = ipProcess.waitFor();
-            return (exitValue == 0);
-        }
-        catch (IOException e)          { e.printStackTrace(); }
-        catch (InterruptedException e) { e.printStackTrace(); }
+    private static final String SOCKET_ADDRESS = "8.8.8.8";
+    private static final int PORT_NUMBER = 53;
+    private static final int TIMEOUT_MILLIS = 1500;
 
-        return false;
+    //source: https://stackoverflow.com/questions/1560788/how-to-check-internet-access-on-android-inetaddress-never-times-out
+    //user: Levit
+    //date: Dec 5 '14
+    public static boolean isOnline() {
+        try {
+            int timeoutMs = TIMEOUT_MILLIS;
+            Socket sock = new Socket();
+            SocketAddress sockaddr = new InetSocketAddress(SOCKET_ADDRESS, PORT_NUMBER);
+
+            sock.connect(sockaddr, timeoutMs);
+            sock.close();
+
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     //agnostic search request

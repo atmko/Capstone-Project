@@ -143,21 +143,18 @@ public class Stack extends RecyclerView.OnScrollListener {
 
     //initial setup paging block
     public void initialize() {
-        if (pagingBlockTemplate.createPageLoader.onCustomScrollCondition()) {
-            //stack is not idle
-            mIsIdle = false;
+        //stack is not idle
+        mIsIdle = false;
 
-            //clear values
-            pagingBlockMap.clear();
-            getAdapterData().clear();
+        //clear values
+        pagingBlockMap.clear();
+        getAdapterData().clear();
 
-            adapter.notifyDataSetChanged();
-            totalPages = 0;
+        adapter.notifyDataSetChanged();
+        totalPages = 0;
 
-            //load new block
-            loadNextBlock(0);
-
-        }
+        //load new block
+        loadNextBlock(0);
     }
 
     public int getFirstPage() {
@@ -435,7 +432,6 @@ public class Stack extends RecyclerView.OnScrollListener {
         public interface OnCreatePageLoader {
             void onPageEndReached(int blockNumber, int targetPage);
             void onPageStartReached(int blockNumber, int targetPage);
-            boolean onCustomScrollCondition();
         }
     }
 
@@ -490,16 +486,14 @@ public class Stack extends RecyclerView.OnScrollListener {
     @Override
     public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
         super.onScrollStateChanged(recyclerView, newState);
-        if (atListEnd && newState == RecyclerView.SCROLL_STATE_IDLE
-                && pagingBlockTemplate.createPageLoader.onCustomScrollCondition()) {
+        if (atListEnd && newState == RecyclerView.SCROLL_STATE_IDLE) {
             if (pagingBlockMap.size() == blockLimit) {
                 removeTopBlock();
             }
 
             addBottomBlock();
 
-        } else if (atListStart && newState == RecyclerView.SCROLL_STATE_IDLE
-                && pagingBlockTemplate.createPageLoader.onCustomScrollCondition()) {
+        } else if (atListStart && newState == RecyclerView.SCROLL_STATE_IDLE) {
             if (pagingBlockMap.size() == blockLimit) {
                 removeBottomBlock();
             }
