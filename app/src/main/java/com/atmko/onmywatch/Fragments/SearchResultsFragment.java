@@ -411,6 +411,9 @@ public class SearchResultsFragment extends Fragment implements
     public void onItemClick(int position) {
         MediaData selectedData = ((MediaDataAdapter) mDataAdapter).getAdapterData().get(position);
 
+        //do nothing if selecting stack placeholder
+        if (selectedData.getId() == null) return;
+
         startDetailsFragment(selectedData);
     }
 

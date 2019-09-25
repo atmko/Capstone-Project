@@ -297,6 +297,9 @@ public class MasterActivity extends AppCompatActivity {
     }
 
     public void launchAddToListActivity(MediaData mediaData) {
+        //fix for stack placeholder, do nothing if no id
+        if (mediaData.getId() == null) return;
+
         int mediaType = mediaData instanceof MovieData ? MEDIA_TYPE_MOVIE : MEDIA_TYPE_SERIES;
 
         Intent intent = new Intent(getApplicationContext(), AddToListActivity.class);
