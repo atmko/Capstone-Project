@@ -28,6 +28,7 @@ import com.atmko.onmywatch.models.MovieDataRecord;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesDataRecord;
 import com.atmko.onmywatch.models.UserListModel;
+import com.atmko.onmywatch.models.WatchListModel;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.view_models.AddToListViewModel;
 import com.atmko.onmywatch.view_models.AddToListViewModelFactory;
@@ -58,6 +59,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
     private Bundle mSavedInstanceState;
     private AppDatabase mDatabase;
     private AddToListAdapter mAdapter;
+    private int mOldWatchStatus;
     private int mSelectedWatchStatus;
     private ArrayList<UserListModel> mOriginalContainingLists;
     private ArrayList<UserListModel> mNewContainingLists;
@@ -86,6 +88,9 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
         Intent intent = getIntent();
         mMediaType = intent.getIntExtra(MEDIA_TYPE_KEY, 0);
         mMediaData = Parcels.unwrap(intent.getParcelableExtra(MEDIA_DATA_KEY));
+
+        final int oldWatchStatus = mMediaData.getWatchStatus();
+        mOldWatchStatus = oldWatchStatus;
 
         //save saveInstanceState value for onCreateAnimator and mNewContainingLists to check if
         // this is the first instance
@@ -278,11 +283,14 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
 
                 }
 
-                //TODO observe user list counts by view model instead of manually through netCountChange
-                int netCountChange = updateUserListRecords();
-                int newContainingListValue = mOriginalContainingLists.size() + netCountChange;
+                int uerListNetCountChange = updateUserListRecords();
+                int newContainingListValue = mOriginalContainingLists.size() + uerListNetCountChange;
 
-                deleteMediaDataIfDataNotUsed(newMediaData.getWatchStatus(), newContainingListValue);
+                boolean isCreated = newMediaData == mMediaData;
+                boolean isDeleted = deleteMediaDataIfDataNotUsed(newMediaData.getWatchStatus(),
+                        newContainingListValue);
+
+                updateWatchListCounts(newMediaData.getWatchStatus(), isCreated, isDeleted);
             }
         });
     }
@@ -357,6 +365,52 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
         return netCountChange;
     }
 
+    private void updateWatchListCounts(int newWatchStatus, boolean isCreated, boolean isDeleted) {
+        WatchListModel oldWatchStatusList;
+        WatchListModel newWatchStatusList;
+
+        //get watch status names
+        String oldWatchStatusName = MediaData.getWatchStatusTitle(mOldWatchStatus,
+                getApplicationContext());
+        String newWatchStatusName = MediaData.getWatchStatusTitle(newWatchStatus,
+                getApplicationContext());
+
+        //get watch status lists
+        oldWatchStatusList =
+                mDatabase.watchListsDao().getListByNameAlt(oldWatchStatusName);
+        newWatchStatusList =
+                mDatabase.watchListsDao().getListByNameAlt(newWatchStatusName);
+
+        //update counts
+
+        //for when status has changed
+        if (mOldWatchStatus != newWatchStatus) {
+            //because none status is default, avoid subtraction if...
+            //none watch list is empty
+            if (oldWatchStatusList.getItemCount() != 0) {
+                oldWatchStatusList.setItemCount(oldWatchStatusList.getItemCount() - 1);
+
+            }
+
+            newWatchStatusList.setItemCount(newWatchStatusList.getItemCount() + 1);
+
+        //for when media is newly created with none none status (unchanged) but simultaneously being added to a list
+        } else if (isCreated) {
+            newWatchStatusList.setItemCount(newWatchStatusList.getItemCount() + 1);
+
+        }
+
+        //for when media is deleted
+        if (isDeleted) {
+            newWatchStatusList.setItemCount(newWatchStatusList.getItemCount() - 1);
+
+        }
+
+        //update lists
+        mDatabase.watchListsDao().updateListConfiguration(oldWatchStatusList);
+        mDatabase.watchListsDao().updateListConfiguration(newWatchStatusList);
+    }
+
     private void removeFromList(final UserListModel userListModel) {
         if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
             //remove record from list
@@ -396,7 +450,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
         Log.d(TAG, "update list count");
     }
 
-    private void deleteMediaDataIfDataNotUsed(int newWatchStatus, int newContainingListValue) {
+    private boolean deleteMediaDataIfDataNotUsed(int newWatchStatus, int newContainingListValue) {
         //if watch status is none and if there are no lists containing this media
         if (newWatchStatus == MediaData.WATCH_STATUS_NONE
                 && newContainingListValue == 0) {
@@ -410,7 +464,11 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
                 mDatabase.seriesDataDao().deleteSeriesData(((SeriesData) mMediaData));
 
             }
+
+            return true;
         }
+
+        return false;
     }
 
     @Override

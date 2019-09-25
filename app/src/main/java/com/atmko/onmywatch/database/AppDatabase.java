@@ -10,7 +10,6 @@ import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.atmko.onmywatch.R;
-import com.atmko.onmywatch.database.daos.MediaDataDao;
 import com.atmko.onmywatch.database.daos.MovieDataDao;
 import com.atmko.onmywatch.database.daos.SeriesDataDao;
 import com.atmko.onmywatch.database.daos.UserListsDao;
@@ -83,7 +82,6 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public abstract WatchListsDao watchListsDao();
     public abstract UserListsDao userListsDao();
-    public abstract MediaDataDao mediaDataDao();
     public abstract MovieDataDao movieDataDao();
     public abstract SeriesDataDao seriesDataDao();
     public abstract MovieDataRecordsDao movieDataRecordsDao();

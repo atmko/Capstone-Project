@@ -2,15 +2,12 @@ package com.atmko.onmywatch.view_models;
 
 import android.app.Application;
 import android.util.Log;
-import android.util.SparseArray;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.database.AppDatabase;
-import com.atmko.onmywatch.models.ListCounts;
 import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.models.WatchListModel;
 
@@ -22,8 +19,6 @@ public class ListsWatchAndUserViewModel extends AndroidViewModel {
     private LiveData<List<UserListModel>> userLists;
     private LiveData<List<WatchListModel>> watchLists;
 
-    private SparseArray<LiveData<ListCounts>> watchStatusCountsList;
-
     public ListsWatchAndUserViewModel(@NonNull Application application) {
         super(application);
 
@@ -33,23 +28,6 @@ public class ListsWatchAndUserViewModel extends AndroidViewModel {
 
         Log.d(TAG, "fetching watch list counts from the database");
         watchLists = database.watchListsDao().getAllLists();
-
-        watchStatusCountsList = loadWatchListCounts(application, database);
-    }
-
-    private SparseArray<LiveData<ListCounts>> loadWatchListCounts(Application application, AppDatabase database) {
-        int[] watchStatusValues =
-                application.getResources().getIntArray(R.array.watch_status_series_values);
-
-        SparseArray<LiveData<ListCounts>> tempSparseArray = new SparseArray<>();
-
-        for (int watchStatus: watchStatusValues) {
-            tempSparseArray.put(watchStatus, database.mediaDataDao()
-                    .getAgnosticWatchStatusCount(watchStatus));
-
-        }
-
-        return tempSparseArray;
     }
 
     public LiveData<List<WatchListModel>> getWatchLists() {
@@ -58,9 +36,5 @@ public class ListsWatchAndUserViewModel extends AndroidViewModel {
 
     public LiveData<List<UserListModel>> getUserLists() {
         return userLists;
-    }
-
-    public SparseArray<LiveData<ListCounts>> getWatchStatusCountList() {
-        return watchStatusCountsList;
     }
 }

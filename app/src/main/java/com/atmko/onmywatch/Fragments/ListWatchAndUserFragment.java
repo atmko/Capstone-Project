@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +26,6 @@ import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.UserListsAdapter;
 import com.atmko.onmywatch.adapters.WatchListsAdapter;
 import com.atmko.onmywatch.database.AppDatabase;
-import com.atmko.onmywatch.models.ListCounts;
 import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.models.WatchListModel;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
@@ -172,8 +170,6 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
                     ((WatchListsAdapter) mAdapter).getAdapterData().clear();
                     ((WatchListsAdapter) mAdapter).addAdapterData(watchListModels);
 
-                    observeWatchListCounts(viewModel);
-
                     //restore search if it exists
                     final ImageButton searchImageButton = getParentFragment().
                             getView().findViewById(R.id.search_image_button);
@@ -200,38 +196,6 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
                             mFirstInit, mSavedInstanceState, searchImageButton, mSearchTextView);
 
                     mFirstInit = false;
-                }
-            });
-        }
-    }
-
-    private void observeWatchListCounts(ListsWatchAndUserViewModel viewModel) {
-        SparseArray<LiveData<ListCounts>> countsLiveDataList = viewModel.getWatchStatusCountList();
-
-        for (int index = 0; index< countsLiveDataList.size(); index++) {
-            LiveData<ListCounts> listCountLiveData = countsLiveDataList.get(index);
-
-            final int finalIndex = index;
-            listCountLiveData.observe(this, new Observer<ListCounts>() {
-                @Override
-                public void onChanged(ListCounts listCounts) {
-                    int moviesCount;
-                    int seriesCount;
-
-                    if (listCounts != null) {
-                        moviesCount = listCounts.getMoviesCount();
-                        seriesCount = listCounts.getSeriesCount();
-
-                    } else {
-                        moviesCount = 0;
-                        seriesCount = 0;
-                    }
-
-                    WatchListModel watchListModel =
-                            ((WatchListsAdapter) mAdapter).getAdapterData().get(finalIndex);
-                    watchListModel.setItemCount(moviesCount + seriesCount);
-
-                    mAdapter.notifyDataSetChanged();
                 }
             });
         }

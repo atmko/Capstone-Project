@@ -2,7 +2,6 @@ package com.atmko.onmywatch.database.daos;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
-import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -22,6 +21,10 @@ public interface WatchListsDao {
 
     @Query("SELECT * FROM watch_lists WHERE id = :name")
     LiveData<WatchListModel> getListByName(String name);
+
+    //alternate method without live data
+    @Query("SELECT * FROM watch_lists WHERE id = :name")
+    WatchListModel getListByNameAlt(String name);
 
     @Query("SELECT * FROM watch_lists WHERE id LIKE :name")
     LiveData<List<WatchListModel>> getListsWithNameLike(String name);

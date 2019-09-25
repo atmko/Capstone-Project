@@ -6,12 +6,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -20,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.WatchListsAdapter;
-import com.atmko.onmywatch.models.ListCounts;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.WatchListModel;
 import com.atmko.onmywatch.utils.GeneralUtils;
@@ -207,45 +204,10 @@ public class ListWidgetProviderConfigureActivity extends AppCompatActivity imple
                 ((WatchListsAdapter) mAdapter).getAdapterData().clear();
                 ((WatchListsAdapter) mAdapter).addAdapterData(watchListModels);
 
-                observeWatchListCounts(viewModel);
-
                 Log.d(TAG, "update watch lists");
             }
         });
     }
-
-    private void observeWatchListCounts(ListsWatchAndUserViewModel viewModel) {
-        SparseArray<LiveData<ListCounts>> countsLiveDataList = viewModel.getWatchStatusCountList();
-
-        for (int index = 0; index< countsLiveDataList.size(); index++) {
-            LiveData<ListCounts> listCountLiveData = countsLiveDataList.get(index);
-
-            final int finalIndex = index;
-            listCountLiveData.observe(this, new Observer<ListCounts>() {
-                @Override
-                public void onChanged(ListCounts listCounts) {
-                    int moviesCount;
-                    int seriesCount;
-
-                    if (listCounts != null) {
-                        moviesCount = listCounts.getMoviesCount();
-                        seriesCount = listCounts.getSeriesCount();
-
-                    } else {
-                        moviesCount = 0;
-                        seriesCount = 0;
-                    }
-
-                    WatchListModel watchListModel =
-                            ((WatchListsAdapter) mAdapter).getAdapterData().get(finalIndex);
-                    watchListModel.setItemCount(moviesCount + seriesCount);
-
-                    mAdapter.notifyDataSetChanged();
-                }
-            });
-        }
-    }
-
 
     @Override
     public void onItemClick(int position) {
