@@ -225,9 +225,16 @@ public class Stack extends RecyclerView.OnScrollListener {
             //increase value with each iteration through zero index
             int currentInsertPosition = firstInsertPosition + index;
 
-            //replace preload object and update adapter
-            getAdapterData().remove(currentInsertPosition);
-            getAdapterData().add(currentInsertPosition, dataList.get(index));
+            //catch exception caused by queries that get sent after adapter has already been
+            //cleared during configuration changes
+            try {
+                //replace preload object and update adapter
+                getAdapterData().remove(currentInsertPosition);
+                getAdapterData().add(currentInsertPosition, dataList.get(index));
+
+            } catch (IndexOutOfBoundsException e) {
+                e.printStackTrace();
+            }
         }
 
         adapter.notifyItemRangeChanged(firstInsertPosition, dataList.size());
