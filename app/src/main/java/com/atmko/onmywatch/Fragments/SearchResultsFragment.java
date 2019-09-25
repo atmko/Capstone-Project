@@ -245,6 +245,8 @@ public class SearchResultsFragment extends Fragment implements
     }
 
     private void executeSearch(final int blockNumber, final int targetPage, final int stackOperation) {
+        if (getParentFragment().getActivity() == null) return;
+
         //build AN request
         ANRequest request = NetworkFunctions.agnosticSearchRequest(mSearchUrl, mSearchPreferences,
                 getParentFragment().getActivity());
@@ -330,6 +332,8 @@ public class SearchResultsFragment extends Fragment implements
     // && is containing fragment on top in fragment detail container
     private void loadDetailFragment() {
         MasterActivity masterActivity = ((MasterActivity) getParentFragment().getActivity());
+
+        if (masterActivity == null) return;
 
         Fragment activeFragment = masterActivity.getSupportFragmentManager().findFragmentById(R.id.master_fragments_container);
         String activeClassName = activeFragment.getClass().getName();
