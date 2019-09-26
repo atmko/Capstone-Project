@@ -11,6 +11,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.atmko.stack.NetworkFunctions.isOnline;
+
 public class Stack extends RecyclerView.OnScrollListener {
     //stack operation identifiers
     public static final int GO_DOWN_ONE_BLOCK = 1;
@@ -23,11 +25,13 @@ public class Stack extends RecyclerView.OnScrollListener {
     private PagingBlockTemplate pagingBlockTemplate;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
+    private boolean mUsesInternet;
     private SparseArray<PagingBlock> pagingBlockMap;
     private boolean mIsIdle;
 
     public Stack(boolean pageZeroStart, int blockLimit, PagingBlockTemplate pagingBlockTemplate,
-                 Object preloadObject, RecyclerView recyclerView, RecyclerView.Adapter adapter) {
+                 Object preloadObject, RecyclerView recyclerView, RecyclerView.Adapter adapter,
+                 boolean usesInternet) {
 
         this.firstPage = pageZeroStart ? 0 : 1;
         this.blockLimit = blockLimit;
@@ -35,6 +39,7 @@ public class Stack extends RecyclerView.OnScrollListener {
         this.mPreloadObject = preloadObject;
         this.recyclerView = recyclerView;
         this.adapter = adapter;
+        this.mUsesInternet = usesInternet;
         this.pagingBlockMap = new SparseArray<>();
         mIsIdle = true;
     }
@@ -201,7 +206,7 @@ public class Stack extends RecyclerView.OnScrollListener {
         } else if (stackOperation == GO_UP_ONE_BLOCK){
             addItemsIntoAdapter(pagingBlock, pageNumber, dataList);
         }
-            
+
         mIsIdle = true;
     }
 
@@ -487,18 +492,60 @@ public class Stack extends RecyclerView.OnScrollListener {
     public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
         super.onScrollStateChanged(recyclerView, newState);
         if (atListEnd && newState == RecyclerView.SCROLL_STATE_IDLE) {
-            if (pagingBlockMap.size() == blockLimit) {
-                removeTopBlock();
-            }
+            if (mUsesInternet) {
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isOnline()) {
+                            AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (pagingBlockMap.size() == blockLimit) {
+                                        removeTopBlock();
+                                    }
 
-            addBottomBlock();
+                                    addBottomBlock();
+                                }
+                            });
+                        }
+                    }
+                });
+
+            } else {
+                if (pagingBlockMap.size() == blockLimit) {
+                    removeTopBlock();
+                }
+
+                addBottomBlock();
+            }
 
         } else if (atListStart && newState == RecyclerView.SCROLL_STATE_IDLE) {
-            if (pagingBlockMap.size() == blockLimit) {
-                removeBottomBlock();
-            }
+            if (mUsesInternet) {
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isOnline()) {
+                            AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (pagingBlockMap.size() == blockLimit) {
+                                        removeBottomBlock();
+                                    }
 
-            addTopBlock();
+                                    addTopBlock();
+                                }
+                            });
+                        }
+                    }
+                });
+
+            } else {
+                if (pagingBlockMap.size() == blockLimit) {
+                    removeBottomBlock();
+                }
+
+                addTopBlock();
+            }
         }
     }
 }

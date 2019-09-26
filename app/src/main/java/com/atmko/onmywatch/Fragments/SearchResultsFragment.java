@@ -165,36 +165,32 @@ public class SearchResultsFragment extends Fragment implements
                 new Stack.PagingBlockTemplate(new Stack.PagingBlockTemplate.OnCreatePageLoader() {
             @Override
             public void onPageEndReached(final int blockNumber, final int targetPage) {
-                AppExecutors.getInstance().networkIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (NetworkFunctions.isOnline()) {
+                if (targetPage == stack.getFirstPage()) {
+                    mSearchPreferences.setTargetPage(targetPage);
+                    executeSearch(blockNumber, targetPage, Stack.GO_DOWN_ONE_BLOCK);
+
+                } else {
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
                             mSearchPreferences.setTargetPage(targetPage);
-
-                            if (targetPage == stack.getFirstPage()) {
-                                executeSearch(blockNumber, targetPage, Stack.GO_DOWN_ONE_BLOCK);
-
-                            } else {
-                                SystemClock.sleep(REQUEST_COOL_DOWN);
-                                executeSearch(blockNumber, targetPage, Stack.GO_DOWN_ONE_BLOCK);
-                            }
+                            executeSearch(blockNumber, targetPage, Stack.GO_DOWN_ONE_BLOCK);
                         }
-                    }
-                });
+                    }, REQUEST_COOL_DOWN);
+                }
             }
 
             @Override
             public void onPageStartReached(final int blockNumber, final int targetPage) {
-                AppExecutors.getInstance().networkIO().execute(new Runnable() {
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if (NetworkFunctions.isOnline()) {
-                            SystemClock.sleep(REQUEST_COOL_DOWN);
-                            mSearchPreferences.setTargetPage(targetPage);
-                            executeSearch(blockNumber, targetPage, Stack.GO_UP_ONE_BLOCK);
-                        }
+                        mSearchPreferences.setTargetPage(targetPage);
+                        executeSearch(blockNumber, targetPage, Stack.GO_UP_ONE_BLOCK);
                     }
-                });
+                }, REQUEST_COOL_DOWN);
             }
         }, ApiConstants.RESULTS_PER_PAGE, getResources().getInteger(R.integer.stack_pages_per_block));
 
@@ -225,7 +221,7 @@ public class SearchResultsFragment extends Fragment implements
 
         recyclerView.setAdapter(mDataAdapter);
         stack = new Stack(false,getResources().getInteger(R.integer.stack_block_limit), pagingBlockTemplate,
-                preloadObject, recyclerView, mDataAdapter);
+                preloadObject, recyclerView, mDataAdapter, true);
         recyclerView.addOnScrollListener(stack);
 
         //get search bar from parent fragment
