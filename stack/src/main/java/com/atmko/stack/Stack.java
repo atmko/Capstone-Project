@@ -248,9 +248,10 @@ public class Stack extends RecyclerView.OnScrollListener {
 
             for (int i = 0; i < correctionDifference; i++) {
                 getAdapterData().remove(getAdapterData().size() - 1);
-                adapter.notifyItemRemoved(getAdapterData().size() - 1);
 
             }
+
+            adapter.notifyItemRangeRemoved(correctionDifference - 1, correctionDifference);
         }
 
         //TODO data still in paging data now useless now that its been added to adapter.
