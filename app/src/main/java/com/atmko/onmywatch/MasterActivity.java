@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.work.Constraints;
-import androidx.work.OneTimeWorkRequest;
+import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
 import android.content.Context;
@@ -39,6 +39,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import org.parceler.Parcels;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class MasterActivity extends AppCompatActivity {
 
@@ -52,6 +53,9 @@ public class MasterActivity extends AppCompatActivity {
 
     public static final String SEARCH_TEXT_KEY = "search_text";
     public static final String SEARCH_BAR_VISIBILITY_KEY = "visible_search_bar";
+
+    public static final int REPEAT_INTERVAL = 2;
+    public static final int INITIAL_DELAY = 15;
 
     //for restoring keyboard visibility upon configuration change
     private boolean mIsKeyboardVisible;
@@ -155,11 +159,16 @@ public class MasterActivity extends AppCompatActivity {
     }
 
     private void startWorkers() {
-        Constraints constraints = new Constraints.Builder().build();
+        Constraints constraints = new Constraints.Builder()
+                .setRequiresBatteryNotLow(true)
+                .setRequiresStorageNotLow(true)
+                .build();
 
-        OneTimeWorkRequest updateMediaDataRequest =
-                new OneTimeWorkRequest.Builder(UpdateMediaWorker.class)
+        PeriodicWorkRequest updateMediaDataRequest =
+                new PeriodicWorkRequest.Builder(
+                        UpdateMediaWorker.class, REPEAT_INTERVAL, TimeUnit.HOURS)
                         .setConstraints(constraints)
+                        .setInitialDelay(INITIAL_DELAY, TimeUnit.MINUTES)
                         .build();
 
         WorkManager.getInstance(this).enqueue(updateMediaDataRequest);
