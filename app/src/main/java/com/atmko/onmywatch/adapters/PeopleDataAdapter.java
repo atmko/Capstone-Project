@@ -27,6 +27,10 @@ import com.atmko.onmywatch.utils.network_utils.NetworkFunctions;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * data adapter for people data objects
+ */
+
 public class PeopleDataAdapter extends RecyclerView.Adapter<PeopleDataAdapter.PeopleDataAdapterViewHolder> {
 
     private final Fragment mFragment;

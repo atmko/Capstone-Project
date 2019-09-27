@@ -16,6 +16,10 @@ import com.atmko.onmywatch.Fragments.SearchParentFragment;
 import com.atmko.onmywatch.Fragments.SearchResultsFragment;
 import com.atmko.onmywatch.utils.SearchPreferences;
 
+/*
+ * pager adapter for preset search results in DiscoveryFragment
+ */
+
 public class SearchPresetPagerAdapter extends FragmentStatePagerAdapter {
     private int mMediaType;
     private String[] mUrlList;

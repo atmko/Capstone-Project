@@ -25,6 +25,10 @@ import com.atmko.onmywatch.utils.network_utils.NetworkFunctions;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * data adapter for media data objects in HomeSpotlightFragment within HomeFragment
+ */
+
 public class HomeSpotlightAdapter extends RecyclerView.Adapter<HomeSpotlightAdapter.HomeSpotlightAdapterViewHolder> {
     private final Fragment mFragment;
     private final List<MediaData> mAdapterData;

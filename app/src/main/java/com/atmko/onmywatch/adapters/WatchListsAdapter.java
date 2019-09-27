@@ -20,6 +20,10 @@ import com.atmko.onmywatch.models.WatchListModel;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * data adapter for WatchList objects
+ */
+
 public class WatchListsAdapter extends RecyclerView.Adapter<WatchListsAdapter.WatchListsAdapterViewHolder> {
 
     private final List<WatchListModel> mAdapterData;

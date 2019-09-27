@@ -12,6 +12,10 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import com.atmko.onmywatch.Fragments.ListWatchAndUserFragment;
 import com.atmko.onmywatch.Fragments.ListsWatchAndUserParentFragment;
 
+/*
+ * pager adapter hosting ListsWatchAndUserParentFragment's child fragments
+ */
+
 public class ListWatchAndUserAdapter extends FragmentStatePagerAdapter {
     private static final int TAB_COUNT = 2;
 

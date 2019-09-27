@@ -27,6 +27,10 @@ import com.atmko.onmywatch.utils.network_utils.NetworkFunctions;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * data adapter for cast objects in CastFragment within DetailsFragment
+ */
+
 public class CastDataAdapter extends RecyclerView.Adapter<CastDataAdapter.CastDataAdapterViewHolder> {
     private final Fragment mFragment;
     private final List<CastData> mAdapterData;

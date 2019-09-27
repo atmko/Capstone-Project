@@ -20,6 +20,10 @@ import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
+/*
+ * pager adapter hosting DetailFragment's child fragments for the series media type
+ */
+
 public class DetailSeriesExtrasAdapter extends FragmentStatePagerAdapter {
     private static final int TAB_COUNT = 3;
 

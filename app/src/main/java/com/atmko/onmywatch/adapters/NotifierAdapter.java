@@ -20,6 +20,10 @@ import com.atmko.onmywatch.R;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * data adapter for notification items in Notifier Activity
+ */
+
 public class NotifierAdapter extends RecyclerView.Adapter<NotifierAdapter.NotifierViewHolder> {
     private final List<String> mConditionTitles;
     private final List<Boolean> mConditionValues;

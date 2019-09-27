@@ -16,6 +16,10 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import com.atmko.onmywatch.Fragments.ListResultsFragment;
 import com.atmko.onmywatch.R;
 
+/*
+ * pager adapter hosting ListResultsParentFragment's child fragments
+ */
+
 public class ListResultsUserPagerAdapter extends FragmentStatePagerAdapter {
     private int mListType;
     private String mListName;

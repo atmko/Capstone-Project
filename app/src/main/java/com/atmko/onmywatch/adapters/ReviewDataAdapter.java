@@ -21,6 +21,10 @@ import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 import java.util.ArrayList;
 import java.util.Map;
 
+/*
+ * data adapter for review objects ReviewsFragment
+ */
+
 public final class ReviewDataAdapter extends RecyclerView.Adapter<ReviewDataAdapter.ReviewDataAdapterViewHolder> {
 
     private final ArrayList<Map<String, String>> mAdapterData;

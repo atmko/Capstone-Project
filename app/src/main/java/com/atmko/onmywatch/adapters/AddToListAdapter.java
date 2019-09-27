@@ -20,6 +20,10 @@ import com.atmko.onmywatch.models.UserListModel;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * data adapter for list objects in AddToListActivity
+ */
+
 public class AddToListAdapter extends RecyclerView.Adapter<AddToListAdapter.AddToListViewHolder> {
     private final List<UserListModel> mAdapterData;
     private final OnListItemClickListener mOnListItemClickListener;

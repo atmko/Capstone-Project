@@ -29,6 +29,10 @@ import com.atmko.onmywatch.utils.network_utils.NetworkFunctions;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * data adapter for Media data objects
+ */
+
 public class MediaDataAdapter extends RecyclerView.Adapter<MediaDataAdapter.MediaDataAdapterViewHolder> {
 
     private final Fragment mFragment;

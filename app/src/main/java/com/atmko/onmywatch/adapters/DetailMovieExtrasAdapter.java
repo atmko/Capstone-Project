@@ -20,6 +20,10 @@ import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
+/*
+ * pager adapter hosting DetailFragment's child fragments for the movie media type
+ */
+
 public class DetailMovieExtrasAdapter extends FragmentStatePagerAdapter {
     private static final int TAB_COUNT = 2;
 
