@@ -62,15 +62,15 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     private static final int WIDGET_BACKDROP_WIDTH = 780;
     private static final int WIDGET_BACKDROP_HEIGHT = 439;
 
-    Context mContext;
-    AppDatabase mDatabase;
-    int mAppWidgetId;
-    String mListName;
-    int mMediaType;
-    List<MovieData> mMovieDataList;
-    List<SeriesData> mSeriesDataList;
+    private Context mContext;
+    private AppDatabase mDatabase;
+    private int mAppWidgetId;
+    private String mListName;
+    private int mMediaType;
+    private List<MovieData> mMovieDataList;
+    private List<SeriesData> mSeriesDataList;
 
-    public ListRemoteViewsFactory(Context applicationContext, int appWidgetId) {
+    ListRemoteViewsFactory(Context applicationContext, int appWidgetId) {
         mContext = applicationContext;
         mDatabase = AppDatabase.getInstance(mContext);
         mAppWidgetId = appWidgetId;

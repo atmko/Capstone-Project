@@ -22,7 +22,7 @@ public final class SearchPreferences {
 
     //language parameters
     String mLanguageParamVal;
-    public static final String ENG_US = "en-US";
+    private static final String ENG_US = "en-US";
 
     //query parameter
     String mQuery;

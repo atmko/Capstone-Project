@@ -22,18 +22,18 @@ public class UserListModel extends ListModel {
 
     @Ignore
     public UserListModel(@NonNull String name, int itemCount) {
-        this.name = name;
+        this.mName = name;
         this.mItemCount = itemCount;
     }
 
     public UserListModel(@NonNull String name) {
-        this.name = name;
+        this.mName = name;
     }
 
     @Override
     public boolean equals(@Nullable Object obj) {
         if (obj instanceof UserListModel) {
-            return ((UserListModel) obj).getName().equals(this.name);
+            return ((UserListModel) obj).getName().equals(this.mName);
 
         } else {
             return super.equals(obj);

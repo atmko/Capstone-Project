@@ -10,7 +10,7 @@ import android.view.KeyEvent;
 import android.widget.EditText;
 
 public class SuperEditText extends EditText {
-    OnKeyBoardDismissListener mKeyBoardDismissListener;
+    private OnKeyBoardDismissListener mKeyBoardDismissListener;
 
     public SuperEditText(Context context) {
         super(context);

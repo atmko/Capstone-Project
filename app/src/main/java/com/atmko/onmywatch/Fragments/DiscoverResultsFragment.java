@@ -72,9 +72,9 @@ public class DiscoverResultsFragment extends Fragment implements
     private static final String PAGING_BLOCK_MAP_KEY = "paging_block_map";
 
     //check for restoring state
-    boolean mFirstInit = true;
+    private boolean mIsFirstInit = true;
     private RecyclerView.Adapter mDataAdapter;
-    private Stack stack;
+    private Stack mStack;
     private SearchPreferences mSearchPreferences;
     private SuperEditText mSearchTextView;
 
@@ -130,9 +130,9 @@ public class DiscoverResultsFragment extends Fragment implements
                     getView().findViewById(R.id.search_image_button);
             MasterActivity masterActivity = ((MasterActivity) getActivity());
             masterActivity.restoreSavedSearch(DiscoverResultsFragment.this,
-                    mFirstInit, savedInstanceState, searchImageButton, mSearchTextView);
+                    mIsFirstInit, savedInstanceState, searchImageButton, mSearchTextView);
 
-            mFirstInit = false;
+            mIsFirstInit = false;
 
             List mediaDataList;
 
@@ -153,10 +153,10 @@ public class DiscoverResultsFragment extends Fragment implements
 
             //get saved paging block map
             int[] pagingBlockRange = savedInstanceState.getIntArray(PAGING_BLOCK_MAP_KEY);
-            stack.restorePagingBlockStructure(pagingBlockRange, mediaDataList);
+            mStack.restorePagingBlockStructure(pagingBlockRange, mediaDataList);
 
             //set total pages
-            stack.setTotalPages(mSearchPreferences.getTotalPages());
+            mStack.setTotalPages(mSearchPreferences.getTotalPages());
 
             loadDetailFragment();
         }
@@ -167,7 +167,7 @@ public class DiscoverResultsFragment extends Fragment implements
                 new Stack.PagingBlockTemplate(new Stack.PagingBlockTemplate.OnCreatePageLoader() {
             @Override
             public void onPageEndReached(final int blockNumber, final int targetPage) {
-                if (targetPage == stack.getFirstPage()) {
+                if (targetPage == mStack.getFirstPage()) {
                     mSearchPreferences.setTargetPage(targetPage);
                     executeSearch(blockNumber, targetPage, Stack.GO_DOWN_ONE_BLOCK);
 
@@ -222,9 +222,9 @@ public class DiscoverResultsFragment extends Fragment implements
         }
 
         recyclerView.setAdapter(mDataAdapter);
-        stack = new Stack(false,getResources().getInteger(R.integer.stack_block_limit), pagingBlockTemplate,
+        mStack = new Stack(false,getResources().getInteger(R.integer.stack_block_limit), pagingBlockTemplate,
                 preloadObject, recyclerView, mDataAdapter, true);
-        recyclerView.addOnScrollListener(stack);
+        recyclerView.addOnScrollListener(mStack);
 
         //get search bar from parent fragment
         mSearchTextView =
@@ -232,7 +232,7 @@ public class DiscoverResultsFragment extends Fragment implements
     }
 
     private void loadSearch() {
-        stack.initialize();
+        mStack.initialize();
     }
 
     private GridLayoutManager configureLayoutManager() {
@@ -254,7 +254,7 @@ public class DiscoverResultsFragment extends Fragment implements
             @Override
             public void onResponse(String returnedJSONString) {
                 try {
-                    stack.setIsFrozen(false);
+                    mStack.setIsFrozen(false);
 
                     //parse and populate retrieved data
 
@@ -262,19 +262,19 @@ public class DiscoverResultsFragment extends Fragment implements
 
                     if (mMediaType == MEDIA_TYPE_MOVIE) {
                         dataList =
-                                MovieDataParser.parseData(returnedJSONString, stack, mSearchPreferences);
+                                MovieDataParser.parseData(returnedJSONString, mStack, mSearchPreferences);
 
                     } else if (mMediaType == MEDIA_TYPE_SERIES) {
                         dataList =
-                                SeriesDataParser.parseData(returnedJSONString, stack, mSearchPreferences);
+                                SeriesDataParser.parseData(returnedJSONString, mStack, mSearchPreferences);
 
                     } else if (mMediaType == MEDIA_TYPE_PEOPLE) {
                         dataList =
-                                PersonDataParser.parseData(returnedJSONString, stack, mSearchPreferences);
+                                PersonDataParser.parseData(returnedJSONString, mStack, mSearchPreferences);
 
                     }
 
-                    stack.stackPage(blockNumber, targetPage, dataList, stackOperation);
+                    mStack.stackPage(blockNumber, targetPage, dataList, stackOperation);
 
                     loadDetailFragment();
 
@@ -286,17 +286,17 @@ public class DiscoverResultsFragment extends Fragment implements
             @Override
             public void onError(ANError anError) {
                 if (anError.getErrorCode() == ApiConstants.TOO_MANY_REQUESTS) {
-                    stack.setIsFrozen(true);
+                    mStack.setIsFrozen(true);
                     retryAfterCoolDOwn(anError, blockNumber, targetPage, stackOperation);
 
                     return;
                 }
 
-                //stack page on failure to include empty results in recycler view,
-                //also so stack can keep counts for when to remove a block
-                stack.stackPage(blockNumber, targetPage, null, stackOperation);
+                //mStack page on failure to include empty results in recycler view,
+                //also so mStack can keep counts for when to remove a block
+                mStack.stackPage(blockNumber, targetPage, null, stackOperation);
 
-                stack.setIsFrozen(false);
+                mStack.setIsFrozen(false);
 
                 //notify user of error
                 Snackbar.make(getActivity().findViewById(R.id.top_layout),
@@ -343,7 +343,7 @@ public class DiscoverResultsFragment extends Fragment implements
         if (masterActivity.isTabletLandscape()
                 && !masterActivity.hasFragment(R.id.detail_fragments_container)
                 && isCurrentTab()
-                && stack.isIdle()
+                && mStack.isIdle()
                 //TODO consider detaching fragments to disable background updates instead of "isParentActive"
                 && isParentActive) {
 
@@ -434,7 +434,7 @@ public class DiscoverResultsFragment extends Fragment implements
             outState.putParcelable(ADAPTER_DATA_LIST_KEY, Parcels.wrap(((MediaDataAdapter)mDataAdapter).getAdapterData()));
         }
 
-        outState.putIntArray(PAGING_BLOCK_MAP_KEY, stack.saveBlockStructure());
+        outState.putIntArray(PAGING_BLOCK_MAP_KEY, mStack.saveBlockStructure());
 
         //save search bar text
         outState.putString(MasterActivity.SEARCH_TEXT_KEY, mSearchTextView.getText().toString());

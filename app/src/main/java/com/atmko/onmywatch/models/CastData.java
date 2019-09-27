@@ -12,14 +12,14 @@ import org.parceler.Parcel;
 
 @Parcel
 public class CastData {
-    String id;
-    String creditId;
-    String name;
-    String gender;
-    String character;
-    String profilePath;
-    double popularity;
-    String order;
+    String mId;
+    String mCreditId;
+    String mName;
+    String mGender;
+    String mCharacter;
+    String mProfilePath;
+    double mPopularity;
+    String mOrder;
 
     //constructor for parceler
     @Ignore
@@ -29,73 +29,73 @@ public class CastData {
 
     public CastData(String id, String creditId, String name, String gender, String character,
                     String profilePath, String order) {
-        this.id = id;
-        this.creditId = creditId;
-        this.name = name;
-        this.gender = gender;
-        this.character = character;
+        this.mId = id;
+        this.mCreditId = creditId;
+        this.mName = name;
+        this.mGender = gender;
+        this.mCharacter = character;
         if (profilePath == null) {
-            this.profilePath = null;
+            this.mProfilePath = null;
         } else {
-            this.profilePath = ApiConstants.IMAGE_BASE_URL +
+            this.mProfilePath = ApiConstants.IMAGE_BASE_URL +
                     ApiConstants.POSTER_IMAGE_SIZE +
                     profilePath;
-        }        this.order = order;
+        }        this.mOrder = order;
     }
 
     public String getId() {
-        return id;
+        return mId;
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.mId = id;
     }
 
     public String getName() {
-        return name;
+        return mName;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.mName = name;
     }
 
     public String getGender() {
-        return gender;
+        return mGender;
     }
 
     public void setGender(String gender) {
-        this.gender = gender;
+        this.mGender = gender;
     }
 
     public String getCharacter() {
-        return character;
+        return mCharacter;
     }
 
     public void setCharacter(String character) {
-        this.character = character;
+        this.mCharacter = character;
     }
 
     public String getProfilePath() {
-        return profilePath;
+        return mProfilePath;
     }
 
     public void setProfilePath(String profilePath) {
-        this.profilePath = profilePath;
+        this.mProfilePath = profilePath;
     }
 
     public double getPopularity() {
-        return popularity;
+        return mPopularity;
     }
 
     public void setPopularity(double popularity) {
-        this.popularity = popularity;
+        this.mPopularity = popularity;
     }
 
     public String getOrder() {
-        return order;
+        return mOrder;
     }
 
     public void setOrder(String order) {
-        this.order = order;
+        this.mOrder = order;
     }
 }

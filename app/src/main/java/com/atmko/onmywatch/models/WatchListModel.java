@@ -21,11 +21,11 @@ public class WatchListModel extends ListModel {
 
     @Ignore
     public WatchListModel(@NonNull String name, int itemCount) {
-        this.name = name;
+        this.mName = name;
         this.mItemCount = itemCount;
     }
 
     public WatchListModel(@NonNull String name) {
-        this.name = name;
+        this.mName = name;
     }
 }

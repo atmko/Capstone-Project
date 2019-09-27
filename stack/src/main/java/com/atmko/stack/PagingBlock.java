@@ -8,45 +8,45 @@ import android.util.SparseArray;
 
 import java.util.List;
 
-public class PagingBlock {
-    private int firstPage;
-    private int blockIndex;
-    private int blockPageCapacity;
-    private SparseArray<List> pageList;
+class PagingBlock {
+    private int mFirstPage;
+    private int mBlockIndex;
+    private int mBlockPageCapacity;
+    private SparseArray<List> mPageList;
 
     PagingBlock(int firstPage, int blockIndex, int blockPageCapacity) {
-        this.firstPage = firstPage;
-        this.blockIndex = blockIndex;
-        this.blockPageCapacity = blockPageCapacity;
-        this.pageList = new SparseArray<>();
+        this.mFirstPage = firstPage;
+        this.mBlockIndex = blockIndex;
+        this.mBlockPageCapacity = blockPageCapacity;
+        this.mPageList = new SparseArray<>();
     }
 
     int getBlockPageCapacity() {
-        return blockPageCapacity;
+        return mBlockPageCapacity;
     }
 
     List getDataListByPage(int page) {
-        return pageList.get(page);
+        return mPageList.get(page);
     }
 
     SparseArray<List> getPageList() {
-        return pageList;
+        return mPageList;
     }
 
     void setDataListByPage(int page, List dataList) {
-        pageList.put(page, dataList);
+        mPageList.put(page, dataList);
     }
 
     int getFullDataCount() {
         int count = 0;
 
         //iterate through list
-        for (int index = 0; index < pageList.size(); index++) {
-            int page = pageList.keyAt(index);
+        for (int index = 0; index < mPageList.size(); index++) {
+            int page = mPageList.keyAt(index);
 
             try {
                 //add to count
-                count += pageList.get(page).size();
+                count += mPageList.get(page).size();
 
                 //catch error if items in page not yet set
             } catch (NullPointerException e) {
@@ -59,10 +59,10 @@ public class PagingBlock {
 
     int getFirstPageInBlock() {
         //define first page index
-        return  firstPage + (blockPageCapacity * blockIndex);
+        return  mFirstPage + (mBlockPageCapacity * mBlockIndex);
     }
 
     int getLastPageInBlock() {
-        return getFirstPageInBlock() + (blockPageCapacity - 1);
+        return getFirstPageInBlock() + (mBlockPageCapacity - 1);
     }
 }

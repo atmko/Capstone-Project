@@ -24,8 +24,8 @@ public class ListsResultsViewModel extends ViewModel {
     private LiveData<List<MovieData>> allMoviesInWatchList, allMoviesInUserList;
     private LiveData<List<SeriesData>> allSeriesInWatchList, allSeriesInUserList;
     
-    public ListsResultsViewModel(@NonNull AppDatabase database, int listType, int mediaType,
-                                 List<String> watchStatusTitleList, String listName) {
+    ListsResultsViewModel(@NonNull AppDatabase database, int listType, int mediaType,
+                          List<String> watchStatusTitleList, String listName) {
 
         if (listType == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
             Log.d(TAG, "fetching media in watch list");

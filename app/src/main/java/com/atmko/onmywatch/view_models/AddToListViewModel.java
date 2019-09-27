@@ -23,7 +23,7 @@ public class AddToListViewModel extends ViewModel {
     private LiveData<List<UserListModel>> allUserLists;
     private LiveData<List<UserListModel>> containingUserLists;
 
-    public AddToListViewModel(@NonNull AppDatabase database, int mediaType, String mediaId) {
+    AddToListViewModel(@NonNull AppDatabase database, int mediaType, String mediaId) {
         Log.d(TAG, "fetching watch status from the database");
         if (mediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
             watchStatus = database.movieDataDao().getMoviesWatchStatus(mediaId);

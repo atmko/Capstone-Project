@@ -86,20 +86,19 @@ public class DetailsFragment extends Fragment {
     private MediaData mMediaData;
     private SearchPreferences mSearchPreferences;
 
-
     public static final int REVIEW_CUT_OFF_INDEX = 100;
 
     private Bundle mSavedInstanceState;
     private int mWatchStatus;
 
-    private FloatingActionButton fab;
-    private ImageButton shareButton;
-    private ImageButton rateButton;
+    private FloatingActionButton mFab;
+    private ImageButton mShareButton;
+    private ImageButton mRateButton;
 
     //details views
-    private TabLayout detailExtrasTabLayout;
-    private ViewPager detailExtrasViewPager;
-    private TextView releaseStatusTextView;
+    private TabLayout mDetailExtrasTabLayout;
+    private ViewPager mDetailExtrasViewPager;
+    private TextView mReleaseStatusTextView;
 
     //values
     private int mOverviewCutoffIndex;
@@ -225,7 +224,7 @@ public class DetailsFragment extends Fragment {
         //update initialized media data
         getArguments().putParcelable(MEDIA_DATA_PARCELABLE_KEY, Parcels.wrap(mMediaData));
 
-        outState.putString(ApiConstants.RELEASE_STATUS_KEY, releaseStatusTextView.getText().toString());
+        outState.putString(ApiConstants.RELEASE_STATUS_KEY, mReleaseStatusTextView.getText().toString());
     }
 
     private static final String STATUS_BAR_IDENTIFIER = "status_bar_height";
@@ -258,8 +257,8 @@ public class DetailsFragment extends Fragment {
             upNavigationButton.setVisibility(View.GONE);
         }
 
-        fab = getView().findViewById(R.id.add_to_list_fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        mFab = getView().findViewById(R.id.add_to_list_fab);
+        mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ((MasterActivity) getActivity()).launchAddToListActivity(mMediaData);
@@ -267,8 +266,8 @@ public class DetailsFragment extends Fragment {
         });
 
         //configure share button
-        shareButton = getView().findViewById(R.id.share_button);
-        shareButton.setOnClickListener(new View.OnClickListener() {
+        mShareButton = getView().findViewById(R.id.share_button);
+        mShareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ShareCompat.IntentBuilder
@@ -281,8 +280,8 @@ public class DetailsFragment extends Fragment {
         });
 
         //configure rate button
-        rateButton = getView().findViewById(R.id.rate_button);
-        rateButton.setOnClickListener(new View.OnClickListener() {
+        mRateButton = getView().findViewById(R.id.rate_button);
+        mRateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mWatchStatus != WATCH_STATUS_WATCHING
@@ -332,13 +331,13 @@ public class DetailsFragment extends Fragment {
         });
 
         //define views dependent on retrieving details
-        detailExtrasTabLayout = getView().findViewById(R.id.detail_extras_tab_layout);
-        detailExtrasViewPager = getView().findViewById(R.id.details_extra_view_pager);
+        mDetailExtrasTabLayout = getView().findViewById(R.id.detail_extras_tab_layout);
+        mDetailExtrasViewPager = getView().findViewById(R.id.details_extra_view_pager);
 
         configureBackDropDimensions();
         configureDetailExtrasSize();
 
-        releaseStatusTextView = getView().findViewById(R.id.release_status_text);
+        mReleaseStatusTextView = getView().findViewById(R.id.release_status_text);
 
     }
 
@@ -516,7 +515,7 @@ public class DetailsFragment extends Fragment {
 
     private void configureDetailExtrasAdapter() {
         //remove old tabs
-        detailExtrasTabLayout.removeAllTabs();
+        mDetailExtrasTabLayout.removeAllTabs();
 
         //add new tabs
         String[] titleList = null;
@@ -535,20 +534,20 @@ public class DetailsFragment extends Fragment {
         }
 
         for (String title : titleList) {
-            detailExtrasTabLayout.addTab(detailExtrasTabLayout.newTab().setText(title));
+            mDetailExtrasTabLayout.addTab(mDetailExtrasTabLayout.newTab().setText(title));
         }
 
-        detailExtrasViewPager.setAdapter(extrasAdapter);
+        mDetailExtrasViewPager.setAdapter(extrasAdapter);
 
         //clear old listeners to avoid conflicts
-        detailExtrasViewPager.clearOnPageChangeListeners();
+        mDetailExtrasViewPager.clearOnPageChangeListeners();
 
         //configure new listeners
-        detailExtrasViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(detailExtrasTabLayout));
-        detailExtrasTabLayout.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
+        mDetailExtrasViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mDetailExtrasTabLayout));
+        mDetailExtrasTabLayout.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                detailExtrasViewPager.setCurrentItem(tab.getPosition());
+                mDetailExtrasViewPager.setCurrentItem(tab.getPosition());
             }
 
             @Override
@@ -626,7 +625,7 @@ public class DetailsFragment extends Fragment {
     }
 
     private void setDetailViewValues() {
-        releaseStatusTextView.setText(mMediaData.getReleaseStatus());
+        mReleaseStatusTextView.setText(mMediaData.getReleaseStatus());
 
         //set trailer button visibility
         try {

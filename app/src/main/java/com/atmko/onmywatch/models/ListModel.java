@@ -11,16 +11,16 @@ import androidx.room.PrimaryKey;
 abstract public class ListModel {
     @NonNull
     @PrimaryKey
-    @ColumnInfo(name = "id", index = true) String name;
+    @ColumnInfo(name = "id", index = true) String mName;
     @ColumnInfo(name = "item_count") int mItemCount;
 
     @NonNull
     public String getName() {
-        return name;
+        return mName;
     }
 
-    public void setName(@NonNull String name) {
-        this.name = name;
+    public void setName(@NonNull String mName) {
+        this.mName = mName;
     }
 
     public int getItemCount() {

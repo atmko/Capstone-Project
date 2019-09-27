@@ -36,7 +36,7 @@ public class PeopleDataAdapter extends RecyclerView.Adapter<PeopleDataAdapter.Pe
     private final Fragment mFragment;
     private final List<PersonData> mAdapterData;
     private final OnListItemClickListener mOnListItemClickListener;
-    Context mContext;
+    private Context mContext;
 
     //layout ids
     @SuppressWarnings("FieldCanBeLocal")

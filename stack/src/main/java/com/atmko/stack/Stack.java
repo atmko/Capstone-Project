@@ -22,29 +22,29 @@ public class Stack extends RecyclerView.OnScrollListener {
     public static final int GO_DOWN_ONE_BLOCK = 1;
     public static final int GO_UP_ONE_BLOCK = 2;
 
-    private int firstPage;
-    private int totalPages;
-    private int blockLimit;
+    private int mFirstPage;
+    private int mTotalPages;
+    private int mBlockLimit;
     private Object mPreloadObject;
-    private PagingBlockTemplate pagingBlockTemplate;
-    private RecyclerView recyclerView;
-    private RecyclerView.Adapter adapter;
+    private PagingBlockTemplate mPagingBlockTemplate;
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
     private boolean mUsesInternet;
-    private SparseArray<PagingBlock> pagingBlockMap;
+    private SparseArray<PagingBlock> mPagingBlockMap;
     private boolean mIsIdle;
 
     public Stack(boolean pageZeroStart, int blockLimit, PagingBlockTemplate pagingBlockTemplate,
                  Object preloadObject, RecyclerView recyclerView, RecyclerView.Adapter adapter,
                  boolean usesInternet) {
 
-        this.firstPage = pageZeroStart ? 0 : 1;
-        this.blockLimit = blockLimit;
-        this.pagingBlockTemplate = pagingBlockTemplate;
+        this.mFirstPage = pageZeroStart ? 0 : 1;
+        this.mBlockLimit = blockLimit;
+        this.mPagingBlockTemplate = pagingBlockTemplate;
         this.mPreloadObject = preloadObject;
-        this.recyclerView = recyclerView;
-        this.adapter = adapter;
+        this.mRecyclerView = recyclerView;
+        this.mAdapter = adapter;
         this.mUsesInternet = usesInternet;
-        this.pagingBlockMap = new SparseArray<>();
+        this.mPagingBlockMap = new SparseArray<>();
         mIsIdle = true;
     }
 
@@ -52,9 +52,9 @@ public class Stack extends RecyclerView.OnScrollListener {
     private List getAdapterData() {
         List dataList = null;
         try {
-            Class adapterClass = Class.forName(adapter.getClass().getName());
+            Class adapterClass = Class.forName(mAdapter.getClass().getName());
             Method getAdapterData = adapterClass.getMethod("getAdapterData");
-            dataList = (List) getAdapterData.invoke(adapter);
+            dataList = (List) getAdapterData.invoke(mAdapter);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (NoSuchMethodException e) {
@@ -73,8 +73,8 @@ public class Stack extends RecyclerView.OnScrollListener {
         return getAdapterData().size() == 0;
     }
 
-    public SparseArray<PagingBlock> getPagingBlockMap() {
-        return pagingBlockMap;
+    private SparseArray<PagingBlock> getPagingBlockMap() {
+        return mPagingBlockMap;
     }
 
     public boolean isIdle() {
@@ -84,9 +84,9 @@ public class Stack extends RecyclerView.OnScrollListener {
     public int[] saveBlockStructure() {
         int[] blockIndexRange = new int[2];
 
-        blockIndexRange[0] = pagingBlockMap.keyAt(0);
+        blockIndexRange[0] = mPagingBlockMap.keyAt(0);
 
-        int lastBlockNumber = pagingBlockMap.keyAt(pagingBlockMap.size() - 1);
+        int lastBlockNumber = mPagingBlockMap.keyAt(mPagingBlockMap.size() - 1);
         //index range[1] not inclusive in operation.
         //therefore + 1 is added to include last block
         int rangeAdjustment = lastBlockNumber + 1;
@@ -103,11 +103,11 @@ public class Stack extends RecyclerView.OnScrollListener {
 
         for (int index = 0; index < iterationSize; index++) {
             int blockIndex = blockIndexRange[0] + index;
-            PagingBlock pagingBlock = new PagingBlock(getFirstPage(), blockIndex, pagingBlockTemplate.getBlockPageCapacity());
+            PagingBlock pagingBlock = new PagingBlock(getFirstPage(), blockIndex, mPagingBlockTemplate.getBlockPageCapacity());
 
             pagingBlock = restorePagingBlockPages(pagingBlock, fullDataList);
 
-            pagingBlockMap.put(blockIndex, pagingBlock);
+            mPagingBlockMap.put(blockIndex, pagingBlock);
         }
     }
 
@@ -120,8 +120,8 @@ public class Stack extends RecyclerView.OnScrollListener {
 
             int iterationSize;
 
-            if (fullDataList.size() >= pagingBlockTemplate.pageCapacity) {
-                iterationSize =  pagingBlockTemplate.pageCapacity;
+            if (fullDataList.size() >= mPagingBlockTemplate.pageCapacity) {
+                iterationSize =  mPagingBlockTemplate.pageCapacity;
 
             } else {
                 iterationSize = fullDataList.size();
@@ -143,11 +143,11 @@ public class Stack extends RecyclerView.OnScrollListener {
     }
 
     private int getTotalPages() {
-        return this.totalPages;
+        return this.mTotalPages;
     }
 
     public void setTotalPages(int totalPages) {
-        this.totalPages = totalPages;
+        this.mTotalPages = totalPages;
     }
 
     //initial setup paging block
@@ -156,35 +156,35 @@ public class Stack extends RecyclerView.OnScrollListener {
         mIsIdle = false;
 
         //clear values
-        pagingBlockMap.clear();
+        mPagingBlockMap.clear();
         getAdapterData().clear();
 
-        adapter.notifyDataSetChanged();
-        totalPages = 0;
+        mAdapter.notifyDataSetChanged();
+        mTotalPages = 0;
 
         //load new block
         loadNextBlock(0);
     }
 
     public int getFirstPage() {
-        return firstPage;
+        return mFirstPage;
     }
 
     public void setIsFrozen(boolean isFrozen) {
-        this.recyclerView.setLayoutFrozen(isFrozen);
+        this.mRecyclerView.setLayoutFrozen(isFrozen);
 
     }
 
     //this method is called as many times as the value of blockPageCapacity
     public void stackPage(int blockNumber, int pageNumber, List dataList, int stackOperation) {
         //get blocks for stacking
-        PagingBlock pagingBlock = pagingBlockMap.get(blockNumber);
+        PagingBlock pagingBlock = mPagingBlockMap.get(blockNumber);
 
         //if data list is null
         //define data list as a list of preload objects so they can be stacked without incident
         if (dataList == null) {
             dataList = new ArrayList();
-            for (int i = 0; i < pagingBlockTemplate.pageCapacity ; i++) {
+            for (int i = 0; i < mPagingBlockTemplate.pageCapacity ; i++) {
                 dataList.add(mPreloadObject);
             }
         }
@@ -215,17 +215,17 @@ public class Stack extends RecyclerView.OnScrollListener {
     }
 
     private void addItemsIntoAdapter(PagingBlock pagingBlock, int pageNumber, List dataList) {
-        int pagingBlockIndex = pagingBlockMap.indexOfValue(pagingBlock);
+        int pagingBlockIndex = mPagingBlockMap.indexOfValue(pagingBlock);
 
         //get index of the paging block's first item its the first page
         int blockStartingIndex = pagingBlockIndex
-                * pagingBlockTemplate.pageCapacity
-                * pagingBlockTemplate.blockPageCapacity;
+                * mPagingBlockTemplate.pageCapacity
+                * mPagingBlockTemplate.blockPageCapacity;
 
         //use page number to find the index the page relative to existing pages currently in the block
         int pageIndex = pageNumber - pagingBlock.getFirstPageInBlock();
         //define first adapter position loop should begin.
-        int firstInsertPosition = blockStartingIndex + (pageIndex * pagingBlockTemplate.pageCapacity);
+        int firstInsertPosition = blockStartingIndex + (pageIndex * mPagingBlockTemplate.pageCapacity);
 
         for (int index = 0; index < dataList.size(); index++) {
             //increase value with each iteration through zero index
@@ -243,19 +243,19 @@ public class Stack extends RecyclerView.OnScrollListener {
             }
         }
 
-        adapter.notifyItemRangeChanged(firstInsertPosition, dataList.size());
+        mAdapter.notifyItemRangeChanged(firstInsertPosition, dataList.size());
 
         //TODO add method that remove extra data BEFORE items are stacked to avoid late clean up
         //if incoming data < page capacity, remove extraneous empty data
-        if (dataList.size() < pagingBlockTemplate.pageCapacity) {
-            int correctionDifference = pagingBlockTemplate.pageCapacity - dataList.size();
+        if (dataList.size() < mPagingBlockTemplate.pageCapacity) {
+            int correctionDifference = mPagingBlockTemplate.pageCapacity - dataList.size();
 
             for (int i = 0; i < correctionDifference; i++) {
                 getAdapterData().remove(getAdapterData().size() - 1);
 
             }
 
-            adapter.notifyItemRangeRemoved(correctionDifference - 1, correctionDifference);
+            mAdapter.notifyItemRangeRemoved(correctionDifference - 1, correctionDifference);
         }
 
         //TODO data still in paging data now useless now that its been added to adapter.
@@ -265,18 +265,18 @@ public class Stack extends RecyclerView.OnScrollListener {
         //stack is not idle
         mIsIdle = false;
 
-        int firstKey = pagingBlockMap.keyAt(0);
-        int listSize = pagingBlockMap.get(firstKey).getFullDataCount();
+        int firstKey = mPagingBlockMap.keyAt(0);
+        int listSize = mPagingBlockMap.get(firstKey).getFullDataCount();
 
         //loop through length of block
         for (int index = 0; index < listSize; index++) {
             //remove top item in adapter
             getAdapterData().remove(0);
             //notify change
-            adapter.notifyItemRemoved(0);
+            mAdapter.notifyItemRemoved(0);
         }
 
-        pagingBlockMap.remove(firstKey);
+        mPagingBlockMap.remove(firstKey);
 
         //stack is idle
         mIsIdle = true;
@@ -286,18 +286,18 @@ public class Stack extends RecyclerView.OnScrollListener {
         //stack is not idle
         mIsIdle = false;
 
-        int lastKey = pagingBlockMap.keyAt(pagingBlockMap.size() - 1);
-        int listSize = pagingBlockMap.get(lastKey).getFullDataCount();
+        int lastKey = mPagingBlockMap.keyAt(mPagingBlockMap.size() - 1);
+        int listSize = mPagingBlockMap.get(lastKey).getFullDataCount();
 
         //loop through length of block
         for (int index = 0; index < listSize; index++) {
             //remove bottom item in adapter
             getAdapterData().remove(getAdapterData().size() - 1);
             //notify change
-            adapter.notifyItemRemoved(getAdapterData().size() - 1);
+            mAdapter.notifyItemRemoved(getAdapterData().size() - 1);
         }
 
-        pagingBlockMap.remove(lastKey);
+        mPagingBlockMap.remove(lastKey);
 
         //stack is idle
         mIsIdle = true;
@@ -307,7 +307,7 @@ public class Stack extends RecyclerView.OnScrollListener {
         //stack is not idle
         mIsIdle = false;
 
-        mIsIdle = false;int firstKey = pagingBlockMap.keyAt(0);
+        mIsIdle = false;int firstKey = mPagingBlockMap.keyAt(0);
         int newKey = firstKey - 1;
 
         loadPreviousBlock(newKey);
@@ -316,23 +316,23 @@ public class Stack extends RecyclerView.OnScrollListener {
     private void loadPreviousBlock(int blockNumber) {
         //initialize paging block
         PagingBlock pagingBlock =
-                new PagingBlock(getFirstPage(), blockNumber, pagingBlockTemplate.blockPageCapacity);
+                new PagingBlock(getFirstPage(), blockNumber, mPagingBlockTemplate.blockPageCapacity);
 
         //add block to list
-        pagingBlockMap.put(blockNumber, pagingBlock);
+        mPagingBlockMap.put(blockNumber, pagingBlock);
 
         //define first targetPage
         int targetPage = pagingBlock.getFirstPageInBlock();
 
         //add placeholder objects till real stacking begins
-        for (int i = 0; i < pagingBlockTemplate.getBlockPageCapacity(); i++) {
+        for (int i = 0; i < mPagingBlockTemplate.getBlockPageCapacity(); i++) {
             prestackPageBackWards();
         }
 
         //iterate through block page capacity
-        for (int i = 0; i < pagingBlockTemplate.getBlockPageCapacity(); i++) {
+        for (int i = 0; i < mPagingBlockTemplate.getBlockPageCapacity(); i++) {
             //fetch page data
-            pagingBlockTemplate.createPageLoader.onPageStartReached(blockNumber, targetPage);
+            mPagingBlockTemplate.createPageLoader.onPageStartReached(blockNumber, targetPage);
 
             //increase targetPage value
             targetPage += 1;
@@ -340,20 +340,20 @@ public class Stack extends RecyclerView.OnScrollListener {
     }
 
     private void prestackPageBackWards() {
-        for (int i = pagingBlockTemplate.pageCapacity - 1; i >= 0; i--) {
+        for (int i = mPagingBlockTemplate.pageCapacity - 1; i >= 0; i--) {
             //add item to front
             getAdapterData().add(0, mPreloadObject);
 
         }
 
-        adapter.notifyItemRangeInserted(0, pagingBlockTemplate.pageCapacity);
+        mAdapter.notifyItemRangeInserted(0, mPagingBlockTemplate.pageCapacity);
     }
 
     private void addBottomBlock() {
         //stack is not idle
         mIsIdle = false;
 
-        int lastKey = pagingBlockMap.keyAt(pagingBlockMap.size() - 1);
+        int lastKey = mPagingBlockMap.keyAt(mPagingBlockMap.size() - 1);
         int newKey = lastKey + 1;
 
         loadNextBlock(newKey);
@@ -362,24 +362,24 @@ public class Stack extends RecyclerView.OnScrollListener {
     private void loadNextBlock(int blockNumber) {
         //initialize paging block
         PagingBlock pagingBlock =
-                new PagingBlock(getFirstPage(), blockNumber, pagingBlockTemplate.blockPageCapacity);
+                new PagingBlock(getFirstPage(), blockNumber, mPagingBlockTemplate.blockPageCapacity);
 
         //add block to list
-        pagingBlockMap.put(blockNumber, pagingBlock);
+        mPagingBlockMap.put(blockNumber, pagingBlock);
 
         //define first targetPage
         int targetPage = pagingBlock.getFirstPageInBlock();
 
         //add placeholder objects till real stacking begins
-        for (int i = 0; i < pagingBlockTemplate.getBlockPageCapacity(); i++) {
+        for (int i = 0; i < mPagingBlockTemplate.getBlockPageCapacity(); i++) {
             prestackPageForwards();
         }
 
         //TODO if number of pages ahead is < getBlockPageCapacity then extra api queries are a wasted
         //iterate through block page capacity
-        for (int i = 0; i < pagingBlockTemplate.getBlockPageCapacity(); i++) {
+        for (int i = 0; i < mPagingBlockTemplate.getBlockPageCapacity(); i++) {
             //fetch page data
-            pagingBlockTemplate.createPageLoader.onPageEndReached(blockNumber, targetPage);
+            mPagingBlockTemplate.createPageLoader.onPageEndReached(blockNumber, targetPage);
 
             //increase targetPage value
             targetPage += 1;
@@ -387,14 +387,14 @@ public class Stack extends RecyclerView.OnScrollListener {
     }
 
     private void prestackPageForwards() {
-        for (int i = 0; i < pagingBlockTemplate.pageCapacity; i++) {
+        for (int i = 0; i < mPagingBlockTemplate.pageCapacity; i++) {
             //add item to end
             getAdapterData().add(mPreloadObject);
         }
 
-        adapter.notifyItemRangeInserted(
-                (getAdapterData().size()-1) - (pagingBlockTemplate.pageCapacity-1),
-                pagingBlockTemplate.pageCapacity);
+        mAdapter.notifyItemRangeInserted(
+                (getAdapterData().size()-1) - (mPagingBlockTemplate.pageCapacity-1),
+                mPagingBlockTemplate.pageCapacity);
     }
 
     private int getFirstPageInStack() throws IndexOutOfBoundsException {
@@ -403,9 +403,9 @@ public class Stack extends RecyclerView.OnScrollListener {
         }
 
         //get key of first block in stack
-        int topPagingBlockKey = pagingBlockMap.keyAt(0);
+        int topPagingBlockKey = mPagingBlockMap.keyAt(0);
         //get top block using key
-        PagingBlock topPagingBlock = pagingBlockMap.get(topPagingBlockKey);
+        PagingBlock topPagingBlock = mPagingBlockMap.get(topPagingBlockKey);
 
         return topPagingBlock.getFirstPageInBlock();
     }
@@ -416,9 +416,9 @@ public class Stack extends RecyclerView.OnScrollListener {
         }
 
         //get key of last block in stack
-        int bottomPagingBlockKey = pagingBlockMap.keyAt(pagingBlockMap.size() - 1);
+        int bottomPagingBlockKey = mPagingBlockMap.keyAt(mPagingBlockMap.size() - 1);
         //get bottom block using key
-        PagingBlock bottomPagingBlock = pagingBlockMap.get(bottomPagingBlockKey);
+        PagingBlock bottomPagingBlock = mPagingBlockMap.get(bottomPagingBlockKey);
 
         return bottomPagingBlock.getLastPageInBlock();
     }
@@ -462,7 +462,7 @@ public class Stack extends RecyclerView.OnScrollListener {
                 .findFirstVisibleItemPosition();
 
         //isLastItem makes sure we are at the end of list
-        boolean isLastItem = lastShown == adapter.getItemCount() - 1;
+        boolean isLastItem = lastShown == mAdapter.getItemCount() - 1;
         //isFirstItem makes sure we are at the start of list
         boolean isFirstItem = firstShownIndex == 0;
 
@@ -505,7 +505,7 @@ public class Stack extends RecyclerView.OnScrollListener {
                             AppExecutors.getInstance().mainThread().execute(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (pagingBlockMap.size() == blockLimit) {
+                                    if (mPagingBlockMap.size() == mBlockLimit) {
                                         removeTopBlock();
                                     }
 
@@ -517,7 +517,7 @@ public class Stack extends RecyclerView.OnScrollListener {
                 });
 
             } else {
-                if (pagingBlockMap.size() == blockLimit) {
+                if (mPagingBlockMap.size() == mBlockLimit) {
                     removeTopBlock();
                 }
 
@@ -533,7 +533,7 @@ public class Stack extends RecyclerView.OnScrollListener {
                             AppExecutors.getInstance().mainThread().execute(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (pagingBlockMap.size() == blockLimit) {
+                                    if (mPagingBlockMap.size() == mBlockLimit) {
                                         removeBottomBlock();
                                     }
 
@@ -545,7 +545,7 @@ public class Stack extends RecyclerView.OnScrollListener {
                 });
 
             } else {
-                if (pagingBlockMap.size() == blockLimit) {
+                if (mPagingBlockMap.size() == mBlockLimit) {
                     removeBottomBlock();
                 }
 

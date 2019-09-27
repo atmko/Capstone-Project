@@ -39,7 +39,7 @@ public class MediaDataAdapter extends RecyclerView.Adapter<MediaDataAdapter.Medi
     private final List<MediaData> mAdapterData;
     private final OnListItemClickListener mOnListItemClickListener;
     private boolean mInPlaceholderMode;
-    Context mContext;
+    private Context mContext;
 
     //layout ids
     @SuppressWarnings("FieldCanBeLocal")

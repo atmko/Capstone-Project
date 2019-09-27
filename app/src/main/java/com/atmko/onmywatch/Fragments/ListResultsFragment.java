@@ -50,7 +50,7 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
 
     // TODO: Rename and change types of parameters
     //check for restoring state
-    boolean mFirstInit = true;
+    private boolean mFirstInit = true;
     private int mListType;
     private int mMediaType;
     private String mListName;

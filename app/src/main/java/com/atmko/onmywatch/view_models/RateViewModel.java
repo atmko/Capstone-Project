@@ -18,7 +18,7 @@ public class RateViewModel extends ViewModel {
 
     private LiveData mMediaData;
 
-    public RateViewModel(@NonNull AppDatabase database, int mediaType, String mediaId) {
+    RateViewModel(@NonNull AppDatabase database, int mediaType, String mediaId) {
         Log.d(TAG, "fetching media from the database");
         if (mediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
             mMediaData = database.movieDataDao()

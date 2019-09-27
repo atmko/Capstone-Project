@@ -35,7 +35,7 @@ public class CastDataAdapter extends RecyclerView.Adapter<CastDataAdapter.CastDa
     private final Fragment mFragment;
     private final List<CastData> mAdapterData;
     private final OnListItemClickListener mOnListItemClickListener;
-    Context mContext;
+    private Context mContext;
 
     //layout ids
     @SuppressWarnings("FieldCanBeLocal")

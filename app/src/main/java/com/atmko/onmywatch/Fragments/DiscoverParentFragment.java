@@ -43,22 +43,22 @@ public class DiscoverParentFragment extends Fragment
     public static final String SEARCH_MODE_PRESET = "preset_search";
     public static final String SEARCH_MODE_MANUAL = "manual_search";
 
-    public static final String SEARCH_MODE_KEY = "search_mode";
+    private static final String SEARCH_MODE_KEY = "search_mode";
     public static final String MEDIA_TYPE_KEY = "media_type";
     private static final String FRAGMENT_PAGER_ADAPTER_KEY = "fragment_pager_adapter";
 
-    private String searchMode;
-    private int mediaType;
-    private FragmentStatePagerAdapter resultsAdapter;
+    private String mSearchMode;
+    private int mMediaType;
+    private FragmentStatePagerAdapter mResultsAdapter;
 
     private Bundle mSavedInstanceState;
-    private FrameLayout searchFrameLayout;
-    private SuperEditText searchEditTextView;
-    private TabLayout mediaTypeTabLayout;
-    private FrameLayout searchPresetsTopLayout;
-    private TabLayout searchPresetsTabLayout;
-    private ImageButton searchImageButton;
-    private ViewPager searchResultsViewPager;
+    private FrameLayout mSearchFrameLayout;
+    private SuperEditText mSearchEditTextView;
+    private TabLayout mMediaTypeTabLayout;
+    private FrameLayout mSearchPresetsTopLayout;
+    private TabLayout mSearchPresetsTabLayout;
+    private ImageButton mSearchImageButton;
+    private ViewPager mSearchResultsViewPager;
 
     private int mCurrentTabPosition;
 
@@ -73,7 +73,7 @@ public class DiscoverParentFragment extends Fragment
         return fragment;
     }
 
-    public int getCurrentTabPosition() {
+    int getCurrentTabPosition() {
         return mCurrentTabPosition;
     }
 
@@ -100,20 +100,20 @@ public class DiscoverParentFragment extends Fragment
 
         if (savedInstanceState == null) {
             //run code after entry animation is complete
-            searchMode = SEARCH_MODE_PRESET;
+            mSearchMode = SEARCH_MODE_PRESET;
             //TODO replace MEDIA_TYPE_SERIES with default media shared preference
-            mediaType = MEDIA_TYPE_SERIES;
+            mMediaType = MEDIA_TYPE_SERIES;
 
             //startup code moved to onCreateAnimator
 
         } else {
-            searchMode = savedInstanceState.getString(SEARCH_MODE_KEY);
-            mediaType = savedInstanceState.getInt(MEDIA_TYPE_KEY);
+            mSearchMode = savedInstanceState.getString(SEARCH_MODE_KEY);
+            mMediaType = savedInstanceState.getInt(MEDIA_TYPE_KEY);
 
-            if (searchMode.equals(SEARCH_MODE_PRESET)) {
+            if (mSearchMode.equals(SEARCH_MODE_PRESET)) {
                 loadPresetSearchUi();
 
-            } else if (searchMode.equals(SEARCH_MODE_MANUAL)){
+            } else if (mSearchMode.equals(SEARCH_MODE_MANUAL)){
                 loadManualSearchUi();
             }
         }
@@ -175,43 +175,43 @@ public class DiscoverParentFragment extends Fragment
         titleText.setText(getString(R.string.search_text_literal));
 
         final SuperEditText searchEditText = getView().findViewById(R.id.search_edit_text_view);
-        searchImageButton = getView().findViewById(R.id.search_image_button);
-        searchImageButton.setOnClickListener(new View.OnClickListener() {
+        mSearchImageButton = getView().findViewById(R.id.search_image_button);
+        mSearchImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MasterActivity) getActivity()).onSearchButtonPressed(searchImageButton,
+                ((MasterActivity) getActivity()).onSearchButtonPressed(mSearchImageButton,
                         searchEditText, titleText);
 
-                if (searchMode.equals(SEARCH_MODE_PRESET)) {
+                if (mSearchMode.equals(SEARCH_MODE_PRESET)) {
 
-                } else if (searchMode.equals(SEARCH_MODE_MANUAL)) {
+                } else if (mSearchMode.equals(SEARCH_MODE_MANUAL)) {
                     loadPresetSearchUi();
                 }
             }
         });
 
-        mediaTypeTabLayout = getView().findViewById(R.id.media_type_tab_layout);
-        searchPresetsTopLayout = getView().findViewById(R.id.discover_presets_top_layout);
-        searchPresetsTabLayout = getView().findViewById(R.id.discover_presets_tab_layout);
-        searchResultsViewPager = getView().findViewById(R.id.discover_results_view_pager);
+        mMediaTypeTabLayout = getView().findViewById(R.id.media_type_tab_layout);
+        mSearchPresetsTopLayout = getView().findViewById(R.id.discover_presets_top_layout);
+        mSearchPresetsTabLayout = getView().findViewById(R.id.discover_presets_tab_layout);
+        mSearchResultsViewPager = getView().findViewById(R.id.discover_results_view_pager);
 
         configureSearchBox();
     }
 
     private void configureSearchBox() {
-        searchFrameLayout = getView().findViewById(R.id.discover_frame_layout);
-        searchEditTextView = getView().findViewById(R.id.search_edit_text_view);
-        searchEditTextView.setKeyBoardDismissListener(this);
+        mSearchFrameLayout = getView().findViewById(R.id.discover_frame_layout);
+        mSearchEditTextView = getView().findViewById(R.id.search_edit_text_view);
+        mSearchEditTextView.setKeyBoardDismissListener(this);
         //configure search box action event
-        searchEditTextView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mSearchEditTextView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
                 //validate user input
-                if (searchEditTextView.getText().toString().equals("")) {
+                if (mSearchEditTextView.getText().toString().equals("")) {
                     return true;
                 }
 
-                ((MasterActivity) getActivity()).hideSoftKeyboard(searchEditTextView);
+                ((MasterActivity) getActivity()).hideSoftKeyboard(mSearchEditTextView);
 
                 //set focus to top layout(away from search box)
                 getView().findViewById(R.id.top_layout).requestFocus();
@@ -226,9 +226,9 @@ public class DiscoverParentFragment extends Fragment
     }
 
     private void loadPresetSearchUi() {
-        searchPresetsTopLayout.setVisibility(View.VISIBLE);
+        mSearchPresetsTopLayout.setVisibility(View.VISIBLE);
 
-        searchMode = SEARCH_MODE_PRESET;
+        mSearchMode = SEARCH_MODE_PRESET;
 
         configurePresetMediaTypeTabLayout();
         loadPresetTabAndPager();
@@ -236,25 +236,25 @@ public class DiscoverParentFragment extends Fragment
 
     private void configurePresetMediaTypeTabLayout() {
         //remove old tabs
-        mediaTypeTabLayout.removeAllTabs();
+        mMediaTypeTabLayout.removeAllTabs();
 
         //add new tabs
         String[] searchTypesList = getContext().getResources().getStringArray(R.array.discover_preset_media_types);
 
         for (String type : searchTypesList) {
-            mediaTypeTabLayout.addTab(mediaTypeTabLayout.newTab().setText(type));
+            mMediaTypeTabLayout.addTab(mMediaTypeTabLayout.newTab().setText(type));
         }
 
-        mediaTypeTabLayout.getTabAt(mediaType).select();
+        mMediaTypeTabLayout.getTabAt(mMediaType).select();
 
         //clear old listeners to avoid conflicts
-        mediaTypeTabLayout.clearOnTabSelectedListeners();
+        mMediaTypeTabLayout.clearOnTabSelectedListeners();
 
         //configure new listener
-        mediaTypeTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        mMediaTypeTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                mediaType = tab.getPosition();
+                mMediaType = tab.getPosition();
                 loadPresetTabAndPager();
             }
 
@@ -272,46 +272,46 @@ public class DiscoverParentFragment extends Fragment
 
     private void loadPresetTabAndPager() {
         //remove old tabs
-        searchPresetsTabLayout.removeAllTabs();
+        mSearchPresetsTabLayout.removeAllTabs();
 
         //add new tabs
         String[] titleList = null;
         //configure urls
         String[] urlList = null;
 
-        if (mediaType == MEDIA_TYPE_MOVIE) {
+        if (mMediaType == MEDIA_TYPE_MOVIE) {
             titleList = getContext().getResources().getStringArray(R.array.preset_movie_discover_titles);
             urlList = getContext().getResources().getStringArray(R.array.preset_movie_discover_urls);
 
-        } else if (mediaType == MEDIA_TYPE_SERIES){
+        } else if (mMediaType == MEDIA_TYPE_SERIES){
             titleList = getContext().getResources().getStringArray(R.array.preset_series_discover_titles);
             urlList = getContext().getResources().getStringArray(R.array.preset_series_discover_urls);
         }
 
         for (String title : titleList) {
-            searchPresetsTabLayout.addTab(searchPresetsTabLayout.newTab().setText(title));
+            mSearchPresetsTabLayout.addTab(mSearchPresetsTabLayout.newTab().setText(title));
         }
 
-        searchResultsViewPager.setOffscreenPageLimit(titleList.length - 1);
+        mSearchResultsViewPager.setOffscreenPageLimit(titleList.length - 1);
 
         //configure search preferences
         SearchPreferences searchPreferences = new SearchPreferences();
 
-        resultsAdapter = new DiscoverPresetPagerAdapter(getChildFragmentManager(),
-                FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, mediaType, urlList,
+        mResultsAdapter = new DiscoverPresetPagerAdapter(getChildFragmentManager(),
+                FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, mMediaType, urlList,
                 searchPreferences);
 
-        searchResultsViewPager.setAdapter(resultsAdapter);
+        mSearchResultsViewPager.setAdapter(mResultsAdapter);
 
         //clear old listeners to avoid conflicts
-        searchResultsViewPager.clearOnPageChangeListeners();
+        mSearchResultsViewPager.clearOnPageChangeListeners();
 
         //configure new listeners
-        searchResultsViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(searchPresetsTabLayout));
-        searchPresetsTabLayout.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
+        mSearchResultsViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mSearchPresetsTabLayout));
+        mSearchPresetsTabLayout.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                searchResultsViewPager.setCurrentItem(tab.getPosition());
+                mSearchResultsViewPager.setCurrentItem(tab.getPosition());
                 mCurrentTabPosition = tab.getPosition();
             }
 
@@ -329,34 +329,34 @@ public class DiscoverParentFragment extends Fragment
 
     private void loadManualSearchUi() {
         //hide presets tab
-        searchPresetsTopLayout.setVisibility(View.GONE);
+        mSearchPresetsTopLayout.setVisibility(View.GONE);
 
-        searchMode = SEARCH_MODE_MANUAL;
+        mSearchMode = SEARCH_MODE_MANUAL;
 
         configureManualMediaTypeTabLayout();
-        loadManualPager(searchEditTextView.getText().toString());
+        loadManualPager(mSearchEditTextView.getText().toString());
     }
 
     private void configureManualMediaTypeTabLayout() {
         //remove old tabs
-        mediaTypeTabLayout.removeAllTabs();
+        mMediaTypeTabLayout.removeAllTabs();
 
         //add new tabs
         String[] searchTypesList = getContext().getResources().getStringArray(R.array.discover_manual_media_types);
 
         for (String type : searchTypesList) {
-            mediaTypeTabLayout.addTab(mediaTypeTabLayout.newTab().setText(type));
+            mMediaTypeTabLayout.addTab(mMediaTypeTabLayout.newTab().setText(type));
         }
 
         //clear old listeners to avoid conflicts
-        mediaTypeTabLayout.clearOnTabSelectedListeners();
+        mMediaTypeTabLayout.clearOnTabSelectedListeners();
 
         //configure new listener
-        mediaTypeTabLayout.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
+        mMediaTypeTabLayout.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                mediaType = tab.getPosition();
-                searchResultsViewPager.setCurrentItem(tab.getPosition());
+                mMediaType = tab.getPosition();
+                mSearchResultsViewPager.setCurrentItem(tab.getPosition());
                 mCurrentTabPosition = tab.getPosition();
             }
 
@@ -374,10 +374,10 @@ public class DiscoverParentFragment extends Fragment
 
     private void loadManualPager(String query) {
         //clear old listeners to avoid conflicts
-        searchResultsViewPager.clearOnPageChangeListeners();
+        mSearchResultsViewPager.clearOnPageChangeListeners();
 
         //configure new listener
-        searchResultsViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mediaTypeTabLayout));
+        mSearchResultsViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mMediaTypeTabLayout));
 
         //configure view pager adapter
 
@@ -388,20 +388,20 @@ public class DiscoverParentFragment extends Fragment
         SearchPreferences searchPreferences = new SearchPreferences();
         searchPreferences.setQuery(query);
 
-        resultsAdapter = new DiscoverManualPagerAdapter(getChildFragmentManager(),
+        mResultsAdapter = new DiscoverManualPagerAdapter(getChildFragmentManager(),
                 FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, urlList,
                 searchPreferences);
 
-        searchResultsViewPager.setAdapter(resultsAdapter);
+        mSearchResultsViewPager.setAdapter(mResultsAdapter);
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putString(SEARCH_MODE_KEY, searchMode);
-        outState.putInt(MEDIA_TYPE_KEY, mediaType);
-        outState.putParcelable(FRAGMENT_PAGER_ADAPTER_KEY, resultsAdapter.saveState());
+        outState.putString(SEARCH_MODE_KEY, mSearchMode);
+        outState.putInt(MEDIA_TYPE_KEY, mMediaType);
+        outState.putParcelable(FRAGMENT_PAGER_ADAPTER_KEY, mResultsAdapter.saveState());
     }
 
     @Override

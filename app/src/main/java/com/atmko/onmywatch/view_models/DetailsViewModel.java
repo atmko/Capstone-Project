@@ -21,7 +21,7 @@ public class DetailsViewModel extends ViewModel {
     private LiveData mediaData;
     private LiveData<List<String>> containingUserLists;
 
-    public DetailsViewModel(@NonNull AppDatabase database, int mediaType, String mediaId) {
+    DetailsViewModel(@NonNull AppDatabase database, int mediaType, String mediaId) {
         Log.d(TAG, "fetching media from the database");
         Log.d(TAG, "fetching user containing lists from the database");
 

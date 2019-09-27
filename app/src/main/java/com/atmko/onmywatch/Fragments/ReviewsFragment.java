@@ -27,7 +27,7 @@ import java.util.Map;
 public class ReviewsFragment extends Fragment implements ReviewDataAdapter.OnListItemClickListener {
     public static String FRAGMENT_KEY = "reviews_fragment";
 
-    public static String REVIEWS_PARCELABLE_KEY = "reviews_parcelable";
+    private static String REVIEWS_PARCELABLE_KEY = "reviews_parcelable";
 
     private ArrayList<Map<String, String>> mReviewList;
     private RecyclerView.Adapter mAdapter;
