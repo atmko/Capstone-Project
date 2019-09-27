@@ -6,7 +6,7 @@
         <item>@string/media_type_people_text</item>
     </array>
 
-    <array name="search_preset_media_types">
+    <array name="discover_preset_media_types">
         <item>@string/media_type_series_text</item>
         <item>@string/media_type_movies_text</item>
     </array>
@@ -21,20 +21,20 @@
         <item>@string/list_type_user_text</item>
     </array>
 
-    <array name="search_manual_media_types">
+    <array name="discover_manual_media_types">
         <item>@string/media_type_series_text</item>
         <item>@string/media_type_movies_text</item>
         <item>@string/media_type_people_text</item>
     </array>
 
-    <array name="preset_movie_search_titles">
+    <array name="preset_movie_discover_titles">
         <item>now playing</item>
         <item>popular</item>
         <item>top rated</item>
         <item>upcoming</item>
     </array>
 
-    <array name="preset_movie_search_urls">
+    <array name="preset_movie_discover_urls">
         <item>https://api.themoviedb.org/3/movie/now_playing?api_key={api_key}&amp;language={language}&amp;page={page}&amp;region={region}</item>
         <item>https://api.themoviedb.org/3/movie/popular?api_key={api_key}&amp;language={language}&amp;page={page}&amp;region={region}</item>
         <item>https://api.themoviedb.org/3/movie/top_rated?api_key={api_key}&amp;language={language}&amp;page={page}&amp;region={region}</item>
@@ -43,7 +43,7 @@
 
 <!--___________________________________________-->
 
-    <array name="preset_series_search_titles">
+    <array name="preset_series_discover_titles">
         <!--<item>latest</item>-->
         <item>airing today</item>
         <item>on the air</item>
@@ -51,14 +51,14 @@
         <item>top rated</item>
     </array>
 
-    <array name="preset_series_search_urls">
+    <array name="preset_series_discover_urls">
         <item>https://api.themoviedb.org/3/tv/airing_today?api_key={api_key}&amp;language={language}&amp;page={page}</item>
         <item>https://api.themoviedb.org/3/tv/on_the_air?api_key={api_key}&amp;language={language}&amp;page={page}</item>
         <item>https://api.themoviedb.org/3/tv/popular?api_key={api_key}&amp;language={language}&amp;page={page}</item>
         <item>https://api.themoviedb.org/3/tv/top_rated?api_key={api_key}&amp;language={language}&amp;page={page}</item>
     </array>
 
-    <array name="manual_search_urls">
+    <array name="manual_discover_urls">
         <item>https://api.themoviedb.org/3/search/tv?api_key={api_key}&amp;language={language}&amp;query={query}&amp;page={page}&amp;first_air_date_year={first_air_date_year}</item>
         <item>https://api.themoviedb.org/3/search/movie?api_key={api_key}&amp;language={language}&amp;query={query}&amp;page={page}&amp;include_adult={include_adult}&amp;region={region}&amp;year={year}&amp;primary_release_year={primary_release_year}</item>
         <item>https://api.themoviedb.org/3/search/person?api_key={api_key}&amp;language={language}&amp;query={query}&amp;page={page}&amp;include_adult={include_adult}&amp;region={region}</item>

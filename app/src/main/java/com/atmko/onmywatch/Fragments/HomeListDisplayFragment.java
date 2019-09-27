@@ -5,7 +5,6 @@
 package com.atmko.onmywatch.Fragments;
 
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,17 +23,11 @@ import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.SeriesData;
-import com.atmko.onmywatch.utils.SearchPreferences;
 import com.atmko.onmywatch.view_models.ListResultsViewModelFactory;
 import com.atmko.onmywatch.view_models.ListsResultsViewModel;
 
-import org.parceler.Parcels;
-
 import java.util.Arrays;
 import java.util.List;
-
-import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
-import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
 
 public class HomeListDisplayFragment extends Fragment implements MediaDataAdapter.OnListItemClickListener{
     public static String FRAGMENT_KEY = "home_list_display_fragment";
@@ -184,12 +177,12 @@ public class HomeListDisplayFragment extends Fragment implements MediaDataAdapte
     @Override
     public void onItemClick(int position) {
         if (mMediaDataAdapter.inPlaceholderMode()) {
-            SearchParentFragment searchParentFragment = SearchParentFragment.newInstance();
+            DiscoverParentFragment discoverParentFragment = DiscoverParentFragment.newInstance();
 
             getActivity().getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(R.anim.slide_down_entry, android.R.animator.fade_out)
-                    .add(R.id.master_fragments_container,searchParentFragment,
-                            SearchParentFragment.FRAGMENT_KEY)
+                    .add(R.id.master_fragments_container, discoverParentFragment,
+                            DiscoverParentFragment.FRAGMENT_KEY)
                     .commit();
 
             return;

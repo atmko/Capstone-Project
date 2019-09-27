@@ -361,12 +361,12 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
     @Override
     public void onItemClick(int position) {
         if (mDataAdapter.inPlaceholderMode()) {
-            SearchParentFragment searchParentFragment = SearchParentFragment.newInstance();
+            DiscoverParentFragment discoverParentFragment = DiscoverParentFragment.newInstance();
 
             getActivity().getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(R.anim.slide_down_entry, android.R.animator.fade_out)
-                    .add(R.id.master_fragments_container,searchParentFragment,
-                            SearchParentFragment.FRAGMENT_KEY)
+                    .add(R.id.master_fragments_container, discoverParentFragment,
+                            DiscoverParentFragment.FRAGMENT_KEY)
                     .commit();
             return;
         }

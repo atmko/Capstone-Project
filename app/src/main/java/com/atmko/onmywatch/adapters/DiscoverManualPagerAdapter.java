@@ -12,20 +12,20 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
-import com.atmko.onmywatch.Fragments.SearchParentFragment;
-import com.atmko.onmywatch.Fragments.SearchResultsFragment;
+import com.atmko.onmywatch.Fragments.DiscoverParentFragment;
+import com.atmko.onmywatch.Fragments.DiscoverResultsFragment;
 import com.atmko.onmywatch.utils.SearchPreferences;
 
 /*
  * pager adapter for manual search results in DiscoveryFragment
  */
 
-public class SearchManualPagerAdapter extends FragmentStatePagerAdapter {
+public class DiscoverManualPagerAdapter extends FragmentStatePagerAdapter {
     private String[] mUrlList;
     private SearchPreferences mSearchPreferences;
 
-    public SearchManualPagerAdapter(@NonNull FragmentManager fm, int behavior,
-                                    String[] urlList, SearchPreferences searchPreferences) {
+    public DiscoverManualPagerAdapter(@NonNull FragmentManager fm, int behavior,
+                                      String[] urlList, SearchPreferences searchPreferences) {
         super(fm, behavior);
 
         mUrlList = urlList;
@@ -36,8 +36,8 @@ public class SearchManualPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         String url = mUrlList[position];
-        return SearchResultsFragment.newInstance(
-                SearchParentFragment.SEARCH_MODE_MANUAL,
+        return DiscoverResultsFragment.newInstance(
+                DiscoverParentFragment.SEARCH_MODE_MANUAL,
                 position,
                 url,
                 mSearchPreferences);

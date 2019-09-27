@@ -6,12 +6,10 @@ package com.atmko.onmywatch.Fragments;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -91,7 +89,7 @@ public class HomeSpotlightFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.fragment_search_results, container, false);
+        return inflater.inflate(R.layout.fragment_discover_results, container, false);
     }
 
     @Override
@@ -125,7 +123,7 @@ public class HomeSpotlightFragment extends Fragment implements
     }
 
     private void defineViews() {
-        RecyclerView recyclerView = getView().findViewById(R.id.search_results_recycler_view);
+        RecyclerView recyclerView = getView().findViewById(R.id.discover_results_recycler_view);
         recyclerView.setLayoutManager(configureLayoutManager());
 
         mDataAdapter = new HomeSpotlightAdapter(this,

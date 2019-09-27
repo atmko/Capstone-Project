@@ -18,7 +18,7 @@
         android:orientation="vertical">
 
         <FrameLayout
-            android:id="@+id/search_frame_layout"
+            android:id="@+id/discover_frame_layout"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize">
 
@@ -56,7 +56,7 @@
         </FrameLayout>
 
         <FrameLayout
-            android:id="@+id/search_presets_top_layout"
+            android:id="@+id/discover_presets_top_layout"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize">
 
@@ -69,7 +69,7 @@
 
             <com.google.android.material.tabs.TabLayout
                 style="@style/tab_style"
-                android:id="@+id/search_presets_tab_layout"
+                android:id="@+id/discover_presets_tab_layout"
                 app:tabMode="scrollable">
 
                 <!--TODO these TabItems are for visualization purposes only. Tabs applied programmatically instead.-->
@@ -97,7 +97,7 @@
         </FrameLayout>
 
         <androidx.viewpager.widget.ViewPager
-            android:id="@+id/search_results_view_pager"
+            android:id="@+id/discover_results_view_pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 

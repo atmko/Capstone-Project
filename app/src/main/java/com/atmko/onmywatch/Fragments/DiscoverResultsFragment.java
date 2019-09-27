@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
-import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +27,6 @@ import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
-import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.stack.Stack;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.MediaDataAdapter;
@@ -54,7 +52,7 @@ import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_PEOPLE;
 import static com.atmko.onmywatch.utils.GeneralUtils.MILLISECOND_CONVERSION;
 import static com.atmko.onmywatch.utils.UpdateMediaWorker.REQUEST_COOL_DOWN;
 
-public class SearchResultsFragment extends Fragment implements
+public class DiscoverResultsFragment extends Fragment implements
         MediaDataAdapter.OnListItemClickListener,
         PeopleDataAdapter.OnListItemClickListener{
 
@@ -81,14 +79,14 @@ public class SearchResultsFragment extends Fragment implements
     private SuperEditText mSearchTextView;
 
 
-    public SearchResultsFragment() {
+    public DiscoverResultsFragment() {
         // Required empty public constructor
     }
 
-    public static SearchResultsFragment newInstance(String searchType, int mediaType, String searchUrl,
-                                                    SearchPreferences searchPreferencesParcel) {
+    public static DiscoverResultsFragment newInstance(String searchType, int mediaType, String searchUrl,
+                                                      SearchPreferences searchPreferencesParcel) {
 
-        SearchResultsFragment fragment = new SearchResultsFragment();
+        DiscoverResultsFragment fragment = new DiscoverResultsFragment();
         Bundle args = new Bundle();
         args.putString(SEARCH_TYPE_KEY, searchType);
         args.putInt(MEDIA_TYPE_KEY, mediaType);
@@ -114,7 +112,7 @@ public class SearchResultsFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.fragment_search_results, container, false);
+        return inflater.inflate(R.layout.fragment_discover_results, container, false);
     }
 
     @Override
@@ -131,7 +129,7 @@ public class SearchResultsFragment extends Fragment implements
             final ImageButton searchImageButton = getParentFragment().
                     getView().findViewById(R.id.search_image_button);
             MasterActivity masterActivity = ((MasterActivity) getActivity());
-            masterActivity.restoreSavedSearch(SearchResultsFragment.this,
+            masterActivity.restoreSavedSearch(DiscoverResultsFragment.this,
                     mFirstInit, savedInstanceState, searchImageButton, mSearchTextView);
 
             mFirstInit = false;
@@ -198,7 +196,7 @@ public class SearchResultsFragment extends Fragment implements
             }
         }, ApiConstants.RESULTS_PER_PAGE, getResources().getInteger(R.integer.stack_pages_per_block));
 
-        RecyclerView recyclerView = getView().findViewById(R.id.search_results_recycler_view);
+        RecyclerView recyclerView = getView().findViewById(R.id.discover_results_recycler_view);
         recyclerView.setLayoutManager(configureLayoutManager());
 
         if (mMediaType == MEDIA_TYPE_PEOPLE) {
@@ -302,7 +300,7 @@ public class SearchResultsFragment extends Fragment implements
 
                 //notify user of error
                 Snackbar.make(getActivity().findViewById(R.id.top_layout),
-                        getString(R.string.search_results_fetch_error_message),
+                        getString(R.string.discover_results_fetch_error_message),
                         Snackbar.LENGTH_LONG).show();
             }
         });
@@ -369,16 +367,16 @@ public class SearchResultsFragment extends Fragment implements
     //compares the url list of each tab to checks if this fragment is the currently selected tab
     private boolean isCurrentTab() {
         //if this is a manual search
-        if (mSearchType.equals(SearchParentFragment.SEARCH_MODE_MANUAL)) {
+        if (mSearchType.equals(DiscoverParentFragment.SEARCH_MODE_MANUAL)) {
             //get the list of manual search urls and compare to this fragment's mSearchUrl
             String[] manualUrls =
                     getParentFragment().getActivity().getResources()
-                            .getStringArray(R.array.manual_search_urls);
+                            .getStringArray(R.array.manual_discover_urls);
 
             List<String> manualUrlList = Arrays.asList(manualUrls);
 
             return manualUrlList.indexOf(mSearchUrl)
-                    == ((SearchParentFragment) getParentFragment()).getCurrentTabPosition();
+                    == ((DiscoverParentFragment) getParentFragment()).getCurrentTabPosition();
 
             //if this is a preset search
         } else {
@@ -388,12 +386,12 @@ public class SearchResultsFragment extends Fragment implements
             if (mMediaType == MEDIA_TYPE_MOVIE) {
                 presetUrls =
                         getParentFragment().getActivity().getResources()
-                                .getStringArray(R.array.preset_movie_search_urls);
+                                .getStringArray(R.array.preset_movie_discover_urls);
 
             } else if (mMediaType == MEDIA_TYPE_SERIES) {
                 presetUrls =
                         getParentFragment().getActivity().getResources()
-                                .getStringArray(R.array.preset_series_search_urls);
+                                .getStringArray(R.array.preset_series_discover_urls);
 
             } else {
                 throw new Error("no specified media type");
@@ -403,7 +401,7 @@ public class SearchResultsFragment extends Fragment implements
             List<String> presetUrlList = Arrays.asList(presetUrls);
 
             return presetUrlList.indexOf(mSearchUrl) ==
-                    ((SearchParentFragment) getParentFragment()).getCurrentTabPosition();
+                    ((DiscoverParentFragment) getParentFragment()).getCurrentTabPosition();
         }
     }
 
@@ -419,7 +417,7 @@ public class SearchResultsFragment extends Fragment implements
 
     private void startDetailsFragment(MediaData selectedData) {
         ((MasterActivity) getActivity())
-                .launchDetailsFragment(SearchResultsFragment.this, selectedData);
+                .launchDetailsFragment(DiscoverResultsFragment.this, selectedData);
     }
 
     @Override

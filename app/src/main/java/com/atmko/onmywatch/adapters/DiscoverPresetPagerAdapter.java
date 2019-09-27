@@ -12,21 +12,21 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
-import com.atmko.onmywatch.Fragments.SearchParentFragment;
-import com.atmko.onmywatch.Fragments.SearchResultsFragment;
+import com.atmko.onmywatch.Fragments.DiscoverParentFragment;
+import com.atmko.onmywatch.Fragments.DiscoverResultsFragment;
 import com.atmko.onmywatch.utils.SearchPreferences;
 
 /*
  * pager adapter for preset search results in DiscoveryFragment
  */
 
-public class SearchPresetPagerAdapter extends FragmentStatePagerAdapter {
+public class DiscoverPresetPagerAdapter extends FragmentStatePagerAdapter {
     private int mMediaType;
     private String[] mUrlList;
     private SearchPreferences mSearchPreferences;
 
-    public SearchPresetPagerAdapter(@NonNull FragmentManager fm, int behavior, int mediaType,
-                                    String[] urlList, SearchPreferences searchPreferences) {
+    public DiscoverPresetPagerAdapter(@NonNull FragmentManager fm, int behavior, int mediaType,
+                                      String[] urlList, SearchPreferences searchPreferences) {
         super(fm, behavior);
 
         mUrlList = urlList;
@@ -38,7 +38,7 @@ public class SearchPresetPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         String url = mUrlList[position];
-        return SearchResultsFragment.newInstance(SearchParentFragment.SEARCH_MODE_PRESET,
+        return DiscoverResultsFragment.newInstance(DiscoverParentFragment.SEARCH_MODE_PRESET,
                 mMediaType,url,
                 mSearchPreferences);
     }

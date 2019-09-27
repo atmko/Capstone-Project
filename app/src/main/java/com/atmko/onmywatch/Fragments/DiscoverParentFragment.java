@@ -6,7 +6,6 @@ package com.atmko.onmywatch.Fragments;
 
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -22,7 +21,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -31,14 +29,14 @@ import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.google.android.material.tabs.TabLayout;
 import com.atmko.onmywatch.R;
-import com.atmko.onmywatch.adapters.SearchManualPagerAdapter;
-import com.atmko.onmywatch.adapters.SearchPresetPagerAdapter;
+import com.atmko.onmywatch.adapters.DiscoverManualPagerAdapter;
+import com.atmko.onmywatch.adapters.DiscoverPresetPagerAdapter;
 import com.atmko.onmywatch.utils.SearchPreferences;
 
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
 
-public class SearchParentFragment extends Fragment
+public class DiscoverParentFragment extends Fragment
         implements SuperEditText.OnKeyBoardDismissListener {
     public static String FRAGMENT_KEY = "search_parent_fragment";
 
@@ -64,12 +62,12 @@ public class SearchParentFragment extends Fragment
 
     private int mCurrentTabPosition;
 
-    public SearchParentFragment() {
+    public DiscoverParentFragment() {
         // Required empty public constructor
     }
 
-    public static SearchParentFragment newInstance() {
-        SearchParentFragment fragment = new SearchParentFragment();
+    public static DiscoverParentFragment newInstance() {
+        DiscoverParentFragment fragment = new DiscoverParentFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -83,7 +81,7 @@ public class SearchParentFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.fragment_search_parent, container, false);
+        return inflater.inflate(R.layout.fragment_discover_parent, container, false);
     }
 
     @Override
@@ -149,7 +147,7 @@ public class SearchParentFragment extends Fragment
 
                     //reserve focus by hiding background fragment
                     ((MasterActivity) getActivity())
-                            .hideBackgroundFragment(SearchParentFragment.this);
+                            .hideBackgroundFragment(DiscoverParentFragment.this);
 
                 }
 
@@ -193,15 +191,15 @@ public class SearchParentFragment extends Fragment
         });
 
         mediaTypeTabLayout = getView().findViewById(R.id.media_type_tab_layout);
-        searchPresetsTopLayout = getView().findViewById(R.id.search_presets_top_layout);
-        searchPresetsTabLayout = getView().findViewById(R.id.search_presets_tab_layout);
-        searchResultsViewPager = getView().findViewById(R.id.search_results_view_pager);
+        searchPresetsTopLayout = getView().findViewById(R.id.discover_presets_top_layout);
+        searchPresetsTabLayout = getView().findViewById(R.id.discover_presets_tab_layout);
+        searchResultsViewPager = getView().findViewById(R.id.discover_results_view_pager);
 
         configureSearchBox();
     }
 
     private void configureSearchBox() {
-        searchFrameLayout = getView().findViewById(R.id.search_frame_layout);
+        searchFrameLayout = getView().findViewById(R.id.discover_frame_layout);
         searchEditTextView = getView().findViewById(R.id.search_edit_text_view);
         searchEditTextView.setKeyBoardDismissListener(this);
         //configure search box action event
@@ -241,7 +239,7 @@ public class SearchParentFragment extends Fragment
         mediaTypeTabLayout.removeAllTabs();
 
         //add new tabs
-        String[] searchTypesList = getContext().getResources().getStringArray(R.array.search_preset_media_types);
+        String[] searchTypesList = getContext().getResources().getStringArray(R.array.discover_preset_media_types);
 
         for (String type : searchTypesList) {
             mediaTypeTabLayout.addTab(mediaTypeTabLayout.newTab().setText(type));
@@ -282,12 +280,12 @@ public class SearchParentFragment extends Fragment
         String[] urlList = null;
 
         if (mediaType == MEDIA_TYPE_MOVIE) {
-            titleList = getContext().getResources().getStringArray(R.array.preset_movie_search_titles);
-            urlList = getContext().getResources().getStringArray(R.array.preset_movie_search_urls);
+            titleList = getContext().getResources().getStringArray(R.array.preset_movie_discover_titles);
+            urlList = getContext().getResources().getStringArray(R.array.preset_movie_discover_urls);
 
         } else if (mediaType == MEDIA_TYPE_SERIES){
-            titleList = getContext().getResources().getStringArray(R.array.preset_series_search_titles);
-            urlList = getContext().getResources().getStringArray(R.array.preset_series_search_urls);
+            titleList = getContext().getResources().getStringArray(R.array.preset_series_discover_titles);
+            urlList = getContext().getResources().getStringArray(R.array.preset_series_discover_urls);
         }
 
         for (String title : titleList) {
@@ -299,7 +297,7 @@ public class SearchParentFragment extends Fragment
         //configure search preferences
         SearchPreferences searchPreferences = new SearchPreferences();
 
-        resultsAdapter = new SearchPresetPagerAdapter(getChildFragmentManager(),
+        resultsAdapter = new DiscoverPresetPagerAdapter(getChildFragmentManager(),
                 FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, mediaType, urlList,
                 searchPreferences);
 
@@ -344,7 +342,7 @@ public class SearchParentFragment extends Fragment
         mediaTypeTabLayout.removeAllTabs();
 
         //add new tabs
-        String[] searchTypesList = getContext().getResources().getStringArray(R.array.search_manual_media_types);
+        String[] searchTypesList = getContext().getResources().getStringArray(R.array.discover_manual_media_types);
 
         for (String type : searchTypesList) {
             mediaTypeTabLayout.addTab(mediaTypeTabLayout.newTab().setText(type));
@@ -384,13 +382,13 @@ public class SearchParentFragment extends Fragment
         //configure view pager adapter
 
         //configure urls
-        String[] urlList = getContext().getResources().getStringArray(R.array.manual_search_urls);
+        String[] urlList = getContext().getResources().getStringArray(R.array.manual_discover_urls);
 
         //configure search preferences
         SearchPreferences searchPreferences = new SearchPreferences();
         searchPreferences.setQuery(query);
 
-        resultsAdapter = new SearchManualPagerAdapter(getChildFragmentManager(),
+        resultsAdapter = new DiscoverManualPagerAdapter(getChildFragmentManager(),
                 FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, urlList,
                 searchPreferences);
 
