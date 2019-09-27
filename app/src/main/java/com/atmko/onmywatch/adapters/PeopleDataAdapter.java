@@ -31,7 +31,8 @@ import java.util.List;
  * data adapter for people data objects
  */
 
-public class PeopleDataAdapter extends RecyclerView.Adapter<PeopleDataAdapter.PeopleDataAdapterViewHolder> {
+public class PeopleDataAdapter
+        extends RecyclerView.Adapter<PeopleDataAdapter.PeopleDataAdapterViewHolder> {
 
     private final Fragment mFragment;
     private final List<PersonData> mAdapterData;
@@ -129,7 +130,8 @@ public class PeopleDataAdapter extends RecyclerView.Adapter<PeopleDataAdapter.Pe
     }
 
     private ViewGroup.MarginLayoutParams getPosterMargins(View view) {
-        ViewGroup.MarginLayoutParams margins = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+        ViewGroup.MarginLayoutParams margins =
+                (ViewGroup.MarginLayoutParams) view.getLayoutParams();
 
         int searchImageSpacing = (int) mFragment.getResources().getDimension(R.dimen.search_image_spacing);
 
@@ -139,7 +141,8 @@ public class PeopleDataAdapter extends RecyclerView.Adapter<PeopleDataAdapter.Pe
 
     @NonNull
     @Override
-    public PeopleDataAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
+    public PeopleDataAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup,
+                                                          int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(mContext);
 
         int resourceId;
@@ -157,7 +160,8 @@ public class PeopleDataAdapter extends RecyclerView.Adapter<PeopleDataAdapter.Pe
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PeopleDataAdapterViewHolder adapterViewHolder, int position) {
+    public void onBindViewHolder(@NonNull PeopleDataAdapterViewHolder adapterViewHolder,
+                                 int position) {
         //get current MediaData
         PersonData currentMediaData = mAdapterData.get(position);
 

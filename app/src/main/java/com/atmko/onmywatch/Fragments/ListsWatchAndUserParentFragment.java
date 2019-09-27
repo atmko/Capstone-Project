@@ -171,13 +171,15 @@ public class ListsWatchAndUserParentFragment extends Fragment
 
         mListsViewPager.setOffscreenPageLimit(listTypeNames.length - 1);
 
-        ListWatchAndUserAdapter mListWatchAndUserAdapter = new ListWatchAndUserAdapter(getChildFragmentManager(),
+        ListWatchAndUserAdapter mListWatchAndUserAdapter =
+                new ListWatchAndUserAdapter(getChildFragmentManager(),
                 FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
 
         mListsViewPager.setAdapter(mListWatchAndUserAdapter);
 
         //configure listeners
-        mListsViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mMediaTypeTabLayout));
+        mListsViewPager.addOnPageChangeListener(
+                new TabLayout.TabLayoutOnPageChangeListener(mMediaTypeTabLayout));
         mMediaTypeTabLayout.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {

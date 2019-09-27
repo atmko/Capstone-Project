@@ -12,7 +12,8 @@ import androidx.room.ForeignKey;
 @Entity(tableName = "movie_data_records", primaryKeys = {"movie_id", "list_id"},
         foreignKeys =
                 {@ForeignKey(entity = MovieData.class, parentColumns = "id", childColumns = "movie_id"),
-                @ForeignKey(entity = UserListModel.class, parentColumns = "id",  childColumns = "list_id", onDelete = ForeignKey.CASCADE)}
+                @ForeignKey(entity = UserListModel.class, parentColumns = "id",
+                        childColumns = "list_id", onDelete = ForeignKey.CASCADE)}
                 )
 
 public class MovieDataRecord {

@@ -24,7 +24,8 @@ import java.util.List;
  * data adapter for WatchList objects
  */
 
-public class WatchListsAdapter extends RecyclerView.Adapter<WatchListsAdapter.WatchListsAdapterViewHolder> {
+public class WatchListsAdapter
+        extends RecyclerView.Adapter<WatchListsAdapter.WatchListsAdapterViewHolder> {
 
     private final List<WatchListModel> mAdapterData;
     private final OnListItemClickListener mOnListItemClickListener;
@@ -59,8 +60,10 @@ public class WatchListsAdapter extends RecyclerView.Adapter<WatchListsAdapter.Wa
 
             final Context context = itemView.getContext();
 
-            final String[] optionsTitles = context.getResources().getStringArray(R.array.options_spinner_titles);
-            SpinnerListOptionsAdapter spinnerAdapter = new SpinnerListOptionsAdapter(optionsTitles, context);
+            final String[] optionsTitles =
+                    context.getResources().getStringArray(R.array.options_spinner_titles);
+            SpinnerListOptionsAdapter spinnerAdapter =
+                    new SpinnerListOptionsAdapter(optionsTitles, context);
 
             optionsSpinner.setAdapter(spinnerAdapter);
 
@@ -78,7 +81,8 @@ public class WatchListsAdapter extends RecyclerView.Adapter<WatchListsAdapter.Wa
 
     @NonNull
     @Override
-    public WatchListsAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
+    public WatchListsAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup,
+                                                          int viewType) {
         Context context = viewGroup.getContext();
         LayoutInflater layoutInflater = LayoutInflater.from(context);
 
@@ -90,14 +94,16 @@ public class WatchListsAdapter extends RecyclerView.Adapter<WatchListsAdapter.Wa
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final WatchListsAdapterViewHolder adapterViewHolder, int position) {
+    public void onBindViewHolder(@NonNull final WatchListsAdapterViewHolder adapterViewHolder,
+                                 int position) {
         final Context context = adapterViewHolder.listNameTextView.getContext();
 
         //get current WatchListData
         WatchListModel currentWatchListModel = mAdapterData.get(position);
 
         adapterViewHolder.listNameTextView.setText(currentWatchListModel.getName());
-        adapterViewHolder.itemCountTextView.setText(String.valueOf(currentWatchListModel.getItemCount()));
+        adapterViewHolder.itemCountTextView.
+                setText(String.valueOf(currentWatchListModel.getItemCount()));
     }
 
     @Override

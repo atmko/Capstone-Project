@@ -40,8 +40,8 @@ public class MovieData extends MediaData{
     }
 
     @Ignore
-    public MovieData(@NonNull String id, String voteCount, boolean video, String voteAverage, String title,
-                     double popularity, String posterPath, String originalLanguage,
+    public MovieData(@NonNull String id, String voteCount, boolean video, String voteAverage,
+                     String title, double popularity, String posterPath, String originalLanguage,
                      String originalTitle, ArrayList<String> genres, String backdropPath,
                      boolean adult, String overview, String releaseDate) {
 

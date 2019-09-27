@@ -112,7 +112,8 @@ public class UpdateMediaWorker extends Worker {
                         //parse and populate retrieved data
                         if (oldMediaData instanceof MovieData) {
                             newMediaData =
-                                    MovieDataParser.parseDetails(returnedJSONString, ((MovieData) oldMediaData));
+                                    MovieDataParser.parseDetails(returnedJSONString,
+                                            ((MovieData) oldMediaData));
 
                             //preserve the overwritten watch status and user rating
                             newMediaData.setWatchStatus(oldMediaData.getWatchStatus());
@@ -122,8 +123,8 @@ public class UpdateMediaWorker extends Worker {
 
                         } else {
                             newMediaData =
-                                    SeriesDataParser
-                                            .parseDetails(returnedJSONString, ((SeriesData) oldMediaData), mContext);
+                                    SeriesDataParser.parseDetails(returnedJSONString,
+                                            ((SeriesData) oldMediaData), mContext);
 
                             //preserve the over written watch status
                             newMediaData.setWatchStatus(oldMediaData.getWatchStatus());

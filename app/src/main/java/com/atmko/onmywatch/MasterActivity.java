@@ -189,8 +189,10 @@ public class MasterActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Fragment detailFragment = getSupportFragmentManager().findFragmentById(R.id.detail_fragments_container);
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.master_fragments_container);
+        Fragment detailFragment =
+                getSupportFragmentManager().findFragmentById(R.id.detail_fragments_container);
+        Fragment fragment =
+                getSupportFragmentManager().findFragmentById(R.id.master_fragments_container);
 
         //condition for navigation
         //this removes details fragment because master container is behind detail container
@@ -289,8 +291,8 @@ public class MasterActivity extends AppCompatActivity {
         SearchPreferences searchPreferences =  new SearchPreferences();
         Parcelable parceledSharedPreferences = Parcels.wrap(searchPreferences);
 
-        DetailsFragment detailsFragment =
-                DetailsFragment.newInstance(mediaType, detailUrl, parceledData, parceledSharedPreferences);
+        DetailsFragment detailsFragment = DetailsFragment.newInstance(
+                mediaType, detailUrl, parceledData, parceledSharedPreferences);
 
         Fragment detailContainerFragment = getSupportFragmentManager()
                 .findFragmentById(R.id.detail_fragments_container);

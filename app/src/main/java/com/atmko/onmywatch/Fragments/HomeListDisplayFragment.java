@@ -29,7 +29,8 @@ import com.atmko.onmywatch.view_models.ListsResultsViewModel;
 import java.util.Arrays;
 import java.util.List;
 
-public class HomeListDisplayFragment extends Fragment implements MediaDataAdapter.OnListItemClickListener{
+public class HomeListDisplayFragment extends Fragment
+        implements MediaDataAdapter.OnListItemClickListener{
     public static String FRAGMENT_KEY = "home_list_display_fragment";
 
     private static final String LIST_TYPE_KEY = "list_type";
@@ -106,7 +107,7 @@ public class HomeListDisplayFragment extends Fragment implements MediaDataAdapte
 
         AppDatabase database = AppDatabase.getInstance(getContext());
         ListResultsViewModelFactory resultsViewModelFactory =
-                new ListResultsViewModelFactory(database, ListsWatchAndUserParentFragment.LIST_TYPE_WATCH,
+                new ListResultsViewModelFactory(database,ListsWatchAndUserParentFragment.LIST_TYPE_WATCH,
                         mMediaType, titleList, mListName);
 
         final ListsResultsViewModel viewModel =

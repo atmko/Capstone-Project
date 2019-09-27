@@ -35,8 +35,9 @@ public class SeriesData extends MediaData{
     @Ignore
     public SeriesData(@NonNull String id, String voteCount, String voteAverage, String title,
                       double popularity, String posterPath, String originalLanguage,
-                      String originalTitle, ArrayList<String> countryOfOrigin, ArrayList<String> genres,
-                      String backdropPath, String overview, String releaseDate) {
+                      String originalTitle, ArrayList<String> countryOfOrigin,
+                      ArrayList<String> genres, String backdropPath, String overview,
+                      String releaseDate) {
 
         this.mId = id;
         this.mVoteCount = voteCount;

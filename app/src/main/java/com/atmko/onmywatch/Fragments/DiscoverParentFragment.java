@@ -239,7 +239,8 @@ public class DiscoverParentFragment extends Fragment
         mMediaTypeTabLayout.removeAllTabs();
 
         //add new tabs
-        String[] searchTypesList = getContext().getResources().getStringArray(R.array.discover_preset_media_types);
+        String[] searchTypesList =
+                getContext().getResources().getStringArray(R.array.discover_preset_media_types);
 
         for (String type : searchTypesList) {
             mMediaTypeTabLayout.addTab(mMediaTypeTabLayout.newTab().setText(type));
@@ -307,7 +308,8 @@ public class DiscoverParentFragment extends Fragment
         mSearchResultsViewPager.clearOnPageChangeListeners();
 
         //configure new listeners
-        mSearchResultsViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mSearchPresetsTabLayout));
+        mSearchResultsViewPager.addOnPageChangeListener(
+                new TabLayout.TabLayoutOnPageChangeListener(mSearchPresetsTabLayout));
         mSearchPresetsTabLayout.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -342,7 +344,8 @@ public class DiscoverParentFragment extends Fragment
         mMediaTypeTabLayout.removeAllTabs();
 
         //add new tabs
-        String[] searchTypesList = getContext().getResources().getStringArray(R.array.discover_manual_media_types);
+        String[] searchTypesList =
+                getContext().getResources().getStringArray(R.array.discover_manual_media_types);
 
         for (String type : searchTypesList) {
             mMediaTypeTabLayout.addTab(mMediaTypeTabLayout.newTab().setText(type));
@@ -377,7 +380,8 @@ public class DiscoverParentFragment extends Fragment
         mSearchResultsViewPager.clearOnPageChangeListeners();
 
         //configure new listener
-        mSearchResultsViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mMediaTypeTabLayout));
+        mSearchResultsViewPager.addOnPageChangeListener(
+                new TabLayout.TabLayoutOnPageChangeListener(mMediaTypeTabLayout));
 
         //configure view pager adapter
 

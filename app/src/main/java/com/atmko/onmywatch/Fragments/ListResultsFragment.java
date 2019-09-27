@@ -39,7 +39,8 @@ import java.util.List;
 
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 
-public class ListResultsFragment extends Fragment implements MediaDataAdapter.OnListItemClickListener{
+public class ListResultsFragment extends Fragment
+        implements MediaDataAdapter.OnListItemClickListener{
     public static final String FRAGMENT_KEY = "list_results_fragment";
 
     // TODO: Rename parameter arguments, choose names that match
@@ -161,7 +162,8 @@ public class ListResultsFragment extends Fragment implements MediaDataAdapter.On
         if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
             //if media data is movie
             if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
-                viewModel.getAllMoviesInWatchList().observe(getParentFragment(), new Observer<List<MovieData>>() {
+                viewModel.getAllMoviesInWatchList().observe(getParentFragment(),
+                        new Observer<List<MovieData>>() {
                     @Override
                     public void onChanged(List<MovieData> mediaDataList) {
                         populateAndNotifyAdapter(mediaDataList);

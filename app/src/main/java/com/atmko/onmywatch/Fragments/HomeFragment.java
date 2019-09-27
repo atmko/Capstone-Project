@@ -116,7 +116,8 @@ public class HomeFragment extends Fragment {
         listsTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ListsWatchAndUserParentFragment listsParentFragment = ListsWatchAndUserParentFragment.newInstance();
+                ListsWatchAndUserParentFragment listsParentFragment =
+                        ListsWatchAndUserParentFragment.newInstance();
 
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.slide_down_entry, android.R.animator.fade_out)
@@ -179,13 +180,16 @@ public class HomeFragment extends Fragment {
                     .newInstance(mMediaType, spotlightUrl, searchPreferences);
 
             HomeListDisplayFragment toWatchHomeList = HomeListDisplayFragment
-                    .newInstance(mMediaType, LIST_TYPE_WATCH, movieWatchStatusTitles[MediaData.WATCH_STATUS_TO_WATCH]);
+                    .newInstance(mMediaType, LIST_TYPE_WATCH,
+                            movieWatchStatusTitles[MediaData.WATCH_STATUS_TO_WATCH]);
 
             HomeListDisplayFragment watchingHomeList = HomeListDisplayFragment
-                    .newInstance(mMediaType, LIST_TYPE_WATCH, movieWatchStatusTitles[MediaData.WATCH_STATUS_WATCHING]);
+                    .newInstance(mMediaType, LIST_TYPE_WATCH,
+                            movieWatchStatusTitles[MediaData.WATCH_STATUS_WATCHING]);
 
             HomeListDisplayFragment watchedHomeList = HomeListDisplayFragment
-                    .newInstance(mMediaType, LIST_TYPE_WATCH, movieWatchStatusTitles[MediaData.WATCH_STATUS_WATCHED]);
+                    .newInstance(mMediaType, LIST_TYPE_WATCH,
+                            movieWatchStatusTitles[MediaData.WATCH_STATUS_WATCHED]);
 
             getChildFragmentManager()
                     .beginTransaction()
@@ -207,13 +211,16 @@ public class HomeFragment extends Fragment {
                     .newInstance(mMediaType, spotlightUrl, searchPreferences);
 
             HomeListDisplayFragment toWatchHomeList = HomeListDisplayFragment
-                    .newInstance(mMediaType, LIST_TYPE_WATCH, seriesWatchStatusTitles[MediaData.WATCH_STATUS_TO_WATCH]);
+                    .newInstance(mMediaType, LIST_TYPE_WATCH,
+                            seriesWatchStatusTitles[MediaData.WATCH_STATUS_TO_WATCH]);
 
             HomeListDisplayFragment watchingHomeList = HomeListDisplayFragment
-                    .newInstance(mMediaType, LIST_TYPE_WATCH, seriesWatchStatusTitles[MediaData.WATCH_STATUS_WATCHING]);
+                    .newInstance(mMediaType, LIST_TYPE_WATCH,
+                            seriesWatchStatusTitles[MediaData.WATCH_STATUS_WATCHING]);
 
             HomeListDisplayFragment watchedHomeList = HomeListDisplayFragment
-                    .newInstance(mMediaType, LIST_TYPE_WATCH, seriesWatchStatusTitles[MediaData.WATCH_STATUS_WATCHED]);
+                    .newInstance(mMediaType, LIST_TYPE_WATCH,
+                            seriesWatchStatusTitles[MediaData.WATCH_STATUS_WATCHED]);
 
             getChildFragmentManager()
                     .beginTransaction()

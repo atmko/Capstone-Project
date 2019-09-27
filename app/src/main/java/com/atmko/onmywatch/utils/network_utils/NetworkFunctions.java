@@ -46,10 +46,13 @@ public class NetworkFunctions {
     }
 
     //agnostic search request
-    public static ANRequest agnosticSearchRequest(String urlFormat, SearchPreferences searchPreferences, Context context) {
+    public static ANRequest agnosticSearchRequest(String urlFormat,
+                                                  SearchPreferences searchPreferences,
+                                                  Context context) {
         String finalUrl = ""+urlFormat;
 
-        String[] preferenceKeyCheckList = context.getResources().getStringArray(R.array.preference_key_checklist);
+        String[] preferenceKeyCheckList =
+                context.getResources().getStringArray(R.array.preference_key_checklist);
         String[] preferenceValueList = searchPreferences.getPreferenceValueList();
 
         //replace format keys with related values
@@ -67,10 +70,13 @@ public class NetworkFunctions {
     }
 
     //agnostic search request
-    public static ANRequest agnosticDetailRequestById(String urlFormat, String id, SearchPreferences searchPreferences, Context context) {
+    public static ANRequest agnosticDetailRequestById(String urlFormat, String id,
+                                                      SearchPreferences searchPreferences,
+                                                      Context context) {
         String finalUrl = ""+urlFormat;
 
-        String[] preferenceKeyCheckList = context.getResources().getStringArray(R.array.preference_key_checklist);
+        String[] preferenceKeyCheckList =
+                context.getResources().getStringArray(R.array.preference_key_checklist);
         String[] preferenceValueList = searchPreferences.getPreferenceValueList();
 
         for (int index = 0; index < preferenceKeyCheckList.length; index++) {

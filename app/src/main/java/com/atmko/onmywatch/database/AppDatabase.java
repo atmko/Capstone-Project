@@ -65,11 +65,12 @@ public abstract class AppDatabase extends RoomDatabase {
                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                     @Override
                     public void run() {
-                        String[] seriesWatchListTitles =
-                                context.getResources().getStringArray(R.array.watch_status_series_titles);
+                        String[] seriesWatchListTitles = context.getResources()
+                                        .getStringArray(R.array.watch_status_series_titles);
                         for (String title: seriesWatchListTitles) {
                             WatchListModel watchListModel = new WatchListModel(title);
-                            AppDatabase.getInstance(context).watchListsDao().addList(watchListModel);
+                            AppDatabase.getInstance(context).watchListsDao()
+                                    .addList(watchListModel);
                         }
                     }
                 });

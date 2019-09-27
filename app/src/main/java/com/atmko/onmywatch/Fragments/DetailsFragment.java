@@ -107,7 +107,8 @@ public class DetailsFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static DetailsFragment newInstance(int mediaType, String detailUrl, Parcelable mediaDataParcel,
+    public static DetailsFragment newInstance(int mediaType, String detailUrl,
+                                              Parcelable mediaDataParcel,
                                               Parcelable searchPreferencesParcel) {
         DetailsFragment fragment = new DetailsFragment();
         Bundle args = new Bundle();
@@ -132,7 +133,8 @@ public class DetailsFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_details, container, false);
     }
 
@@ -453,7 +455,8 @@ public class DetailsFragment extends Fragment {
         String id = mMediaData.getId();
 
         //build AN request
-        ANRequest request = NetworkFunctions.agnosticDetailRequestById(mDetailUrl, id,  mSearchPreferences, getContext());
+        ANRequest request = NetworkFunctions.agnosticDetailRequestById(mDetailUrl, id,
+                mSearchPreferences, getContext());
 
         request.getAsString(new StringRequestListener() {
             @Override
@@ -543,7 +546,8 @@ public class DetailsFragment extends Fragment {
         mDetailExtrasViewPager.clearOnPageChangeListeners();
 
         //configure new listeners
-        mDetailExtrasViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mDetailExtrasTabLayout));
+        mDetailExtrasViewPager.addOnPageChangeListener(
+                new TabLayout.TabLayoutOnPageChangeListener(mDetailExtrasTabLayout));
         mDetailExtrasTabLayout.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {

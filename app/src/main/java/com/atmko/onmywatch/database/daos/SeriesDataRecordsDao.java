@@ -25,10 +25,12 @@ public interface SeriesDataRecordsDao {
     @Query("SELECT * FROM series_data_records")
     LiveData<List<SeriesDataRecord>> getAllRecords();
 //
-    @Query("SELECT * FROM series INNER JOIN series_data_records ON series.id = series_data_records.series_id WHERE series_data_records.list_id = :listId")
+    @Query("SELECT * FROM series INNER JOIN series_data_records ON series.id = series_data_records.series_id "
+            +"WHERE series_data_records.list_id = :listId")
     LiveData<List<SeriesData>> getAllSeriesInList(String listId);
 
-    @Query("SELECT * FROM series INNER JOIN series_data_records ON series.id = series_data_records.series_id WHERE series_data_records.list_id = :listId AND series.title LIKE :mediaTitle")
+    @Query("SELECT * FROM series INNER JOIN series_data_records ON series.id = series_data_records.series_id "
+            +"WHERE series_data_records.list_id = :listId AND series.title LIKE :mediaTitle")
     LiveData<List<SeriesData>> getSeriesWithNameLike(String listId, String mediaTitle);
 
     @Query("SELECT * FROM series_data_records WHERE list_id = :listId")
@@ -37,7 +39,8 @@ public interface SeriesDataRecordsDao {
     @Query("SELECT list_id FROM series_data_records WHERE series_id = :seriesId")
     LiveData<List<String>> getAllListNamesContainingMedia(String seriesId);
 
-    @Query("SELECT * FROM user_lists INNER JOIN series_data_records ON user_lists.id = series_data_records.list_id WHERE series_id = :seriesId")
+    @Query("SELECT * FROM user_lists INNER JOIN series_data_records ON user_lists.id = series_data_records.list_id "
+            +"WHERE series_id = :seriesId")
     LiveData<List<UserListModel>> getAllListsContainingMedia(String seriesId);
 
     @Query("SELECT COUNT(*) FROM series_data_records WHERE list_id = :listId")

@@ -37,7 +37,8 @@ import com.atmko.onmywatch.view_models.ListsWatchAndUserViewModel;
 
 import java.util.List;
 
-public class ListWatchAndUserFragment extends Fragment implements WatchListsAdapter.OnListItemClickListener,
+public class ListWatchAndUserFragment extends Fragment
+        implements WatchListsAdapter.OnListItemClickListener,
         UserListsAdapter.OnListItemClickListener, UserListsAdapter.OnSpinnerItemClickListener {
 
     public static String FRAGMENT_KEY = "list_watch_and_user_fragment";
@@ -211,7 +212,8 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
 
         if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
             //observe lists with searched name then remove observer
-            final LiveData<List<WatchListModel>> listLiveData = mDatabase.watchListsDao().getListsWithNameLike(listName);
+            final LiveData<List<WatchListModel>> listLiveData =
+                    mDatabase.watchListsDao().getListsWithNameLike(listName);
             listLiveData.observe(getParentFragment(), new Observer<List<WatchListModel>>() {
                 @Override
                 public void onChanged(List<WatchListModel> watchListModels) {
@@ -225,7 +227,8 @@ public class ListWatchAndUserFragment extends Fragment implements WatchListsAdap
 
         if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_USER) {
             //observe lists with searched name then remove observer
-            final LiveData<List<UserListModel>> listLiveData = mDatabase.userListsDao().getListsWithNameLike(listName);
+            final LiveData<List<UserListModel>> listLiveData =
+                    mDatabase.userListsDao().getListsWithNameLike(listName);
             listLiveData.observe(getParentFragment(), new Observer<List<UserListModel>>() {
                 @Override
                 public void onChanged(List<UserListModel> userListModels) {

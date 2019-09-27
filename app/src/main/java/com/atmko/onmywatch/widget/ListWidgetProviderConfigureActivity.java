@@ -35,7 +35,8 @@ import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
 /**
  * The configuration screen for the {@link ListWidgetProvider NewAppWidget} AppWidget.
  */
-public class ListWidgetProviderConfigureActivity extends AppCompatActivity implements WatchListsAdapter.OnListItemClickListener {
+public class ListWidgetProviderConfigureActivity extends AppCompatActivity
+        implements WatchListsAdapter.OnListItemClickListener {
     public static String TAG = "NewAppWidgetConfigureActivity";
 
     private static final String PREFS_NAME = "com.upkipp.onmywatch.widget.NewAppWidget";

@@ -29,7 +29,8 @@ import java.util.List;
  * data adapter for media data objects in HomeSpotlightFragment within HomeFragment
  */
 
-public class HomeSpotlightAdapter extends RecyclerView.Adapter<HomeSpotlightAdapter.HomeSpotlightAdapterViewHolder> {
+public class HomeSpotlightAdapter
+        extends RecyclerView.Adapter<HomeSpotlightAdapter.HomeSpotlightAdapterViewHolder> {
     private final Fragment mFragment;
     private final List<MediaData> mAdapterData;
     private final OnListItemClickListener mOnListItemClickListener;
@@ -91,7 +92,8 @@ public class HomeSpotlightAdapter extends RecyclerView.Adapter<HomeSpotlightAdap
     }
 
     private ViewGroup.MarginLayoutParams getPosterMargins(View view) {
-        ViewGroup.MarginLayoutParams margins = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+        ViewGroup.MarginLayoutParams margins =
+                (ViewGroup.MarginLayoutParams) view.getLayoutParams();
 
         int searchImageSpacing = (int) mFragment.getResources().getDimension(R.dimen.search_image_spacing);
 
@@ -101,7 +103,8 @@ public class HomeSpotlightAdapter extends RecyclerView.Adapter<HomeSpotlightAdap
 
     @NonNull
     @Override
-    public HomeSpotlightAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
+    public HomeSpotlightAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup,
+                                                             int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(mContext);
 
         int resourceId;
@@ -119,7 +122,8 @@ public class HomeSpotlightAdapter extends RecyclerView.Adapter<HomeSpotlightAdap
     }
 
     @Override
-    public void onBindViewHolder(@NonNull HomeSpotlightAdapterViewHolder adapterViewHolder, int position) {
+    public void onBindViewHolder(@NonNull HomeSpotlightAdapterViewHolder adapterViewHolder,
+                                 int position) {
         //get current MediaData
         MediaData currentMediaData = mAdapterData.get(position);
 

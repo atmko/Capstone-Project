@@ -33,7 +33,8 @@ import java.util.List;
  * data adapter for Media data objects
  */
 
-public class MediaDataAdapter extends RecyclerView.Adapter<MediaDataAdapter.MediaDataAdapterViewHolder> {
+public class MediaDataAdapter
+        extends RecyclerView.Adapter<MediaDataAdapter.MediaDataAdapterViewHolder> {
 
     private final Fragment mFragment;
     private final List<MediaData> mAdapterData;
@@ -164,7 +165,8 @@ public class MediaDataAdapter extends RecyclerView.Adapter<MediaDataAdapter.Medi
     }
 
     private ViewGroup.MarginLayoutParams getPosterMargins(View view) {
-        ViewGroup.MarginLayoutParams margins = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+        ViewGroup.MarginLayoutParams margins =
+                (ViewGroup.MarginLayoutParams) view.getLayoutParams();
 
         int searchImageSpacing = (int) mFragment.getResources().getDimension(R.dimen.search_image_spacing);
 
@@ -174,7 +176,8 @@ public class MediaDataAdapter extends RecyclerView.Adapter<MediaDataAdapter.Medi
 
     @NonNull
     @Override
-    public MediaDataAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
+    public MediaDataAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup,
+                                                         int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(mContext);
 
         int resourceId;

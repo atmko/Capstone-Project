@@ -25,7 +25,8 @@ import java.util.Map;
  * data adapter for review objects ReviewsFragment
  */
 
-public final class ReviewDataAdapter extends RecyclerView.Adapter<ReviewDataAdapter.ReviewDataAdapterViewHolder> {
+public final class ReviewDataAdapter
+        extends RecyclerView.Adapter<ReviewDataAdapter.ReviewDataAdapterViewHolder> {
 
     private final ArrayList<Map<String, String>> mAdapterData;
     private final OnListItemClickListener mOnListItemClickListener;
@@ -63,7 +64,8 @@ public final class ReviewDataAdapter extends RecyclerView.Adapter<ReviewDataAdap
 
     @NonNull
     @Override
-    public ReviewDataAdapter.ReviewDataAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public ReviewDataAdapter.ReviewDataAdapterViewHolder onCreateViewHolder(
+            @NonNull ViewGroup viewGroup, int i) {
         Context context = viewGroup.getContext();
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         int resourceId = R.layout.object_review;
@@ -74,7 +76,8 @@ public final class ReviewDataAdapter extends RecyclerView.Adapter<ReviewDataAdap
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ReviewDataAdapterViewHolder adapterViewHolder, int position) {
+    public void onBindViewHolder(@NonNull ReviewDataAdapterViewHolder adapterViewHolder,
+                                 int position) {
         //get current reviewData
         Map<String, String> currentReviewData = mAdapterData.get(position);
         String author = currentReviewData.get(ApiConstants.REVIEW_AUTHOR_KEY);
@@ -83,7 +86,8 @@ public final class ReviewDataAdapter extends RecyclerView.Adapter<ReviewDataAdap
         adapterViewHolder.authorTextVIew.setText(author);
         adapterViewHolder.contentTextView.setTag(content);
         //noinspection ConstantConditions
-        adapterViewHolder.contentTextView.setText(limitText(content, DetailsFragment.REVIEW_CUT_OFF_INDEX));
+        adapterViewHolder.contentTextView
+                .setText(limitText(content, DetailsFragment.REVIEW_CUT_OFF_INDEX));
 
     }
 

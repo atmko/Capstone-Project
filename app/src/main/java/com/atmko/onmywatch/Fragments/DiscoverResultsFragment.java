@@ -83,7 +83,9 @@ public class DiscoverResultsFragment extends Fragment implements
         // Required empty public constructor
     }
 
-    public static DiscoverResultsFragment newInstance(String searchType, int mediaType, String searchUrl,
+    public static DiscoverResultsFragment newInstance(String searchType,
+                                                      int mediaType,
+                                                      String searchUrl,
                                                       SearchPreferences searchPreferencesParcel) {
 
         DiscoverResultsFragment fragment = new DiscoverResultsFragment();
@@ -334,7 +336,8 @@ public class DiscoverResultsFragment extends Fragment implements
 
         if (masterActivity == null) return;
 
-        Fragment activeFragment = masterActivity.getSupportFragmentManager().findFragmentById(R.id.master_fragments_container);
+        Fragment activeFragment =
+                masterActivity.getSupportFragmentManager().findFragmentById(R.id.master_fragments_container);
         String activeClassName = activeFragment.getClass().getName();
         String parentClassName = getParentFragment().getClass().getName();
 
@@ -428,10 +431,12 @@ public class DiscoverResultsFragment extends Fragment implements
         getArguments().putParcelable(SEARCH_PREFERENCES_KEY, Parcels.wrap(mSearchPreferences));
 
         if (mMediaType == MEDIA_TYPE_PEOPLE) {
-            outState.putParcelable(ADAPTER_DATA_LIST_KEY, Parcels.wrap(((PeopleDataAdapter)mDataAdapter).getAdapterData()));
+            outState.putParcelable(ADAPTER_DATA_LIST_KEY,
+                    Parcels.wrap(((PeopleDataAdapter)mDataAdapter).getAdapterData()));
 
         } else {
-            outState.putParcelable(ADAPTER_DATA_LIST_KEY, Parcels.wrap(((MediaDataAdapter)mDataAdapter).getAdapterData()));
+            outState.putParcelable(ADAPTER_DATA_LIST_KEY,
+                    Parcels.wrap(((MediaDataAdapter)mDataAdapter).getAdapterData()));
         }
 
         outState.putIntArray(PAGING_BLOCK_MAP_KEY, mStack.saveBlockStructure());

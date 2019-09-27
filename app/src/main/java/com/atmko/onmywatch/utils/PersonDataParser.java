@@ -74,7 +74,8 @@ public class PersonDataParser {
 
                         (String) (peopleDataMap.get(PeopleApiConstants.PROFILE_PATH_KEY)),
 
-                        parseKnownForObjects((ArrayList<Map>) peopleDataMap.get(PeopleApiConstants.KNOWN_FOR_KEY)),
+                        parseKnownForObjects(
+                                (ArrayList<Map>) peopleDataMap.get(PeopleApiConstants.KNOWN_FOR_KEY)),
 
                         (String) peopleDataMap.get(PeopleApiConstants.NAME_KEY),
 

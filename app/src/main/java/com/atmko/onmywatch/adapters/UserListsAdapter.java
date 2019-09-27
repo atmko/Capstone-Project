@@ -104,7 +104,8 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.User
     }
 
     @NonNull
-    @Override public UserListsAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
+    @Override public UserListsAdapterViewHolder onCreateViewHolder(
+            @NonNull ViewGroup viewGroup, int viewType) {
         Context context = viewGroup.getContext();
         LayoutInflater layoutInflater = LayoutInflater.from(context);
 
@@ -116,12 +117,14 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.User
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final UserListsAdapterViewHolder adapterViewHolder, int position) {
+    public void onBindViewHolder(@NonNull final UserListsAdapterViewHolder adapterViewHolder,
+                                 int position) {
         //get current UserList
         UserListModel currentUserListModel = mAdapterData.get(position);
 
         adapterViewHolder.listNameTextView.setText(currentUserListModel.getName());
-        adapterViewHolder.itemCountTextView.setText(String.valueOf(currentUserListModel.getItemCount()));
+        adapterViewHolder.itemCountTextView
+                .setText(String.valueOf(currentUserListModel.getItemCount()));
     }
 
     @Override

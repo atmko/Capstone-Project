@@ -31,8 +31,8 @@ public class PersonData {
     }
 
     @Ignore
-    public PersonData(@NonNull String id, String profilePath, ArrayList<MediaData> knownFor, String name,
-                      double popularity, boolean adult) {
+    public PersonData(@NonNull String id, String profilePath, ArrayList<MediaData> knownFor,
+                      String name, double popularity, boolean adult) {
 
         this.mId = id;
         if (profilePath == null) {

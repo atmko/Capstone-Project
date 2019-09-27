@@ -103,7 +103,9 @@ public class Stack extends RecyclerView.OnScrollListener {
 
         for (int index = 0; index < iterationSize; index++) {
             int blockIndex = blockIndexRange[0] + index;
-            PagingBlock pagingBlock = new PagingBlock(getFirstPage(), blockIndex, mPagingBlockTemplate.getBlockPageCapacity());
+            PagingBlock pagingBlock =
+                    new PagingBlock(getFirstPage(), blockIndex,
+                            mPagingBlockTemplate.getBlockPageCapacity());
 
             pagingBlock = restorePagingBlockPages(pagingBlock, fullDataList);
 

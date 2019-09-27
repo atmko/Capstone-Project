@@ -28,9 +28,11 @@ public class ListWatchAndUserAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
 
         if (position == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
-            return ListWatchAndUserFragment.newInstance(ListsWatchAndUserParentFragment.LIST_TYPE_WATCH);
+            return ListWatchAndUserFragment
+                    .newInstance(ListsWatchAndUserParentFragment.LIST_TYPE_WATCH);
         } else  {
-            return ListWatchAndUserFragment.newInstance(ListsWatchAndUserParentFragment.LIST_TYPE_USER);
+            return ListWatchAndUserFragment
+                    .newInstance(ListsWatchAndUserParentFragment.LIST_TYPE_USER);
         }
     }
 

@@ -25,10 +25,12 @@ public interface MovieDataRecordsDao {
     @Query("SELECT * FROM movie_data_records")
     LiveData<List<MovieDataRecord>> getAllRecords();
 
-    @Query("SELECT * FROM movies INNER JOIN movie_data_records ON movies.id = movie_data_records.movie_id WHERE movie_data_records.list_id = :listId")
+    @Query("SELECT * FROM movies INNER JOIN movie_data_records ON movies.id = movie_data_records.movie_id "
+            +"WHERE movie_data_records.list_id = :listId")
     LiveData<List<MovieData>> getAllMoviesInList(String listId);
 
-    @Query("SELECT * FROM movies INNER JOIN movie_data_records ON movies.id = movie_data_records.movie_id WHERE movie_data_records.list_id = :listId AND movies.title LIKE :mediaTitle")
+    @Query("SELECT * FROM movies INNER JOIN movie_data_records ON movies.id = movie_data_records.movie_id "
+            +"WHERE movie_data_records.list_id = :listId AND movies.title LIKE :mediaTitle")
     LiveData<List<MovieData>> getMoviesWithNameLike(String listId, String mediaTitle);
 
     @Query("SELECT * FROM movie_data_records WHERE list_id = :listId")
@@ -37,7 +39,8 @@ public interface MovieDataRecordsDao {
     @Query("SELECT list_id FROM movie_data_records WHERE movie_id = :movieId")
     LiveData<List<String>> getAllListNamesContainingMedia(String movieId);
 
-    @Query("SELECT * FROM user_lists INNER JOIN movie_data_records ON user_lists.id = movie_data_records.list_id WHERE movie_id = :movieId")
+    @Query("SELECT * FROM user_lists INNER JOIN movie_data_records ON user_lists.id = movie_data_records.list_id "
+            +"WHERE movie_id = :movieId")
     LiveData<List<UserListModel>> getAllListsContainingMedia(String movieId);
 
     @Query("SELECT COUNT(*) FROM movie_data_records WHERE list_id = :listId")
