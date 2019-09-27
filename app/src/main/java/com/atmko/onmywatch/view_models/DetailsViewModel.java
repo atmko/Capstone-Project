@@ -1,4 +1,8 @@
-package com.atmko.onmywatch.view_models;//package com.upkipp.onmywatch.view_models;
+/*
+ * Copyright (C) 2019 Aayat Mimiko
+ */
+
+package com.atmko.onmywatch.view_models;
 
 import android.util.Log;
 

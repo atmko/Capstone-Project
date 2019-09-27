@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2019 Aayat Mimiko
+ */
+
 package com.atmko.onmywatch.view_models;
 
 import android.app.Application;
