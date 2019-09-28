@@ -233,13 +233,5 @@ public class ListWidgetProviderConfigureActivity extends AppCompatActivity
         setResult(RESULT_OK, resultValue);
         finish();
     }
-
-
-//    private void vfd() {
-//        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-//        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, ListWidgetProvider.class));
-//
-//        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list_provider);
-//    }
 }
 
