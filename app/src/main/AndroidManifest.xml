@@ -12,24 +12,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <receiver android:name="com.atmko.onmywatch.widget.ListWidgetProvider">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/list_widget_provider_info" />
-        </receiver>
-
-        <activity android:name="com.atmko.onmywatch.widget.ListWidgetProviderConfigureActivity"
-            android:launchMode="singleInstance"
-            android:taskAffinity=".widget_setup"
-            android:autoRemoveFromRecents="true">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
-            </intent-filter>
-        </activity>
 
         <receiver android:name="com.atmko.onmywatch.widget.ListWidgetProvider">
             <intent-filter>
@@ -48,6 +30,15 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name="com.atmko.onmywatch.widget.ListWidgetProviderConfigureActivity"
+            android:launchMode="singleInstance"
+            android:taskAffinity=".widget_setup"
+            android:autoRemoveFromRecents="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
 
