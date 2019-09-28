@@ -22,7 +22,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="list name" />
+        tools:text="list name"
+        android:textAlignment="viewStart"
+        android:gravity="start" />
 
     <androidx.appcompat.widget.AppCompatCheckBox
         android:id="@+id/checkbox_view"

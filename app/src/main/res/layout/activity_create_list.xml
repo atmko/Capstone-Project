@@ -22,6 +22,8 @@
         android:padding="@dimen/x2_layout_margin"
         android:textColor="@android:color/white"
         android:textColorHint="@android:color/white"
+        android:textAlignment="viewStart"
+        android:gravity="start"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

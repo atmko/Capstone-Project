@@ -28,7 +28,7 @@
         android:src="@drawable/ic_fab_add_to_list_poster"
         android:foreground="@drawable/ripple_pressed"
         android:background="@null"
-        android:layout_gravity="bottom|right"
+        android:layout_gravity="bottom|end"
         android:nextFocusUp="@id/top_frame_layout"
         android:nextFocusLeft="@id/add_to_list_button"
         android:nextFocusRight="@id/add_to_list_button" />

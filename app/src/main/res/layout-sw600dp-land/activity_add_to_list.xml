@@ -16,6 +16,8 @@
         android:imeOptions="actionSearch|flagNoExtractUi|flagNoFullscreen"
         android:inputType="text"
         android:padding="@dimen/x2_layout_margin"
+        android:textAlignment="viewStart"
+        android:gravity="start"
         android:textColor="@android:color/white"
         android:textColorHint="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
@@ -42,7 +44,9 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintHorizontal_bias="0.66"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <RadioGroup
         android:id="@+id/watch_status_radio_group"
@@ -56,9 +60,10 @@
         android:orientation="vertical"
         android:theme="@style/AppTheme.ActionBar"
         app:layout_constraintBottom_toTopOf="@id/save_button"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="@id/status_dividing_line"
-        app:layout_constraintTop_toBottomOf="@id/search_edit_text_view">
+        app:layout_constraintTop_toBottomOf="@id/search_edit_text_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="@dimen/x1_layout_margin">
         <!--TODO make button additions programmatically instead-->
         <androidx.appcompat.widget.AppCompatRadioButton
             style="@style/radio_button_style"
@@ -105,6 +110,6 @@
         android:text="@string/save_button_text"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -18,12 +18,16 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/x3_layout_margin"
+        android:layout_marginStart="@dimen/x3_layout_margin"
         android:layout_marginRight="@dimen/x3_layout_margin"
+        android:layout_marginEnd="@dimen/x3_layout_margin"
         android:layout_marginTop="@dimen/x1_layout_margin"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/item_count_text_view"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/item_count_text_view"
         tools:text="list name"
+        android:textAlignment="viewStart"
+        android:gravity="start"
         android:textColor="@android:color/white" />
 
     <TextView
@@ -35,8 +39,8 @@
         android:layout_marginStart="@dimen/x4_layout_margin"
         android:layout_marginRight="@dimen/x4_layout_margin"
         android:layout_marginEnd="@dimen/x3_layout_margin"
-        app:layout_constraintRight_toLeftOf="@id/options_spinner"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/options_spinner"
         tools:text="count"
         android:textColor="@android:color/white" />
 
@@ -45,9 +49,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        style="@style/ListStyle"/>
+        style="@style/ListStyle" />
 
     <FrameLayout
         android:layout_width="match_parent"
