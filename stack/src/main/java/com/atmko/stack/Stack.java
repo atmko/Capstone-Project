@@ -22,15 +22,15 @@ public class Stack extends RecyclerView.OnScrollListener {
     public static final int GO_DOWN_ONE_BLOCK = 1;
     public static final int GO_UP_ONE_BLOCK = 2;
 
-    private int mFirstPage;
+    private final int mFirstPage;
     private int mTotalPages;
-    private int mBlockLimit;
-    private Object mPreloadObject;
-    private PagingBlockTemplate mPagingBlockTemplate;
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private boolean mUsesInternet;
-    private SparseArray<PagingBlock> mPagingBlockMap;
+    private final int mBlockLimit;
+    private final Object mPreloadObject;
+    private final PagingBlockTemplate mPagingBlockTemplate;
+    private final RecyclerView mRecyclerView;
+    private final RecyclerView.Adapter mAdapter;
+    private final boolean mUsesInternet;
+    private final SparseArray<PagingBlock> mPagingBlockMap;
     private boolean mIsIdle;
 
     public Stack(boolean pageZeroStart, int blockLimit, PagingBlockTemplate pagingBlockTemplate,
@@ -328,7 +328,7 @@ public class Stack extends RecyclerView.OnScrollListener {
 
         //add placeholder objects till real stacking begins
         for (int i = 0; i < mPagingBlockTemplate.getBlockPageCapacity(); i++) {
-            prestackPageBackWards();
+            preStackPageBackWards();
         }
 
         //iterate through block page capacity
@@ -341,7 +341,7 @@ public class Stack extends RecyclerView.OnScrollListener {
         }
     }
 
-    private void prestackPageBackWards() {
+    private void preStackPageBackWards() {
         for (int i = mPagingBlockTemplate.pageCapacity - 1; i >= 0; i--) {
             //add item to front
             getAdapterData().add(0, mPreloadObject);
@@ -374,7 +374,7 @@ public class Stack extends RecyclerView.OnScrollListener {
 
         //add placeholder objects till real stacking begins
         for (int i = 0; i < mPagingBlockTemplate.getBlockPageCapacity(); i++) {
-            prestackPageForwards();
+            preStackPageForwards();
         }
 
         //TODO if number of pages ahead is < getBlockPageCapacity then extra api queries are a wasted
@@ -388,7 +388,7 @@ public class Stack extends RecyclerView.OnScrollListener {
         }
     }
 
-    private void prestackPageForwards() {
+    private void preStackPageForwards() {
         for (int i = 0; i < mPagingBlockTemplate.pageCapacity; i++) {
             //add item to end
             getAdapterData().add(mPreloadObject);
@@ -426,9 +426,9 @@ public class Stack extends RecyclerView.OnScrollListener {
     }
 
     public static class PagingBlockTemplate {
-        OnCreatePageLoader createPageLoader;
-        private int pageCapacity;
-        private int blockPageCapacity;
+        final OnCreatePageLoader createPageLoader;
+        private final int pageCapacity;
+        private final int blockPageCapacity;
 
         public PagingBlockTemplate(OnCreatePageLoader createPageLoader, int pageCapacity,
                                    int blockPageCapacity) {

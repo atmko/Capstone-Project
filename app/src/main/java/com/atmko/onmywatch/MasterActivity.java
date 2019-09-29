@@ -49,15 +49,15 @@ public class MasterActivity extends AppCompatActivity {
     public static final int MEDIA_TYPE_MOVIE = 1;
     public static final int MEDIA_TYPE_PEOPLE = 2;
 
-    public static final String KEYBOARD_VISIBILITY_KEY = "keyboard_visibility";
+    private static final String KEYBOARD_VISIBILITY_KEY = "keyboard_visibility";
 
     public static final String SEARCH_TEXT_KEY = "search_text";
     public static final String SEARCH_BAR_VISIBILITY_KEY = "visible_search_bar";
 
     public static final String ACTION_LAUNCH_DETAILS = "launch_details";
 
-    public static final int REPEAT_INTERVAL = 2;
-    public static final int INITIAL_DELAY = 15;
+    private static final int REPEAT_INTERVAL = 2;
+    private static final int INITIAL_DELAY = 15;
 
     //for restoring keyboard visibility upon configuration change
     private boolean mIsKeyboardVisible;
@@ -462,13 +462,13 @@ public class MasterActivity extends AppCompatActivity {
     }
 
     //convenience method for hiding search bar edit text
-    public void hideSearchBar(SuperEditText searchEditText) {
+    private void hideSearchBar(SuperEditText searchEditText) {
         hideSoftKeyboard(searchEditText);
         searchEditText.setVisibility(View.GONE);
     }
 
     //convenience method for showing search bar edit text
-    public void showSearchBar(SuperEditText searchEditText) {
+    private void showSearchBar(SuperEditText searchEditText) {
         searchEditText.setVisibility(View.VISIBLE);
     }
 }

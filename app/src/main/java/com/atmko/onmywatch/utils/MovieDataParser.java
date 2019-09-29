@@ -6,8 +6,6 @@ package com.atmko.onmywatch.utils;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.ANRequest;
-import com.atmko.onmywatch.models.Genre;
-import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.utils.network_utils.MovieApiConstants;
 import com.google.gson.Gson;
 import com.atmko.stack.Stack;
@@ -159,7 +157,7 @@ public class MovieDataParser {
     }
 
     @SuppressWarnings("ConstantConditions")
-    public static ArrayList<Map<String, String>> parseReviews(Map reviewMap) {
+    private static ArrayList<Map<String, String>> parseReviews(Map reviewMap) {
         //review data will be stored as Map<String, ArrayList<String>>
         ArrayList<Map<String, String>> reviews = new ArrayList<>();
         //skips code below if returnedJSONString null or empty

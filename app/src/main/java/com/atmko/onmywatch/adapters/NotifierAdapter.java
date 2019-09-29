@@ -29,24 +29,21 @@ public class NotifierAdapter extends RecyclerView.Adapter<NotifierAdapter.Notifi
     private final List<Boolean> mConditionValues;
     private final OnListItemClickListener mOnListItemClickListener;
 
-    //layout ids
-    @SuppressWarnings("FieldCanBeLocal")
-
     public NotifierAdapter(OnListItemClickListener clickListener, String mediaId) {
         mOnListItemClickListener = clickListener;
         mConditionTitles = new ArrayList<>();
         mConditionValues = new ArrayList<>();
     }
 
-    public interface OnListItemClickListener {
+    interface OnListItemClickListener {
         void onItemClick(int position, AppCompatCheckBox checkBox);
     }
 
     public class NotifierViewHolder extends RecyclerView.ViewHolder
              implements View.OnClickListener{
 
-        TextView conditionNameTextView;
-        AppCompatCheckBox checkBox;
+        final TextView conditionNameTextView;
+        final AppCompatCheckBox checkBox;
 
         private NotifierViewHolder(@NonNull View itemView, int viewType) {
             super(itemView);

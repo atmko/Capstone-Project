@@ -13,8 +13,6 @@ import com.atmko.onmywatch.models.PersonData;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.utils.network_utils.PeopleApiConstants;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +23,6 @@ public class PersonDataParser {
         return String.valueOf(number);
     }
 
-    @SuppressWarnings({"ConstantConditions", "unchecked"})
     public static List<PersonData> parseData(String returnedJSONString, Stack stack,
                                              SearchPreferences searchPreferences) {
 
@@ -65,26 +62,23 @@ public class PersonDataParser {
         return personDataList;
     }
 
-    static PersonData parsePeopleMap(Map peopleDataMap) {
+    private static PersonData parsePeopleMap(Map peopleDataMap) {
         //create new PeopleData from peopleDataMap
-        PersonData personData =
-                new PersonData(
-                        //get by keys
-                        checkAndConvertNumber(peopleDataMap.get(PeopleApiConstants.ID_KEY)),
+        return new PersonData(
+                //get by keys
+                checkAndConvertNumber(peopleDataMap.get(PeopleApiConstants.ID_KEY)),
 
-                        (String) (peopleDataMap.get(PeopleApiConstants.PROFILE_PATH_KEY)),
+                (String) (peopleDataMap.get(PeopleApiConstants.PROFILE_PATH_KEY)),
 
-                        parseKnownForObjects(
-                                (ArrayList<Map>) peopleDataMap.get(PeopleApiConstants.KNOWN_FOR_KEY)),
+                parseKnownForObjects(
+                        (ArrayList<Map>) peopleDataMap.get(PeopleApiConstants.KNOWN_FOR_KEY)),
 
-                        (String) peopleDataMap.get(PeopleApiConstants.NAME_KEY),
+                (String) peopleDataMap.get(PeopleApiConstants.NAME_KEY),
 
-                        (Double) peopleDataMap.get(PeopleApiConstants.POPULARITY_KEY),
+                (Double) peopleDataMap.get(PeopleApiConstants.POPULARITY_KEY),
 
-                        (boolean) peopleDataMap.get(PeopleApiConstants.ADULT_KEY)
-                );
-
-        return personData;
+                (boolean) peopleDataMap.get(PeopleApiConstants.ADULT_KEY)
+        );
     }
 
     private static ArrayList<MediaData> parseKnownForObjects(ArrayList<Map> mediaList) {

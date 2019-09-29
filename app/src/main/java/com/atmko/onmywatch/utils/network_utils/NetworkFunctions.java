@@ -32,11 +32,10 @@ public class NetworkFunctions {
     //date: Dec 5 '14
     public static boolean isOnline() {
         try {
-            int timeoutMs = TIMEOUT_MILLIS;
             Socket sock = new Socket();
-            SocketAddress sockaddr = new InetSocketAddress(SOCKET_ADDRESS, PORT_NUMBER);
+            SocketAddress socketAddress = new InetSocketAddress(SOCKET_ADDRESS, PORT_NUMBER);
 
-            sock.connect(sockaddr, timeoutMs);
+            sock.connect(socketAddress, TIMEOUT_MILLIS);
             sock.close();
 
             return true;

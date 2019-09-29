@@ -29,7 +29,6 @@ import static com.atmko.onmywatch.utils.GeneralUtils.convertTo2Sf;
 import static com.atmko.onmywatch.utils.GeneralUtils.parseDateInfo;
 
 public class SeriesDataParser {
-    @SuppressWarnings({"ConstantConditions", "unchecked"})
     public static List<SeriesData> parseData(String returnedJSONString, Stack stack,
                                              SearchPreferences searchPreferences) throws JSONException {
 
@@ -70,38 +69,35 @@ public class SeriesDataParser {
     }
 
     static SeriesData parseTvMap(Map seriesDataMap) {
-        SeriesData seriesData =
-                new SeriesData(
-                        //get by keys
-                        checkAndConvertNumber(seriesDataMap.get(SeriesApiConstants.ID_KEY)),
+        return new SeriesData(
+                //get by keys
+                checkAndConvertNumber(seriesDataMap.get(SeriesApiConstants.ID_KEY)),
 
-                        checkAndConvertNumber(seriesDataMap.get(SeriesApiConstants.VOTE_COUNT_KEY)),
+                checkAndConvertNumber(seriesDataMap.get(SeriesApiConstants.VOTE_COUNT_KEY)),
 
-                        checkAndConvertNumber(
-                                convertTo2Sf(((double) seriesDataMap.get(SeriesApiConstants.VOTE_AVERAGE_KEY)))),
+                checkAndConvertNumber(
+                        convertTo2Sf(((double) seriesDataMap.get(SeriesApiConstants.VOTE_AVERAGE_KEY)))),
 
-                        (String) seriesDataMap.get(SeriesApiConstants.NAME_KEY),
+                (String) seriesDataMap.get(SeriesApiConstants.NAME_KEY),
 
-                        (Double) seriesDataMap.get(SeriesApiConstants.POPULARITY_KEY),
+                (Double) seriesDataMap.get(SeriesApiConstants.POPULARITY_KEY),
 
-                        (String) seriesDataMap.get(SeriesApiConstants.POSTER_PATH_KEY),
+                (String) seriesDataMap.get(SeriesApiConstants.POSTER_PATH_KEY),
 
-                        (String) seriesDataMap.get(SeriesApiConstants.ORIG_LANG_KEY),
+                (String) seriesDataMap.get(SeriesApiConstants.ORIG_LANG_KEY),
 
-                        (String) seriesDataMap.get(SeriesApiConstants.ORIG_NAME_KEY),
+                (String) seriesDataMap.get(SeriesApiConstants.ORIG_NAME_KEY),
 
-                        (ArrayList<String>) seriesDataMap.get(SeriesApiConstants.ORIGIN_COUNTRY_KEY),
+                (ArrayList<String>) seriesDataMap.get(SeriesApiConstants.ORIGIN_COUNTRY_KEY),
 
-                        convertToGenres(((ArrayList<Map>) seriesDataMap.get(ApiConstants.GENRES_KEY))),
+                convertToGenres(((ArrayList<Map>) seriesDataMap.get(ApiConstants.GENRES_KEY))),
 
-                        (String) seriesDataMap.get(SeriesApiConstants.BACKDROP_PATH_KEY),
+                (String) seriesDataMap.get(SeriesApiConstants.BACKDROP_PATH_KEY),
 
-                        (String) seriesDataMap.get(SeriesApiConstants.OVERVIEW_KEY),
+                (String) seriesDataMap.get(SeriesApiConstants.OVERVIEW_KEY),
 
-                        parseDateInfo((String) seriesDataMap.get(SeriesApiConstants.FIRST_AIR_DATE_KEY))
-                );
-
-        return seriesData;
+                parseDateInfo((String) seriesDataMap.get(SeriesApiConstants.FIRST_AIR_DATE_KEY))
+        );
     }
 
     public static SeriesData parseDetails(String returnedJSONString, SeriesData seriesData,
@@ -176,7 +172,7 @@ public class SeriesDataParser {
     }
 
     @SuppressWarnings("ConstantConditions")
-    public static ArrayList<Map<String, String>> parseReviews(Map reviewMap) {
+    private static ArrayList<Map<String, String>> parseReviews(Map reviewMap) {
         //review data will be stored as Map<String, ArrayList<String>>
         ArrayList<Map<String, String>> reviews = new ArrayList<>();
         //skips code below if returnedJSONString null or empty

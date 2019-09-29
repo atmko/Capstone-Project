@@ -108,8 +108,8 @@
         <item name="android:paddingRight">@dimen/search_box_padding</item>
         <item name="android:paddingEnd">@dimen/search_box_padding</item>
         <item name="android:inputType">text</item>
-        <item name="android:textCursorDrawable">@drawable/toolbar_searchbox_cursor</item>
-        <item name="android:background">@drawable/background_searchbox</item>
+        <item name="android:textCursorDrawable">@drawable/toolbar_search_box_cursor</item>
+        <item name="android:background">@drawable/background_search_box</item>
         <item name="android:imeOptions">actionSearch|flagNoExtractUi|flagNoFullscreen</item>
     </style>
 

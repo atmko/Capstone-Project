@@ -34,7 +34,7 @@ public class HomeSpotlightAdapter
     private final Fragment mFragment;
     private final List<MediaData> mAdapterData;
     private final OnListItemClickListener mOnListItemClickListener;
-    private Context mContext;
+    private final Context mContext;
 
     //layout ids
     @SuppressWarnings("FieldCanBeLocal")
@@ -55,10 +55,10 @@ public class HomeSpotlightAdapter
     public class HomeSpotlightAdapterViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener{
 
-        FrameLayout topFrameLayout;
+        final FrameLayout topFrameLayout;
         ImageView moviePosterImageView;
         TextView posterReplacementTextView;
-        ImageButton addButton;
+        final ImageButton addButton;
 
         private HomeSpotlightAdapterViewHolder(@NonNull View itemView, int viewType) {
             super(itemView);

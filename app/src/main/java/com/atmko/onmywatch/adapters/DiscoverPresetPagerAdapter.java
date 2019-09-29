@@ -21,9 +21,9 @@ import com.atmko.onmywatch.utils.SearchPreferences;
  */
 
 public class DiscoverPresetPagerAdapter extends FragmentStatePagerAdapter {
-    private int mMediaType;
-    private String[] mUrlList;
-    private SearchPreferences mSearchPreferences;
+    private final int mMediaType;
+    private final String[] mUrlList;
+    private final SearchPreferences mSearchPreferences;
 
     public DiscoverPresetPagerAdapter(@NonNull FragmentManager fm, int behavior, int mediaType,
                                       String[] urlList, SearchPreferences searchPreferences) {

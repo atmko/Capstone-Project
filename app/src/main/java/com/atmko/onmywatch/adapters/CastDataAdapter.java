@@ -35,7 +35,7 @@ public class CastDataAdapter extends RecyclerView.Adapter<CastDataAdapter.CastDa
     private final Fragment mFragment;
     private final List<CastData> mAdapterData;
     private final OnListItemClickListener mOnListItemClickListener;
-    private Context mContext;
+    private final Context mContext;
 
     //layout ids
     @SuppressWarnings("FieldCanBeLocal")
@@ -56,7 +56,7 @@ public class CastDataAdapter extends RecyclerView.Adapter<CastDataAdapter.CastDa
     public class CastDataAdapterViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener{
 
-        FrameLayout topFrameLayout;
+        final FrameLayout topFrameLayout;
         ImageView castPosterImageView;
         TextView posterReplacementTextView;
 
@@ -186,11 +186,7 @@ public class CastDataAdapter extends RecyclerView.Adapter<CastDataAdapter.CastDa
 
     @Override
     public int getItemCount() {
-        if (mAdapterData == null) {
-            return 0;
-        } else {
-            return mAdapterData.size();
-        }
+        return mAdapterData.size();
     }
 
     @Override

@@ -18,7 +18,7 @@ public class ListResultsViewModelFactory extends ViewModelProvider.NewInstanceFa
     private final int mListType;
     private final int mMediaType;
     private final List<String> mWatchStatusTitleList;
-    private final String mlistName;
+    private final String mListName;
 
     public ListResultsViewModelFactory(AppDatabase database, int listType, int mediaType,
                                        List<String> watchStatusTitleList, String listName) {
@@ -27,7 +27,7 @@ public class ListResultsViewModelFactory extends ViewModelProvider.NewInstanceFa
         this.mListType = listType;
         this.mMediaType = mediaType;
         this.mWatchStatusTitleList = watchStatusTitleList;
-        this.mlistName = listName;
+        this.mListName = listName;
     }
 
     @Override
@@ -35,6 +35,6 @@ public class ListResultsViewModelFactory extends ViewModelProvider.NewInstanceFa
     <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         //noinspection unchecked
         return (T) new ListsResultsViewModel(
-                mDatabase, mListType, mMediaType, mWatchStatusTitleList, mlistName);
+                mDatabase, mListType, mMediaType, mWatchStatusTitleList, mListName);
     }
 }

@@ -59,7 +59,7 @@ public abstract class AppDatabase extends RoomDatabase {
     private static RoomDatabase.Callback databaseInitializer(final Context context) {
         //reference
         //https://medium.com/@srinuraop/database-create-and-open-callbacks-in-room-7ca98c3286ab
-        RoomDatabase.Callback callback = new RoomDatabase.Callback() {
+        return new Callback() {
             @Override
             public void onCreate(@NonNull SupportSQLiteDatabase db) {
                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
@@ -81,8 +81,6 @@ public abstract class AppDatabase extends RoomDatabase {
                 super.onOpen(db);
             }
         };
-
-        return callback;
     }
 
     public abstract WatchListsDao watchListsDao();

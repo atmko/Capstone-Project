@@ -27,7 +27,7 @@ import java.util.ArrayList;
 public class DetailMovieExtrasAdapter extends FragmentStatePagerAdapter {
     private static final int TAB_COUNT = 2;
 
-    private MovieData mMovieData;
+    private final MovieData mMovieData;
 
     public DetailMovieExtrasAdapter(@NonNull FragmentManager fm, int behavior, MovieData movieData) {
         super(fm, behavior);

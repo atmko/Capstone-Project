@@ -29,10 +29,7 @@ public class AddToListAdapter extends RecyclerView.Adapter<AddToListAdapter.AddT
     private final OnListItemClickListener mOnListItemClickListener;
     private final OnListCheckListener mOnListCheckListener;
 
-    //layout ids
-    @SuppressWarnings("FieldCanBeLocal")
-
-    public AddToListAdapter(OnListItemClickListener clickListener, String mediaId) {
+    public AddToListAdapter(OnListItemClickListener clickListener) {
         mOnListItemClickListener = clickListener;
         mOnListCheckListener = ((OnListCheckListener) clickListener);
         mAdapterData = new ArrayList<>();
@@ -49,10 +46,10 @@ public class AddToListAdapter extends RecyclerView.Adapter<AddToListAdapter.AddT
     public class AddToListViewHolder extends RecyclerView.ViewHolder
              implements View.OnClickListener{
 
-        TextView listNameTextView;
-        AppCompatCheckBox checkBox;
+        final TextView listNameTextView;
+        final AppCompatCheckBox checkBox;
 
-        private AddToListViewHolder(@NonNull View itemView, int viewType) {
+        private AddToListViewHolder(@NonNull View itemView) {
             super(itemView);
 
             listNameTextView = itemView.findViewById(R.id.list_name_text_view);
@@ -78,7 +75,7 @@ public class AddToListAdapter extends RecyclerView.Adapter<AddToListAdapter.AddT
 
         View view = layoutInflater.inflate(resourceId, viewGroup, false);
 
-        return new AddToListViewHolder(view, viewType);
+        return new AddToListViewHolder(view);
     }
 
     @Override
@@ -95,11 +92,7 @@ public class AddToListAdapter extends RecyclerView.Adapter<AddToListAdapter.AddT
 
     @Override
     public int getItemCount() {
-        if (mAdapterData == null) {
-            return 0;
-        } else {
-            return mAdapterData.size();
-        }
+        return mAdapterData.size();
     }
 
     @Override

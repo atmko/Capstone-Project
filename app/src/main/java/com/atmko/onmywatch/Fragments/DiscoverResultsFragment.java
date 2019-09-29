@@ -56,7 +56,7 @@ public class DiscoverResultsFragment extends Fragment implements
         MediaDataAdapter.OnListItemClickListener,
         PeopleDataAdapter.OnListItemClickListener{
 
-    public static String FRAGMENT_KEY = "search_results_fragment";
+    private static final String FRAGMENT_KEY = "search_results_fragment";
 
     // the fragment initialization parameters
     private static final String SEARCH_TYPE_KEY = "search_type";

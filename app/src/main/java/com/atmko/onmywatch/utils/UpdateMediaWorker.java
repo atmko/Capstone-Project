@@ -35,8 +35,8 @@ public class UpdateMediaWorker extends Worker {
     private static final String TAG = UpdateMediaWorker.class.getSimpleName();
     public static final int REQUEST_COOL_DOWN = 1000;
 
-    private Context mContext;
-    private AppDatabase mDatabase;
+    private final Context mContext;
+    private final AppDatabase mDatabase;
 
     public UpdateMediaWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);

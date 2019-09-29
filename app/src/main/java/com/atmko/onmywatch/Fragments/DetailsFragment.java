@@ -70,16 +70,14 @@ import static com.atmko.onmywatch.models.MediaData.WATCH_STATUS_WATCHED;
 import static com.atmko.onmywatch.models.MediaData.WATCH_STATUS_WATCHING;
 import static com.atmko.onmywatch.utils.GeneralUtils.MILLISECOND_CONVERSION;
 
-//import com.upkipp.onmywatch.HomeActivity;
-
 public class DetailsFragment extends Fragment {
-    public static String FRAGMENT_KEY = "details_fragment";
+    public static final String FRAGMENT_KEY = "details_fragment";
 
     //TODO consider putting media type as an attribute in MediaData Class
-    public static String MEDIA_TYPE_KEY = "media_type";
-    private static String DETAIL_URL_KEY = "detail_url";
-    public static String MEDIA_DATA_PARCELABLE_KEY = "media_data";
-    private static String SEARCH_PREFERENCES_KEY = "search_preferences";
+    private static final String MEDIA_TYPE_KEY = "media_type";
+    private static final String DETAIL_URL_KEY = "detail_url";
+    public static final String MEDIA_DATA_PARCELABLE_KEY = "media_data";
+    private static final String SEARCH_PREFERENCES_KEY = "search_preferences";
 
     private int mMediaType;
     private String mDetailUrl;
@@ -633,6 +631,7 @@ public class DetailsFragment extends Fragment {
 
         //set trailer button visibility
         try {
+            //check for trailer
             mMediaData.getVideos().get(0);
             getView().findViewById(R.id.trailer_button).setVisibility(View.VISIBLE);
 

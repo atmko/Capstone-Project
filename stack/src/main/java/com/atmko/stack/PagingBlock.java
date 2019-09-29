@@ -9,10 +9,10 @@ import android.util.SparseArray;
 import java.util.List;
 
 class PagingBlock {
-    private int mFirstPage;
-    private int mBlockIndex;
-    private int mBlockPageCapacity;
-    private SparseArray<List> mPageList;
+    private final int mFirstPage;
+    private final int mBlockIndex;
+    private final int mBlockPageCapacity;
+    private final SparseArray<List> mPageList;
 
     PagingBlock(int firstPage, int blockIndex, int blockPageCapacity) {
         this.mFirstPage = firstPage;

@@ -40,10 +40,9 @@ public class MediaDataAdapter
     private final List<MediaData> mAdapterData;
     private final OnListItemClickListener mOnListItemClickListener;
     private boolean mInPlaceholderMode;
-    private Context mContext;
+    private final Context mContext;
 
     //layout ids
-    @SuppressWarnings("FieldCanBeLocal")
     private final int STANDARD_LAYOUT_ID = 1;
     private final int NO_POSTER_LAYOUT = 2;
     private final int EMPTY_ADAPTER_ID = 3;
@@ -77,7 +76,7 @@ public class MediaDataAdapter
     public class MediaDataAdapterViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener{
 
-        FrameLayout topFrameLayout;
+        final FrameLayout topFrameLayout;
         ImageView moviePosterImageView;
         TextView posterReplacementTextView;
         ImageButton addButton;

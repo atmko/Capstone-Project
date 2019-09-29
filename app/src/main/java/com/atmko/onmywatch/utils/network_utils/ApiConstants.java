@@ -35,7 +35,7 @@ public class ApiConstants {
     public static final String RESULTS_KEY = "results";
 
     //for paging
-    public static int RESULTS_PER_PAGE = 20;
+    public static final int RESULTS_PER_PAGE = 20;
     public static final String TOTAL_PAGES_KEY = "total_pages";
 
     //for videos

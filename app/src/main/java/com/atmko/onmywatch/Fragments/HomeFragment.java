@@ -37,7 +37,7 @@ import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
 public class HomeFragment extends Fragment {
     public static final String FRAGMENT_KEY = "home_fragment";
 
-    public static final String MEDIA_TYPE_KEY = "media_type";
+    private static final String MEDIA_TYPE_KEY = "media_type";
 
     private int mMediaType;
 
@@ -45,7 +45,7 @@ public class HomeFragment extends Fragment {
         // Required empty public constructor
     }
 
-    //TODO @param defaultMedia doesnt need to be passed and can be retrieved within the fragment
+    //TODO @param defaultMedia doesn't need to be passed and can be retrieved within the fragment
     public static HomeFragment newInstance() {
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();

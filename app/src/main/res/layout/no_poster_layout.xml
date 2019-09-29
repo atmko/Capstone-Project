@@ -31,6 +31,7 @@
         android:src="@drawable/ic_fab_add_to_list_poster"
         android:foreground="@drawable/ripple_pressed"
         android:background="@null"
-        android:layout_gravity="bottom|end"/>
+        android:layout_gravity="bottom|end"
+        android:contentDescription="@string/content_description_add_to_list_button"/>
 
 </FrameLayout>

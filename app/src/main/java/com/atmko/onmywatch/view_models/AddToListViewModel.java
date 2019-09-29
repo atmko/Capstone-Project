@@ -20,7 +20,7 @@ public class AddToListViewModel extends ViewModel {
     private static final String TAG = AddToListViewModel.class.getSimpleName();
 
     private LiveData<Integer> watchStatus;
-    private LiveData<List<UserListModel>> allUserLists;
+    private final LiveData<List<UserListModel>> allUserLists;
     private LiveData<List<UserListModel>> containingUserLists;
 
     AddToListViewModel(@NonNull AppDatabase database, int mediaType, String mediaId) {

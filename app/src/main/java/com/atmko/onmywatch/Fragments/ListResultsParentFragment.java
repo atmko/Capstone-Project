@@ -31,7 +31,7 @@ import com.atmko.onmywatch.adapters.ListResultsUserPagerAdapter;
 
 public class ListResultsParentFragment extends Fragment
         implements SuperEditText.OnKeyBoardDismissListener {
-    public static String FRAGMENT_KEY = "list_results_parent_fragment";
+    public static final String FRAGMENT_KEY = "list_results_parent_fragment";
 
     // the fragment initialization parameters
     private static final String LIST_TYPE_KEY = "list_type";

@@ -27,7 +27,7 @@ import java.util.ArrayList;
 public class CastFragment extends Fragment implements CastDataAdapter.OnListItemClickListener{
     public static String FRAGMENT_KEY = "cast_fragment";
 
-    private static String CAST_PARCELABLE_KEY = "cast_parcelable";
+    private static final String CAST_PARCELABLE_KEY = "cast_parcelable";
 
     private ArrayList<CastData> mCastList;
     private RecyclerView.Adapter mAdapter;

@@ -27,7 +27,7 @@ import java.util.ArrayList;
 public class DetailSeriesExtrasAdapter extends FragmentStatePagerAdapter {
     private static final int TAB_COUNT = 3;
 
-    private SeriesData mSeriesData;
+    private final SeriesData mSeriesData;
 
     public DetailSeriesExtrasAdapter(@NonNull FragmentManager fm, int behavior, SeriesData seriesData) {
         super(fm, behavior);

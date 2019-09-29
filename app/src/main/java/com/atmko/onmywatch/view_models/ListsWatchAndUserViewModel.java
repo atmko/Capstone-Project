@@ -20,8 +20,8 @@ import java.util.List;
 public class ListsWatchAndUserViewModel extends AndroidViewModel {
     private static final String TAG = ListsWatchAndUserViewModel.class.getSimpleName();
 
-    private LiveData<List<UserListModel>> userLists;
-    private LiveData<List<WatchListModel>> watchLists;
+    private final LiveData<List<UserListModel>> userLists;
+    private final LiveData<List<WatchListModel>> watchLists;
 
     public ListsWatchAndUserViewModel(@NonNull Application application) {
         super(application);

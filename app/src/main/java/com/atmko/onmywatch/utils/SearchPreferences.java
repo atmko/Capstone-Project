@@ -8,8 +8,6 @@ import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 
 import org.parceler.Parcel;
 
-import java.util.Arrays;
-
 @Parcel
 public final class SearchPreferences {
     //urls & paths

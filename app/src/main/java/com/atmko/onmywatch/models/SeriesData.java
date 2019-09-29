@@ -16,7 +16,6 @@ import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 import org.parceler.Parcel;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 @Entity(tableName = "series")
 @Parcel

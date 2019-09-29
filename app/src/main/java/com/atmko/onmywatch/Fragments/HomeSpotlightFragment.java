@@ -43,7 +43,7 @@ import static com.atmko.onmywatch.utils.GeneralUtils.MILLISECOND_CONVERSION;
 public class HomeSpotlightFragment extends Fragment implements
         HomeSpotlightAdapter.OnListItemClickListener {
 
-    public static String FRAGMENT_KEY = "search_results_fragment";
+    public static final String FRAGMENT_KEY = "search_results_fragment";
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String MEDIA_TYPE_KEY = "media_type";

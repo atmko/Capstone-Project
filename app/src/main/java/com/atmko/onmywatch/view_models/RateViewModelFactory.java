@@ -11,8 +11,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.atmko.onmywatch.database.AppDatabase;
 
-import java.util.List;
-
 public class RateViewModelFactory extends ViewModelProvider.NewInstanceFactory {
     private final AppDatabase mDatabase;
     private final int mMediaType;

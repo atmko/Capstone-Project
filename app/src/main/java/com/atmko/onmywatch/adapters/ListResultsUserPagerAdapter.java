@@ -21,9 +21,9 @@ import com.atmko.onmywatch.R;
  */
 
 public class ListResultsUserPagerAdapter extends FragmentStatePagerAdapter {
-    private int mListType;
-    private String mListName;
-    private int[] mMediaTypes;
+    private final int mListType;
+    private final String mListName;
+    private final int[] mMediaTypes;
 
     public ListResultsUserPagerAdapter(@NonNull FragmentManager fm, int behavior,
                                        Context context, int listType, String listName) {
@@ -39,6 +39,7 @@ public class ListResultsUserPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         //equate media type to adapter position
+        @SuppressWarnings("UnnecessaryLocalVariable")
         int mMediaType = position;
 
         return ListResultsFragment.newInstance(mListType, mMediaType, mListName);

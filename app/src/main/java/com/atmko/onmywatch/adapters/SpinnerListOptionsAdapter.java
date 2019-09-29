@@ -18,9 +18,9 @@ import com.atmko.onmywatch.R;
  * data adapter for list options in ListWatchAndUserFragment
  */
 
-public class SpinnerListOptionsAdapter implements SpinnerAdapter {
-    private String[] mOptionsTitles;
-    private Context mContext;
+class SpinnerListOptionsAdapter implements SpinnerAdapter {
+    private final String[] mOptionsTitles;
+    private final Context mContext;
 
     SpinnerListOptionsAdapter(String[] optionsTitles, Context context) {
         this.mOptionsTitles = optionsTitles;

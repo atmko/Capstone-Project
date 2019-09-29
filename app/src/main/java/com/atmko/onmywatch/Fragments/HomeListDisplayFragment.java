@@ -31,7 +31,7 @@ import java.util.List;
 
 public class HomeListDisplayFragment extends Fragment
         implements MediaDataAdapter.OnListItemClickListener{
-    public static String FRAGMENT_KEY = "home_list_display_fragment";
+    public static final String FRAGMENT_KEY = "home_list_display_fragment";
 
     private static final String LIST_TYPE_KEY = "list_type";
     private static final String MEDIA_TYPE_KEY = "media_type";

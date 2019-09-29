@@ -4,8 +4,8 @@
 
 package com.atmko.onmywatch.models;
 
-public class Genre {
-    private String mName;
+class Genre {
+    private final String mName;
 
     public Genre(String name) {
         mName = name;

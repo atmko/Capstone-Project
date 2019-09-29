@@ -30,7 +30,7 @@ import com.google.android.material.tabs.TabLayout;
 
 public class ListsWatchAndUserParentFragment extends Fragment
         implements SuperEditText.OnKeyBoardDismissListener {
-    public static String FRAGMENT_KEY = "lists_watch_and_user_parent_fragment";
+    public static final String FRAGMENT_KEY = "lists_watch_and_user_parent_fragment";
     public static final int LIST_TYPE_WATCH = 0;
     public static final int LIST_TYPE_USER = 1;
 

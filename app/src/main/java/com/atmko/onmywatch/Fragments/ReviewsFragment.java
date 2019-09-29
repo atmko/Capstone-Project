@@ -27,7 +27,7 @@ import java.util.Map;
 public class ReviewsFragment extends Fragment implements ReviewDataAdapter.OnListItemClickListener {
     public static String FRAGMENT_KEY = "reviews_fragment";
 
-    private static String REVIEWS_PARCELABLE_KEY = "reviews_parcelable";
+    private static final String REVIEWS_PARCELABLE_KEY = "reviews_parcelable";
 
     private ArrayList<Map<String, String>> mReviewList;
     private RecyclerView.Adapter mAdapter;
@@ -56,8 +56,7 @@ public class ReviewsFragment extends Fragment implements ReviewDataAdapter.OnLis
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_reviews, container, false);
-        return rootView;
+        return inflater.inflate(R.layout.fragment_reviews, container, false);
     }
 
     @Override

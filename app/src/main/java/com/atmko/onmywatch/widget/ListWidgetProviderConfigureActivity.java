@@ -37,15 +37,15 @@ import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
  */
 public class ListWidgetProviderConfigureActivity extends AppCompatActivity
         implements WatchListsAdapter.OnListItemClickListener {
-    public static String TAG = "NewAppWidgetConfigureActivity";
+    private static final String TAG = "NewAppWidgetConfigureActivity";
 
-    private static final String PREFS_NAME = "com.upkipp.onmywatch.widget.NewAppWidget";
+    private static final String PREFS_NAME = "com.atmko.onmywatch.widget.NewAppWidget";
 
     private static final String PREF_PREFIX_KEY = "appwidget_";
     private static final String PREF_LIST_NAME_PREFIX_KEY = "list_name";
     private static final String PREF_MEDIA_TYPE_PREFIX_KEY = "media_type";
 
-    int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
+    private int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
 
     private RecyclerView.Adapter mAdapter;
     private TextView mMediaTypeTextView;
@@ -58,7 +58,7 @@ public class ListWidgetProviderConfigureActivity extends AppCompatActivity
     }
 
     // Write the prefix to the SharedPreferences object for this widget
-    static void saveTitlePref(Context context, int appWidgetId, String text) {
+    private static void saveTitlePref(Context context, int appWidgetId, String text) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.putString(PREF_PREFIX_KEY + appWidgetId + PREF_LIST_NAME_PREFIX_KEY, text);
         prefs.apply();

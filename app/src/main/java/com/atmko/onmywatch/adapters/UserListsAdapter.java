@@ -31,9 +31,6 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.User
     private final OnListItemClickListener mOnListItemClickListener;
     private final OnSpinnerItemClickListener mOnSpinnerItemClickListener;
 
-    //layout ids
-    @SuppressWarnings("FieldCanBeLocal")
-
     public UserListsAdapter(OnListItemClickListener listItemClickListener) {
         mOnListItemClickListener = listItemClickListener;
         mOnSpinnerItemClickListener = ((OnSpinnerItemClickListener) listItemClickListener);
@@ -52,9 +49,9 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.User
     public class UserListsAdapterViewHolder extends RecyclerView.ViewHolder
              implements View.OnClickListener{
 
-        TextView listNameTextView;
-        TextView itemCountTextView;
-        Spinner optionsSpinner;
+        final TextView listNameTextView;
+        final TextView itemCountTextView;
+        final Spinner optionsSpinner;
 
         private UserListsAdapterViewHolder(@NonNull View itemView, int viewType) {
             super(itemView);

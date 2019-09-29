@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class ListRemoteViewFactoryService extends RemoteViewsService {
-    private static final String TAG = "ListRemteViewFactorySer";
+    private static final String TAG = "ListRemoteViewFactory";
 
     public static final String APP_WIDGET_ID_KEY = "app_widget_id";
 
@@ -66,9 +66,9 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     private static final int WIDGET_BACKDROP_WIDTH = 780;
     private static final int WIDGET_BACKDROP_HEIGHT = 439;
 
-    private Context mContext;
-    private AppDatabase mDatabase;
-    private int mAppWidgetId;
+    private final Context mContext;
+    private final AppDatabase mDatabase;
+    private final int mAppWidgetId;
     private String mListName;
     private int mMediaType;
     private List<MovieData> mMovieDataList;

@@ -21,8 +21,8 @@ import com.atmko.onmywatch.utils.SearchPreferences;
  */
 
 public class DiscoverManualPagerAdapter extends FragmentStatePagerAdapter {
-    private String[] mUrlList;
-    private SearchPreferences mSearchPreferences;
+    private final String[] mUrlList;
+    private final SearchPreferences mSearchPreferences;
 
     public DiscoverManualPagerAdapter(@NonNull FragmentManager fm, int behavior,
                                       String[] urlList, SearchPreferences searchPreferences) {

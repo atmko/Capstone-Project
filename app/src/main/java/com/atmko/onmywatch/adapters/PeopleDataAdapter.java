@@ -37,7 +37,7 @@ public class PeopleDataAdapter
     private final Fragment mFragment;
     private final List<PersonData> mAdapterData;
     private final OnListItemClickListener mOnListItemClickListener;
-    private Context mContext;
+    private final Context mContext;
 
     //layout ids
     @SuppressWarnings("FieldCanBeLocal")
@@ -58,7 +58,7 @@ public class PeopleDataAdapter
     public class PeopleDataAdapterViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener{
 
-        FrameLayout topFrameLayout;
+        final FrameLayout topFrameLayout;
         ImageView peoplePosterImageView;
         TextView posterReplacementTextView;
 

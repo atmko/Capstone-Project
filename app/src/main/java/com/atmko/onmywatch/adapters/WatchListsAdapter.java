@@ -30,9 +30,6 @@ public class WatchListsAdapter
     private final List<WatchListModel> mAdapterData;
     private final OnListItemClickListener mOnListItemClickListener;
 
-    //layout ids
-    @SuppressWarnings("FieldCanBeLocal")
-
     public WatchListsAdapter(OnListItemClickListener listItemClickListener) {
         mOnListItemClickListener = listItemClickListener;
         mAdapterData = new ArrayList<>();
@@ -45,9 +42,9 @@ public class WatchListsAdapter
    public class WatchListsAdapterViewHolder extends RecyclerView.ViewHolder
              implements View.OnClickListener{
 
-        TextView listNameTextView;
-        TextView itemCountTextView;
-        Spinner optionsSpinner;
+        final TextView listNameTextView;
+        final TextView itemCountTextView;
+        final Spinner optionsSpinner;
 
         private WatchListsAdapterViewHolder(@NonNull View itemView, int viewType) {
             super(itemView);

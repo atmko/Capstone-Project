@@ -48,7 +48,7 @@ import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
 
 public class AddToListActivity extends AppCompatActivity implements AddToListAdapter.OnListItemClickListener,
         AddToListAdapter.OnListCheckListener{
-    public static String TAG = "add_to_list_activity";
+    private static final String TAG = "add_to_list_activity";
 
     public static final String MEDIA_TYPE_KEY = "media_type";
     public static final String MEDIA_DATA_KEY = "media_data";
@@ -93,6 +93,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
         mMediaType = intent.getIntExtra(MEDIA_TYPE_KEY, 0);
         mMediaData = Parcels.unwrap(intent.getParcelableExtra(MEDIA_DATA_KEY));
 
+        //define mOldWatchStatus as final to ensure it doesn't' change
         final int oldWatchStatus = mMediaData.getWatchStatus();
         mOldWatchStatus = oldWatchStatus;
 
@@ -120,7 +121,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
         //configure recycler view
         mRecyclerView = findViewById(R.id.lists_recycler_view);
         mRecyclerView.setLayoutManager(configureLayoutManager());
-        mAdapter = new AddToListAdapter(this, mMediaData.getId());
+        mAdapter = new AddToListAdapter(this);
 
         //configure search box
         mSearchEditTextView = findViewById(R.id.search_edit_text_view);

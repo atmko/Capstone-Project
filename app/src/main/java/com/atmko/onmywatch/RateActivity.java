@@ -159,7 +159,7 @@ public class RateActivity extends AppCompatActivity {
 
                 }
 
-                //setup original seekBar value in first initialization(mSavedInstanceState == nulll)
+                //setup original seekBar value in first initialization(mSavedInstanceState == null)
                 int userRating = ((MediaData) mediaData).getUserRating();
                 if (userRating == 0) {
                     mRatingSeekBar.setProgress(MAX_RATING / 2);

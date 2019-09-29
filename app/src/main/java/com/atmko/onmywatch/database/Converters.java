@@ -4,8 +4,6 @@
 
 package com.atmko.onmywatch.database;
 
-import android.util.SparseBooleanArray;
-
 import androidx.room.TypeConverter;
 
 import java.util.ArrayList;
@@ -18,9 +16,7 @@ public class Converters {
     public static ArrayList<String> stringToOriginList(String formattedOriginString) {
         String[] originStringArray = formattedOriginString.split(ORIGIN_SEPARATOR);
 
-        ArrayList<String> countryOfOrigin = new ArrayList<>(Arrays.asList(originStringArray));
-
-        return countryOfOrigin;
+        return new ArrayList<>(Arrays.asList(originStringArray));
     }
 
     @TypeConverter
