@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.RemoteViews;
 
+import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.utils.GeneralUtils;
@@ -58,10 +59,19 @@ public class ListWidgetProvider extends AppWidgetProvider {
         views.setRemoteAdapter(R.id.list_item_list_view, widgetFactoryIntent);
 
 
-        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context, ListWidgetProvider.class));
+        //configure widget list item pending intent template
+        Intent listItemIntent = new Intent(context, MasterActivity.class);
+        listItemIntent.setAction(MasterActivity.ACTION_LAUNCH_DETAILS);
+        PendingIntent masterActivityPendingIntent = PendingIntent.getActivity(context, 0 ,
+                listItemIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        views.setPendingIntentTemplate(R.id.list_item_list_view, masterActivityPendingIntent);
+
+
+        int[] appWidgetIds =
+                appWidgetManager.getAppWidgetIds(new ComponentName(context, ListWidgetProvider.class));
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.list_item_list_view);
 
-
+        //configure settings button
         Intent widgetSettingsIntent = new Intent(context, ListWidgetProviderConfigureActivity.class);
 
         Bundle widgetSettingsBundle = new Bundle();
@@ -75,12 +85,14 @@ public class ListWidgetProvider extends AppWidgetProvider {
 
         views.setOnClickPendingIntent(R.id.widget_settings_button, widgetSettingsPendingIntent);
 
+        //configure switch media button
         Intent switchMediaIntent = new Intent(context, ListWidgetProvider.class);
         Bundle extras = new Bundle();
         extras.putInt(ListWidgetService.MEDIA_TYPE_KEY, widgetMediaType);
         extras.putInt(APP_WIDGET_ID_KEY, appWidgetId);
         switchMediaIntent.putExtras(extras);
         switchMediaIntent.setAction(ListWidgetService.ACTION_SWITCH_MEDIA_TYPE);
+
         PendingIntent switchMediaPendingIntent =
                 PendingIntent.getBroadcast(context, 1, switchMediaIntent,
                         PendingIntent.FLAG_UPDATE_CURRENT);

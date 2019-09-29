@@ -12,6 +12,8 @@ import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
+import com.atmko.onmywatch.Fragments.DetailsFragment;
+import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.utils.network_utils.NetworkFunctions;
 import com.bumptech.glide.request.FutureTarget;
 import com.atmko.onmywatch.MasterActivity;
@@ -19,6 +21,8 @@ import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.SeriesData;
+
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -135,14 +139,17 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     public RemoteViews getViewAt(int position) {
         final RemoteViews remoteViews = new RemoteViews(mContext.getPackageName(), R.layout.widget_list_object);
 
+        final MediaData mediaData;
         final String title;
         final String backdropUrl;
 
         if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
+            mediaData = mMovieDataList.get(position);
             title = mMovieDataList.get(position).getTitle();
             backdropUrl = mMovieDataList.get(position).getBackdropPath();
 
         } else {
+            mediaData = mSeriesDataList.get(position);
             title = mSeriesDataList.get(position).getTitle();
             backdropUrl = mSeriesDataList.get(position).getBackdropPath();
 
@@ -151,6 +158,13 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         remoteViews.setTextViewText(R.id.title_text_view, title);
 
         loadImageForListItem(mContext, backdropUrl, remoteViews);
+
+        //configure fill in intent
+        Bundle extras = new Bundle();
+        Intent fillInIntent = new Intent();
+        fillInIntent.putExtra(DetailsFragment.MEDIA_DATA_PARCELABLE_KEY, Parcels.wrap(mediaData));
+        fillInIntent.putExtras(extras);
+        remoteViews.setOnClickFillInIntent(R.id.backdrop_image_view, fillInIntent);
 
         return remoteViews;
     }

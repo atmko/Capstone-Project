@@ -54,6 +54,8 @@ public class MasterActivity extends AppCompatActivity {
     public static final String SEARCH_TEXT_KEY = "search_text";
     public static final String SEARCH_BAR_VISIBILITY_KEY = "visible_search_bar";
 
+    public static final String ACTION_LAUNCH_DETAILS = "launch_details";
+
     public static final int REPEAT_INTERVAL = 2;
     public static final int INITIAL_DELAY = 15;
 
@@ -82,6 +84,22 @@ public class MasterActivity extends AppCompatActivity {
             //start background work managers
             startWorkers();
 
+        }
+
+        if (getIntent()!= null) {
+            Intent intent = getIntent();
+
+            if (intent.getAction().equals(ACTION_LAUNCH_DETAILS)) {
+                launchDetailsFromIntent(intent);
+            }
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent.getAction().equals(ACTION_LAUNCH_DETAILS)) {
+            launchDetailsFromIntent(intent);
         }
     }
 
@@ -309,6 +327,12 @@ public class MasterActivity extends AppCompatActivity {
                 .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
                 .add(R.id.detail_fragments_container, detailsFragment, DetailsFragment.FRAGMENT_KEY)
                 .commit();
+    }
+
+    private void launchDetailsFromIntent(Intent intent) {
+        MediaData mediaData =
+                Parcels.unwrap(intent.getParcelableExtra(DetailsFragment.MEDIA_DATA_PARCELABLE_KEY));
+        launchDetailsFragment(null, mediaData);
     }
 
     public void launchAddToListActivity(MediaData mediaData) {

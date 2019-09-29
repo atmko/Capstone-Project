@@ -78,7 +78,7 @@ public class DetailsFragment extends Fragment {
     //TODO consider putting media type as an attribute in MediaData Class
     public static String MEDIA_TYPE_KEY = "media_type";
     private static String DETAIL_URL_KEY = "detail_url";
-    private static String MEDIA_DATA_PARCELABLE_KEY = "media_data";
+    public static String MEDIA_DATA_PARCELABLE_KEY = "media_data";
     private static String SEARCH_PREFERENCES_KEY = "search_preferences";
 
     private int mMediaType;
