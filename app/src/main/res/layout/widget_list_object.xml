@@ -7,7 +7,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="154dp"
+        android:layout_height="@dimen/widget_list_window_height"
         android:orientation="horizontal">
 
         <ImageView
@@ -23,11 +23,10 @@
             android:orientation="vertical"
             android:layout_weight="1">
 
-
             <ImageButton
                 android:id="@+id/rate_button"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="@dimen/widget_bar_icon_size"
                 android:layout_weight="1"
                 android:src="@drawable/ic_rate_black"
                 android:background="@color/colorAccent"
@@ -41,7 +40,7 @@
             <ImageButton
                 android:id="@+id/share_button"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="@dimen/widget_bar_icon_size"
                 android:layout_weight="1"
                 android:src="@drawable/ic_share_black"
                 android:background="@color/colorAccent"
@@ -66,7 +65,7 @@
             android:layout_gravity="center"
             tools:text="Alita Battle Angel"
             android:textColor="@android:color/white"
-            android:textSize="20sp"
+            android:textSize="@dimen/headline_20_text_size"
             android:textAlignment="center"/>
 
     </LinearLayout>

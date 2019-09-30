@@ -58,12 +58,16 @@
     <dimen name="widget_minimum_width">250dp</dimen>
     <!--2cells-->
     <dimen name="widget_minimum_height">110dp</dimen>
+
+    <dimen name="widget_list_window_height">154dp</dimen>
+    <dimen name="widget_bar_icon_size">50dp</dimen>
     <!--WIDGET DIMENSIONS-->
 
     <!--TEXT DIMENSIONS-->
     <dimen name="appbar_headline_18_text_size">18sp</dimen>
     <dimen name="caption_12_text_size">12sp</dimen>
     <dimen name="body_text_size">14sp</dimen>
+    <dimen name="headline_20_text_size">20sp</dimen>
     <dimen name="headline_24_text_size">24sp</dimen>
     <dimen name="headline_36_text_size">36sp</dimen>
     <dimen name="headline_48_text_size">48sp</dimen>
