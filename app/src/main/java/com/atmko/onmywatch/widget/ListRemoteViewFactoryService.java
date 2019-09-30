@@ -160,11 +160,30 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         loadImageForListItem(mContext, backdropUrl, remoteViews);
 
         //configure fill in intent
-        Bundle extras = new Bundle();
-        Intent fillInIntent = new Intent();
-        fillInIntent.putExtra(DetailsFragment.MEDIA_DATA_PARCELABLE_KEY, Parcels.wrap(mediaData));
-        fillInIntent.putExtras(extras);
-        remoteViews.setOnClickFillInIntent(R.id.backdrop_image_view, fillInIntent);
+        Bundle detailsExtras = new Bundle();
+
+        Intent detailsFillInIntent = new Intent();
+        detailsFillInIntent.putExtra(DetailsFragment.MEDIA_DATA_PARCELABLE_KEY, Parcels.wrap(mediaData));
+        detailsFillInIntent.putExtras(detailsExtras);
+        remoteViews.setOnClickFillInIntent(R.id.backdrop_image_view, detailsFillInIntent);
+
+        //configure fill in intent
+        Bundle shareExtras = new Bundle();
+        shareExtras.putString(DetailsFragment.QUICK_ACTION_KEY, DetailsFragment.QUICK_ACTION_SHARE);
+
+        Intent shareFillInIntent = new Intent();
+        shareFillInIntent.putExtra(DetailsFragment.MEDIA_DATA_PARCELABLE_KEY, Parcels.wrap(mediaData));
+        shareFillInIntent.putExtras(shareExtras);
+        remoteViews.setOnClickFillInIntent(R.id.share_button, shareFillInIntent);
+
+        //configure fill in intent
+        Bundle rateExtras = new Bundle();
+        rateExtras.putString(DetailsFragment.QUICK_ACTION_KEY, DetailsFragment.QUICK_ACTION_RATE);
+
+        Intent rateInIntent = new Intent();
+        rateInIntent.putExtra(DetailsFragment.MEDIA_DATA_PARCELABLE_KEY, Parcels.wrap(mediaData));
+        rateInIntent.putExtras(rateExtras);
+        remoteViews.setOnClickFillInIntent(R.id.rate_button, rateInIntent);
 
         return remoteViews;
     }

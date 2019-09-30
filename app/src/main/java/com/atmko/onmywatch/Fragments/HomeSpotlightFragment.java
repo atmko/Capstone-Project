@@ -236,7 +236,8 @@ public class HomeSpotlightFragment extends Fragment implements
 
     private void startDetailsFragment(MediaData selectedData) {
         ((MasterActivity) getActivity())
-                .launchDetailsFragment(HomeSpotlightFragment.this, selectedData);
+                .launchDetailsFragment(HomeSpotlightFragment.this, selectedData,
+                        null);
     }
 
     @Override

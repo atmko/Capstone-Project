@@ -380,6 +380,7 @@ public class ListResultsFragment extends Fragment
 
     private void startDetailsFragment(MediaData selectedData) {
         ((MasterActivity) getActivity())
-                .launchDetailsFragment(ListResultsFragment.this, selectedData);
+                .launchDetailsFragment(ListResultsFragment.this, selectedData,
+                        null);
     }
 }

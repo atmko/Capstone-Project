@@ -79,6 +79,11 @@ public class DetailsFragment extends Fragment {
     public static final String MEDIA_DATA_PARCELABLE_KEY = "media_data";
     private static final String SEARCH_PREFERENCES_KEY = "search_preferences";
 
+    public static final String ACTION_LAUNCH_DETAILS = "launch_details";
+    public static final String QUICK_ACTION_KEY = "quick_action";
+    public static final String QUICK_ACTION_SHARE = "qa_share";
+    public static final String QUICK_ACTION_RATE = "qa_rate";
+
     private int mMediaType;
     private String mDetailUrl;
     private MediaData mMediaData;
@@ -101,6 +106,9 @@ public class DetailsFragment extends Fragment {
     //values
     private int mOverviewCutoffIndex;
 
+    //quick action string
+    private String mQuickAction;
+
     public DetailsFragment() {
         // Required empty public constructor
     }
@@ -116,6 +124,11 @@ public class DetailsFragment extends Fragment {
         args.putParcelable(SEARCH_PREFERENCES_KEY, searchPreferencesParcel);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public void setQuickAction(String quickAction) {
+        mQuickAction = quickAction;
+
     }
 
     @Override
@@ -191,6 +204,10 @@ public class DetailsFragment extends Fragment {
                     }
 
                     try {
+                        if (mQuickAction != null){
+                            launchQuickAction();
+                        }
+
                         getMediaDetails();
 
                     } catch (NullPointerException e) {
@@ -270,12 +287,8 @@ public class DetailsFragment extends Fragment {
         mShareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ShareCompat.IntentBuilder
-                        .from(getActivity())
-                        .setType("text/plain")
-                        .setChooserTitle(getString(R.string.detail_share_title))
-                        .setText(mMediaData.getMediaUrl(getContext(), mMediaData.getId()))
-                        .startChooser();
+                launchShareWindow();
+
             }
         });
 
@@ -284,23 +297,8 @@ public class DetailsFragment extends Fragment {
         mRateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mWatchStatus != WATCH_STATUS_WATCHING
-                        && mWatchStatus != WATCH_STATUS_WATCHED
-                        && mWatchStatus != WATCH_STATUS_DROPPED) {
+                launchRateActivity();
 
-                    Snackbar.make(getActivity().findViewById(R.id.top_layout),
-                            getString(R.string.rating_disallowed_message),
-                            Snackbar.LENGTH_LONG).show();
-
-                    return;
-
-                }
-
-                Intent intent = new Intent(getActivity().getApplicationContext(), RateActivity.class);
-                intent.putExtra(RateActivity.MEDIA_TYPE_KEY, mMediaType);
-                intent.putExtra(RateActivity.MEDIA_ID_KEY, Parcels.wrap(mMediaData.getId()));
-
-                startActivity(intent);
             }
         });
 
@@ -447,6 +445,16 @@ public class DetailsFragment extends Fragment {
                         .setText(String.valueOf(containingListsCount));
             }
         });
+    }
+
+    private void launchQuickAction() {
+        if (mQuickAction.equals(QUICK_ACTION_SHARE)) {
+            launchShareWindow();
+
+        } else if (mQuickAction.equals(QUICK_ACTION_RATE)) {
+            launchRateActivity();
+
+        }
     }
 
     private void getMediaDetails() {
@@ -697,6 +705,35 @@ public class DetailsFragment extends Fragment {
 
             return fullText;
         }
+    }
+
+    private void launchShareWindow() {
+        ShareCompat.IntentBuilder
+                .from(getActivity())
+                .setType("text/plain")
+                .setChooserTitle(getString(R.string.detail_share_title))
+                .setText(mMediaData.getMediaUrl(getContext(), mMediaData.getId()))
+                .startChooser();
+    }
+
+    private void launchRateActivity() {
+        if (mWatchStatus != WATCH_STATUS_WATCHING
+                && mWatchStatus != WATCH_STATUS_WATCHED
+                && mWatchStatus != WATCH_STATUS_DROPPED) {
+
+            Snackbar.make(getActivity().findViewById(R.id.top_layout),
+                    getString(R.string.rating_disallowed_message),
+                    Snackbar.LENGTH_LONG).show();
+
+            return;
+
+        }
+
+        Intent intent = new Intent(getActivity().getApplicationContext(), RateActivity.class);
+        intent.putExtra(RateActivity.MEDIA_TYPE_KEY, mMediaType);
+        intent.putExtra(RateActivity.MEDIA_ID_KEY, Parcels.wrap(mMediaData.getId()));
+
+        startActivity(intent);
     }
 
     @Override

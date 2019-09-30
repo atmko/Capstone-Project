@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.RemoteViews;
 
+import com.atmko.onmywatch.Fragments.DetailsFragment;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.models.MediaData;
@@ -61,7 +62,7 @@ public class ListWidgetProvider extends AppWidgetProvider {
 
         //configure widget list item pending intent template
         Intent listItemIntent = new Intent(context, MasterActivity.class);
-        listItemIntent.setAction(MasterActivity.ACTION_LAUNCH_DETAILS);
+        listItemIntent.setAction(DetailsFragment.ACTION_LAUNCH_DETAILS);
         PendingIntent masterActivityPendingIntent = PendingIntent.getActivity(context, 0 ,
                 listItemIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         views.setPendingIntentTemplate(R.id.list_item_list_view, masterActivityPendingIntent);

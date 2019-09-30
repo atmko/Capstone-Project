@@ -54,8 +54,6 @@ public class MasterActivity extends AppCompatActivity {
     public static final String SEARCH_TEXT_KEY = "search_text";
     public static final String SEARCH_BAR_VISIBILITY_KEY = "visible_search_bar";
 
-    public static final String ACTION_LAUNCH_DETAILS = "launch_details";
-
     private static final int REPEAT_INTERVAL = 2;
     private static final int INITIAL_DELAY = 15;
 
@@ -84,13 +82,13 @@ public class MasterActivity extends AppCompatActivity {
             //start background work managers
             startWorkers();
 
-        }
+            if (getIntent() != null) {
+                Intent intent = getIntent();
+                Bundle extras = intent.getExtras();
 
-        if (getIntent()!= null) {
-            Intent intent = getIntent();
-
-            if (intent.getAction().equals(ACTION_LAUNCH_DETAILS)) {
-                launchDetailsFromIntent(intent);
+                if (intent.getAction().equals(DetailsFragment.ACTION_LAUNCH_DETAILS)) {
+                    launchDetailsFromIntent(intent, extras);
+                }
             }
         }
     }
@@ -98,8 +96,11 @@ public class MasterActivity extends AppCompatActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        if (intent.getAction().equals(ACTION_LAUNCH_DETAILS)) {
-            launchDetailsFromIntent(intent);
+
+        Bundle extras = intent.getExtras();
+
+        if (intent.getAction().equals(DetailsFragment.ACTION_LAUNCH_DETAILS)) {
+            launchDetailsFromIntent(intent, extras);
         }
     }
 
@@ -284,7 +285,8 @@ public class MasterActivity extends AppCompatActivity {
         return fragment != null;
     }
 
-    public void launchDetailsFragment(Fragment fragment, MediaData selectedData) {
+    public void launchDetailsFragment(Fragment fragment, MediaData selectedData,
+                                      String quickAction) {
         //catch error from restoring fragments after configuration change
         try {
             getSupportFragmentManager().executePendingTransactions();
@@ -312,6 +314,11 @@ public class MasterActivity extends AppCompatActivity {
         DetailsFragment detailsFragment = DetailsFragment.newInstance(
                 mediaType, detailUrl, parceledData, parceledSharedPreferences);
 
+        if (quickAction != null) {
+            detailsFragment.setQuickAction(quickAction);
+
+        }
+
         Fragment detailContainerFragment = getSupportFragmentManager()
                 .findFragmentById(R.id.detail_fragments_container);
 
@@ -329,10 +336,13 @@ public class MasterActivity extends AppCompatActivity {
                 .commit();
     }
 
-    private void launchDetailsFromIntent(Intent intent) {
+    private void launchDetailsFromIntent(Intent intent, Bundle extras) {
+        String quickAction = extras.getString(DetailsFragment.QUICK_ACTION_KEY);
+
         MediaData mediaData =
                 Parcels.unwrap(intent.getParcelableExtra(DetailsFragment.MEDIA_DATA_PARCELABLE_KEY));
-        launchDetailsFragment(null, mediaData);
+
+        launchDetailsFragment(null, mediaData, quickAction);
     }
 
     public void launchAddToListActivity(MediaData mediaData) {

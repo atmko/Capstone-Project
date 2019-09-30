@@ -420,7 +420,8 @@ public class DiscoverResultsFragment extends Fragment implements
 
     private void startDetailsFragment(MediaData selectedData) {
         ((MasterActivity) getActivity())
-                .launchDetailsFragment(DiscoverResultsFragment.this, selectedData);
+                .launchDetailsFragment(DiscoverResultsFragment.this, selectedData,
+                        null);
     }
 
     @Override
