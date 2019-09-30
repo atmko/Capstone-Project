@@ -62,6 +62,8 @@ public class WatchListsAdapter
             SpinnerListOptionsAdapter spinnerAdapter =
                     new SpinnerListOptionsAdapter(optionsTitles, context);
 
+            optionsSpinner.setVisibility(View.GONE);
+
             optionsSpinner.setAdapter(spinnerAdapter);
 
             //prevents initial selection of spinner
