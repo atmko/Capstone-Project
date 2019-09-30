@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -60,20 +61,39 @@ public class PeopleDataAdapter
 
         final FrameLayout topFrameLayout;
         ImageView peoplePosterImageView;
-        TextView posterReplacementTextView;
+        TextView nameTextView;
+        TextView roleTextView;
+        ImageButton addToListButton;
 
         private PeopleDataAdapterViewHolder(@NonNull View itemView, int viewType) {
             super(itemView);
 
-            if (viewType == NO_POSTER_LAYOUT) {
-                posterReplacementTextView = itemView.findViewById(R.id.poster_replacement_text_view);
-            } else {
+            if (viewType == STANDARD_LAYOUT_ID) {
                 peoplePosterImageView = itemView.findViewById(R.id.posterImageView);
+
             }
 
             topFrameLayout = itemView.findViewById(R.id.top_frame_layout);
             topFrameLayout.setLayoutParams(getPosterDimensions(topFrameLayout));
             topFrameLayout.setLayoutParams(getPosterMargins(topFrameLayout));
+
+            nameTextView = itemView.findViewById(R.id.name_text_view);
+            roleTextView = itemView.findViewById(R.id.role_text_view);
+            addToListButton = itemView.findViewById(R.id.add_to_list_button);
+
+            roleTextView.setVisibility(View.GONE);
+            addToListButton.setVisibility(View.GONE);
+
+            DisplayMetrics displayDimensions = Resources.getSystem().getDisplayMetrics();
+
+            //set layout margins to nameTextView bottom
+            Float dimenToPixels =
+                    displayDimensions.density * mContext.getResources()
+                            .getInteger(R.integer.x1_standard_layout_margin_unscaled);
+            ViewGroup.MarginLayoutParams margins =
+                    (ViewGroup.MarginLayoutParams) nameTextView.getLayoutParams();
+
+            margins.setMargins(0, 0, 0, dimenToPixels.intValue());
 
             itemView.setOnClickListener(this);
 
@@ -148,10 +168,10 @@ public class PeopleDataAdapter
         int resourceId;
 
         if (viewType == NO_POSTER_LAYOUT) {
-            resourceId = R.layout.no_poster_layout;
+            resourceId = R.layout.object_cast_no_profile;
 
         } else {
-            resourceId = R.layout.object_media_data;
+            resourceId = R.layout.object_cast;
         }
 
         View view = layoutInflater.inflate(resourceId, viewGroup, false);
@@ -160,17 +180,14 @@ public class PeopleDataAdapter
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PeopleDataAdapterViewHolder adapterViewHolder,
-                                 int position) {
+    public void onBindViewHolder(@NonNull PeopleDataAdapterViewHolder adapterViewHolder, int position) {
         //get current MediaData
         PersonData currentMediaData = mAdapterData.get(position);
 
-        //if item view type is no poster
-        if (adapterViewHolder.getItemViewType() == NO_POSTER_LAYOUT) {
-            //set title instead of poster image
-            adapterViewHolder.posterReplacementTextView.setText(currentMediaData.getName());
+        adapterViewHolder.nameTextView.setText(getAdapterData().get(position).getName());
 
-        } else {
+        //if item view type is no poster
+        if (adapterViewHolder.getItemViewType() == STANDARD_LAYOUT_ID) {
             //load image with glide
             NetworkFunctions.loadImage(
                     mContext,

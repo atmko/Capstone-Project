@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -58,20 +59,27 @@ public class CastDataAdapter extends RecyclerView.Adapter<CastDataAdapter.CastDa
 
         final FrameLayout topFrameLayout;
         ImageView castPosterImageView;
-        TextView posterReplacementTextView;
+        TextView nameTextView;
+        TextView roleTextView;
+        ImageButton addToListButton;
 
         private CastDataAdapterViewHolder(@NonNull View itemView, int viewType) {
             super(itemView);
 
-            if (viewType == NO_POSTER_LAYOUT) {
-                posterReplacementTextView = itemView.findViewById(R.id.poster_replacement_text_view);
-            } else {
+            if (viewType == STANDARD_LAYOUT_ID) {
                 castPosterImageView = itemView.findViewById(R.id.posterImageView);
+
             }
 
             topFrameLayout = itemView.findViewById(R.id.top_frame_layout);
             topFrameLayout.setLayoutParams(getPosterDimensions(topFrameLayout));
             topFrameLayout.setLayoutParams(getPosterMargins(topFrameLayout));
+
+            nameTextView = itemView.findViewById(R.id.name_text_view);
+            roleTextView = itemView.findViewById(R.id.role_text_view);
+            addToListButton = itemView.findViewById(R.id.add_to_list_button);
+
+            addToListButton.setVisibility(View.GONE);
 
             itemView.setOnClickListener(this);
 
@@ -154,10 +162,10 @@ public class CastDataAdapter extends RecyclerView.Adapter<CastDataAdapter.CastDa
         int resourceId;
 
         if (viewType == NO_POSTER_LAYOUT) {
-            resourceId = R.layout.no_poster_layout;
+            resourceId = R.layout.object_cast_no_profile;
 
         } else {
-            resourceId = R.layout.object_media_data;
+            resourceId = R.layout.object_cast;
         }
 
         View view = layoutInflater.inflate(resourceId, viewGroup, false);
@@ -170,12 +178,11 @@ public class CastDataAdapter extends RecyclerView.Adapter<CastDataAdapter.CastDa
         //get current MediaData
         CastData currentMediaData = mAdapterData.get(position);
 
-        //if item view type is no poster
-        if (adapterViewHolder.getItemViewType() == NO_POSTER_LAYOUT) {
-            //set title instead of poster image
-            adapterViewHolder.posterReplacementTextView.setText(currentMediaData.getName());
+        adapterViewHolder.nameTextView.setText(getAdapterData().get(position).getName());
+        adapterViewHolder.roleTextView.setText(getAdapterData().get(position).getCharacter());
 
-        } else {
+        //if item view type is no poster
+        if (adapterViewHolder.getItemViewType() == STANDARD_LAYOUT_ID) {
             //load image with glide
             NetworkFunctions.loadImage(
                     mContext,

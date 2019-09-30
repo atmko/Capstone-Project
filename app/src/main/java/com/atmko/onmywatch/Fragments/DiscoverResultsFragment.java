@@ -23,6 +23,7 @@ import com.androidnetworking.common.ANRequest;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.atmko.onmywatch.MasterActivity;
+import com.atmko.onmywatch.adapters.CastDataAdapter;
 import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.SeriesData;
@@ -406,12 +407,20 @@ public class DiscoverResultsFragment extends Fragment implements
 
     @Override
     public void onItemClick(int position) {
-        MediaData selectedData = ((MediaDataAdapter) mDataAdapter).getAdapterData().get(position);
+        Object selectedData;
 
-        //do nothing if selecting stack placeholder
-        if (selectedData.getId() == null) return;
+        if (mDataAdapter instanceof MediaDataAdapter) {
+            selectedData = ((MediaDataAdapter) mDataAdapter).getAdapterData().get(position);
+            //do nothing if selecting stack placeholder
+            if (((MediaData) selectedData).getId() == null) return;
+            startDetailsFragment(((MediaData) selectedData));
 
-        startDetailsFragment(selectedData);
+        } else {
+            selectedData = ((PeopleDataAdapter) mDataAdapter).getAdapterData().get(position);
+            //do nothing if selecting stack placeholder
+            if (((PersonData) selectedData).getId() == null) return;
+
+        }
     }
 
     private void startDetailsFragment(MediaData selectedData) {
