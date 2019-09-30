@@ -192,7 +192,7 @@ public class DiscoverParentFragment extends Fragment
     @SuppressWarnings("ConstantConditions")
     private void defineViews() throws NullPointerException {
         final TextView titleText = getView().findViewById(R.id.title_text_view);
-        titleText.setText(getString(R.string.search_text_literal));
+        titleText.setText(getString(R.string.discover_text_literal));
 
         final SuperEditText searchEditText = getView().findViewById(R.id.search_edit_text_view);
         mSearchImageButton = getView().findViewById(R.id.search_image_button);

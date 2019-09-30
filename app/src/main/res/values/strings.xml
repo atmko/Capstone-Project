@@ -79,8 +79,8 @@
         <string name="watch_lists_literal">Watch Lists</string>
         <!--lists text-->
 
-        <!--search text-->
-        <string name="search_text_literal">Search</string>
+        <!--discover text-->
+        <string name="discover_text_literal">Discover</string>
         <!--search text-->
 
         <!--details text-->
