@@ -299,7 +299,8 @@ public class HomeFragment extends Fragment {
         fragmentContainer.setLayoutParams(parentDictatingParams);
 
         //set layout margins
-        Float dimenToPixels = displayDimensions.density * getResources().getInteger(R.integer.home_list_container_top_margin);
+        Float dimenToPixels = displayDimensions.density *
+                getResources().getInteger(R.integer.x1_standard_layout_margin_unscaled);
         ViewGroup.MarginLayoutParams margins =
                 (ViewGroup.MarginLayoutParams) fragmentContainer.getLayoutParams();
 
