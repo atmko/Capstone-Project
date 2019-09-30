@@ -23,14 +23,15 @@
             android:orientation="vertical"
             android:layout_weight="1">
 
+
             <ImageButton
-                android:id="@+id/notify_button"
+                android:id="@+id/rate_button"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_weight="1"
-                android:src="@drawable/ic_notify_black"
+                android:src="@drawable/ic_rate_black"
                 android:background="@color/colorAccent"
-                android:contentDescription="@string/content_description_notify_button"/>
+                android:contentDescription="@string/content_description_share_button"/>
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -67,14 +68,6 @@
             android:textColor="@android:color/white"
             android:textSize="20sp"
             android:textAlignment="center"/>
-
-        <ImageView
-            android:id="@+id/rate_button"
-            android:layout_width="0dp"
-            android:layout_height="28dp"
-            android:layout_weight="1"
-            android:src="@drawable/ic_rate"
-            android:contentDescription="@string/content_description_rate_button"/>
 
     </LinearLayout>
 
