@@ -5,7 +5,9 @@
     <integer name="search_column_span">3</integer>
     <integer name="cast_column_span">3</integer>
 
+    <!--dp spacing-->
     <integer name="search_image_spacing">4</integer>
+    <integer name="home_list_container_top_margin">8</integer>
 
     <!--PHONE FRAGMENT LAYOUT WEIGHTS-->
     <integer name="details_main_layout_weight">1</integer>
