@@ -40,6 +40,7 @@ import com.androidnetworking.interfaces.StringRequestListener;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.RateActivity;
 import com.atmko.onmywatch.database.AppDatabase;
+import com.atmko.onmywatch.utils.UpdateMediaWorker;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 import com.atmko.onmywatch.view_models.DetailsViewModel;
 import com.atmko.onmywatch.view_models.DetailsViewModelFactory;
@@ -156,10 +157,15 @@ public class DetailsFragment extends Fragment {
         //save saveInstanceState value for onCreateAnimator to check if this is the first instance
         mSavedInstanceState = savedInstanceState;
 
-        defineViews();
-        defineValues();
+        try {
+            defineViews();
+            defineValues();
+            observeViewModel();
 
-        observeViewModel();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+
 
         if (savedInstanceState == null) {
             //startup code moved to onCreateAnimator
@@ -175,7 +181,12 @@ public class DetailsFragment extends Fragment {
         }
 
         //basic values as opposed to values retrieved by getting details
-        setBasicViewValues();
+        try {
+            setBasicViewValues();
+
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 
     @Nullable
@@ -196,14 +207,15 @@ public class DetailsFragment extends Fragment {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     //run code after entry animation is complete
-
-                    //reserve focus by hiding background fragment
-                    if (!((MasterActivity) getActivity()).isTabletLandscape()) {
-                        ((MasterActivity) getActivity())
-                                .hideBackgroundFragment(DetailsFragment.this);
-                    }
-
                     try {
+                        //reserve focus by hiding background fragment
+                        //TODO: NullPointerException handled in try block
+                        //noinspection ConstantConditions
+                        if (!((MasterActivity) getActivity()).isTabletLandscape()) {
+                            ((MasterActivity) getActivity())
+                                    .hideBackgroundFragment(DetailsFragment.this);
+                        }
+
                         if (mQuickAction != null){
                             launchQuickAction();
                         }
@@ -239,6 +251,7 @@ public class DetailsFragment extends Fragment {
         super.onSaveInstanceState(outState);
 
         //update initialized media data
+        assert getArguments() != null;
         getArguments().putParcelable(MEDIA_DATA_PARCELABLE_KEY, Parcels.wrap(mMediaData));
 
         outState.putString(ApiConstants.RELEASE_STATUS_KEY, mReleaseStatusTextView.getText().toString());
@@ -260,7 +273,9 @@ public class DetailsFragment extends Fragment {
         return result;
     }
 
-    private void defineViews() {
+    // TODO: NullPointerException handled in caller
+    @SuppressWarnings("ConstantConditions")
+    private void defineViews() throws NullPointerException {
         //if mIsTablet landscape (2-pane), remove up navigation button from details layout
         ImageButton upNavigationButton = getView().findViewById(R.id.up_navigation_button);
         upNavigationButton.setOnClickListener(new View.OnClickListener() {
@@ -287,8 +302,12 @@ public class DetailsFragment extends Fragment {
         mShareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                launchShareWindow();
+                try {
+                    launchShareWindow();
 
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -297,8 +316,12 @@ public class DetailsFragment extends Fragment {
         mRateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                launchRateActivity();
+                try {
+                    launchRateActivity();
 
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -319,21 +342,26 @@ public class DetailsFragment extends Fragment {
             }
         });
 
-        //configure show more overview button
-        getView().findViewById(R.id.show_more_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((TextView) getView().findViewById(R.id.overView_text_view))
-                        .setText(limitText(mMediaData.getOverview(), mOverviewCutoffIndex));
-            }
-        });
-
         //define views dependent on retrieving details
         mDetailExtrasTabLayout = getView().findViewById(R.id.detail_extras_tab_layout);
         mDetailExtrasViewPager = getView().findViewById(R.id.details_extra_view_pager);
 
-        configureBackDropDimensions();
-        configureDetailExtrasSize();
+        try {
+            //configure show more overview button
+            getView().findViewById(R.id.show_more_button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((TextView) getView().findViewById(R.id.overView_text_view))
+                            .setText(limitText(mMediaData.getOverview(), mOverviewCutoffIndex));
+                }
+            });
+
+            configureBackDropDimensions();
+            configureDetailExtrasSize();
+
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
 
         mReleaseStatusTextView = getView().findViewById(R.id.release_status_text);
 
@@ -343,7 +371,9 @@ public class DetailsFragment extends Fragment {
         mOverviewCutoffIndex = getResources().getInteger(R.integer.detail_overview_cutoff_index);
     }
 
-    private void configureDetailExtrasSize() {
+    // TODO: NullPointerException handled in caller
+    @SuppressWarnings("ConstantConditions")
+    private void configureDetailExtrasSize() throws NullPointerException{
         DisplayMetrics displayMetrics = Resources.getSystem().getDisplayMetrics();
         int pixelHeight = displayMetrics.heightPixels;
         int pixelWidth = displayMetrics.widthPixels;
@@ -386,7 +416,9 @@ public class DetailsFragment extends Fragment {
     }
 
     //observe view models to get watch status, lists containing this media
-    private void observeViewModel() {
+    //TODO: NullPointerException handled in caller
+    @SuppressWarnings("ConstantConditions")
+    private void observeViewModel() throws NullPointerException{
         AppDatabase database = AppDatabase.getInstance(getContext());
         DetailsViewModelFactory viewModelFactory =
                 new DetailsViewModelFactory(database, mMediaType, mMediaData.getId());
@@ -415,9 +447,6 @@ public class DetailsFragment extends Fragment {
                 //set shorthand text
                 ((TextView) getView().findViewById(R.id.watch_status_shorthand_text))
                         .setText(shorthand);
-
-
-
 
                 //configure user rating related UI
                 int userRating = mediaData != null ? castedMediaData.getUserRating() : 0;
@@ -448,16 +477,23 @@ public class DetailsFragment extends Fragment {
     }
 
     private void launchQuickAction() {
-        if (mQuickAction.equals(QUICK_ACTION_SHARE)) {
-            launchShareWindow();
+        try {
+            if (mQuickAction.equals(QUICK_ACTION_SHARE)) {
+                launchShareWindow();
 
-        } else if (mQuickAction.equals(QUICK_ACTION_RATE)) {
-            launchRateActivity();
+            } else if (mQuickAction.equals(QUICK_ACTION_RATE)) {
+                launchRateActivity();
 
+            }
+
+        } catch (NullPointerException e) {
+            e.printStackTrace();
         }
     }
 
-    private void getMediaDetails() {
+    // TODO: NullPointerException handled in caller
+    @SuppressWarnings("ConstantConditions")
+    private void getMediaDetails() throws NullPointerException {
         String id = mMediaData.getId();
 
         //build AN request
@@ -509,20 +545,38 @@ public class DetailsFragment extends Fragment {
     private void retryAfterCoolDOwn(ANError anError) {
         Log.d(FRAGMENT_KEY, "retrying details fetch");
 
-        int coolDown = Integer.valueOf(anError.getResponse().header(ApiConstants.RETRY_AFTER_KEY));
+        int coolDown;
+
+        try {
+            //noinspection ConstantConditions
+            coolDown = Integer.parseInt(anError.getResponse().header(ApiConstants.RETRY_AFTER_KEY));
+
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            coolDown = UpdateMediaWorker.REQUEST_COOL_DOWN;
+
+        }
+
         int coolDownInMilliSecs = coolDown * MILLISECOND_CONVERSION;
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                getMediaDetails();
+                try {
+                    getMediaDetails();
+
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
 
             }
         }, coolDownInMilliSecs);
     }
 
-    private void configureDetailExtrasAdapter() {
+    // TODO: NullPointerException handled in caller
+    @SuppressWarnings("ConstantConditions")
+    private void configureDetailExtrasAdapter() throws NullPointerException {
         //remove old tabs
         mDetailExtrasTabLayout.removeAllTabs();
 
@@ -572,7 +626,9 @@ public class DetailsFragment extends Fragment {
         });
     }
 
-    private void setBasicViewValues() {
+    // TODO: NullPointerException handled in caller
+    @SuppressWarnings("ConstantConditions")
+    private void setBasicViewValues() throws NullPointerException {
         NetworkFunctions.loadImage(getActivity().getApplicationContext(), mMediaData.getBackdropPath(),
                 ((ImageView) getView().findViewById(R.id.backdrop_image_view)));
 
@@ -587,12 +643,19 @@ public class DetailsFragment extends Fragment {
 
         ((TextView) getView().findViewById(R.id.rating_text_view)).setText(mMediaData.getVoteAverage());
 
-        //set overview text
-        ((TextView) getView().findViewById(R.id.overView_text_view)).setText(
-                limitText(mMediaData.getOverview(), mOverviewCutoffIndex));
+        try {
+            //set overview text
+            ((TextView) getView().findViewById(R.id.overView_text_view)).setText(
+                    limitText(mMediaData.getOverview(), mOverviewCutoffIndex));
+
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void configureBackDropDimensions() {
+    // TODO: NullPointerException handled in caller
+    @SuppressWarnings("ConstantConditions")
+    private void configureBackDropDimensions() throws NullPointerException {
         ImageView backdropImageView = getView().findViewById(R.id.backdrop_image_view);
 
         DisplayMetrics displayMetrics = Resources.getSystem().getDisplayMetrics();
@@ -634,7 +697,9 @@ public class DetailsFragment extends Fragment {
         backdropImageView.setLayoutParams(params);
     }
 
-    private void setDetailViewValues() {
+    // TODO: NullPointerException handled in caller
+    @SuppressWarnings("ConstantConditions")
+    private void setDetailViewValues() throws NullPointerException {
         mReleaseStatusTextView.setText(mMediaData.getReleaseStatus());
 
         //set trailer button visibility
@@ -676,7 +741,9 @@ public class DetailsFragment extends Fragment {
     }
 
     //limit long text
-    private String limitText(String fullText, int cutOffIndex) {
+    // TODO: NullPointerException handled in caller
+    @SuppressWarnings("ConstantConditions")
+    private String limitText(String fullText, int cutOffIndex) throws NullPointerException {
         //get show more button
         ImageButton showMoreButton = getView().findViewById(R.id.show_more_button);
         showMoreButton.setVisibility(View.VISIBLE);
@@ -707,7 +774,8 @@ public class DetailsFragment extends Fragment {
         }
     }
 
-    private void launchShareWindow() {
+    private void launchShareWindow() throws NullPointerException {
+        //noinspection ConstantConditions
         ShareCompat.IntentBuilder
                 .from(getActivity())
                 .setType("text/plain")
@@ -716,7 +784,9 @@ public class DetailsFragment extends Fragment {
                 .startChooser();
     }
 
-    private void launchRateActivity() {
+    // TODO: NullPointerException handled in caller
+    @SuppressWarnings("ConstantConditions")
+    private void launchRateActivity() throws NullPointerException {
         if (mWatchStatus != WATCH_STATUS_WATCHING
                 && mWatchStatus != WATCH_STATUS_WATCHED
                 && mWatchStatus != WATCH_STATUS_DROPPED) {

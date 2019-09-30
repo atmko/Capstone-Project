@@ -63,10 +63,17 @@ public class CastFragment extends Fragment implements CastDataAdapter.OnListItem
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        loadSearch();
+        try {
+            loadSearch();
+
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void loadSearch() {
+    // TODO: NullPointerException handled in caller
+    @SuppressWarnings("ConstantConditions")
+    private void loadSearch() throws NullPointerException{
         RecyclerView recyclerView = getView().findViewById(R.id.cast_recycler_view);
         recyclerView.setLayoutManager(configureLayoutManager());
 

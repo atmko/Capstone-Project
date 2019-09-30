@@ -52,7 +52,6 @@ public class DiscoverParentFragment extends Fragment
     private FragmentStatePagerAdapter mResultsAdapter;
 
     private Bundle mSavedInstanceState;
-    private FrameLayout mSearchFrameLayout;
     private SuperEditText mSearchEditTextView;
     private TabLayout mMediaTypeTabLayout;
     private FrameLayout mSearchPresetsTopLayout;
@@ -78,56 +77,71 @@ public class DiscoverParentFragment extends Fragment
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         return inflater.inflate(R.layout.fragment_discover_parent, container, false);
     }
 
+    //TODO: NullPointerException handled
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
-        Toolbar toolbar = getView().findViewById(R.id.toolbar);
 
-        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        try {
+            Toolbar toolbar = getView().findViewById(R.id.toolbar);
 
-        //save savedInstanceState value for onCreateAnimator to check if this is the first instance
-        mSavedInstanceState = savedInstanceState;
+            ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        defineViews();
+            //save savedInstanceState value for onCreateAnimator to check if this is the first instance
+            mSavedInstanceState = savedInstanceState;
 
-        if (savedInstanceState == null) {
-            //run code after entry animation is complete
-            mSearchMode = SEARCH_MODE_PRESET;
-            //TODO replace MEDIA_TYPE_SERIES with default media shared preference
-            mMediaType = MEDIA_TYPE_SERIES;
+            defineViews();
 
-            //startup code moved to onCreateAnimator
+            if (savedInstanceState == null) {
+                //run code after entry animation is complete
+                mSearchMode = SEARCH_MODE_PRESET;
+                //TODO replace MEDIA_TYPE_SERIES with default media shared preference
+                mMediaType = MEDIA_TYPE_SERIES;
 
-        } else {
-            mSearchMode = savedInstanceState.getString(SEARCH_MODE_KEY);
-            mMediaType = savedInstanceState.getInt(MEDIA_TYPE_KEY);
+                //startup code moved to onCreateAnimator
 
-            if (mSearchMode.equals(SEARCH_MODE_PRESET)) {
-                loadPresetSearchUi();
+            } else {
+                mSearchMode = savedInstanceState.getString(SEARCH_MODE_KEY);
+                mMediaType = savedInstanceState.getInt(MEDIA_TYPE_KEY);
 
-            } else if (mSearchMode.equals(SEARCH_MODE_MANUAL)){
-                loadManualSearchUi();
+                if (mSearchMode.equals(SEARCH_MODE_PRESET)) {
+                    loadPresetSearchUi();
+
+                } else if (mSearchMode.equals(SEARCH_MODE_MANUAL)){
+                    loadManualSearchUi();
+                }
             }
+
+        } catch (NullPointerException e) {
+            e.printStackTrace();
         }
     }
 
+    //TODO: NullPointerException handled
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void onResume() {
         super.onResume();
 
-        ((MasterActivity) getActivity()).onResumeMasterContainerFragment(this);
+        try {
+            ((MasterActivity) getActivity()).onResumeMasterContainerFragment(this);
 
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 
-    @Nullable
+    // TODO: NullPointerException handled
+    @SuppressWarnings("ConstantConditions")@Nullable
     @Override
     public Animator onCreateAnimator(int transit, final boolean enter, int nextAnim) {
         //if this is entry animation
@@ -145,10 +159,14 @@ public class DiscoverParentFragment extends Fragment
                     //load default ui
                     loadPresetSearchUi();
 
-                    //reserve focus by hiding background fragment
-                    ((MasterActivity) getActivity())
-                            .hideBackgroundFragment(DiscoverParentFragment.this);
+                    try {
+                        //reserve focus by hiding background fragment
+                        ((MasterActivity) getActivity())
+                                .hideBackgroundFragment(DiscoverParentFragment.this);
 
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 @Override
@@ -170,7 +188,9 @@ public class DiscoverParentFragment extends Fragment
         }
     }
 
-    private void defineViews() {
+    // TODO: NullPointerException handled in caller
+    @SuppressWarnings("ConstantConditions")
+    private void defineViews() throws NullPointerException {
         final TextView titleText = getView().findViewById(R.id.title_text_view);
         titleText.setText(getString(R.string.search_text_literal));
 
@@ -195,11 +215,17 @@ public class DiscoverParentFragment extends Fragment
         mSearchPresetsTabLayout = getView().findViewById(R.id.discover_presets_tab_layout);
         mSearchResultsViewPager = getView().findViewById(R.id.discover_results_view_pager);
 
-        configureSearchBox();
+        try {
+            configureSearchBox();
+
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void configureSearchBox() {
-        mSearchFrameLayout = getView().findViewById(R.id.discover_frame_layout);
+    // TODO: NullPointerException handled in caller
+    @SuppressWarnings("ConstantConditions")
+    private void configureSearchBox() throws NullPointerException {
         mSearchEditTextView = getView().findViewById(R.id.search_edit_text_view);
         mSearchEditTextView.setKeyBoardDismissListener(this);
         //configure search box action event
@@ -230,11 +256,18 @@ public class DiscoverParentFragment extends Fragment
 
         mSearchMode = SEARCH_MODE_PRESET;
 
-        configurePresetMediaTypeTabLayout();
-        loadPresetTabAndPager();
+        try {
+            configurePresetMediaTypeTabLayout();
+            loadPresetTabAndPager();
+
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void configurePresetMediaTypeTabLayout() {
+    // TODO: NullPointerException handled in caller
+    @SuppressWarnings("ConstantConditions")
+    private void configurePresetMediaTypeTabLayout() throws NullPointerException {
         //remove old tabs
         mMediaTypeTabLayout.removeAllTabs();
 
@@ -271,7 +304,9 @@ public class DiscoverParentFragment extends Fragment
         });
     }
 
-    private void loadPresetTabAndPager() {
+    // TODO: NullPointerException handled in caller
+    @SuppressWarnings("ConstantConditions")
+    private void loadPresetTabAndPager() throws NullPointerException {
         //remove old tabs
         mSearchPresetsTabLayout.removeAllTabs();
 
@@ -335,10 +370,17 @@ public class DiscoverParentFragment extends Fragment
 
         mSearchMode = SEARCH_MODE_MANUAL;
 
-        configureManualMediaTypeTabLayout();
-        loadManualPager(mSearchEditTextView.getText().toString());
+        try {
+            configureManualMediaTypeTabLayout();
+            loadManualPager(mSearchEditTextView.getText().toString());
+
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 
+    // TODO: NullPointerException handled in caller
+    @SuppressWarnings("ConstantConditions")
     private void configureManualMediaTypeTabLayout() {
         //remove old tabs
         mMediaTypeTabLayout.removeAllTabs();
@@ -375,7 +417,9 @@ public class DiscoverParentFragment extends Fragment
         });
     }
 
-    private void loadManualPager(String query) {
+    // TODO: NullPointerException handled in caller
+    @SuppressWarnings("ConstantConditions")
+    private void loadManualPager(String query) throws NullPointerException {
         //clear old listeners to avoid conflicts
         mSearchResultsViewPager.clearOnPageChangeListeners();
 
@@ -408,10 +452,16 @@ public class DiscoverParentFragment extends Fragment
         outState.putParcelable(FRAGMENT_PAGER_ADAPTER_KEY, mResultsAdapter.saveState());
     }
 
+    // TODO: NullPointerException handled
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void onKeyBoardDismiss() {
-        //set focus to top layout when keyboard dismissed
-        getView().findViewById(R.id.top_layout).requestFocus();
+        try {
+            //set focus to top layout when keyboard dismissed
+            getView().findViewById(R.id.top_layout).requestFocus();
 
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 }
