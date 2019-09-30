@@ -9,7 +9,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:background="@drawable/background_fragment_overlay"
-    tools:context=".Fragments.AddToListFragment">
+    tools:context=".CreateListActivity">
 
     <EditText
         android:id="@+id/name_edit_text_view"

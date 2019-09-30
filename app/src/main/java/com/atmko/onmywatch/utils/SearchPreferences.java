@@ -8,6 +8,8 @@ import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 
 import org.parceler.Parcel;
 
+//TODO: access is weaker to accommodate parceler library
+@SuppressWarnings("WeakerAccess")
 @Parcel
 public final class SearchPreferences {
     //urls & paths

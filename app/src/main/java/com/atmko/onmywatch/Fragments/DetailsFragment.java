@@ -704,7 +704,7 @@ public class DetailsFragment extends Fragment {
 
         //set trailer button visibility
         try {
-            //check for trailer
+            //checks for trailer
             mMediaData.getVideos().get(0);
             getView().findViewById(R.id.trailer_button).setVisibility(View.VISIBLE);
 

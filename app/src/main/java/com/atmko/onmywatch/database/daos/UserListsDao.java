@@ -18,14 +18,11 @@ import java.util.List;
 
 @Dao
 public interface UserListsDao {
-    @Insert(onConflict = OnConflictStrategy.ABORT)
+    @Insert()
     void addList(UserListModel userListModel);
 
     @Query("SELECT * FROM user_lists")
     LiveData<List<UserListModel>> getAllLists();
-
-    @Query("SELECT * FROM user_lists WHERE id = :name")
-    LiveData<UserListModel> getListByName(String name);
 
     @Query("SELECT * FROM user_lists WHERE id LIKE :name")
     LiveData<List<UserListModel>> getListsWithNameLike(String name);

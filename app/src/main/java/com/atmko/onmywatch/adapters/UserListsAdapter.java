@@ -53,7 +53,7 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.User
         final TextView itemCountTextView;
         final Spinner optionsSpinner;
 
-        private UserListsAdapterViewHolder(@NonNull View itemView, int viewType) {
+        private UserListsAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
 
             listNameTextView = itemView.findViewById(R.id.list_name_text_view);
@@ -110,7 +110,7 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.User
 
         View view = layoutInflater.inflate(resourceId, viewGroup, false);
 
-        return new UserListsAdapterViewHolder(view, viewType);
+        return new UserListsAdapterViewHolder(view);
     }
 
     @Override

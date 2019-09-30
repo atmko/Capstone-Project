@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:layout_gravity="center"
     android:background="@drawable/background_fragment_overlay"
-    tools:context=".Fragments.RateFragment">
+    tools:context=".RateActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

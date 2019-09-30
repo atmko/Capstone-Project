@@ -14,14 +14,15 @@ import org.parceler.Parcel;
 import java.util.ArrayList;
 import java.util.List;
 
+//TODO: access is weaker to accommodate parceler library
+@SuppressWarnings("WeakerAccess")
 @Parcel
 public class PersonData {
-
-    String mId;//
+    String mId;
     String mProfilePath;
     ArrayList<MediaData> mKnownFor;
     String mName;
-    double mPopularity;//
+    double mPopularity;
     boolean mAdult;
 
     //constructor for parceler

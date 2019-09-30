@@ -17,8 +17,6 @@ import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 import com.atmko.onmywatch.utils.network_utils.PeopleApiConstants;
 import com.atmko.onmywatch.utils.network_utils.SeriesApiConstants;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +28,7 @@ import static com.atmko.onmywatch.utils.GeneralUtils.parseDateInfo;
 
 public class SeriesDataParser {
     public static List<SeriesData> parseData(String returnedJSONString, Stack stack,
-                                             SearchPreferences searchPreferences) throws JSONException {
+                                             SearchPreferences searchPreferences) {
 
         //skips code below if returnedJSONString null or empty
         if (returnedJSONString == null || returnedJSONString.equals("")){

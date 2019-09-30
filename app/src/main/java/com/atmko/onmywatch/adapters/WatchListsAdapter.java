@@ -46,7 +46,7 @@ public class WatchListsAdapter
         final TextView itemCountTextView;
         final Spinner optionsSpinner;
 
-        private WatchListsAdapterViewHolder(@NonNull View itemView, int viewType) {
+        private WatchListsAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
 
             listNameTextView = itemView.findViewById(R.id.list_name_text_view);
@@ -87,14 +87,12 @@ public class WatchListsAdapter
 
         View view = layoutInflater.inflate(resourceId, viewGroup, false);
 
-        return new WatchListsAdapterViewHolder(view, viewType);
+        return new WatchListsAdapterViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull final WatchListsAdapterViewHolder adapterViewHolder,
                                  int position) {
-        final Context context = adapterViewHolder.listNameTextView.getContext();
-
         //get current WatchListData
         WatchListModel currentWatchListModel = mAdapterData.get(position);
 

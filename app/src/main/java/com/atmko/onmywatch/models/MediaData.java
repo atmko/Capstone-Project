@@ -14,9 +14,10 @@ import androidx.room.PrimaryKey;
 import com.atmko.onmywatch.R;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
+//TODO: access is weaker to accommodate parceler library
+@SuppressWarnings("WeakerAccess")
 abstract public class MediaData {
     public static final int WATCH_STATUS_NONE = 0;
     public static final int WATCH_STATUS_TO_WATCH = 1;

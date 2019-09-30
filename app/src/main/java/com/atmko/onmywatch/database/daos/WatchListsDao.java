@@ -23,9 +23,6 @@ public interface WatchListsDao {
     @Query("SELECT * FROM watch_lists")
     LiveData<List<WatchListModel>> getAllLists();
 
-    @Query("SELECT * FROM watch_lists WHERE id = :name")
-    LiveData<WatchListModel> getListByName(String name);
-
     //alternate method without live data
     @Query("SELECT * FROM watch_lists WHERE id = :name")
     WatchListModel getListByNameAlt(String name);

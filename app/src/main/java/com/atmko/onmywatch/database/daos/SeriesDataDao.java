@@ -35,9 +35,6 @@ public interface SeriesDataDao {
     @Query("SELECT watch_status FROM series WHERE id = :seriesId")
     LiveData<Integer> getSeriesWatchStatus(String seriesId);
 
-    @Query("SELECT COUNT(*) FROM series WHERE watch_status = :watchStatus")
-    LiveData<Integer> getWatchStatusCount(int watchStatus);
-
     @Query("SELECT * FROM series WHERE watch_status = :watchStatus")
     LiveData<List<SeriesData>> getSeriesByWatchStatus(int watchStatus);
 

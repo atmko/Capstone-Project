@@ -43,8 +43,6 @@ import java.util.concurrent.TimeUnit;
 
 public class MasterActivity extends AppCompatActivity {
 
-    private static final String DEFAULT_MEDIA_KEY = "default_media";
-
     public static final int MEDIA_TYPE_SERIES = 0;
     public static final int MEDIA_TYPE_MOVIE = 1;
     public static final int MEDIA_TYPE_PEOPLE = 2;
@@ -285,7 +283,7 @@ public class MasterActivity extends AppCompatActivity {
         return fragment != null;
     }
 
-    public void launchDetailsFragment(Fragment fragment, MediaData selectedData,
+    public void launchDetailsFragment(MediaData selectedData,
                                       String quickAction) {
         //catch error from restoring fragments after configuration change
         try {
@@ -342,7 +340,7 @@ public class MasterActivity extends AppCompatActivity {
         MediaData mediaData =
                 Parcels.unwrap(intent.getParcelableExtra(DetailsFragment.MEDIA_DATA_PARCELABLE_KEY));
 
-        launchDetailsFragment(null, mediaData, quickAction);
+        launchDetailsFragment(mediaData, quickAction);
     }
 
     public void launchAddToListActivity(MediaData mediaData) {

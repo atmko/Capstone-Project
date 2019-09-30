@@ -100,10 +100,6 @@ public class SeriesData extends MediaData{
         return mReleaseDate;
     }
 
-    public void setReleaseDate(String releaseDate) {
-        this.mReleaseDate = releaseDate;
-    }
-
     @Override
     public String getMediaUrl(Context context, String mediaId) {
         return context.getString(R.string.series_base_url) + "/" + mediaId;

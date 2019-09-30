@@ -255,34 +255,30 @@ public class DiscoverResultsFragment extends Fragment implements
         request.getAsString(new StringRequestListener() {
             @Override
             public void onResponse(String returnedJSONString) {
-                try {
-                    mStack.setIsFrozen(false);
+                mStack.setIsFrozen(false);
 
-                    //parse and populate retrieved data
+                //parse and populate retrieved data
 
-                    List dataList = null;
+                List dataList = null;
 
-                    if (mMediaType == MEDIA_TYPE_MOVIE) {
-                        dataList =
-                                MovieDataParser.parseData(returnedJSONString, mStack, mSearchPreferences);
+                if (mMediaType == MEDIA_TYPE_MOVIE) {
+                    dataList =
+                            MovieDataParser.parseData(returnedJSONString, mStack, mSearchPreferences);
 
-                    } else if (mMediaType == MEDIA_TYPE_SERIES) {
-                        dataList =
-                                SeriesDataParser.parseData(returnedJSONString, mStack, mSearchPreferences);
+                } else if (mMediaType == MEDIA_TYPE_SERIES) {
+                    dataList =
+                            SeriesDataParser.parseData(returnedJSONString, mStack, mSearchPreferences);
 
-                    } else if (mMediaType == MEDIA_TYPE_PEOPLE) {
-                        dataList =
-                                PersonDataParser.parseData(returnedJSONString, mStack, mSearchPreferences);
+                } else if (mMediaType == MEDIA_TYPE_PEOPLE) {
+                    dataList =
+                            PersonDataParser.parseData(returnedJSONString, mStack, mSearchPreferences);
 
-                    }
-
-                    mStack.stackPage(blockNumber, targetPage, dataList, stackOperation);
-
-                    loadDetailFragment();
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
+
+                mStack.stackPage(blockNumber, targetPage, dataList, stackOperation);
+
+                loadDetailFragment();
+
             }
 
             @Override
@@ -419,9 +415,7 @@ public class DiscoverResultsFragment extends Fragment implements
     }
 
     private void startDetailsFragment(MediaData selectedData) {
-        ((MasterActivity) getActivity())
-                .launchDetailsFragment(DiscoverResultsFragment.this, selectedData,
-                        null);
+        ((MasterActivity) getActivity()).launchDetailsFragment(selectedData, null);
     }
 
     @Override

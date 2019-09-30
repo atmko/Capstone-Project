@@ -47,10 +47,4 @@ public class DiscoverPresetPagerAdapter extends FragmentStatePagerAdapter {
     public int getCount() {
         return mUrlList.length;
     }
-
-    @Nullable
-    @Override
-    public Parcelable saveState() {
-        return super.saveState();
-    }
 }

@@ -49,10 +49,4 @@ public class ListResultsUserPagerAdapter extends FragmentStatePagerAdapter {
     public int getCount() {
         return mMediaTypes.length;
     }
-
-    @Nullable
-    @Override
-    public Parcelable saveState() {
-        return super.saveState();
-    }
 }

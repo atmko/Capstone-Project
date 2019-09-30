@@ -191,8 +191,6 @@ public class HomeListDisplayFragment extends Fragment
 
         MediaData selectedData = mMediaDataAdapter.getAdapterData().get(position);
 
-        ((MasterActivity) getActivity())
-                .launchDetailsFragment(HomeListDisplayFragment.this, selectedData,
-                        null);
+        ((MasterActivity) getActivity()).launchDetailsFragment(selectedData, null);
     }
 }

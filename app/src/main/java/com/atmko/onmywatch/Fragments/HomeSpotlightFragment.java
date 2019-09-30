@@ -147,31 +147,27 @@ public class HomeSpotlightFragment extends Fragment implements
         request.getAsString(new StringRequestListener() {
             @Override
             public void onResponse(String returnedJSONString) {
-                try {
-                    //parse and populate retrieved data
-                    List dataList = null;
+                //parse and populate retrieved data
+                List dataList = null;
 
-                    if (mMediaType == MEDIA_TYPE_MOVIE) {
-                        dataList =
-                                MovieDataParser.parseData(returnedJSONString,
-                                        null, mSearchPreferences);
+                if (mMediaType == MEDIA_TYPE_MOVIE) {
+                    dataList =
+                            MovieDataParser.parseData(returnedJSONString,
+                                    null, mSearchPreferences);
 
-                    } else if (mMediaType == MEDIA_TYPE_SERIES) {
-                        dataList =
-                                SeriesDataParser.parseData(returnedJSONString,
-                                        null, mSearchPreferences);
+                } else if (mMediaType == MEDIA_TYPE_SERIES) {
+                    dataList =
+                            SeriesDataParser.parseData(returnedJSONString,
+                                    null, mSearchPreferences);
 
-                    }
-
-                    //refresh adapter data
-                    mDataAdapter.getAdapterData().clear();
-                    mDataAdapter.addAdapterData(dataList);
-
-                    loadDetailFragment();
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
+
+                //refresh adapter data
+                mDataAdapter.getAdapterData().clear();
+                mDataAdapter.addAdapterData(dataList);
+
+                loadDetailFragment();
+
             }
 
             @Override
@@ -235,9 +231,7 @@ public class HomeSpotlightFragment extends Fragment implements
     }
 
     private void startDetailsFragment(MediaData selectedData) {
-        ((MasterActivity) getActivity())
-                .launchDetailsFragment(HomeSpotlightFragment.this, selectedData,
-                        null);
+        ((MasterActivity) getActivity()).launchDetailsFragment(selectedData, null);
     }
 
     @Override
