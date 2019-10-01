@@ -5,17 +5,18 @@
 
 ![Feature Image](https://github.com/atmko/Capstone-Project/blob/master/images/feature_image.png)
 
-Features
+#### Features
 * Create your own lists
 * Add movies and series to watch lists
 * Search through your lists
 * Rate movies and series
 
-Coming Soon
+#### Coming Soon
 * Friends feature
 * Share your lists
 
-API KEY NOTICE
+#### How do I apply for an API key?
+Read [this](https://www.themoviedb.org/faq/api) FAQ that tells you how.
 
 The api key goes into gradle.properties in users/user/.gradle
 
@@ -23,4 +24,4 @@ example:
 
      Api_Key = "value"
 
-where "Api_Key" is the key identifier) and value is your api key
+Replace value with your api key
