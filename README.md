@@ -8,6 +8,7 @@
 #### Features
 * Create your own lists
 * Add movies and series to watch lists
+* View trailers
 * Search through your lists
 * Rate movies and series
 
