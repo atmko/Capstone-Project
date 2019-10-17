@@ -67,32 +67,32 @@ public class MovieDataParser {
     static MovieData parseMovieMap(Map movieDataMap) {
         return new MovieData(
                 //get by keys
-                checkAndConvertNumber(movieDataMap.get(MovieApiConstants.MOVIE_ID_KEY)),
+                checkAndConvertNumber(movieDataMap.get(ApiConstants.ID_KEY)),
 
-                checkAndConvertNumber(movieDataMap.get(MovieApiConstants.VOTE_COUNT_KEY)),
+                checkAndConvertNumber(movieDataMap.get(ApiConstants.VOTE_COUNT_KEY)),
 
                 (Boolean) movieDataMap.get(MovieApiConstants.VIDEO_KEY),
 
                 checkAndConvertNumber(
-                        convertTo2Sf(((double) movieDataMap.get(MovieApiConstants.VOTE_AVERAGE_KEY)))),
+                        convertTo2Sf(((double) movieDataMap.get(ApiConstants.VOTE_AVERAGE_KEY)))),
 
                 (String) movieDataMap.get(MovieApiConstants.MOVIE_TITLE_KEY),
 
-                (Double) movieDataMap.get(MovieApiConstants.POPULARITY_KEY),
+                (Double) movieDataMap.get(ApiConstants.POPULARITY_KEY),
 
-                (String) movieDataMap.get(MovieApiConstants.POSTER_PATH_KEY),
+                (String) movieDataMap.get(ApiConstants.POSTER_PATH_KEY),
 
-                (String) movieDataMap.get(MovieApiConstants.ORIG_LANG_KEY),
+                (String) movieDataMap.get(ApiConstants.ORIG_LANG_KEY),
 
                 (String) movieDataMap.get(MovieApiConstants.ORIG_TITLE_KEY),
 
                 convertToGenres(((ArrayList<Map>) movieDataMap.get(ApiConstants.GENRES_KEY))),
 
-                (String) movieDataMap.get(MovieApiConstants.BACKDROP_PATH_KEY),
+                (String) movieDataMap.get(ApiConstants.BACKDROP_PATH_KEY),
 
                 (Boolean) movieDataMap.get(MovieApiConstants.ADULT_KEY),
 
-                (String) movieDataMap.get(MovieApiConstants.OVERVIEW_KEY),
+                (String) movieDataMap.get(ApiConstants.OVERVIEW_KEY),
 
                 parseDateInfo((String) movieDataMap.get(MovieApiConstants.RELEASE_DATE_KEY))
         );
@@ -120,7 +120,7 @@ public class MovieDataParser {
         for (Map castMap: castMapList) {
             String character = (String) castMap.get(PeopleApiConstants.CHARACTER_KEY);
             String creditId = checkAndConvertNumber(castMap.get(PeopleApiConstants.CREDIT_ID_KEY));
-            String id = checkAndConvertNumber(castMap.get(PeopleApiConstants.ID_KEY));
+            String id = checkAndConvertNumber(castMap.get(ApiConstants.ID_KEY));
             String name = (String) castMap.get(PeopleApiConstants.NAME_KEY);
             String gender = checkAndConvertNumber(castMap.get(PeopleApiConstants.GENDER_KEY));
             String profilePath = (String) castMap.get(PeopleApiConstants.PROFILE_PATH_KEY);

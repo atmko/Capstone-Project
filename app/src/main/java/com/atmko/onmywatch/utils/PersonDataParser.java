@@ -66,7 +66,7 @@ public class PersonDataParser {
         //create new PeopleData from peopleDataMap
         return new PersonData(
                 //get by keys
-                checkAndConvertNumber(peopleDataMap.get(PeopleApiConstants.ID_KEY)),
+                checkAndConvertNumber(peopleDataMap.get(ApiConstants.ID_KEY)),
 
                 (String) (peopleDataMap.get(PeopleApiConstants.PROFILE_PATH_KEY)),
 

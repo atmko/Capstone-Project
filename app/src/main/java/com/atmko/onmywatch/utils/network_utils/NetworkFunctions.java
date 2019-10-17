@@ -67,7 +67,7 @@ public class NetworkFunctions {
         //build request using Fast Android Networking
         ANRequest.GetRequestBuilder requestBuilder = AndroidNetworking.get(finalUrl);
         //add media id path parameter
-        requestBuilder.addPathParameter(MovieApiConstants.MOVIE_ID_KEY, id);
+        requestBuilder.addPathParameter(ApiConstants.ID_KEY, id);
 
         return requestBuilder.build();
     }

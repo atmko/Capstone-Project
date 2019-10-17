@@ -4,9 +4,10 @@
 
 package com.atmko.onmywatch.utils.network_utils;
 
-public class PeopleApiConstants {
+/*
+ * class containing api value constants for people media type
+ */public class PeopleApiConstants {
     //for person
-    public static final String ID_KEY = "id";
     public static final String PROFILES_KEY = "profiles";
     public static final String NAME_KEY = "name";
     public static final String PROFILE_PATH_KEY = "profile_path";

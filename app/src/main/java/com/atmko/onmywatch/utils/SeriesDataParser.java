@@ -69,20 +69,20 @@ public class SeriesDataParser {
     static SeriesData parseTvMap(Map seriesDataMap) {
         return new SeriesData(
                 //get by keys
-                checkAndConvertNumber(seriesDataMap.get(SeriesApiConstants.ID_KEY)),
+                checkAndConvertNumber(seriesDataMap.get(ApiConstants.ID_KEY)),
 
-                checkAndConvertNumber(seriesDataMap.get(SeriesApiConstants.VOTE_COUNT_KEY)),
+                checkAndConvertNumber(seriesDataMap.get(ApiConstants.VOTE_COUNT_KEY)),
 
                 checkAndConvertNumber(
-                        convertTo2Sf(((double) seriesDataMap.get(SeriesApiConstants.VOTE_AVERAGE_KEY)))),
+                        convertTo2Sf(((double) seriesDataMap.get(ApiConstants.VOTE_AVERAGE_KEY)))),
 
                 (String) seriesDataMap.get(SeriesApiConstants.NAME_KEY),
 
-                (Double) seriesDataMap.get(SeriesApiConstants.POPULARITY_KEY),
+                (Double) seriesDataMap.get(ApiConstants.POPULARITY_KEY),
 
-                (String) seriesDataMap.get(SeriesApiConstants.POSTER_PATH_KEY),
+                (String) seriesDataMap.get(ApiConstants.POSTER_PATH_KEY),
 
-                (String) seriesDataMap.get(SeriesApiConstants.ORIG_LANG_KEY),
+                (String) seriesDataMap.get(ApiConstants.ORIG_LANG_KEY),
 
                 (String) seriesDataMap.get(SeriesApiConstants.ORIG_NAME_KEY),
 
@@ -90,9 +90,9 @@ public class SeriesDataParser {
 
                 convertToGenres(((ArrayList<Map>) seriesDataMap.get(ApiConstants.GENRES_KEY))),
 
-                (String) seriesDataMap.get(SeriesApiConstants.BACKDROP_PATH_KEY),
+                (String) seriesDataMap.get(ApiConstants.BACKDROP_PATH_KEY),
 
-                (String) seriesDataMap.get(SeriesApiConstants.OVERVIEW_KEY),
+                (String) seriesDataMap.get(ApiConstants.OVERVIEW_KEY),
 
                 parseDateInfo((String) seriesDataMap.get(SeriesApiConstants.FIRST_AIR_DATE_KEY))
         );
@@ -121,7 +121,7 @@ public class SeriesDataParser {
         for (Map castMap: castMapList) {
             String character = (String) castMap.get(PeopleApiConstants.CHARACTER_KEY);
             String creditId = checkAndConvertNumber(castMap.get(PeopleApiConstants.CREDIT_ID_KEY));
-            String id = checkAndConvertNumber(castMap.get(PeopleApiConstants.ID_KEY));
+            String id = checkAndConvertNumber(castMap.get(ApiConstants.ID_KEY));
             String name = (String) castMap.get(PeopleApiConstants.NAME_KEY);
             String gender = checkAndConvertNumber(castMap.get(PeopleApiConstants.GENDER_KEY));
             String profilePath = (String) castMap.get(PeopleApiConstants.PROFILE_PATH_KEY);
