@@ -13,6 +13,7 @@
 * Rate movies and series
 
 #### Coming Soon
+* Cloud backup
 * Friends feature
 * Share your lists
 
