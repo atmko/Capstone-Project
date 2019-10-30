@@ -39,7 +39,7 @@ public class WatchListsAdapter
         void onItemClick(int position);
     }
 
-   public class WatchListsAdapterViewHolder extends RecyclerView.ViewHolder
+    public class WatchListsAdapterViewHolder extends RecyclerView.ViewHolder
              implements View.OnClickListener{
 
         final TextView listNameTextView;
