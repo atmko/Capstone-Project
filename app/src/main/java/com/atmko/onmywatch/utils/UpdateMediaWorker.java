@@ -76,7 +76,7 @@ public class UpdateMediaWorker extends Worker {
     private void fetchSavedSeries() {
         //get all saved series
         List<SeriesData> seriesDataList = mDatabase.seriesDataDao()
-                .getAllLSeriesAlt();
+                .getAllSeriesAlt();
 
         //get series detail url format
         String[] detailUrls = mContext.getResources().getStringArray(R.array.details_urls);

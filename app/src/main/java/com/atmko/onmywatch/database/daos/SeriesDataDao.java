@@ -23,7 +23,7 @@ public interface SeriesDataDao {
 
     //alternate method without live data
     @Query("SELECT * FROM series")
-    List<SeriesData> getAllLSeriesAlt();
+    List<SeriesData> getAllSeriesAlt();
 
     @Query("SELECT * FROM series WHERE id = :seriesId")
     LiveData<SeriesData> getSeriesById(String seriesId);
