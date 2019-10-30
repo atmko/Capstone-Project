@@ -25,6 +25,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.atmko.onmywatch.CreateListActivity;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.custom_views.SuperEditText;
+import com.atmko.onmywatch.models.MediaData;
+import com.atmko.onmywatch.models.MovieData;
+import com.atmko.onmywatch.models.SeriesData;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.UserListsAdapter;
@@ -281,8 +284,68 @@ public class ListWatchAndUserFragment extends Fragment
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
+                List<MovieData> moviesInList = mDatabase.movieDataRecordsDao()
+                        .getAllMoviesInListAlt(userListModel.getName());
+
+                List<SeriesData> seriesInList = mDatabase.seriesDataRecordsDao()
+                        .getAllSeriesInListAlt(userListModel.getName());
+
                 mDatabase.userListsDao().deleteList(new UserListModel(userListModel.getName()));
+
+                maintainMoviesWatchListCountIntegrity(moviesInList);
+
+                maintainSeriesWatchListCountIntegrity(seriesInList);
             }
         });
+    }
+
+    private void maintainMoviesWatchListCountIntegrity(List<MovieData> moviesInList) {
+        for (MovieData movieData: moviesInList) {
+            //delete if containing lists size = 0 and if watch status is none(0)
+            List<UserListModel> containingLists =
+                    mDatabase.movieDataRecordsDao()
+                            .getAllListsContainingMediaAlt(movieData.getId());
+
+            int watchStatus = movieData.getWatchStatus();
+
+            if (containingLists.size() == 0 && movieData.getWatchStatus() == 0) {
+                mDatabase.movieDataDao().deleteMovieData(movieData);
+
+                if (getContext() == null) return;
+
+                //subtract 1 from watch status list if deleted
+                WatchListModel watchList = mDatabase.watchListsDao().getListByNameAlt(
+                        MediaData.getWatchStatusTitle(watchStatus, getContext()));
+
+                watchList.setItemCount(watchList.getItemCount() - 1);
+
+                mDatabase.watchListsDao().updateListConfiguration(watchList);
+            }
+        }
+    }
+
+    private void maintainSeriesWatchListCountIntegrity(List<SeriesData> seriesInList) {
+        for (SeriesData seriesData: seriesInList) {
+            //delete if containing lists size = 0 and if watch status is none(0)
+            List<UserListModel> containingLists =
+                    mDatabase.seriesDataRecordsDao()
+                            .getAllListsContainingMediaAlt(seriesData.getId());
+
+            int watchStatus = seriesData.getWatchStatus();
+
+            if (containingLists.size() == 0 && seriesData.getWatchStatus() == 0) {
+                mDatabase.seriesDataDao().deleteSeriesData(seriesData);
+
+                if (getContext() == null) return;
+
+                //subtract 1 from watch status list if deleted
+                WatchListModel watchList = mDatabase.watchListsDao().getListByNameAlt(
+                        MediaData.getWatchStatusTitle(watchStatus, getContext()));
+
+                watchList.setItemCount(watchList.getItemCount() - 1);
+
+                mDatabase.watchListsDao().updateListConfiguration(watchList);
+            }
+        }
     }
 }
