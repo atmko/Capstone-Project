@@ -54,6 +54,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
     public static final String MEDIA_DATA_KEY = "media_data";
 
     //save instance keys
+    private static final String OLD_WATCH_STATUS_KEY = "old_watch_status";
     private static final String NEW_CONTAINING_LIST_KEY = "new_containing_list";
     private static final String SELECTED_WATCH_STATUS_KEY = "selected_watch_status";
 
@@ -63,7 +64,8 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
     private Bundle mSavedInstanceState;
     private AppDatabase mDatabase;
     private AddToListAdapter mAdapter;
-    private int mOldWatchStatus;
+    private Integer mOldWatchStatus;
+    private Integer mNewWatchStatus;
     private int mSelectedWatchStatus;
     private ArrayList<UserListModel> mOriginalContainingLists;
     private ArrayList<UserListModel> mNewContainingLists;
@@ -93,10 +95,6 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
         mMediaType = intent.getIntExtra(MEDIA_TYPE_KEY, 0);
         mMediaData = Parcels.unwrap(intent.getParcelableExtra(MEDIA_DATA_KEY));
 
-        //define mOldWatchStatus as final to ensure it doesn't' change
-        final int oldWatchStatus = mMediaData.getWatchStatus();
-        mOldWatchStatus = oldWatchStatus;
-
         //save saveInstanceState value for onCreateAnimator and mNewContainingLists to check if
         // this is the first instance
         mSavedInstanceState = savedInstanceState;
@@ -111,6 +109,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
+        outState.putInt(OLD_WATCH_STATUS_KEY, mOldWatchStatus);
         outState.putParcelable(NEW_CONTAINING_LIST_KEY, Parcels.wrap(mNewContainingLists));
         outState.putInt(SELECTED_WATCH_STATUS_KEY, mSelectedWatchStatus);
     }
@@ -194,6 +193,8 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
             public void onChanged(Integer watchStatus) {
                 //if mSavedInstanceState is null
                 if (mSavedInstanceState == null) {
+                    mOldWatchStatus = watchStatus;
+
                     //if status exists
                     if (watchStatus != null) {
                         //check status
@@ -206,6 +207,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
                     }
 
                 } else {//if mSavedInstanceState exists select saved value
+                    mOldWatchStatus = mSavedInstanceState.getInt(OLD_WATCH_STATUS_KEY);
                     mSelectedWatchStatus =
                             mSavedInstanceState.getInt(SELECTED_WATCH_STATUS_KEY, 0);
 
@@ -291,11 +293,12 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
                 int uerListNetCountChange = updateUserListRecords();
                 int newContainingListValue = mOriginalContainingLists.size() + uerListNetCountChange;
 
-                boolean isCreated = newMediaData == mMediaData;
                 boolean isDeleted = deleteMediaDataIfDataNotUsed(newMediaData.getWatchStatus(),
                         newContainingListValue);
 
-                updateWatchListCounts(newMediaData.getWatchStatus(), isCreated, isDeleted);
+                mNewWatchStatus = isDeleted? null : newMediaData.getWatchStatus();
+
+                updateWatchListCounts();
             }
         });
     }
@@ -370,50 +373,32 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
         return netCountChange;
     }
 
-    private void updateWatchListCounts(int newWatchStatus, boolean isCreated, boolean isDeleted) {
-        WatchListModel oldWatchStatusList;
-        WatchListModel newWatchStatusList;
-
+    private void updateWatchListCounts() {
         //get watch status names
-        String oldWatchStatusName = MediaData.getWatchStatusTitle(mOldWatchStatus,
-                getApplicationContext());
-        String newWatchStatusName = MediaData.getWatchStatusTitle(newWatchStatus,
-                getApplicationContext());
-
         //get watch status lists
-        oldWatchStatusList =
-                mDatabase.watchListsDao().getListByNameAlt(oldWatchStatusName);
-        newWatchStatusList =
-                mDatabase.watchListsDao().getListByNameAlt(newWatchStatusName);
-
         //update counts
-
-        //for when status has changed
-        if (mOldWatchStatus != newWatchStatus) {
-            //because none status is default, avoid subtraction if...
-            //none watch list is empty
-            if (oldWatchStatusList.getItemCount() != 0) {
-                oldWatchStatusList.setItemCount(oldWatchStatusList.getItemCount() - 1);
-
-            }
-
-            newWatchStatusList.setItemCount(newWatchStatusList.getItemCount() + 1);
-
-        //for when media is newly created with none none status (unchanged) but simultaneously being added to a list
-        } else if (isCreated) {
-            newWatchStatusList.setItemCount(newWatchStatusList.getItemCount() + 1);
-
-        }
-
-        //for when media is deleted
-        if (isDeleted) {
-            newWatchStatusList.setItemCount(newWatchStatusList.getItemCount() - 1);
-
-        }
-
         //update lists
-        mDatabase.watchListsDao().updateListConfiguration(oldWatchStatusList);
-        mDatabase.watchListsDao().updateListConfiguration(newWatchStatusList);
+        if (mOldWatchStatus != null) {
+            String oldWatchStatusName = MediaData.getWatchStatusTitle(mOldWatchStatus,
+                    getApplicationContext());
+
+            WatchListModel oldWatchStatusList =
+                    mDatabase.watchListsDao().getListByNameAlt(oldWatchStatusName);
+
+            oldWatchStatusList.setItemCount(oldWatchStatusList.getItemCount() - 1);
+            mDatabase.watchListsDao().updateListConfiguration(oldWatchStatusList);
+        }
+
+        if (mNewWatchStatus != null) {
+            String newWatchStatusName = MediaData.getWatchStatusTitle(mNewWatchStatus,
+                    getApplicationContext());
+
+            WatchListModel newWatchStatusList =
+                    mDatabase.watchListsDao().getListByNameAlt(newWatchStatusName);
+
+            newWatchStatusList.setItemCount(newWatchStatusList.getItemCount() + 1);
+            mDatabase.watchListsDao().updateListConfiguration(newWatchStatusList);
+        }
     }
 
     private void removeFromList(final UserListModel userListModel) {
