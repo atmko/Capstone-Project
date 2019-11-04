@@ -40,7 +40,7 @@ public class WatchListsAdapter
     }
 
     public class WatchListsAdapterViewHolder extends RecyclerView.ViewHolder
-             implements View.OnClickListener{
+            implements View.OnClickListener{
 
         final TextView listNameTextView;
         final TextView itemCountTextView;
