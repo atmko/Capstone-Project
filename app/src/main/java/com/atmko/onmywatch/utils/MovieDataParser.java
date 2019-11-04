@@ -76,7 +76,7 @@ public class MovieDataParser {
                 checkAndConvertNumber(
                         convertTo2Sf(((double) movieDataMap.get(ApiConstants.VOTE_AVERAGE_KEY)))),
 
-                (String) movieDataMap.get(MovieApiConstants.MOVIE_TITLE_KEY),
+                (String) movieDataMap.get(MovieApiConstants.TITLE_KEY),
 
                 (Double) movieDataMap.get(ApiConstants.POPULARITY_KEY),
 
