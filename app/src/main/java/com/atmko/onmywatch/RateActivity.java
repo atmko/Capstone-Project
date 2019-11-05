@@ -14,14 +14,19 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.atmko.onmywatch.database.AppDatabase;
+import com.atmko.onmywatch.database.daos.FirebaseMovieDataDao;
+import com.atmko.onmywatch.database.daos.FirebaseSeriesDataDao;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
+import com.atmko.onmywatch.view_models.FirebaseRateViewModel;
 import com.atmko.onmywatch.view_models.RateViewModel;
 import com.atmko.onmywatch.view_models.RateViewModelFactory;
 
@@ -41,6 +46,7 @@ public class RateActivity extends AppCompatActivity {
     private static final String USER_RATING_KEY = "user_rating";
 
     private Bundle mSavedInstanceState;
+    private ViewModel mViewModel;
     private AppDatabase mDatabase;
     private MediaData databaseMediaData;
     private SeekBar mRatingSeekBar;
@@ -75,15 +81,7 @@ public class RateActivity extends AppCompatActivity {
         defineViews();
 
         //set up and observe view model
-        mDatabase = AppDatabase.getInstance(this);
-        RateViewModelFactory rateViewModelFactory =
-                new RateViewModelFactory(mDatabase, mMediaType, mMediaId);
-
-        final RateViewModel viewModel =
-                ViewModelProviders.of(this, rateViewModelFactory)
-                        .get(RateViewModel.class);
-
-        observeData(viewModel);
+        observeData();
     }
 
     @Override
@@ -140,8 +138,29 @@ public class RateActivity extends AppCompatActivity {
         });
     }
 
-    private void observeData(RateViewModel viewModel) {
-        viewModel.getMediaData().observe(this, new Observer() {
+    private void observeData() {
+        final LiveData mediaDataLiveData;
+
+        mDatabase = AppDatabase.getInstance(this);
+
+        AppDatabase database = AppDatabase.getInstance(this);
+        RateViewModelFactory viewModelFactory =
+                new RateViewModelFactory(database, mMediaType, mMediaId);
+
+        if (MasterActivity.isProMode()) {
+            mViewModel =
+                    ViewModelProviders.of(this,
+                            viewModelFactory).get(FirebaseRateViewModel.class);
+            mediaDataLiveData = ((FirebaseRateViewModel) mViewModel).getMediaData();
+
+        } else {
+            mViewModel =
+                    ViewModelProviders.of(this,
+                            viewModelFactory).get(RateViewModel.class);
+            mediaDataLiveData = ((RateViewModel) mViewModel).getMediaData();
+        }
+
+        mediaDataLiveData.observe(this, new Observer() {
             @Override
             public void onChanged(Object mediaData) {
                 //if media exists
@@ -176,13 +195,28 @@ public class RateActivity extends AppCompatActivity {
         //apply user rating to media data to be saved to database
         databaseMediaData.setUserRating(mRatingSeekBar.getProgress());
 
-        //update media data with new user rating
-        if (mMediaType == MEDIA_TYPE_MOVIE) {
-            mDatabase.movieDataDao().updateMovieData(((MovieData) databaseMediaData));
+        if (MasterActivity.isProMode()) {
+            String documentId  = ((FirebaseRateViewModel) mViewModel).getDocumentId();
+
+            //update media data with new user rating
+            if (mMediaType == MEDIA_TYPE_MOVIE) {
+                FirebaseMovieDataDao.updateMovieData(documentId,
+                        ((MovieData) databaseMediaData).parseMediaDataToDataMap());
+
+            } else {
+                FirebaseSeriesDataDao.updateSeriesData(documentId,
+                        ((SeriesData) databaseMediaData).parseMediaDataToDataMap());
+            }
 
         } else {
-            mDatabase.seriesDataDao().updateSeriesData((SeriesData) databaseMediaData);
+            //update media data with new user rating
+            if (mMediaType == MEDIA_TYPE_MOVIE) {
+                mDatabase.movieDataDao().updateMovieData(((MovieData) databaseMediaData));
 
+            } else {
+                mDatabase.seriesDataDao().updateSeriesData((SeriesData) databaseMediaData);
+
+            }
         }
     }
 }
