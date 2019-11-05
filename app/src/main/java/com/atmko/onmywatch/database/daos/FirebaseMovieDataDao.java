@@ -8,6 +8,7 @@ import com.atmko.onmywatch.MasterActivity;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Map;
 
@@ -26,6 +27,12 @@ public class FirebaseMovieDataDao {
         return MasterActivity.getUserDbHomeReference()
                 .collection(MOVIES_COLLECTION_PATH)
                 .add(movieDataMap);
+    }
+
+    public static Task<QuerySnapshot> getAllMovies() {
+        return MasterActivity.getUserDbHomeReference()
+                .collection(MOVIES_COLLECTION_PATH)
+                .get();
     }
 
     public static Query getMovieById(String mediaId) {

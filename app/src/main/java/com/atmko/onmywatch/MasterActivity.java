@@ -32,6 +32,7 @@ import com.atmko.onmywatch.Fragments.ListResultsParentFragment;
 import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
+import com.atmko.onmywatch.utils.FirebaseUpdateMediaWorker;
 import com.atmko.onmywatch.utils.SearchPreferences;
 import com.atmko.onmywatch.utils.UpdateMediaWorker;
 import com.firebase.ui.auth.AuthUI;
@@ -49,7 +50,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class MasterActivity extends AppCompatActivity {
-
 
     public static final int MEDIA_TYPE_SERIES = 0;
     public static final int MEDIA_TYPE_MOVIE = 1;
@@ -255,12 +255,23 @@ public class MasterActivity extends AppCompatActivity {
                 .setRequiresStorageNotLow(true)
                 .build();
 
-        PeriodicWorkRequest updateMediaDataRequest =
-                new PeriodicWorkRequest.Builder(
-                        UpdateMediaWorker.class, REPEAT_INTERVAL, TimeUnit.HOURS)
-                        .setConstraints(constraints)
-                        .setInitialDelay(INITIAL_DELAY, TimeUnit.MINUTES)
-                        .build();
+        PeriodicWorkRequest updateMediaDataRequest;
+
+        if (isProMode()) {
+            updateMediaDataRequest =
+                    new PeriodicWorkRequest.Builder(
+                            FirebaseUpdateMediaWorker.class, REPEAT_INTERVAL, TimeUnit.HOURS)
+                            .setConstraints(constraints)
+                            .setInitialDelay(INITIAL_DELAY, TimeUnit.MINUTES)
+                            .build();
+        } else {
+            updateMediaDataRequest =
+                    new PeriodicWorkRequest.Builder(
+                            UpdateMediaWorker.class, REPEAT_INTERVAL, TimeUnit.HOURS)
+                            .setConstraints(constraints)
+                            .setInitialDelay(INITIAL_DELAY, TimeUnit.MINUTES)
+                            .build();
+        }
 
         WorkManager.getInstance(this).enqueue(updateMediaDataRequest);
     }
