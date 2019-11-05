@@ -11,6 +11,9 @@ import androidx.room.Ignore;
 
 import org.parceler.Parcel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Parcel
 @Entity(tableName = "user_lists")
 public class UserListModel extends ListModel {
@@ -28,6 +31,17 @@ public class UserListModel extends ListModel {
 
     public UserListModel(@NonNull String name) {
         this.mName = name;
+    }
+
+    public static List<String> getContainingListsNames(List<UserListModel> newContainingLists) {
+        List<String> newContainingListNames = new ArrayList<>();
+
+        for (UserListModel userListModel: newContainingLists) {
+            newContainingListNames.add(userListModel.getName());
+
+        }
+
+        return newContainingListNames;
     }
 
     @Override
