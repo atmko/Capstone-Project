@@ -121,6 +121,8 @@
     <string name="list_updated_message">List Configuration Updated</string>
     <string name="details_error_message">Error fetching media details</string>
     <string name="list_already_exists_error_message">A list with that name already exists</string>
+    <string name="list_deleted_message">List Deleted</string>
+    <string name="list_delete_error_message">Error deleting list</string>
     <string name="rating_disallowed_message">Rating only allowed if item has \"Watching\", \"Watched\" or \"Dropped\" watch status.</string>
     <!--SNACK BAR MESSAGES-->
 
