@@ -107,6 +107,17 @@ public class SeriesData extends MediaData{
         return context.getString(R.string.series_base_url) + "/" + mediaId;
     }
 
+    public Map<String, Object> parseMediaDataToDataMap() {
+        Map<String, Object> firebaseMediaDataMap = getFirebaseMediaDataMap(this);
+
+        firebaseMediaDataMap.put(SeriesApiConstants.ORIGIN_COUNTRY_KEY, getCountryOfOrigin());
+        firebaseMediaDataMap.put(SeriesApiConstants.NAME_KEY, getTitle());
+        firebaseMediaDataMap.put(SeriesApiConstants.ORIG_NAME_KEY, getOriginalTitle());
+        firebaseMediaDataMap.put(SeriesApiConstants.FIRST_AIR_DATE_KEY, getReleaseDate());
+
+        return firebaseMediaDataMap;
+    }
+
     @SuppressWarnings({"ConstantConditions", "unchecked"})
     public static SeriesData parseDataMapToMediaData(Map<String, Object> firebaseDataMap) {
         SeriesData seriesData = new SeriesData(

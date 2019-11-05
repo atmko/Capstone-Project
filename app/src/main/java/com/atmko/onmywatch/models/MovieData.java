@@ -108,6 +108,17 @@ public class MovieData extends MediaData{
         return context.getString(R.string.movie_base_url) + "/" + mediaId;
     }
 
+    public Map<String, Object> parseMediaDataToDataMap() {
+        Map<String, Object> firebaseMediaDataMap = getFirebaseMediaDataMap(this);
+
+        firebaseMediaDataMap.put(MovieApiConstants.ADULT_KEY, isAdult());
+        firebaseMediaDataMap.put(MovieApiConstants.TITLE_KEY, getTitle());
+        firebaseMediaDataMap.put(MovieApiConstants.ORIG_TITLE_KEY, getOriginalTitle());
+        firebaseMediaDataMap.put(MovieApiConstants.RELEASE_DATE_KEY, getReleaseDate());
+
+        return firebaseMediaDataMap;
+    }
+
     @SuppressWarnings({"ConstantConditions", "unchecked"})
     public static MovieData parseDataMapToMediaData(Map<String, Object> firebaseDataMap) {
         MovieData movieData = new MovieData(

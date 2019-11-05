@@ -123,6 +123,7 @@
     <string name="list_already_exists_error_message">A list with that name already exists</string>
     <string name="list_deleted_message">List Deleted</string>
     <string name="list_delete_error_message">Error deleting list</string>
+    <string name="list_delete_record_error_message">Error: media has NOT been removed from list</string>
     <string name="rating_disallowed_message">Rating only allowed if item has \"Watching\", \"Watched\" or \"Dropped\" watch status.</string>
     <!--SNACK BAR MESSAGES-->
 
