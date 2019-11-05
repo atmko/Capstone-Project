@@ -4,14 +4,6 @@
 
 package com.atmko.onmywatch;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import androidx.work.Constraints;
-import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkManager;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -25,6 +17,15 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.work.Constraints;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+
 import com.atmko.onmywatch.Fragments.DetailsFragment;
 import com.atmko.onmywatch.Fragments.HomeFragment;
 import com.atmko.onmywatch.Fragments.ListResultsParentFragment;
@@ -33,15 +34,22 @@ import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.utils.SearchPreferences;
 import com.atmko.onmywatch.utils.UpdateMediaWorker;
+import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.parceler.Parcels;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class MasterActivity extends AppCompatActivity {
+
 
     public static final int MEDIA_TYPE_SERIES = 0;
     public static final int MEDIA_TYPE_MOVIE = 1;
@@ -55,15 +63,22 @@ public class MasterActivity extends AppCompatActivity {
     private static final int REPEAT_INTERVAL = 2;
     private static final int INITIAL_DELAY = 15;
 
+    private static final String USER_COLLECTION_PATH = "users";
+    private final int SIGN_IN_REQUEST_CODE = 10;
+
     //for restoring keyboard visibility upon configuration change
     private boolean mIsKeyboardVisible;
     private boolean mIsTabletLandscape;
     private FirebaseAnalytics mFirebaseAnalytics;
 
+    private static boolean proMode;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_master);
+
+        proMode = true;
 
         initializeAdMob();
 
@@ -75,19 +90,78 @@ public class MasterActivity extends AppCompatActivity {
         // Obtain Analytics instance.
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
+        //if saved instance is null
         if (savedInstanceState == null) {
-            startHomeFragment();
-            //start background work managers
-            startWorkers();
+            //if pro mode
+            if (isProMode()) {
+                //if current user is null, start Firebase sign in activity
+                if (getCurrentUser() == null) {
+                    startSignInActivity();
 
-            if (getIntent() != null) {
-                Intent intent = getIntent();
-                Bundle extras = intent.getExtras();
-
-                if (intent.getAction().equals(DetailsFragment.ACTION_LAUNCH_DETAILS)) {
-                    launchDetailsFromIntent(intent, extras);
+                    //otherwise just load the UI
+                } else {
+                    loadUi();
                 }
+                //otherwise load ui
+            } else {
+                loadUi();
             }
+        }
+    }
+
+    public static boolean isProMode() {
+        return proMode;
+    }
+
+    public static FirebaseUser getCurrentUser() {
+        return FirebaseAuth.getInstance().getCurrentUser();
+    }
+
+    public static DocumentReference getUserDbHomeReference() {
+        return FirebaseFirestore.getInstance()
+                .collection(USER_COLLECTION_PATH)
+                .document(getCurrentUser().getUid());
+    }
+
+    private void loadUi() {
+        startHomeFragment();
+        //start background work managers
+        startWorkers();
+
+        if (getIntent() != null) {
+            Intent intent = getIntent();
+            Bundle extras = intent.getExtras();
+
+            if (intent.getAction().equals(DetailsFragment.ACTION_LAUNCH_DETAILS)) {
+                launchDetailsFromIntent(intent, extras);
+            }
+        }
+    }
+
+    private void startSignInActivity() {
+        // Choose authentication providers
+        List<AuthUI.IdpConfig> providers = Arrays.asList(
+                new AuthUI.IdpConfig.EmailBuilder().build(),
+                new AuthUI.IdpConfig.GoogleBuilder().build()
+        );
+
+        // Create and launch sign-in intent
+        startActivityForResult(
+                AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setAvailableProviders(providers)
+                        .build(),
+                SIGN_IN_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        //if returning from firebase sign in activity, load the UI
+        if (requestCode == SIGN_IN_REQUEST_CODE) {
+            loadUi();
+
         }
     }
 
@@ -377,7 +451,7 @@ public class MasterActivity extends AppCompatActivity {
             //exclude fragments that don't have search bar
             if (!(backgroundFragment instanceof HomeFragment)) {
                 SuperEditText searchTextView =
-                backgroundFragment.getView().findViewById(R.id.search_edit_text_view);
+                        backgroundFragment.getView().findViewById(R.id.search_edit_text_view);
                 hideSearchBar(searchTextView);
             }
         }

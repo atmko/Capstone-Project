@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
+import com.atmko.onmywatch.utils.network_utils.MovieApiConstants;
 
 import org.parceler.Parcel;
 
@@ -105,5 +106,30 @@ public class MovieData extends MediaData{
     @Override
     public String getMediaUrl(Context context, String mediaId) {
         return context.getString(R.string.movie_base_url) + "/" + mediaId;
+    }
+
+    @SuppressWarnings({"ConstantConditions", "unchecked"})
+    public static MovieData parseDataMapToMediaData(Map<String, Object> firebaseDataMap) {
+        MovieData movieData = new MovieData(
+                (String) firebaseDataMap.get(ApiConstants.ID_KEY),
+                (String) firebaseDataMap.get(ApiConstants.VOTE_AVERAGE_KEY),
+                (String) firebaseDataMap.get(MovieApiConstants.TITLE_KEY),
+                (String) firebaseDataMap.get(ApiConstants.POSTER_PATH_KEY),
+                (String) firebaseDataMap.get(ApiConstants.ORIG_LANG_KEY),
+                (String) firebaseDataMap.get(MovieApiConstants.ORIG_TITLE_KEY),
+                (ArrayList<String>) firebaseDataMap.get(ApiConstants.GENRES_KEY),
+                (boolean) firebaseDataMap.get(MovieApiConstants.ADULT_KEY),
+                (String) firebaseDataMap.get(ApiConstants.BACKDROP_PATH_KEY),
+                (String) firebaseDataMap.get(ApiConstants.OVERVIEW_KEY),
+                (String) firebaseDataMap.get(MovieApiConstants.RELEASE_DATE_KEY),
+                (String) firebaseDataMap.get(ApiConstants.RELEASE_STATUS_KEY)
+        );
+
+        movieData.setWatchStatus(
+                ((Long) firebaseDataMap.get(MediaData.WATCH_STATUS_KEY)).intValue());
+        movieData.setUserRating(
+                ((Long) firebaseDataMap.get(MediaData.USER_RATING_KEY)).intValue());
+
+        return movieData;
     }
 }

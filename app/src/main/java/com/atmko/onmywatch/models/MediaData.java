@@ -12,8 +12,10 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import com.atmko.onmywatch.R;
+import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 //TODO: access is weaker to accommodate parceler library
@@ -24,6 +26,9 @@ abstract public class MediaData {
     public static final int WATCH_STATUS_WATCHING = 2;
     public static final int WATCH_STATUS_WATCHED = 3;
     public static final int WATCH_STATUS_DROPPED = 4;
+
+    public static final String WATCH_STATUS_KEY = "watch_status";
+    public static final String USER_RATING_KEY = "user_rating";
 
     //primary attributes
     @PrimaryKey
@@ -180,4 +185,21 @@ abstract public class MediaData {
     }
 
     public abstract String getMediaUrl(Context context, String mediaId);
+
+    Map<String, Object> getFirebaseMediaDataMap(MediaData mediaData) {
+        Map<String, Object> mediaDataMap = new HashMap<>();
+
+        mediaDataMap.put(ApiConstants.ID_KEY, mediaData.getId());
+        mediaDataMap.put(ApiConstants.VOTE_AVERAGE_KEY, mediaData.getVoteAverage());
+        mediaDataMap.put(ApiConstants.POSTER_PATH_KEY, mediaData.getPosterPath());
+        mediaDataMap.put(ApiConstants.ORIG_LANG_KEY, mediaData.getOriginalLanguage());
+        mediaDataMap.put(ApiConstants.GENRES_KEY, mediaData.getGenres());
+        mediaDataMap.put(ApiConstants.BACKDROP_PATH_KEY, mediaData.getBackdropPath());
+        mediaDataMap.put(ApiConstants.OVERVIEW_KEY, mediaData.getOverview());
+        mediaDataMap.put(ApiConstants.RELEASE_STATUS_KEY, mediaData.getReleaseStatus());
+        mediaDataMap.put("watch_status", mediaData.getWatchStatus());
+        mediaDataMap.put("user_rating", mediaData.getUserRating());
+
+        return mediaDataMap;
+    }
 }

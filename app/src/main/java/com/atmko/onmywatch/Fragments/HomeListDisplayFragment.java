@@ -11,7 +11,9 @@ import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,6 +25,7 @@ import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.SeriesData;
+import com.atmko.onmywatch.view_models.FirebaseListsResultsViewModel;
 import com.atmko.onmywatch.view_models.ListResultsViewModelFactory;
 import com.atmko.onmywatch.view_models.ListsResultsViewModel;
 
@@ -101,6 +104,12 @@ public class HomeListDisplayFragment extends Fragment
     }
 
     private void observeData() {
+        final ViewModel viewModel;
+        LiveData<List<MovieData>> movieDataWatchListLiveData;
+        LiveData<List<SeriesData>> seriesDataWatchListLiveData;
+        LiveData<List<MovieData>> movieDataUserListLiveData;
+        LiveData<List<SeriesData>> seriesDataUserListLiveData;
+
         final String[] watchStatusMoviesTitles = getContext().getResources()
                 .getStringArray(R.array.watch_status_movie_titles);
         List<String> titleList = Arrays.asList(watchStatusMoviesTitles);
@@ -110,15 +119,28 @@ public class HomeListDisplayFragment extends Fragment
                 new ListResultsViewModelFactory(database,ListsWatchAndUserParentFragment.LIST_TYPE_WATCH,
                         mMediaType, titleList, mListName);
 
-        final ListsResultsViewModel viewModel =
-                ViewModelProviders.of(this, resultsViewModelFactory)
-                        .get(ListsResultsViewModel.class);
+        if (MasterActivity.isProMode()) {
+            viewModel = ViewModelProviders.of(this, resultsViewModelFactory)
+                    .get(FirebaseListsResultsViewModel.class);
+            movieDataWatchListLiveData = ((FirebaseListsResultsViewModel) viewModel).getAllMoviesInWatchList();
+            seriesDataWatchListLiveData = ((FirebaseListsResultsViewModel) viewModel).getAllSeriesInWatchList();
+            movieDataUserListLiveData = ((FirebaseListsResultsViewModel) viewModel).getAllMoviesInUserList();
+            seriesDataUserListLiveData = ((FirebaseListsResultsViewModel) viewModel).getAllSeriesInUserList();
+
+        } else {
+            viewModel = ViewModelProviders.of(this, resultsViewModelFactory)
+                    .get(ListsResultsViewModel.class);
+            movieDataWatchListLiveData = ((ListsResultsViewModel) viewModel).getAllMoviesInWatchList();
+            seriesDataWatchListLiveData = ((ListsResultsViewModel) viewModel).getAllSeriesInWatchList();
+            movieDataUserListLiveData = ((ListsResultsViewModel) viewModel).getAllMoviesInUserList();
+            seriesDataUserListLiveData = ((ListsResultsViewModel) viewModel).getAllSeriesInUserList();
+        }
 
         //if this is a watch list
         if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
             //if media data is movie
             if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
-                viewModel.getAllMoviesInWatchList().observe(this, new Observer<List<MovieData>>() {
+                movieDataWatchListLiveData.observe(this, new Observer<List<MovieData>>() {
                     @Override
                     public void onChanged(List<MovieData> mediaDataList) {
                         populateAndNotifyAdapter(mediaDataList);
@@ -127,7 +149,7 @@ public class HomeListDisplayFragment extends Fragment
 
             //if media data is series
             } else if (mMediaType == MasterActivity.MEDIA_TYPE_SERIES) {
-                viewModel.getAllSeriesInWatchList().observe(this, new Observer<List<SeriesData>>() {
+                seriesDataWatchListLiveData.observe(this, new Observer<List<SeriesData>>() {
                     @Override
                     public void onChanged(List<SeriesData> mediaDataList) {
                         populateAndNotifyAdapter(mediaDataList);
@@ -140,16 +162,16 @@ public class HomeListDisplayFragment extends Fragment
         if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_USER) {
             //if media data is movie
             if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
-                viewModel.getAllMoviesInUserList().observe(this, new Observer<List<MovieData>>() {
+                movieDataUserListLiveData.observe(this, new Observer<List<MovieData>>() {
                     @Override
                     public void onChanged(List<MovieData> mediaDataList) {
                         populateAndNotifyAdapter(mediaDataList);
                     }
                 });
 
-                //if media data is series
+            //if media data is series
             } else if (mMediaType == MasterActivity.MEDIA_TYPE_SERIES) {
-                viewModel.getAllSeriesInUserList().observe(this, new Observer<List<SeriesData>>() {
+                seriesDataUserListLiveData.observe(this, new Observer<List<SeriesData>>() {
                     @Override
                     public void onChanged(List<SeriesData> mediaDataList) {
                         populateAndNotifyAdapter(mediaDataList);
