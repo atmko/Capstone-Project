@@ -170,17 +170,17 @@ public class FirebaseUpdateMediaWorker extends Worker {
 
                         mediaUpdateTask.addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.getException() != null) {
-                                        notifyUpdateFailure(oldMediaData, task.getException(),
-                                                detailUrl, documentId, searchPreferences);
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.getException() != null) {
+                                    notifyUpdateFailure(oldMediaData, task.getException(),
+                                            detailUrl, documentId, searchPreferences);
 
-                                    } else {
-                                        Log.d(TAG, newMediaData.getTitle() + " data updated");
+                                } else {
+                                    Log.d(TAG, newMediaData.getTitle() + " data updated");
 
-                                    }
                                 }
-                            });
+                            }
+                        });
                     }
                 });
             }
