@@ -90,7 +90,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
                 getResources().getInteger(R.integer.add_to_list_activity_popup_screen_percent) / 100;
 
         getWindow().setLayout(width, height);
-        
+
         Intent intent = getIntent();
         mMediaType = intent.getIntExtra(MEDIA_TYPE_KEY, 0);
         mMediaData = Parcels.unwrap(intent.getParcelableExtra(MEDIA_DATA_KEY));
@@ -109,7 +109,6 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putInt(OLD_WATCH_STATUS_KEY, mOldWatchStatus);
         outState.putParcelable(NEW_CONTAINING_LIST_KEY, Parcels.wrap(mNewContainingLists));
         outState.putInt(SELECTED_WATCH_STATUS_KEY, mSelectedWatchStatus);
     }
@@ -191,9 +190,10 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
         watchStatusLiveData.observe(this, new Observer<Integer>() {
             @Override
             public void onChanged(Integer watchStatus) {
+                mOldWatchStatus = watchStatus;
+
                 //if mSavedInstanceState is null
                 if (mSavedInstanceState == null) {
-                    mOldWatchStatus = watchStatus;
 
                     //if status exists
                     if (watchStatus != null) {
@@ -207,7 +207,6 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
                     }
 
                 } else {//if mSavedInstanceState exists select saved value
-                    mOldWatchStatus = mSavedInstanceState.getInt(OLD_WATCH_STATUS_KEY);
                     mSelectedWatchStatus =
                             mSavedInstanceState.getInt(SELECTED_WATCH_STATUS_KEY, 0);
 
