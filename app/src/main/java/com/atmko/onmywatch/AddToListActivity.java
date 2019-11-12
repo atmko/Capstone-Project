@@ -197,6 +197,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
         final ViewModel viewModel;
         final LiveData<Integer> watchStatusLiveData;
         final LiveData<List<UserListModel>> allUserListLiveData;
+        final LiveData<List<UserListModel>> containingUserListLiveData;
 
         AddToListViewModelFactory addToListViewModelFactory =
                 new AddToListViewModelFactory(mDatabase, mMediaType, mMediaData.getId());
@@ -208,6 +209,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
 
             watchStatusLiveData = ((FirebaseAddToListViewModel) viewModel).getWatchStatus();
             allUserListLiveData = ((FirebaseAddToListViewModel) viewModel).getAllUserLists();
+            containingUserListLiveData = ((FirebaseAddToListViewModel) viewModel).getContainingLists();
 
         } else {
             //create view model
@@ -216,6 +218,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
 
             watchStatusLiveData = ((AddToListViewModel) viewModel).getWatchStatus();
             allUserListLiveData = ((AddToListViewModel) viewModel).getAllUserLists();
+            containingUserListLiveData = ((AddToListViewModel) viewModel).getContainingLists();
         }
 
         //observe live data of media's watch status
@@ -257,22 +260,6 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
                 //if user list(s) exist
                 if (allUserLists != null) {
                     //observe live data of lists containing media
-                    final LiveData<List<UserListModel>> containingUserListLiveData;
-
-                    if (MasterActivity.isProMode()) {
-                        //observe live data of lists containing media
-                        //noinspection ConstantConditions //class cast exception not possible
-                        containingUserListLiveData =
-                                ((FirebaseAddToListViewModel) viewModel).getContainingLists();
-
-                    } else {
-                        //observe live data of lists containing media
-                        //noinspection ConstantConditions //class cast exception not possible
-                        containingUserListLiveData =
-                                ((AddToListViewModel) viewModel).getContainingLists();
-
-                    }
-
                     containingUserListLiveData.observe(AddToListActivity.this,
                             new Observer<List<UserListModel>>() {
                                 @Override
