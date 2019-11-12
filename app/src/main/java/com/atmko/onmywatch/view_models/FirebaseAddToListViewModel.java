@@ -127,7 +127,7 @@ public class FirebaseAddToListViewModel extends ViewModel {
 
                     for (DocumentSnapshot documentSnapshot: containingListsDocuments) {
                         String listName = ((String) documentSnapshot.get(LIST_NAME_KEY));
-                        containingLists.add(parseUserListModel(listName));
+                        containingLists.add(UserListModel.parseUserListModel(listName));
 
                     }
 
@@ -158,29 +158,13 @@ public class FirebaseAddToListViewModel extends ViewModel {
                 final List<UserListModel> userLists = new ArrayList<>();
 
                 for (DocumentSnapshot document : snapshots.getDocuments()) {
-                    UserListModel userList = ((UserListModel) parseUserListModel(document));
+                    UserListModel userList = ((UserListModel) UserListModel.parseUserListModel(document));
                     userLists.add(userList);
                 }
 
                 allUserListsLiveData.setValue(userLists);
             }
         });
-    }
-
-    //TODO: list name and list count are never null when retrieved from the database
-    @SuppressWarnings("ConstantConditions")
-    private ListModel parseUserListModel(DocumentSnapshot document) {
-        String listName = document.getString(LIST_NAME_KEY);
-        int listCount = ((Long) document.get(ITEM_COUNT_KEY)).intValue();
-
-        UserListModel userListModel = new UserListModel(listName, listCount);
-        userListModel.setDocumentId(document.getId());
-
-        return userListModel;
-    }
-
-    private UserListModel parseUserListModel(String listName) {
-        return new UserListModel(listName);
     }
 
     public LiveData<Integer> getWatchStatus() {
