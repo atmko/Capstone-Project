@@ -56,7 +56,6 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
     public static final String MEDIA_DATA_KEY = "media_data";
 
     //save instance keys
-    private static final String OLD_WATCH_STATUS_KEY = "old_watch_status";
     private static final String NEW_CONTAINING_LIST_KEY = "new_containing_list";
     private static final String SELECTED_WATCH_STATUS_KEY = "selected_watch_status";
 
