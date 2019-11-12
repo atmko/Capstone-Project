@@ -66,8 +66,8 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
     private AppDatabase mDatabase;
     private AddToListAdapter mAdapter;
     private Integer mOldWatchStatus;
-    private Integer mNewWatchStatus;
     private int mSelectedWatchStatus;
+    private Integer mNewWatchStatus;// value is either null (after media is deleted) or (new media data's watch status i.e mSelectedWatchStatus)
     private ArrayList<UserListModel> mOriginalContainingLists;
     private ArrayList<UserListModel> mNewContainingLists;
 
