@@ -167,7 +167,7 @@ public class CreateListActivity extends AppCompatActivity {
 
                                     //can't update records directly because name is changing and table id == list name
                                     List<MovieDataRecord> movieRecords
-                                            = appDatabase.movieDataRecordsDao().getAllRecordsOfList(mListName);
+                                            = appDatabase.movieDataRecordsDao().getAllRecordsOfListAlt(mListName);
 
                                     for (MovieDataRecord dataRecord: movieRecords) {
                                         //create new updated record
@@ -180,7 +180,7 @@ public class CreateListActivity extends AppCompatActivity {
                                     }
 
                                     List<SeriesDataRecord> seriesRecord
-                                            = appDatabase.seriesDataRecordsDao().getAllRecordsOfList(mListName);
+                                            = appDatabase.seriesDataRecordsDao().getAllRecordsOfListAlt(mListName);
 
                                     for (SeriesDataRecord dataRecord: seriesRecord) {
                                         //create new updated record

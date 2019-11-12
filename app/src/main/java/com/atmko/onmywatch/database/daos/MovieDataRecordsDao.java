@@ -38,8 +38,9 @@ public interface MovieDataRecordsDao {
             +"WHERE movie_data_records.list_id = :listId AND movies.title LIKE :mediaTitle")
     LiveData<List<MovieData>> getMoviesWithNameLike(String listId, String mediaTitle);
 
+    //alternate method without live data
     @Query("SELECT * FROM movie_data_records WHERE list_id = :listId")
-    List<MovieDataRecord> getAllRecordsOfList(String listId);
+    List<MovieDataRecord> getAllRecordsOfListAlt(String listId);
 
     @Query("SELECT list_id FROM movie_data_records WHERE media_id = :movieId")
     LiveData<List<String>> getAllListNamesContainingMedia(String movieId);
