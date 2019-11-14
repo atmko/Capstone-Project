@@ -2,7 +2,7 @@
  * Copyright (C) 2019 Aayat Mimiko
  */
 
-package com.atmko.onmywatch.utils.network_utils;
+package com.atmko.onmywatch.utils.api_utils;
 
 import com.atmko.onmywatch.BuildConfig;
 

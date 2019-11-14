@@ -13,7 +13,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.Map;
 
 import static com.atmko.onmywatch.models.MediaData.WATCH_STATUS_KEY;
-import static com.atmko.onmywatch.utils.network_utils.ApiConstants.ID_KEY;
+import static com.atmko.onmywatch.utils.api_utils.ApiConstants.ID_KEY;
 
 /*
  * SeriesData firebase Dao

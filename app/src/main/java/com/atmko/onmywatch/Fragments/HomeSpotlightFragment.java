@@ -24,14 +24,13 @@ import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.HomeSpotlightAdapter;
 import com.atmko.onmywatch.models.MediaData;
-import com.atmko.onmywatch.utils.MovieDataParser;
-import com.atmko.onmywatch.utils.SearchPreferences;
-import com.atmko.onmywatch.utils.SeriesDataParser;
-import com.atmko.onmywatch.utils.network_utils.ApiConstants;
-import com.atmko.onmywatch.utils.network_utils.NetworkFunctions;
+import com.atmko.onmywatch.utils.api_utils.MovieDataParser;
+import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
+import com.atmko.onmywatch.utils.api_utils.SeriesDataParser;
+import com.atmko.onmywatch.utils.api_utils.ApiConstants;
+import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
 import com.google.android.material.snackbar.Snackbar;
 
-import org.json.JSONException;
 import org.parceler.Parcels;
 
 import java.util.List;

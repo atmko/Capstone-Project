@@ -13,8 +13,8 @@ import androidx.room.Ignore;
 import androidx.annotation.NonNull;
 
 import com.atmko.onmywatch.R;
-import com.atmko.onmywatch.utils.network_utils.ApiConstants;
-import com.atmko.onmywatch.utils.network_utils.MovieApiConstants;
+import com.atmko.onmywatch.utils.api_utils.ApiConstants;
+import com.atmko.onmywatch.utils.api_utils.MovieApiConstants;
 
 import org.parceler.Parcel;
 

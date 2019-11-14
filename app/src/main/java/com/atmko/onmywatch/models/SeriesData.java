@@ -11,8 +11,8 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 
 import com.atmko.onmywatch.R;
-import com.atmko.onmywatch.utils.network_utils.ApiConstants;
-import com.atmko.onmywatch.utils.network_utils.SeriesApiConstants;
+import com.atmko.onmywatch.utils.api_utils.ApiConstants;
+import com.atmko.onmywatch.utils.api_utils.SeriesApiConstants;
 
 import org.parceler.Parcel;
 

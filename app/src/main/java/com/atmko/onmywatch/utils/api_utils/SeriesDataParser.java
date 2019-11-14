@@ -2,7 +2,7 @@
  * Copyright (C) 2019 Aayat Mimiko
  */
 
-package com.atmko.onmywatch.utils;
+package com.atmko.onmywatch.utils.api_utils;
 
 import android.content.Context;
 
@@ -13,9 +13,6 @@ import com.atmko.stack.Stack;
 import com.google.gson.Gson;
 import com.atmko.onmywatch.models.CastData;
 import com.atmko.onmywatch.models.SeriesData;
-import com.atmko.onmywatch.utils.network_utils.ApiConstants;
-import com.atmko.onmywatch.utils.network_utils.PeopleApiConstants;
-import com.atmko.onmywatch.utils.network_utils.SeriesApiConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;

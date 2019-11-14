@@ -14,7 +14,7 @@ import android.widget.RemoteViewsService;
 
 import com.atmko.onmywatch.Fragments.DetailsFragment;
 import com.atmko.onmywatch.models.MediaData;
-import com.atmko.onmywatch.utils.network_utils.NetworkFunctions;
+import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
 import com.bumptech.glide.request.FutureTarget;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;

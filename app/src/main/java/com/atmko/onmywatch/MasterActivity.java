@@ -33,7 +33,7 @@ import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.utils.network_utils.work_manager_workers.FirebaseUpdateMediaWorker;
-import com.atmko.onmywatch.utils.SearchPreferences;
+import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
 import com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.ads.MobileAds;

@@ -26,17 +26,17 @@ public class GeneralUtils {
     }
 
     //check for int/double errors
-    static String checkAndConvertNumber(Object number) {
+    public static String checkAndConvertNumber(Object number) {
         return String.valueOf(number);
     }
 
     //Note not original code.
     //forgotten reference
-    static double convertTo2Sf(Double number) {
+    public static double convertTo2Sf(Double number) {
         return Math.round(number * 10) / 10.0;
     }
 
-    static String parseDateInfo(String dateString) {
+    public static String parseDateInfo(String dateString) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy");
 
         Date date = null;

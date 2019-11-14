@@ -2,16 +2,14 @@
  * Copyright (C) 2019 Aayat Mimiko
  */
 
-package com.atmko.onmywatch.utils;
+package com.atmko.onmywatch.utils.api_utils;
 
 import com.atmko.onmywatch.models.MediaData;
-import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 import com.atmko.stack.Stack;
 import com.google.gson.Gson;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.PersonData;
 import com.atmko.onmywatch.models.SeriesData;
-import com.atmko.onmywatch.utils.network_utils.PeopleApiConstants;
 
 import java.util.ArrayList;
 import java.util.List;

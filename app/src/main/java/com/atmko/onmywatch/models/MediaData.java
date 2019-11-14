@@ -12,7 +12,7 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import com.atmko.onmywatch.R;
-import com.atmko.onmywatch.utils.network_utils.ApiConstants;
+import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;

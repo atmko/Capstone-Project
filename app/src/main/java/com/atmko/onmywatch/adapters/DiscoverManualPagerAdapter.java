@@ -4,17 +4,14 @@
 
 package com.atmko.onmywatch.adapters;
 
-import android.os.Parcelable;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import com.atmko.onmywatch.Fragments.DiscoverParentFragment;
 import com.atmko.onmywatch.Fragments.DiscoverResultsFragment;
-import com.atmko.onmywatch.utils.SearchPreferences;
+import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
 
 /*
  * pager adapter for manual search results in DiscoveryFragment
