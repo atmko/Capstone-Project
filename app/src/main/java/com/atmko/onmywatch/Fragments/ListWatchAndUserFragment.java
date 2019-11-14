@@ -319,26 +319,20 @@ public class ListWatchAndUserFragment extends Fragment
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            try {
-                                Snackbar.make(getView().findViewById(R.id.top_layout),
+                            if (getActivity() != null) {
+                                Snackbar.make(getActivity().findViewById(R.id.top_layout),
                                         getString(R.string.list_deleted_message),
                                         Snackbar.LENGTH_LONG).show();
-
-                            } catch (NullPointerException e) {
-                                e.printStackTrace();
                             }
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception exception) {
-                            try {
-                                Snackbar.make(getView().findViewById(R.id.top_layout),
+                            if (getActivity() != null) {
+                                Snackbar.make(getActivity().findViewById(R.id.top_layout),
                                         getString(R.string.list_delete_error_message),
                                         Snackbar.LENGTH_LONG).show();
-
-                            } catch (NullPointerException e) {
-                                e.printStackTrace();
                             }
                         }
                     });
