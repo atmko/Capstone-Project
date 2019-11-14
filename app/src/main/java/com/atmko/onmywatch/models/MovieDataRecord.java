@@ -31,4 +31,15 @@ public class MovieDataRecord extends MediaRecord {
         this.mId = mId;
         this.mListName = mListName;
     }
+
+    @SuppressWarnings("ConstantConditions")
+    public static MediaRecord parseMediaRecord(DocumentSnapshot document) {
+        MediaRecord mediaRecord = new MovieDataRecord(
+                (String) document.get(ID_KEY),
+                (String) document.get(LIST_NAME_KEY)
+        );
+
+        mediaRecord.setDocumentId(document.getId());
+        return mediaRecord;
+    }
 }

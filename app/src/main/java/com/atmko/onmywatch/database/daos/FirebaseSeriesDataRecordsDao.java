@@ -5,6 +5,7 @@
 package com.atmko.onmywatch.database.daos;
 
 import com.atmko.onmywatch.MasterActivity;
+import com.atmko.onmywatch.models.MediaRecord;
 import com.atmko.onmywatch.models.UserListModel;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
@@ -28,9 +29,10 @@ public class FirebaseSeriesDataRecordsDao {
 
     private static final String SERIES_DATA_RECORDS_COLLECTION_PATH = "series_data_records";
 
-    public static Task<Void> addMediaListRecords(List<UserListModel> originalContainingLists,
-                                                 List<UserListModel> newContainingLists,
-                                                 String mediaId) {
+    public static Task<Void> addAndDeleteMediaListRecords(List<MediaRecord> mediaRecords,
+                                                          List<UserListModel> originalContainingLists,
+                                                          List<UserListModel> newContainingLists,
+                                                          String mediaId) {
         final WriteBatch batch = FirebaseFirestore.getInstance().batch();
 
         for (UserListModel userListModel : newContainingLists) {
@@ -50,23 +52,29 @@ public class FirebaseSeriesDataRecordsDao {
             }
         }
 
+        for (UserListModel userListModel : originalContainingLists) {
+            if (!newContainingLists.contains(userListModel)) {
+                int correspondingRecordIndex = originalContainingLists.indexOf(userListModel);
+                MediaRecord correspondingRecord = mediaRecords.get(correspondingRecordIndex);
+
+                //delete the media record
+                DocumentReference documentReference =
+                        MasterActivity.getUserDbHomeReference()
+                                .collection(SERIES_DATA_RECORDS_COLLECTION_PATH)
+                                .document(correspondingRecord.getDocumentId());
+
+                batch.delete(documentReference);
+            }
+        }
+
         return batch.commit();
     }
 
-    public static Task<QuerySnapshot> getMediaListRecord(String listName,
-                                                         String mediaId) {
-
+    public static Task<QuerySnapshot> getAllRecordsOfMedia(String mediaId) {
         return MasterActivity.getUserDbHomeReference()
                 .collection(SERIES_DATA_RECORDS_COLLECTION_PATH)
-                .whereEqualTo(LIST_NAME_KEY, listName)
                 .whereEqualTo(ID_KEY, mediaId)
                 .get();
-    }
-
-    public static Task<Void> deleteMediaListRecord(String documentId) {
-        return MasterActivity.getUserDbHomeReference().collection(SERIES_DATA_RECORDS_COLLECTION_PATH)
-                .document(documentId)
-                .delete();
     }
 
     public static Query getAllListsContainingMedia(String mediaId) {

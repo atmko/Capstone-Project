@@ -6,7 +6,6 @@
 
 package com.atmko.onmywatch;
 
-import android.app.Activity;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -16,50 +15,181 @@ import com.atmko.onmywatch.database.daos.FirebaseMovieDataRecordsDao;
 import com.atmko.onmywatch.database.daos.FirebaseSeriesDataDao;
 import com.atmko.onmywatch.database.daos.FirebaseSeriesDataRecordsDao;
 import com.atmko.onmywatch.models.MediaData;
+import com.atmko.onmywatch.models.MediaRecord;
 import com.atmko.onmywatch.models.MovieData;
+import com.atmko.onmywatch.models.MovieDataRecord;
 import com.atmko.onmywatch.models.SeriesData;
+import com.atmko.onmywatch.models.SeriesDataRecord;
 import com.atmko.onmywatch.models.UserListModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.HttpsCallableResult;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
 
-public class AddToListFirebaseHelper {
+class AddToListFirebaseHelper {
     private final static String TAG = AddToListFirebaseHelper.class.getSimpleName();
 
-    static void saveFirebaseData(Activity activity, MediaData mediaData, int mediaType,
-                                 int selectedWatchStatus, List<UserListModel> originalContainingLists,
-                                 List<UserListModel> newContainingLists) {
+    static void saveFirebaseData(final MediaData mediaData, final int mediaType,
+                                 final Integer oldWatchStatus, final int selectedWatchStatus,
+                                 final List<UserListModel> originalContainingLists,
+                                 final List<UserListModel> newContainingLists) {
 
-        Task<Void> updateListRecordsTask;
+        //get containingMediaRecords
+        Task<QuerySnapshot> containingMediaRecordsTask;
+
+        if (mediaType == MEDIA_TYPE_MOVIE) {
+            containingMediaRecordsTask =
+                    FirebaseMovieDataRecordsDao.getAllRecordsOfMedia(mediaData.getId());
+
+        } else {
+            containingMediaRecordsTask =
+                    FirebaseSeriesDataRecordsDao.getAllRecordsOfMedia(mediaData.getId());
+        }
+
+        containingMediaRecordsTask.addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                //TODO: make message when error occurs
+                if (task.getException() != null) return;
+
+                QuerySnapshot snapshots = task.getResult();
+
+                if (snapshots == null) return;
+
+                final List<MediaRecord> mediaRecords = new ArrayList<>();
+
+                for (DocumentSnapshot document : snapshots.getDocuments()) {
+                    MediaRecord mediaRecord;
+
+                    if (mediaType == MEDIA_TYPE_MOVIE) {
+                        mediaRecord = MovieDataRecord.parseMediaRecord(document);
+                        mediaRecords.add(mediaRecord);
+
+                    } else {
+                        mediaRecord = SeriesDataRecord.parseMediaRecord(document);
+                        mediaRecords.add(mediaRecord);
+                    }
+                }
+
+                startSave(mediaData,
+                        mediaType,
+                        oldWatchStatus,
+                        selectedWatchStatus,
+                        mediaRecords,
+                        originalContainingLists,
+                        newContainingLists);
+            }
+        });
+    }
+
+    //creates a set from the combination of two lists
+    private static Set<UserListModel> getMasterUserListModels(List<UserListModel> originalContainingLists,
+                                                              List<UserListModel> newContainingLists) {
+
+        List<UserListModel> masterUserLists = new ArrayList<>();
+        masterUserLists.addAll(originalContainingLists);
+        masterUserLists.addAll(newContainingLists);
+
+        return new HashSet<>(masterUserLists);
+    }
+
+    private static void startSave(final MediaData mediaData, final int mediaType,
+                                  final Integer oldWatchStatus, final int selectedWatchStatus,
+                                  List<MediaRecord> mediaRecords,
+                                  final List<UserListModel> originalContainingLists,
+                                  final List<UserListModel> newContainingLists) {
         Task<Void> addMediaRecordTask;
 
         if (mediaType == MEDIA_TYPE_MOVIE) {
             checkIfMovieDataExists(mediaData, selectedWatchStatus, newContainingLists);
 
-            addMediaRecordTask = FirebaseMovieDataRecordsDao.addMediaListRecords(
-                    originalContainingLists, newContainingLists, mediaData.getId());
+            addMediaRecordTask = FirebaseMovieDataRecordsDao.addAndDeleteMediaListRecords(
+                    mediaRecords, originalContainingLists, newContainingLists, mediaData.getId());
 
         } else {
             checkIfSeriesDataExists(mediaData, selectedWatchStatus, newContainingLists);
 
-            addMediaRecordTask = FirebaseSeriesDataRecordsDao.addMediaListRecords(
-                    originalContainingLists, newContainingLists, mediaData.getId());
+            addMediaRecordTask = FirebaseSeriesDataRecordsDao.addAndDeleteMediaListRecords(
+                    mediaRecords, originalContainingLists, newContainingLists, mediaData.getId());
         }
 
-        addUserListRecords(addMediaRecordTask);
-        deleteUserListRecords(activity, mediaType, mediaData.getId(),
-                originalContainingLists,newContainingLists);
+        updateWatchListCounts(
+                addMediaRecordTask, mediaData, mediaType, oldWatchStatus,
+                selectedWatchStatus, newContainingLists.size()
+        );
+        updateUserListCounts(originalContainingLists, newContainingLists);
+    }
+
+    private static void updateWatchListCounts(Task<Void> addMediaRecordTask, final MediaData mediaData,
+                                              final int mediaType, final Integer oldWatchStatus,
+                                              final int selectedWatchStatus, final int newContainingListSize) {
+        addMediaRecordTask.addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                List<Object> watchListCountArgs = new ArrayList<>();
+                watchListCountArgs.add(mediaData.getId());
+                watchListCountArgs.add(mediaType);
+                watchListCountArgs.add(oldWatchStatus);
+                watchListCountArgs.add(selectedWatchStatus);
+                watchListCountArgs.add(newContainingListSize);
+
+                FirebaseFunctions.getInstance().getHttpsCallable("updateWatchListCount")
+                        .call(watchListCountArgs)
+                        .addOnSuccessListener(new OnSuccessListener<HttpsCallableResult>() {
+                            @Override
+                            public void onSuccess(HttpsCallableResult httpsCallableResult) {
+
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, e.getMessage());
+
+                    }
+                });
+            }
+        });
+    }
+
+    private static void updateUserListCounts(List<UserListModel> originalContainingLists,
+                                             List<UserListModel> newContainingLists) {
+        Set<UserListModel> masterUserListModels =
+                getMasterUserListModels(originalContainingLists, newContainingLists);
+
+        for (UserListModel userListModel: masterUserListModels) {
+            List<Object> usrListCountArgs = new ArrayList<>();
+            usrListCountArgs.add(userListModel.getName());
+            usrListCountArgs.add(userListModel.getDocumentId());
+
+            FirebaseFunctions.getInstance().getHttpsCallable("updateUserListCount")
+                    .call(usrListCountArgs)
+                    .addOnSuccessListener(new OnSuccessListener<HttpsCallableResult>() {
+                        @Override
+                        public void onSuccess(HttpsCallableResult httpsCallableResult) {
+
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d(TAG, e.getMessage());
+
+                }
+            });
+        }
     }
 
     //checks if movie data exists, update if it does, create if it doesn't
@@ -226,94 +356,15 @@ public class AddToListFirebaseHelper {
                 });
     }
 
-    private static void addUserListRecords(Task<Void> updateListRecordsTask) {
-        updateListRecordsTask.addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.d(TAG, "batch updateUserListRecords successful");
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d(TAG, "batch updateUserListRecords failed");
-
-            }
-        });
-    }
-
-    private static void deleteUserListRecords(final Activity activity,
-                                              final int mediaType,
-                                              final String mediaId,
-                                              final List<UserListModel> originalContainingLists,
-                                              final List<UserListModel> newContainingLists) {
-
-        for (UserListModel userListModel : originalContainingLists) {
-            if (!newContainingLists.contains(userListModel)) {
-                Task<QuerySnapshot> getMediaRecordTask;
-
-                if (mediaType == MEDIA_TYPE_MOVIE) {
-                    getMediaRecordTask =
-                            FirebaseMovieDataRecordsDao.getMediaListRecord(userListModel.getName(), mediaId);
-
-                } else {
-                    getMediaRecordTask =
-                            FirebaseSeriesDataRecordsDao.getMediaListRecord(userListModel.getName(), mediaId);
-                }
-
-                getMediaRecordTask
-                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                            @Override
-                            public void onSuccess(QuerySnapshot snapshots) {
-                                DocumentReference documentReference =
-                                        snapshots.getDocuments().get(0).getReference();
-
-                                Task<Void> deleteMediaRecordTask;
-
-                                if (mediaType == MEDIA_TYPE_MOVIE) {
-                                    deleteMediaRecordTask =
-                                            FirebaseMovieDataRecordsDao
-                                                    .deleteMediaListRecord(documentReference.getId());
-
-                                } else {
-                                    deleteMediaRecordTask =
-                                            FirebaseSeriesDataRecordsDao
-                                                    .deleteMediaListRecord(documentReference.getId());
-                                }
-
-                                deleteMediaRecordTask
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                //notify user of error
-                                                Snackbar.make(activity.findViewById(R.id.top_layout),
-                                                        activity.getString(R.string.list_delete_record_error_message),
-                                                        Snackbar.LENGTH_LONG).show();
-                                            }
-                                        });
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                //notify user of error
-                                Snackbar.make(activity.findViewById(R.id.top_layout),
-                                        activity.getString(R.string.list_delete_record_error_message),
-                                        Snackbar.LENGTH_LONG).show();
-                            }
-                        });
-            }
-        }
-    }
-
     private static void firebaseDeleteMediaDataIfDataNotUsed(int mediaType, String documentId,
-                                                             int newWatchStatus,
+                                                             int selectedWatchStatus,
                                                              int newContainingListsSize) {
 
         //if watch status is none and if there are no lists containing this media
 
         Task<Void> deleteMediaTask;
 
-        if (newWatchStatus == MediaData.WATCH_STATUS_NONE
+        if (selectedWatchStatus == MediaData.WATCH_STATUS_NONE
                 && newContainingListsSize == 0) {
             //delete the media from the database
             Log.d(TAG, "deleting empty media data");

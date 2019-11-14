@@ -174,9 +174,9 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
             public void onClick(View v) {
                 if (MasterActivity.isProMode()) {
                     AddToListFirebaseHelper.saveFirebaseData(
-                            AddToListActivity.this,
                             mMediaData,
                             mMediaType,
+                            mOldWatchStatus,
                             mSelectedWatchStatus,
                             mOriginalContainingLists,
                             mNewContainingLists);
