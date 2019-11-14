@@ -22,7 +22,7 @@ public class ListsResultsViewModel extends ViewModel {
 
     private LiveData<List<MovieData>> allMoviesInWatchList, allMoviesInUserList;
     private LiveData<List<SeriesData>> allSeriesInWatchList, allSeriesInUserList;
-    
+
     ListsResultsViewModel(@NonNull AppDatabase database, int listType, int mediaType,
                           List<String> watchStatusTitleList, String listName) {
 
@@ -36,8 +36,8 @@ public class ListsResultsViewModel extends ViewModel {
 
         } else if (listType == ListsWatchAndUserParentFragment.LIST_TYPE_USER){
             Log.d(TAG, "fetching media in user list");
-                allMoviesInUserList = database.movieDataRecordsDao().getAllMoviesInList(listName);
-                allSeriesInUserList = database.seriesDataRecordsDao().getAllSeriesInList(listName);
+            allMoviesInUserList = database.movieDataRecordsDao().getAllMoviesInList(listName);
+            allSeriesInUserList = database.seriesDataRecordsDao().getAllSeriesInList(listName);
         }
     }
 

@@ -60,61 +60,62 @@ public class FirebaseListsResultsViewModel extends ViewModel {
     }
 
     private void fetchMoviesInUserList(String listName) {
-        FirebaseMovieDataRecordsDao.getAllMoviesInList(listName)
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
-                //TODO: make message when error occurs
-                if (e != null) return;
-                if (snapshots == null) return;
+        FirebaseMovieDataRecordsDao.getAllMoviesInList(listName).addSnapshotListener(
+                new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot snapshots,
+                                        @Nullable FirebaseFirestoreException e) {
+                        //TODO: make message when error occurs
+                        if (e != null) return;
+                        if (snapshots == null) return;
 
-                if (snapshots.getDocuments().size() != 0) {
-                    final List<MovieData> containingMediaData = new ArrayList<>();
+                        if (snapshots.getDocuments().size() != 0) {
+                            final List<MovieData> containingMediaData = new ArrayList<>();
 
-                    List<DocumentSnapshot> containingMediaDataDocuments = snapshots.getDocuments();
+                            List<DocumentSnapshot> containingMediaDataDocuments = snapshots.getDocuments();
 
-                    for (DocumentSnapshot documentSnapshot : containingMediaDataDocuments) {
-                        String mediaId = documentSnapshot.getString(ApiConstants.ID_KEY);
+                            for (DocumentSnapshot documentSnapshot : containingMediaDataDocuments) {
+                                String mediaId = documentSnapshot.getString(ApiConstants.ID_KEY);
 
-                        FirebaseMovieDataDao.getMovieById(mediaId).get()
-                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (!task.isSuccessful()) {
-                                    //TODO: make message when error occurs
-                                }
+                                FirebaseMovieDataDao.getMovieById(mediaId).get()
+                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                if (!task.isSuccessful()) {
+                                                    //TODO: make message when error occurs
+                                                }
 
-                                if (task.getResult() != null) {
-                                    List<DocumentSnapshot> documentSnapshots =
-                                            task.getResult().getDocuments();
+                                                if (task.getResult() != null) {
+                                                    List<DocumentSnapshot> documentSnapshots =
+                                                            task.getResult().getDocuments();
 
-                                    for (DocumentSnapshot documentSnapshot : documentSnapshots) {
-                                        //TODO: mediaDataMap null check already done by getting by id and checking getDocuments != 0
-                                        //noinspection ConstantConditions
-                                        MovieData movieData =
-                                                MovieData.parseDataMapToMediaData(documentSnapshot.getData());
-                                        containingMediaData.add(movieData);
+                                                    for (DocumentSnapshot documentSnapshot : documentSnapshots) {
+                                                        //TODO: mediaDataMap null check already done by getting by id and checking getDocuments != 0
+                                                        //noinspection ConstantConditions
+                                                        MovieData movieData =
+                                                                MovieData.parseDataMapToMediaData(documentSnapshot.getData());
+                                                        containingMediaData.add(movieData);
 
-                                    }
+                                                    }
 
-                                    //set containing lists
-                                    allMoviesInUserList.setValue(containingMediaData);
+                                                    //set containing lists
+                                                    allMoviesInUserList.setValue(containingMediaData);
 
-                                } else {
-                                    allMoviesInUserList.setValue(null);
+                                                } else {
+                                                    allMoviesInUserList.setValue(null);
 
-                                }
+                                                }
+                                            }
+                                        });
                             }
-                        });
+                        }
                     }
-                }
-            }
-        });
+                });
     }
 
     private void fetchSeriesInUserList(String listName) {
-        FirebaseSeriesDataRecordsDao.getAllSeriesInList(listName)
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+        FirebaseSeriesDataRecordsDao.getAllSeriesInList(listName).addSnapshotListener(
+                new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
                         //TODO: make message when error occurs
@@ -131,34 +132,34 @@ public class FirebaseListsResultsViewModel extends ViewModel {
 
                                 FirebaseSeriesDataDao.getSeriesById(mediaId).get()
                                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                        if (!task.isSuccessful()) {
-                                            //TODO: make message when error occurs
-                                        }
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                if (!task.isSuccessful()) {
+                                                    //TODO: make message when error occurs
+                                                }
 
-                                        if (task.getResult() != null) {
-                                            List<DocumentSnapshot> documentSnapshots =
-                                                    task.getResult().getDocuments();
+                                                if (task.getResult() != null) {
+                                                    List<DocumentSnapshot> documentSnapshots =
+                                                            task.getResult().getDocuments();
 
-                                            for (DocumentSnapshot documentSnapshot : documentSnapshots) {
-                                                //TODO: mediaDataMap null check already done by getting by id and checking getDocuments != 0
-                                                //noinspection ConstantConditions
-                                                SeriesData seriesData =
-                                                        SeriesData.parseDataMapToMediaData(documentSnapshot.getData());
-                                                containingMediaData.add(seriesData);
+                                                    for (DocumentSnapshot documentSnapshot : documentSnapshots) {
+                                                        //TODO: mediaDataMap null check already done by getting by id and checking getDocuments != 0
+                                                        //noinspection ConstantConditions
+                                                        SeriesData seriesData =
+                                                                SeriesData.parseDataMapToMediaData(documentSnapshot.getData());
+                                                        containingMediaData.add(seriesData);
 
+                                                    }
+
+                                                    //set containing lists
+                                                    allSeriesInUserList.setValue(containingMediaData);
+
+                                                } else {
+                                                    allSeriesInUserList.setValue(null);
+
+                                                }
                                             }
-
-                                            //set containing lists
-                                            allSeriesInUserList.setValue(containingMediaData);
-
-                                        } else {
-                                            allSeriesInUserList.setValue(null);
-
-                                        }
-                                    }
-                                });
+                                        });
                             }
                         } else {
                             allSeriesInUserList.setValue(containingMediaData);
