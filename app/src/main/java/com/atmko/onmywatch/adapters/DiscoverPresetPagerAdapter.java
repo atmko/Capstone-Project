@@ -33,7 +33,7 @@ public class DiscoverPresetPagerAdapter extends FragmentStatePagerAdapter {
         mMediaType = mediaType;
         mSearchPreferences = searchPreferences;
     }
-    
+
     @NonNull
     @Override
     public Fragment getItem(int position) {

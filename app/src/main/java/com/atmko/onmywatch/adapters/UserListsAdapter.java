@@ -47,7 +47,7 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.User
     }
 
     public class UserListsAdapterViewHolder extends RecyclerView.ViewHolder
-             implements View.OnClickListener{
+            implements View.OnClickListener{
 
         final TextView listNameTextView;
         final TextView itemCountTextView;
