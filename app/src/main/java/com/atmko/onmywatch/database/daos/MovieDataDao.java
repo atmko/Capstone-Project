@@ -35,9 +35,6 @@ public interface MovieDataDao {
     @Query("SELECT watch_status FROM movies WHERE id = :movieId")
     LiveData<Integer> getMoviesWatchStatus(String movieId);
 
-    @Query("SELECT COUNT(*) FROM movies WHERE watch_status = :watchStatus")
-    LiveData<Integer> getWatchStatusCount(int watchStatus);
-
     @Query("SELECT * FROM movies WHERE watch_status = :watchStatus")
     LiveData<List<MovieData>> getMoviesByWatchStatus(int watchStatus);
 

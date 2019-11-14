@@ -44,7 +44,7 @@ public interface SeriesDataDao {
 
     @Query("SELECT * FROM series WHERE watch_status = :watchStatus AND title LIKE :mediaTitle")
     LiveData<List<SeriesData>> getSeriesByWatchStatusLike(int watchStatus, String mediaTitle);
-    
+
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateSeriesData(SeriesData seriesData);
 

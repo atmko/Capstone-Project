@@ -22,9 +22,6 @@ public interface MovieDataRecordsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void addRecord(MovieDataRecord movieDataRecord);
 
-    @Query("SELECT * FROM movie_data_records")
-    LiveData<List<MovieDataRecord>> getAllRecords();
-
     @Query("SELECT * FROM movies INNER JOIN movie_data_records ON movies.id = movie_data_records.media_id "
             +"WHERE movie_data_records.list_id = :listId")
     LiveData<List<MovieData>> getAllMoviesInList(String listId);
@@ -53,9 +50,6 @@ public interface MovieDataRecordsDao {
     @Query("SELECT * FROM user_lists INNER JOIN movie_data_records ON user_lists.id = movie_data_records.list_id "
             +"WHERE media_id = :movieId")
     List<UserListModel> getAllListsContainingMediaAlt(String movieId);
-
-    @Query("SELECT COUNT(*) FROM movie_data_records WHERE list_id = :listId")
-    LiveData<Integer> getListMemberCount(String listId);
 
     @Delete
     void deleteRecord(MovieDataRecord movieDataRecord);
