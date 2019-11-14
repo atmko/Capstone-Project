@@ -10,13 +10,6 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Ignore;
 
-import com.atmko.onmywatch.utils.network_utils.ApiConstants;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 @Entity(primaryKeys = {"media_id", "list_id"},
         foreignKeys =
                 {@ForeignKey(entity = MovieData.class, parentColumns = "id", childColumns = "media_id"),
