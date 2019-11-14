@@ -168,36 +168,36 @@ public class DiscoverResultsFragment extends Fragment implements
     private void defineViews() {
         Stack.PagingBlockTemplate pagingBlockTemplate =
                 new Stack.PagingBlockTemplate(new Stack.PagingBlockTemplate.OnCreatePageLoader() {
-            @Override
-            public void onPageEndReached(final int blockNumber, final int targetPage) {
-                if (targetPage == mStack.getFirstPage()) {
-                    mSearchPreferences.setTargetPage(targetPage);
-                    executeSearch(blockNumber, targetPage, Stack.GO_DOWN_ONE_BLOCK);
-
-                } else {
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
+                    @Override
+                    public void onPageEndReached(final int blockNumber, final int targetPage) {
+                        if (targetPage == mStack.getFirstPage()) {
                             mSearchPreferences.setTargetPage(targetPage);
                             executeSearch(blockNumber, targetPage, Stack.GO_DOWN_ONE_BLOCK);
-                        }
-                    }, REQUEST_COOL_DOWN);
-                }
-            }
 
-            @Override
-            public void onPageStartReached(final int blockNumber, final int targetPage) {
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mSearchPreferences.setTargetPage(targetPage);
-                        executeSearch(blockNumber, targetPage, Stack.GO_UP_ONE_BLOCK);
+                        } else {
+                            Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mSearchPreferences.setTargetPage(targetPage);
+                                    executeSearch(blockNumber, targetPage, Stack.GO_DOWN_ONE_BLOCK);
+                                }
+                            }, REQUEST_COOL_DOWN);
+                        }
                     }
-                }, REQUEST_COOL_DOWN);
-            }
-        }, ApiConstants.RESULTS_PER_PAGE, getResources().getInteger(R.integer.stack_pages_per_block));
+
+                    @Override
+                    public void onPageStartReached(final int blockNumber, final int targetPage) {
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mSearchPreferences.setTargetPage(targetPage);
+                                executeSearch(blockNumber, targetPage, Stack.GO_UP_ONE_BLOCK);
+                            }
+                        }, REQUEST_COOL_DOWN);
+                    }
+                }, ApiConstants.RESULTS_PER_PAGE, getResources().getInteger(R.integer.stack_pages_per_block));
 
         RecyclerView recyclerView = getView().findViewById(R.id.discover_results_recycler_view);
         recyclerView.setLayoutManager(configureLayoutManager());

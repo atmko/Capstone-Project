@@ -66,7 +66,7 @@ public abstract class AppDatabase extends RoomDatabase {
                     @Override
                     public void run() {
                         String[] seriesWatchListTitles = context.getResources()
-                                        .getStringArray(R.array.watch_status_series_titles);
+                                .getStringArray(R.array.watch_status_series_titles);
                         for (String title: seriesWatchListTitles) {
                             WatchListModel watchListModel = new WatchListModel(title);
                             AppDatabase.getInstance(context).watchListsDao()

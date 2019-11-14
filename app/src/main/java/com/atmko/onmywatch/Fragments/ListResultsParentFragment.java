@@ -206,8 +206,8 @@ public class ListResultsParentFragment extends Fragment
 
         FragmentStatePagerAdapter resultsAdapter =
                 new ListResultsUserPagerAdapter(getChildFragmentManager(),
-                FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, getContext(),
-                mListType, mListName);
+                        FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, getContext(),
+                        mListType, mListName);
 
         mListsViewPager.setAdapter(resultsAdapter);
 
