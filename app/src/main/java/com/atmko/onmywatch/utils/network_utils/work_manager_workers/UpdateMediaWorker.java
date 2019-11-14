@@ -2,7 +2,7 @@
  * Copyright (C) 2019 Aayat Mimiko
  */
 
-package com.atmko.onmywatch.utils;
+package com.atmko.onmywatch.utils.network_utils.work_manager_workers;
 
 import android.content.Context;
 import android.os.Handler;
@@ -21,6 +21,9 @@ import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.SeriesData;
+import com.atmko.onmywatch.utils.MovieDataParser;
+import com.atmko.onmywatch.utils.SearchPreferences;
+import com.atmko.onmywatch.utils.SeriesDataParser;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.utils.network_utils.NetworkFunctions;

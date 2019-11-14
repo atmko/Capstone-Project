@@ -41,7 +41,7 @@ import com.androidnetworking.interfaces.StringRequestListener;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.RateActivity;
 import com.atmko.onmywatch.database.AppDatabase;
-import com.atmko.onmywatch.utils.UpdateMediaWorker;
+import com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 import com.atmko.onmywatch.view_models.DetailsViewModel;
 import com.atmko.onmywatch.view_models.DetailsViewModelFactory;

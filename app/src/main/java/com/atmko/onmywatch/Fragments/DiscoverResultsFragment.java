@@ -23,7 +23,6 @@ import com.androidnetworking.common.ANRequest;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.atmko.onmywatch.MasterActivity;
-import com.atmko.onmywatch.adapters.CastDataAdapter;
 import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.SeriesData;
@@ -41,7 +40,6 @@ import com.atmko.onmywatch.utils.SeriesDataParser;
 import com.atmko.onmywatch.utils.network_utils.NetworkFunctions;
 import com.google.android.material.snackbar.Snackbar;
 
-import org.json.JSONException;
 import org.parceler.Parcels;
 
 import java.util.Arrays;
@@ -51,7 +49,7 @@ import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_PEOPLE;
 import static com.atmko.onmywatch.utils.GeneralUtils.MILLISECOND_CONVERSION;
-import static com.atmko.onmywatch.utils.UpdateMediaWorker.REQUEST_COOL_DOWN;
+import static com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker.REQUEST_COOL_DOWN;
 
 public class DiscoverResultsFragment extends Fragment implements
         MediaDataAdapter.OnListItemClickListener,
