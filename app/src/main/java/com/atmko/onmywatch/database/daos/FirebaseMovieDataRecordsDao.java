@@ -29,6 +29,26 @@ public class FirebaseMovieDataRecordsDao {
 
     private static final String MOVIE_DATA_RECORDS_COLLECTION_PATH = "movie_data_records";
 
+    public static Task<Void> addMovieDataRecordBatch(List<Map<String, Object>> watchListMaps) {
+        final WriteBatch batch = FirebaseFirestore.getInstance().batch();
+
+        for (Map<String, Object> watchListMap: watchListMaps) {
+            DocumentReference documentReference = MasterActivity.getUserDbHomeReference()
+                    .collection(MOVIE_DATA_RECORDS_COLLECTION_PATH)
+                    .document();
+
+            batch.set(documentReference, watchListMap);
+        }
+
+        return batch.commit();
+    }
+
+    public static Task<QuerySnapshot> getAllMovieDataRecords() {
+        return MasterActivity.getUserDbHomeReference()
+                .collection(MOVIE_DATA_RECORDS_COLLECTION_PATH)
+                .get();
+    }
+
     public static Task<Void> addAndDeleteMediaListRecords(List<MediaRecord> mediaRecords,
                                                           List<UserListModel> originalContainingLists,
                                                           List<UserListModel> newContainingLists,

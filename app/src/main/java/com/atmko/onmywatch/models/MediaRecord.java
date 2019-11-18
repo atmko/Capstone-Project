@@ -5,6 +5,7 @@
 package com.atmko.onmywatch.models;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
@@ -48,5 +49,18 @@ abstract public class MediaRecord {
 
     public void setDocumentId(String documentId) {
         this.documentId = documentId;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj instanceof MediaRecord) {
+            boolean listNameMatches = ((MediaRecord) obj).getListName().equals(this.mListName);
+            boolean mediaIdMatches = ((MediaRecord) obj).getId().equals(this.mId);
+            return listNameMatches && mediaIdMatches;
+
+        } else {
+            return super.equals(obj);
+
+        }
     }
 }

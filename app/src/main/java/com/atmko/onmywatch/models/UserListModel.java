@@ -15,6 +15,7 @@ import org.parceler.Parcel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Parcel
 @Entity(tableName = "user_lists")
@@ -46,9 +47,13 @@ public class UserListModel extends ListModel {
         return newContainingListNames;
     }
 
+    public Map<String, Object> parseListModelToDataMap() {
+        return getFirebaseListModelMap(this);
+    }
+
     //TODO: list name and list count are never null when retrieved from the database
     @SuppressWarnings("ConstantConditions")
-    public static ListModel parseUserListModel(DocumentSnapshot document) {
+    public static UserListModel parseUserListModel(DocumentSnapshot document) {
         String listName = document.getString(LIST_NAME_KEY);
         int listCount = ((Long) document.get(ITEM_COUNT_KEY)).intValue();
 
@@ -60,16 +65,5 @@ public class UserListModel extends ListModel {
 
     public static UserListModel parseUserListModel(String listName) {
         return new UserListModel(listName);
-    }
-
-    @Override
-    public boolean equals(@Nullable Object obj) {
-        if (obj instanceof UserListModel) {
-            return ((UserListModel) obj).getName().equals(this.mName);
-
-        } else {
-            return super.equals(obj);
-
-        }
     }
 }

@@ -7,9 +7,12 @@ package com.atmko.onmywatch.database.daos;
 import com.atmko.onmywatch.MasterActivity;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 
+import java.util.List;
 import java.util.Map;
 
 import static com.atmko.onmywatch.models.MediaData.WATCH_STATUS_KEY;
@@ -27,6 +30,20 @@ public class FirebaseMovieDataDao {
         return MasterActivity.getUserDbHomeReference()
                 .collection(MOVIES_COLLECTION_PATH)
                 .add(movieDataMap);
+    }
+
+    public static Task<Void> addMovieDataBatch(List<Map<String, Object>> movieDataMapList) {
+        final WriteBatch batch = FirebaseFirestore.getInstance().batch();
+
+        for (Map<String, Object> movieDataMap: movieDataMapList) {
+            DocumentReference documentReference = MasterActivity.getUserDbHomeReference()
+                    .collection(MOVIES_COLLECTION_PATH)
+                    .document();
+
+            batch.set(documentReference, movieDataMap);
+        }
+
+        return batch.commit();
     }
 
     public static Task<QuerySnapshot> getAllMovies() {
@@ -52,6 +69,21 @@ public class FirebaseMovieDataDao {
                 .collection(MOVIES_COLLECTION_PATH)
                 .document(documentId)
                 .update(movieDataMap);
+    }
+
+    public static Task<Void> updateMovieDataBatch(List<String> batchDocumentIds, List<Map<String,
+            Object>> movieDataMapList) {
+        final WriteBatch batch = FirebaseFirestore.getInstance().batch();
+
+        for (int i = 0; i < batchDocumentIds.size(); i++) {
+            DocumentReference documentReference = MasterActivity.getUserDbHomeReference()
+                    .collection(MOVIES_COLLECTION_PATH)
+                    .document(batchDocumentIds.get(i));
+
+            batch.update(documentReference, movieDataMapList.get(i));
+        }
+
+        return batch.commit();
     }
 
     public static Task<Void> deleteMovieData(String documentId) {

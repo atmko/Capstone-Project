@@ -10,6 +10,9 @@ import androidx.room.ForeignKey;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static com.atmko.onmywatch.models.ListModel.LIST_NAME_KEY;
 import static com.atmko.onmywatch.utils.api_utils.ApiConstants.ID_KEY;
 
@@ -28,13 +31,21 @@ public class SeriesDataRecord extends MediaRecord {
     }
 
     @SuppressWarnings("ConstantConditions")
-    public static MediaRecord parseMediaRecord(DocumentSnapshot document) {
-        MediaRecord mediaRecord = new SeriesDataRecord(
+    public static SeriesDataRecord parseMediaRecord(DocumentSnapshot document) {
+        SeriesDataRecord mediaRecord = new SeriesDataRecord(
                 (String) document.get(ID_KEY),
                 (String) document.get(LIST_NAME_KEY)
         );
 
         mediaRecord.setDocumentId(document.getId());
         return mediaRecord;
+    }
+
+    public Map<String, Object> parseListModelToDataMap() {
+        Map<String, Object> seriesDataRecordMap = new HashMap<>();
+        seriesDataRecordMap.put(LIST_NAME_KEY, getListName());
+        seriesDataRecordMap.put(ID_KEY, getId());
+
+        return seriesDataRecordMap;
     }
 }

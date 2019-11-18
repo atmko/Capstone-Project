@@ -22,16 +22,20 @@ public interface SeriesDataRecordsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void addRecord(SeriesDataRecord seriesDataRecord);
 
-    @Query("SELECT * FROM series INNER JOIN series_data_records ON series.id = series_data_records.media_id "
+    //alternate method without live data
+    @Query("SELECT * FROM series_data_records")
+    List<SeriesDataRecord> getAllRecordsAlt();
+
+    @Query("SELECT * FROM series INNER JOIN series_data_records ON series.id = media_id "
             +"WHERE series_data_records.list_id = :listId")
     LiveData<List<SeriesData>> getAllSeriesInList(String listId);
 
     //alternate method without live data
-    @Query("SELECT * FROM series INNER JOIN series_data_records ON series.id = series_data_records.media_id "
+    @Query("SELECT * FROM series INNER JOIN series_data_records ON series.id = media_id "
             +"WHERE series_data_records.list_id = :listId")
     List<SeriesData> getAllSeriesInListAlt(String listId);
 
-    @Query("SELECT * FROM series INNER JOIN series_data_records ON series.id = series_data_records.media_id "
+    @Query("SELECT * FROM series INNER JOIN series_data_records ON series.id = media_id "
             +"WHERE series_data_records.list_id = :listId AND series.title LIKE :mediaTitle")
     LiveData<List<SeriesData>> getSeriesWithNameLike(String listId, String mediaTitle);
 

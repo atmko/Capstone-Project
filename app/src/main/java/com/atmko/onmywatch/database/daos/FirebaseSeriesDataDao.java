@@ -7,9 +7,12 @@ package com.atmko.onmywatch.database.daos;
 import com.atmko.onmywatch.MasterActivity;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 
+import java.util.List;
 import java.util.Map;
 
 import static com.atmko.onmywatch.models.MediaData.WATCH_STATUS_KEY;
@@ -27,6 +30,20 @@ public class FirebaseSeriesDataDao {
         return MasterActivity.getUserDbHomeReference()
                 .collection(SERIES_COLLECTION_PATH)
                 .add(seriesDataMap);
+    }
+
+    public static Task<Void> addSeriesDataBatch(List<Map<String, Object>> seriesDataMapList) {
+        final WriteBatch batch = FirebaseFirestore.getInstance().batch();
+
+        for (Map<String, Object> seriesDataMap: seriesDataMapList) {
+            DocumentReference documentReference = MasterActivity.getUserDbHomeReference()
+                    .collection(SERIES_COLLECTION_PATH)
+                    .document();
+
+            batch.set(documentReference, seriesDataMap);
+        }
+
+        return batch.commit();
     }
 
     public static Task<QuerySnapshot> getAllSeries() {
@@ -52,6 +69,21 @@ public class FirebaseSeriesDataDao {
                 .collection(SERIES_COLLECTION_PATH)
                 .document(documentId)
                 .update(seriesDataMap);
+    }
+
+    public static Task<Void> updateSeriesDataBatch(List<String> batchDocumentIds, List<Map<String,
+            Object>> seriesDataMapList) {
+        final WriteBatch batch = FirebaseFirestore.getInstance().batch();
+
+        for (int i = 0; i < batchDocumentIds.size(); i++) {
+            DocumentReference documentReference = MasterActivity.getUserDbHomeReference()
+                    .collection(SERIES_COLLECTION_PATH)
+                    .document(batchDocumentIds.get(i));
+
+            batch.update(documentReference, seriesDataMapList.get(i));
+        }
+
+        return batch.commit();
     }
 
     public static Task<Void> deleteSeriesData(String documentId) {

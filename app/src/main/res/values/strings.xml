@@ -6,6 +6,7 @@
 
     <!--options menu titles-->
     <string name="options_settings_title">Settings</string>
+    <string name="go_premium_title">Go Premium</string>
     <!--options menu titles-->
 
     <!--settings titles-->
@@ -132,6 +133,16 @@
     <!--PLACEHOLDER TEXT-->
 
     <!--NOTIFICATION TEXT-->
+    <!--foreground service descriptions-->
+    <string name="pro_migration_service_description">moving locally stored data to the cloud</string>
+    <string name="free_migration_service_description">moving cloud stored data to your device</string>
+
+    <string name="notification_migration_title">Migrating</string>
+    <string name="notification_pro_migration_content">Migrating to pro mode</string>
+    <string name="notification_free_migration_content">Migrating to free mode</string>
+    <string name="notification_channel_migration">Migration</string>
+    <string name="notification_channel_migration_description">Notifications for videos</string>
+
     <string name="notification_new_release_title">New Release</string>
     <string name="notification_new_release_content_suffix"> has been released</string>
     <string name="notification_channel_releases">Releases</string>

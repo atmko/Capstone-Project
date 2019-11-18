@@ -33,8 +33,10 @@ import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.utils.network_utils.work_manager_workers.FirebaseUpdateMediaWorker;
+import com.atmko.onmywatch.utils.network_utils.ProModeMigrationService;
 import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
 import com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker;
+import com.atmko.onmywatch.utils.network_utils.UserTierWatcher;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -82,6 +84,8 @@ public class MasterActivity extends AppCompatActivity {
 
         initializeAdMob();
 
+        startNotificationChannels();
+
         //set / restore values
         setValues(savedInstanceState);
 
@@ -100,6 +104,8 @@ public class MasterActivity extends AppCompatActivity {
 
                     //otherwise just load the UI
                 } else {
+                    //watch user_tier value
+                    UserTierWatcher.watch(getApplicationContext());
                     loadUi();
                 }
                 //otherwise load ui
@@ -160,6 +166,8 @@ public class MasterActivity extends AppCompatActivity {
 
         //if returning from firebase sign in activity, load the UI
         if (requestCode == SIGN_IN_REQUEST_CODE) {
+            //watch user_tier value
+            UserTierWatcher.watch(getApplicationContext());
             loadUi();
 
         }
@@ -247,6 +255,10 @@ public class MasterActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.master_fragments_container, homeFragment, HomeFragment.FRAGMENT_KEY)
                 .commit();
+    }
+
+    private void startNotificationChannels() {
+        ProModeMigrationService.createMigrationNotificationChannel(getApplicationContext());
     }
 
     private void startWorkers() {

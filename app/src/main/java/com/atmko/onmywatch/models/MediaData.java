@@ -7,6 +7,7 @@ package com.atmko.onmywatch.models;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -201,5 +202,16 @@ abstract public class MediaData {
         mediaDataMap.put("user_rating", mediaData.getUserRating());
 
         return mediaDataMap;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj instanceof MediaData) {
+            return ((MediaData) obj).getId().equals(this.mId);
+
+        } else {
+            return super.equals(obj);
+
+        }
     }
 }

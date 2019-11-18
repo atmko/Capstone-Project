@@ -22,16 +22,20 @@ public interface MovieDataRecordsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void addRecord(MovieDataRecord movieDataRecord);
 
-    @Query("SELECT * FROM movies INNER JOIN movie_data_records ON movies.id = movie_data_records.media_id "
+    //alternate method without live data
+    @Query("SELECT * FROM movie_data_records")
+    List<MovieDataRecord> getAllRecordsAlt();
+
+    @Query("SELECT * FROM movies INNER JOIN movie_data_records ON movies.id = media_id "
             +"WHERE movie_data_records.list_id = :listId")
     LiveData<List<MovieData>> getAllMoviesInList(String listId);
 
     //alternate method without live data
-    @Query("SELECT * FROM movies INNER JOIN movie_data_records ON movies.id = movie_data_records.media_id "
+    @Query("SELECT * FROM movies INNER JOIN movie_data_records ON movies.id = media_id "
             +"WHERE movie_data_records.list_id = :listId")
     List<MovieData> getAllMoviesInListAlt(String listId);
 
-    @Query("SELECT * FROM movies INNER JOIN movie_data_records ON movies.id = movie_data_records.media_id "
+    @Query("SELECT * FROM movies INNER JOIN movie_data_records ON movies.id = media_id "
             +"WHERE movie_data_records.list_id = :listId AND movies.title LIKE :mediaTitle")
     LiveData<List<MovieData>> getMoviesWithNameLike(String listId, String mediaTitle);
 

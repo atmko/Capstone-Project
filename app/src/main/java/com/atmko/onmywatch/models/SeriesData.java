@@ -70,8 +70,9 @@ public class SeriesData extends MediaData{
     }
 
     public SeriesData(@NonNull String id, String voteAverage, String title, String posterPath,
-                      String originalLanguage, String originalTitle, ArrayList<String> genres,
-                      String backdropPath, String overview, String releaseDate, String releaseStatus) {
+                      String originalLanguage, String originalTitle, ArrayList<String> countryOfOrigin,
+                      ArrayList<String> genres, String backdropPath, String overview,
+                      String releaseDate, String releaseStatus) {
 
         this.mId = id;
         this.mVoteAverage = voteAverage;
@@ -79,6 +80,7 @@ public class SeriesData extends MediaData{
         this.mPosterPath = posterPath;
         this.mOriginalLanguage = originalLanguage;
         this.mOriginalTitle = originalTitle;
+        this.mCountryOfOrigin = countryOfOrigin;
         this.mGenres = genres;
         this.mBackdropPath = backdropPath;
         this.mOverview = overview;
@@ -127,6 +129,7 @@ public class SeriesData extends MediaData{
                 (String) firebaseDataMap.get(ApiConstants.POSTER_PATH_KEY),
                 (String) firebaseDataMap.get(ApiConstants.ORIG_LANG_KEY),
                 (String) firebaseDataMap.get(SeriesApiConstants.ORIG_NAME_KEY),
+                (ArrayList<String>) firebaseDataMap.get(SeriesApiConstants.ORIGIN_COUNTRY_KEY),
                 (ArrayList<String>) firebaseDataMap.get(ApiConstants.GENRES_KEY),
                 (String) firebaseDataMap.get(ApiConstants.BACKDROP_PATH_KEY),
                 (String) firebaseDataMap.get(ApiConstants.OVERVIEW_KEY),
