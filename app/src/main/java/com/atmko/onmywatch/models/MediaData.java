@@ -19,6 +19,7 @@ import java.util.Map;
 //TODO: access is weaker to accommodate parceler library
 @SuppressWarnings("WeakerAccess")
 abstract public class MediaData {
+    public static final String MEDIA_TYPE_KEY = "media_type";
     public static final int WATCH_STATUS_NONE = 0;
     public static final int WATCH_STATUS_TO_WATCH = 1;
     public static final int WATCH_STATUS_WATCHING = 2;

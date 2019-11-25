@@ -89,9 +89,6 @@
         <string name="detail_share_text_title">Share</string>
         <string name="detail_rate_text_title">Rate</string>
 
-        <string name="detail_text_replacement_running_series">Running</string>
-        <string name="detail_text_replacement_in_production">Production</string>
-
         <string name="detail_extra_cast_text_literal">Cast</string>
         <string name="detail_extra_seasons_text_literal">Seasons</string>
         <string name="detail_extra_reviews_text_literal">Reviews</string>
@@ -126,6 +123,7 @@
 
     <!--PLACEHOLDER TEXT-->
     <string name="maturity_rating_placeholder">PG-13</string>
+    <string name="release_date_placeholder">TBD</string>
     <!--PLACEHOLDER TEXT-->
 
     <!--NOTIFICATION TEXT-->

@@ -182,6 +182,19 @@
             app:layout_constraintTop_toBottomOf="@id/date_text_view" />
 
         <ImageButton
+            android:id="@+id/notify_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/x2_layout_margin"
+            android:foreground="@drawable/ripple_pressed"
+            android:background="@null"
+            android:src="@drawable/ic_notify_white"
+            app:layout_constraintEnd_toEndOf="@+id/notify_text_view"
+            app:layout_constraintStart_toStartOf="@+id/notify_text_view"
+            app:layout_constraintTop_toBottomOf="@id/watch_status_shorthand_text"
+            android:contentDescription="@string/content_description_notify_button"/>
+
+        <ImageButton
             android:id="@+id/share_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -210,16 +223,29 @@
         <!--______________________________________________-->
 
         <TextView
-            android:id="@+id/share_text_view"
+            android:id="@+id/notify_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/x2_layout_margin"
             android:layout_marginLeft="@dimen/x2_layout_margin"
             android:layout_marginTop="@dimen/x2_layout_margin"
-            android:text="@string/detail_share_text_title"
+            android:text="@string/detail_notify_text_title"
             android:textColor="@color/color_subtext"
             android:textSize="@dimen/caption_12_text_size"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/notify_button" />
+
+        <TextView
+            android:id="@+id/share_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/x4_layout_margin"
+            android:layout_marginLeft="@dimen/x4_layout_margin"
+            android:layout_marginTop="@dimen/x2_layout_margin"
+            android:text="@string/detail_share_text_title"
+            android:textColor="@color/color_subtext"
+            android:textSize="@dimen/caption_12_text_size"
+            app:layout_constraintStart_toEndOf="@id/notify_text_view"
             app:layout_constraintTop_toBottomOf="@id/share_button" />
 
         <TextView

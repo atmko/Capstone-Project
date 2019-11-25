@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Map;
 
 import static com.atmko.onmywatch.utils.GeneralUtils.checkAndConvertNumber;
+import static com.atmko.onmywatch.utils.GeneralUtils.checkAndConvertInteger;
 import static com.atmko.onmywatch.utils.GeneralUtils.convertTo2Sf;
-import static com.atmko.onmywatch.utils.GeneralUtils.parseDateInfo;
 
 public class MovieDataParser {
     @SuppressWarnings({"ConstantConditions", "unchecked"})
@@ -67,7 +67,7 @@ public class MovieDataParser {
     static MovieData parseMovieMap(Map movieDataMap) {
         return new MovieData(
                 //get by keys
-                checkAndConvertNumber(movieDataMap.get(ApiConstants.ID_KEY)),
+                checkAndConvertInteger(movieDataMap.get(ApiConstants.ID_KEY)),
 
                 checkAndConvertNumber(movieDataMap.get(ApiConstants.VOTE_COUNT_KEY)),
 
@@ -94,7 +94,7 @@ public class MovieDataParser {
 
                 (String) movieDataMap.get(ApiConstants.OVERVIEW_KEY),
 
-                parseDateInfo((String) movieDataMap.get(MovieApiConstants.RELEASE_DATE_KEY))
+                (String) movieDataMap.get(MovieApiConstants.RELEASE_DATE_KEY)
         );
     }
 

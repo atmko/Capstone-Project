@@ -4,8 +4,10 @@
 
 package com.atmko.onmywatch;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
@@ -24,27 +26,47 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.androidnetworking.common.ANRequest;
+import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.StringRequestListener;
 import com.atmko.onmywatch.adapters.AddToListAdapter;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MediaData;
+import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.MovieDataRecord;
+import com.atmko.onmywatch.models.MovieNotifier;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesDataRecord;
+import com.atmko.onmywatch.models.SeriesNotifier;
 import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.models.WatchListModel;
+import com.atmko.onmywatch.utils.MovieDataParser;
+import com.atmko.onmywatch.utils.NotificationHandler;
+import com.atmko.onmywatch.utils.SearchPreferences;
+import com.atmko.onmywatch.utils.SeriesDataParser;
+import com.atmko.onmywatch.utils.UpdateMediaWorker;
+import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
+import com.atmko.onmywatch.utils.network_utils.MovieApiConstants;
+import com.atmko.onmywatch.utils.network_utils.NetworkFunctions;
+import com.atmko.onmywatch.utils.network_utils.SeriesApiConstants;
 import com.atmko.onmywatch.view_models.AddToListViewModel;
 import com.atmko.onmywatch.view_models.AddToListViewModelFactory;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.parceler.Parcels;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
+import static com.atmko.onmywatch.utils.GeneralUtils.MILLISECOND_CONVERSION;
 
 public class AddToListActivity extends AppCompatActivity implements AddToListAdapter.OnListItemClickListener,
         AddToListAdapter.OnListCheckListener{
@@ -289,6 +311,8 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
 
                 }
 
+                updateReleaseNotifier(newMediaData, newMediaData.getWatchStatus());
+
                 int uerListNetCountChange = updateUserListRecords();
                 int newContainingListValue = mOriginalContainingLists.size() + uerListNetCountChange;
 
@@ -370,6 +394,212 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
         }
 
         return netCountChange;
+    }
+
+    //creates release notifier if new watch status is to watch or watching,
+    //otherwise delete all notifiers with this media id and cancel alarms
+    private void updateReleaseNotifier(MediaData newMediaData, int newWatchStatus) {
+        if (newWatchStatus == MediaData.WATCH_STATUS_TO_WATCH
+                || newWatchStatus == MediaData.WATCH_STATUS_WATCHING) {
+
+            //if release date exists set release notifier through date caparison
+            //otherwise create a notifier via release status without creating an alarm
+            if (!newMediaData.getReleaseDate().equals("")) {
+                setNotifierThroughDateComparision(newMediaData);
+
+            } else {
+                setNotifierThroughReleaseStatus(newMediaData);
+            }
+
+        } else {
+            //delete notifiers and cancel alarms
+            cancelMediaAlarms();
+        }
+    }
+
+    //compares release date and current date and sets release notifier if release date is in the future
+    //then schedules alarm notification for future
+    private void setNotifierThroughDateComparision(MediaData newMediaData) {
+        Date currentDate = new Date();
+        Date releaseDate;
+
+        try {
+            //TODO: local format not used. Using API date format
+            @SuppressLint("SimpleDateFormat")
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ApiConstants.DATE_FORMAT);
+            releaseDate = simpleDateFormat.parse(newMediaData.getReleaseDate());
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentDate);
+
+        //if release date has passed, return
+        if (releaseDate.before(currentDate)) return;
+
+        //create notifier and set alarm with release notification
+        MediaNotifier releaseNotifier = createReleaseNotifier(newMediaData);
+
+        NotificationHandler.scheduleReleaseNotification(this, newMediaData, releaseNotifier);
+    }
+
+    //used when release date doesn't exist. Checks if media has been released by getting release status via media's details
+    //if release status not released, canceled, pilot, ended or returning series, save notifier object without creating accompanying alarm notification.
+    //NOTE: alarm will be created when media is updated and a release date becomes available
+    private void setNotifierThroughReleaseStatus(final MediaData newMediaData) {
+        //if release status exists create notifier and return
+        //otherwise fetch release status from media details, then create notifier
+        //NOTE: release status will be null when not accessing this activity via DetailsFragment, because details won't have been fetched
+        if (newMediaData.getReleaseStatus() != null) {
+            createNotifierPendingRelease(newMediaData);
+            return;
+        }
+
+        String[] detailUrls = getResources().getStringArray(R.array.details_urls);
+        String detailUrl = null;
+
+        if (mMediaType == MEDIA_TYPE_MOVIE) {
+            detailUrl = detailUrls[MEDIA_TYPE_MOVIE];
+
+        } else if (mMediaType == MEDIA_TYPE_SERIES) {
+            detailUrl = detailUrls[MEDIA_TYPE_SERIES];
+        }
+
+        SearchPreferences searchPreferences =  new SearchPreferences();
+
+        //build AN request
+        ANRequest request = NetworkFunctions.agnosticDetailRequestById(detailUrl, newMediaData.getId(),
+                searchPreferences, this);
+
+        request.getAsString(new StringRequestListener() {
+            @Override
+            public void onResponse(final String returnedJSONString) {
+                try {
+                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            //get release status, set release status and create notifier
+                            MediaData detailsMediaData;
+
+                            if (mMediaType == MEDIA_TYPE_MOVIE) {
+                                detailsMediaData =
+                                        MovieDataParser.parseDetails(returnedJSONString, ((MovieData) mMediaData));
+
+                            } else {
+                                detailsMediaData =
+                                        SeriesDataParser.parseDetails(returnedJSONString,
+                                                ((SeriesData) mMediaData), AddToListActivity.this);
+                            }
+
+                            String releaseStatus = detailsMediaData.getReleaseStatus();
+                            newMediaData.setReleaseStatus(releaseStatus);
+                            createNotifierPendingRelease(newMediaData);
+                        }
+                    });
+
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(ANError anError) {
+                if (anError.getErrorCode() == ApiConstants.TOO_MANY_REQUESTS) {
+                    retryAfterCoolDOwn(anError, newMediaData);
+
+                    return;
+                }
+
+                //notify user of error
+                Snackbar.make(AddToListActivity.this.findViewById(R.id.top_layout),
+                        getString(R.string.details_error_message), Snackbar.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    //create notifier if media release still pending
+    private void createNotifierPendingRelease(MediaData newMediaData) {
+        String releaseStatus = newMediaData.getReleaseStatus();
+
+        //create notifier if media release still pending
+        if (!releaseStatus.equals(MovieApiConstants.RELEASE_STATUS_RELEASED)
+                && !releaseStatus.equals(SeriesApiConstants.SeriesTextReplacement.REPLACEMENT_RETURNING_SERIES)
+                && !releaseStatus.equals(SeriesApiConstants.RELEASE_STATUS_PILOT)
+                && !releaseStatus.equals(SeriesApiConstants.RELEASE_STATUS_ENDED)
+                && !releaseStatus.equals(ApiConstants.RELEASE_STATUS_CANCELED)) {
+
+            createReleaseNotifier(newMediaData);
+        }
+    }
+
+    //retry method if api returns too may requests error
+    private void retryAfterCoolDOwn(ANError anError, final MediaData newMediaData) {
+        Log.d(TAG, "retrying details fetch");
+
+        int coolDown;
+
+        try {
+            //noinspection ConstantConditions
+            coolDown = Integer.parseInt(anError.getResponse().header(ApiConstants.RETRY_AFTER_KEY));
+
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            coolDown = UpdateMediaWorker.REQUEST_COOL_DOWN;
+
+        }
+
+        int coolDownInMilliSecs = coolDown * MILLISECOND_CONVERSION;
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    setNotifierThroughReleaseStatus(newMediaData);
+
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, coolDownInMilliSecs);
+    }
+
+    //creates new Media release notifier in database and returns notifier
+    private MediaNotifier createReleaseNotifier(MediaData newMediaData) {
+        //create notifier and set alarm with release notification
+        MediaNotifier releaseNotifier;
+
+        if (newMediaData instanceof MovieData) {
+            releaseNotifier = new MovieNotifier(newMediaData.getId(), MediaNotifier.CONDITION_ON_RELEASE);
+            mDatabase.movieNotifierDao().addMediaNotifier(((MovieNotifier) releaseNotifier));
+
+        } else {
+            releaseNotifier = new SeriesNotifier(newMediaData.getId(), MediaNotifier.CONDITION_ON_RELEASE);
+            mDatabase.seriesNotifierDao().addMediaNotifier(((SeriesNotifier) releaseNotifier));
+        }
+
+        return releaseNotifier;
+    }
+
+    //cancels all alarms with media id and deletes notifiers
+    private void cancelMediaAlarms() {
+        List notifiers;
+
+        if (mMediaType == MEDIA_TYPE_MOVIE) {
+            notifiers = mDatabase.movieNotifierDao().getNotifiersWithMediaIdAlt(mMediaData.getId());
+
+        } else {
+            notifiers = mDatabase.seriesNotifierDao().getNotifiersWithMediaIdAlt(mMediaData.getId());
+        }
+
+        //cancel alarms and delete media notifiers
+        //TODO: notifiers only contains MediaNotifier objects
+        //noinspection unchecked
+        NotificationHandler.cancelAlarms(this, notifiers);
     }
 
     private void updateWatchListCounts() {

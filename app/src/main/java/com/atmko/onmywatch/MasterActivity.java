@@ -30,6 +30,7 @@ import com.atmko.onmywatch.Fragments.HomeFragment;
 import com.atmko.onmywatch.Fragments.ListResultsParentFragment;
 import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.atmko.onmywatch.models.MediaData;
+import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.utils.SearchPreferences;
 import com.atmko.onmywatch.utils.UpdateMediaWorker;
@@ -77,6 +78,9 @@ public class MasterActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             startHomeFragment();
+
+            createNotificationChannels();
+
             //start background work managers
             startWorkers();
 
@@ -173,6 +177,10 @@ public class MasterActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.master_fragments_container, homeFragment, HomeFragment.FRAGMENT_KEY)
                 .commit();
+    }
+
+    private void createNotificationChannels() {
+        MediaNotifier.createReleaseNotificationChannel(this);
     }
 
     private void startWorkers() {

@@ -40,6 +40,9 @@ import com.androidnetworking.interfaces.StringRequestListener;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.RateActivity;
 import com.atmko.onmywatch.database.AppDatabase;
+import com.atmko.onmywatch.models.MovieNotifier;
+import com.atmko.onmywatch.models.SeriesNotifier;
+import com.atmko.onmywatch.utils.GeneralUtils;
 import com.atmko.onmywatch.utils.UpdateMediaWorker;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 import com.atmko.onmywatch.view_models.DetailsViewModel;
@@ -474,6 +477,46 @@ public class DetailsFragment extends Fragment {
                         .setText(String.valueOf(containingListsCount));
             }
         });
+
+        LiveData<List<MovieNotifier>> movieNotifiersLiveData;
+        LiveData<List<SeriesNotifier>> seriesNotifiersLiveData;
+
+        if (mMediaType == MEDIA_TYPE_MOVIE) {
+            movieNotifiersLiveData = viewModel.getMovieNotifiers();
+            movieNotifiersLiveData.observe(this, new Observer<List<MovieNotifier>>() {
+                @Override
+                public void onChanged(List<MovieNotifier> movieNotifiers) {
+                    if (movieNotifiers.size() != 0) {
+                        //set image
+                        ((ImageButton) getView().findViewById(R.id.notify_button))
+                                .setImageResource(R.drawable.ic_notify_accent);
+
+                    } else {
+                        //set image
+                        ((ImageButton) getView().findViewById(R.id.notify_button))
+                                .setImageResource(R.drawable.ic_notify_white);
+                    }
+                }
+            });
+
+        } else {
+            seriesNotifiersLiveData = viewModel.getSeriesNotifiers();
+            seriesNotifiersLiveData.observe(this, new Observer<List<SeriesNotifier>>() {
+                @Override
+                public void onChanged(List<SeriesNotifier> seriesNotifiers) {
+                    if (seriesNotifiers.size() != 0) {
+                        //set image
+                        ((ImageButton) getView().findViewById(R.id.notify_button))
+                                .setImageResource(R.drawable.ic_notify_accent);
+
+                    } else {
+                        //set image
+                        ((ImageButton) getView().findViewById(R.id.notify_button))
+                                .setImageResource(R.drawable.ic_notify_white);
+                    }
+                }
+            });
+        }
     }
 
     private void launchQuickAction() {
@@ -635,7 +678,14 @@ public class DetailsFragment extends Fragment {
         ((TextView) getView().findViewById(R.id.title_text_view))
                 .setText(mMediaData.getFormattedTitle());
 
-        ((TextView) getView().findViewById(R.id.date_text_view)).setText(mMediaData.getReleaseDate());
+        if (!mMediaData.getReleaseDate().equals("")) {
+            ((TextView) getView().findViewById(R.id.date_text_view)).setText(
+                    GeneralUtils.parseDateToYear(mMediaData.getReleaseDate()));
+
+        } else {
+            ((TextView) getView().findViewById(R.id.date_text_view)).setText(
+                    getString(R.string.release_date_placeholder));
+        }
 
         //TODO implement maturity rating
         ((TextView) getView().findViewById(R.id.maturity_rating_text_view))

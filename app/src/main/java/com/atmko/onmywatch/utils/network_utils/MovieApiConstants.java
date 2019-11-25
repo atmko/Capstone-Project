@@ -14,4 +14,7 @@ public class MovieApiConstants {
     public static final String ORIG_TITLE_KEY = "original_title";
     public static final String ADULT_KEY = "adult";
     public static final String RELEASE_DATE_KEY = "release_date";
+
+    //RELEASE STATUS VALUES
+    public static final String RELEASE_STATUS_RELEASED = "Released";
 }

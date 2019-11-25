@@ -19,12 +19,14 @@ import com.androidnetworking.interfaces.StringRequestListener;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MediaData;
+import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.utils.network_utils.NetworkFunctions;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
@@ -134,6 +136,8 @@ public class UpdateMediaWorker extends Worker {
 
                         }
 
+                        checkForReleaseNotifierUpdates(oldMediaData, newMediaData);
+
                         Log.d(TAG, newMediaData.getTitle() + " data updated");
 
                     }
@@ -150,6 +154,39 @@ public class UpdateMediaWorker extends Worker {
                 }
             }
         });
+    }
+
+    //updates release notifications if media release date has changed
+    private void checkForReleaseNotifierUpdates( MediaData oldMediaData, MediaData newMediaData) {
+        //if release date has changed, get release notifier
+        if (!newMediaData.getReleaseDate().equals(oldMediaData.getReleaseDate())) {
+            MediaNotifier releaseNotifier;
+
+            if (newMediaData instanceof MovieData) {
+                releaseNotifier =
+                        mDatabase.movieNotifierDao()
+                                .getNotifierByIdAlt(newMediaData.getId(),
+                                        MediaNotifier.CONDITION_ON_RELEASE);
+
+            } else {
+                releaseNotifier =
+                        mDatabase.seriesNotifierDao()
+                                .getNotifierByIdAlt(newMediaData.getId(),
+                                        MediaNotifier.CONDITION_ON_RELEASE);
+            }
+
+            //if releaseNotifier exists, cancel old alarm notification
+            if (releaseNotifier != null) {
+                //TODO: method requires list
+                //noinspection ArraysAsListWithZeroOrOneArgument
+                NotificationHandler.cancelAlarms(mContext, Arrays.asList(releaseNotifier));
+
+                //set new alarm notification if new release date not empty
+                if (!newMediaData.getReleaseDate().equals("")) {
+                    NotificationHandler.scheduleReleaseNotification(mContext, newMediaData, releaseNotifier);
+                }
+            }
+        }
     }
 
     private void retryAfterCoolDOwn(ANError anError, final MediaData mediaData,

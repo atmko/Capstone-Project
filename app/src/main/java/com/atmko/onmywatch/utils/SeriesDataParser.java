@@ -8,14 +8,13 @@ import android.content.Context;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.ANRequest;
-import com.atmko.onmywatch.R;
+import com.atmko.onmywatch.utils.network_utils.SeriesApiConstants;
 import com.atmko.stack.Stack;
 import com.google.gson.Gson;
 import com.atmko.onmywatch.models.CastData;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 import com.atmko.onmywatch.utils.network_utils.PeopleApiConstants;
-import com.atmko.onmywatch.utils.network_utils.SeriesApiConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,8 +22,9 @@ import java.util.List;
 import java.util.Map;
 
 import static com.atmko.onmywatch.utils.GeneralUtils.checkAndConvertNumber;
+import static com.atmko.onmywatch.utils.GeneralUtils.checkAndConvertInteger;
 import static com.atmko.onmywatch.utils.GeneralUtils.convertTo2Sf;
-import static com.atmko.onmywatch.utils.GeneralUtils.parseDateInfo;
+import static com.atmko.onmywatch.utils.network_utils.SeriesApiConstants.*;
 
 public class SeriesDataParser {
     public static List<SeriesData> parseData(String returnedJSONString, Stack stack,
@@ -69,7 +69,7 @@ public class SeriesDataParser {
     static SeriesData parseTvMap(Map seriesDataMap) {
         return new SeriesData(
                 //get by keys
-                checkAndConvertNumber(seriesDataMap.get(ApiConstants.ID_KEY)),
+                checkAndConvertInteger(seriesDataMap.get(ApiConstants.ID_KEY)),
 
                 checkAndConvertNumber(seriesDataMap.get(ApiConstants.VOTE_COUNT_KEY)),
 
@@ -94,7 +94,7 @@ public class SeriesDataParser {
 
                 (String) seriesDataMap.get(ApiConstants.OVERVIEW_KEY),
 
-                parseDateInfo((String) seriesDataMap.get(SeriesApiConstants.FIRST_AIR_DATE_KEY))
+                (String) seriesDataMap.get(FIRST_AIR_DATE_KEY)
         );
     }
 
@@ -136,21 +136,9 @@ public class SeriesDataParser {
         detailsSeriesData.setReviews(parseReviews(((Map) returnedMap.get(ApiConstants.REVIEWS_KEY))));
 
         String releaseStatus = ((String) returnedMap.get(ApiConstants.RELEASE_STATUS_KEY));
-        detailsSeriesData.setReleaseStatus(replaceText(releaseStatus, context));
+        detailsSeriesData.setReleaseStatus(SeriesTextReplacement.replaceText(releaseStatus));
 
         return detailsSeriesData;
-    }
-
-    static private String replaceText(String originalText, Context context) {
-        if (originalText.equals(SeriesApiConstants.RELEASE_STATUS_RETURNING_SERIES)) {
-            return (context.getResources().getString(R.string.detail_text_replacement_running_series));
-
-        } else if (originalText.equals(SeriesApiConstants.RELEASE_STATUS_IN_PRODUCTION)) {
-            return (context.getResources().getString(R.string.detail_text_replacement_in_production));
-
-        } else {
-            return originalText;
-        }
     }
 
     private static ArrayList<String> convertToGenres(ArrayList<Map> rawGenreArray) {

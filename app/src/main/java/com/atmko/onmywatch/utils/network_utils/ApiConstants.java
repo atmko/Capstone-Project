@@ -69,6 +69,13 @@ public class ApiConstants {
     public static final String GENRE_ID_KEY = "id";
     public static final String GENRE_NAME = "name";
 
+    //DATE VALUES
+    public static final String DATE_SEPARATOR = "-";
+    public static final String DATE_FORMAT = "yyyy-MM-dd";
+
+    //RELEASE STATUS VALUES
+    public static final String RELEASE_STATUS_CANCELED = "Canceled";
+
     //HEADER VALUES
     public static final String RETRY_AFTER_KEY = "Retry-After";
 

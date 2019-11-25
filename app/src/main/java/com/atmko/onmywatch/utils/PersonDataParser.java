@@ -17,12 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class PersonDataParser {
-    //check for int/double errors
-    private static String checkAndConvertNumber(Object number) {
-        return String.valueOf(number);
-    }
+import static com.atmko.onmywatch.utils.GeneralUtils.checkAndConvertInteger;
 
+public class PersonDataParser {
     public static List<PersonData> parseData(String returnedJSONString, Stack stack,
                                              SearchPreferences searchPreferences) {
 
@@ -66,7 +63,7 @@ public class PersonDataParser {
         //create new PeopleData from peopleDataMap
         return new PersonData(
                 //get by keys
-                checkAndConvertNumber(peopleDataMap.get(ApiConstants.ID_KEY)),
+                checkAndConvertInteger(peopleDataMap.get(ApiConstants.ID_KEY)),
 
                 (String) (peopleDataMap.get(PeopleApiConstants.PROFILE_PATH_KEY)),
 
