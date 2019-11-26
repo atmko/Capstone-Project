@@ -126,6 +126,7 @@
             android:paddingEnd="@dimen/x1_layout_margin"
             android:paddingBottom="@dimen/half_layout_margin"
             android:text="Tw"
+            android:textSize="@dimen/caption_12_text_size"
             android:textColor="@android:color/white"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/date_text_view" />
@@ -143,6 +144,7 @@
             android:paddingEnd="@dimen/x1_layout_margin"
             android:paddingBottom="@dimen/half_layout_margin"
             android:text="5"
+            android:textSize="@dimen/caption_12_text_size"
             android:textColor="@android:color/white"
             app:layout_constraintStart_toEndOf="@+id/watch_status_shorthand_text"
             app:layout_constraintTop_toBottomOf="@id/date_text_view" />
@@ -160,6 +162,7 @@
             android:paddingEnd="@dimen/x1_layout_margin"
             android:paddingBottom="@dimen/half_layout_margin"
             tools:text="Unreleased"
+            android:textSize="@dimen/caption_12_text_size"
             android:textColor="@android:color/white"
             app:layout_constraintStart_toEndOf="@+id/list_counts_text"
             app:layout_constraintTop_toBottomOf="@id/date_text_view" />
@@ -177,6 +180,7 @@
             android:paddingEnd="@dimen/x1_layout_margin"
             android:paddingBottom="@dimen/half_layout_margin"
             tools:text="7.5"
+            android:textSize="@dimen/caption_12_text_size"
             android:textColor="@android:color/white"
             app:layout_constraintStart_toEndOf="@+id/release_status_text"
             app:layout_constraintTop_toBottomOf="@id/date_text_view" />
