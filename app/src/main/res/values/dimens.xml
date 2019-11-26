@@ -70,6 +70,7 @@
     <dimen name="headline_20_text_size">20sp</dimen>
     <dimen name="headline_24_text_size">24sp</dimen>
     <dimen name="headline_36_text_size">36sp</dimen>
+    <dimen name="headline_45_text_size">45sp</dimen>
     <dimen name="headline_48_text_size">48sp</dimen>
     <!--TEXT DIMENSIONS-->
 </resources>
