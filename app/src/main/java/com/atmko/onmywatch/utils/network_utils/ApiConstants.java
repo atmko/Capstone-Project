@@ -7,11 +7,11 @@ package com.atmko.onmywatch.utils.network_utils;
 import com.atmko.onmywatch.BuildConfig;
 
 /*
- * class containing api value constants for all media types
+ * class containing tmdb api value constants for all media types
  */
 public class ApiConstants {
     //api key
-    public static final String API_KEY = BuildConfig.apiKey;
+    public static final String API_KEY = BuildConfig.tmdbApiKey;
 
     public static final String MEDIA_TYPE_MOVIE = "movie";
     public static final String MEDIA_TYPE_TV = "tv";

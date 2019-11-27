@@ -19,17 +19,15 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+
+        buildConfigField "String", "tmdbApiKey", TMDB_Api_Key
+        buildConfigField "String", "traktApiKey", Trakt_Api_Key
     }
+
     buildTypes {
-        debug {
-            buildConfigField "String", "apiKey", Api_Key
-
-        }
-
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "apiKey", Api_Key
             signingConfig signingConfigs.capstone_sign_config
         }
     }
@@ -78,7 +76,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics:17.2.0'
     //firebase ads
     implementation 'com.google.firebase:firebase-ads:18.2.0'
-
 
     // (WorkManager)
     implementation "androidx.work:work-runtime:2.2.0"

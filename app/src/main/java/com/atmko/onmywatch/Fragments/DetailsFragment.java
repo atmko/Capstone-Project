@@ -40,11 +40,13 @@ import com.androidnetworking.interfaces.StringRequestListener;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.RateActivity;
 import com.atmko.onmywatch.database.AppDatabase;
+import com.atmko.onmywatch.models.AirSchedule;
 import com.atmko.onmywatch.models.MovieNotifier;
 import com.atmko.onmywatch.models.SeriesNotifier;
 import com.atmko.onmywatch.utils.GeneralUtils;
 import com.atmko.onmywatch.utils.UpdateMediaWorker;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
+import com.atmko.onmywatch.utils.network_utils.TraktApiConstants;
 import com.atmko.onmywatch.view_models.DetailsViewModel;
 import com.atmko.onmywatch.view_models.DetailsViewModelFactory;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -83,10 +85,15 @@ public class DetailsFragment extends Fragment {
     public static final String MEDIA_DATA_PARCELABLE_KEY = "media_data";
     private static final String SEARCH_PREFERENCES_KEY = "search_preferences";
 
+    private String COUNTDOWN_KEY = "countdown";
+
     public static final String ACTION_LAUNCH_DETAILS = "launch_details";
     public static final String QUICK_ACTION_KEY = "quick_action";
     public static final String QUICK_ACTION_SHARE = "qa_share";
     public static final String QUICK_ACTION_RATE = "qa_rate";
+
+    private static final int COOL_DOWN_REQUEST_TMDB_ID = 0;
+    private static final int COOL_DOWN_REQUEST_TRAKT_ID = 1;
 
     private int mMediaType;
     private String mDetailUrl;
@@ -106,6 +113,7 @@ public class DetailsFragment extends Fragment {
     private TabLayout mDetailExtrasTabLayout;
     private ViewPager mDetailExtrasViewPager;
     private TextView mReleaseStatusTextView;
+    private TextView mCountDownTextView;
 
     //values
     private int mOverviewCutoffIndex;
@@ -258,6 +266,7 @@ public class DetailsFragment extends Fragment {
         getArguments().putParcelable(MEDIA_DATA_PARCELABLE_KEY, Parcels.wrap(mMediaData));
 
         outState.putString(ApiConstants.RELEASE_STATUS_KEY, mReleaseStatusTextView.getText().toString());
+        outState.putString(COUNTDOWN_KEY, mCountDownTextView.getText().toString());
     }
 
     private static final String STATUS_BAR_IDENTIFIER = "status_bar_height";
@@ -367,7 +376,7 @@ public class DetailsFragment extends Fragment {
         }
 
         mReleaseStatusTextView = getView().findViewById(R.id.release_status_text);
-
+        mCountDownTextView = getView().findViewById(R.id.count_down_text);
     }
 
     private void defineValues() {
@@ -554,9 +563,14 @@ public class DetailsFragment extends Fragment {
 
                     } else {
                         mMediaData =
-                                SeriesDataParser.parseDetails(returnedJSONString,
-                                        ((SeriesData) mMediaData), getContext());
+                                SeriesDataParser.parseDetails(returnedJSONString, ((SeriesData) mMediaData));
 
+                        //get trakt series details if there is a next episode and the air date is available
+                        if (((SeriesData) mMediaData).getNextEpisodeToAir() != null) {
+                            if (!((SeriesData) mMediaData).getNextEpisodeToAir().airDate.equals("")) {
+                                getTraktSeriesDetails(mMediaData.getTraktId());
+                            }
+                        }
                     }
 
                     //todo implement get details for people data
@@ -573,7 +587,7 @@ public class DetailsFragment extends Fragment {
             @Override
             public void onError(ANError anError) {
                 if (anError.getErrorCode() == ApiConstants.TOO_MANY_REQUESTS) {
-                    retryAfterCoolDOwn(anError);
+                    retryAfterCoolDOwn(anError, COOL_DOWN_REQUEST_TMDB_ID);
 
                     return;
                 }
@@ -585,7 +599,70 @@ public class DetailsFragment extends Fragment {
         });
     }
 
-    private void retryAfterCoolDOwn(ANError anError) {
+    //get series details from trakt api
+    //gets called twice: once to get matching trakt id, again to get trakt details
+    //if trakt id already exists, its called only once
+    private void getTraktSeriesDetails(final String inputTraktId) {
+        //if inputTraktId id is null make url to get trakt id
+        //otherwise make url to get trakt details
+        String[] traktFetchUrls;
+        ANRequest request;
+
+        if (getActivity() == null) return;
+
+        if (inputTraktId == (null)) {
+            traktFetchUrls = getActivity().getResources().getStringArray(R.array.trakt_matching_media_urls);
+            String traktFetchUrl = traktFetchUrls[mMediaType];
+            request = NetworkFunctions.traktAgnosticRequestById(
+                    traktFetchUrl, mMediaData.getId());
+
+        } else {
+            traktFetchUrls = getActivity().getResources().getStringArray(R.array.trakt_detail_urls);
+            String traktFetchUrl = traktFetchUrls[mMediaType];
+            request = NetworkFunctions.traktAgnosticRequestById(
+                    traktFetchUrl, mMediaData.getTraktId());
+        }
+
+        request.getAsString(new StringRequestListener() {
+            @Override
+            public void onResponse(String returnedJSONString) {
+                try {
+                    if (inputTraktId == null) {
+                        String outputTraktId = SeriesDataParser.parseAndGetTraktId(returnedJSONString);
+
+                        //rerun the function with non null trakt id
+                        if (outputTraktId != null) {
+                            mMediaData.setTraktId(outputTraktId);
+                            getTraktSeriesDetails(outputTraktId);
+                        }
+
+                    } else {
+                        mMediaData =
+                                SeriesDataParser.parseTraktDetails(returnedJSONString, ((SeriesData) mMediaData));
+                        setCountdown();
+                    }
+
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(ANError anError) {
+                if (anError.getErrorCode() == TraktApiConstants.TOO_MANY_REQUESTS) {
+                    retryAfterCoolDOwn(anError, COOL_DOWN_REQUEST_TRAKT_ID);
+
+                    return;
+                }
+
+                //notify user of error
+                Snackbar.make(getActivity().findViewById(R.id.top_layout),
+                        getString(R.string.details_error_message), Snackbar.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void retryAfterCoolDOwn(ANError anError, final int coolDownRequestId) {
         Log.d(FRAGMENT_KEY, "retrying details fetch");
 
         int coolDown;
@@ -607,7 +684,12 @@ public class DetailsFragment extends Fragment {
             @Override
             public void run() {
                 try {
-                    getMediaDetails();
+                    if (coolDownRequestId == COOL_DOWN_REQUEST_TMDB_ID) {
+                        getMediaDetails();
+
+                    } else if (coolDownRequestId == COOL_DOWN_REQUEST_TRAKT_ID){
+                        getTraktSeriesDetails(mMediaData.getTraktId());
+                    }
 
                 } catch (NullPointerException e) {
                     e.printStackTrace();
@@ -787,6 +869,28 @@ public class DetailsFragment extends Fragment {
 
                 getView().findViewById(R.id.genre_1_text_view).setVisibility(View.GONE);
             }
+        }
+
+        if (mSavedInstanceState != null) {
+            mCountDownTextView.setText(mSavedInstanceState.getString(COUNTDOWN_KEY));
+            if (!mCountDownTextView.getText().toString().equals("")) {
+                mCountDownTextView.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
+    //set air date countdown value
+    private void setCountdown() throws NullPointerException {
+        // TODO: NullPointerException handled in caller
+        @SuppressWarnings("ConstantConditions")
+        AirSchedule airSchedule = ((SeriesData) mMediaData).getAirSchedule();
+
+        String nextEpisodeAirDate = ((SeriesData) mMediaData).getNextEpisodeToAir().airDate;
+        String countdown = airSchedule.getCountdown(nextEpisodeAirDate);
+
+        if (countdown != null) {
+            mCountDownTextView.setVisibility(View.VISIBLE);
+            mCountDownTextView.setText(countdown);
         }
     }
 

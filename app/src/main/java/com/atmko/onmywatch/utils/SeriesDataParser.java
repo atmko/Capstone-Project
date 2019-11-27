@@ -4,11 +4,12 @@
 
 package com.atmko.onmywatch.utils;
 
-import android.content.Context;
-
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.ANRequest;
+import com.atmko.onmywatch.models.AirSchedule;
+import com.atmko.onmywatch.models.Episode;
 import com.atmko.onmywatch.utils.network_utils.SeriesApiConstants;
+import com.atmko.onmywatch.utils.network_utils.TraktApiConstants;
 import com.atmko.stack.Stack;
 import com.google.gson.Gson;
 import com.atmko.onmywatch.models.CastData;
@@ -98,8 +99,7 @@ public class SeriesDataParser {
         );
     }
 
-    public static SeriesData parseDetails(String returnedJSONString, SeriesData seriesData,
-                                          Context context) {
+    public static SeriesData parseDetails(String returnedJSONString, SeriesData seriesData) {
         //skips code below if returnedJSONString null or empty
         if (returnedJSONString == null || returnedJSONString.equals("")){
             //return same series data
@@ -138,7 +138,66 @@ public class SeriesDataParser {
         String releaseStatus = ((String) returnedMap.get(ApiConstants.RELEASE_STATUS_KEY));
         detailsSeriesData.setReleaseStatus(SeriesTextReplacement.replaceText(releaseStatus));
 
+        Map nextEpisodeToAirMap = ((Map) returnedMap.get(TraktApiConstants.NEXT_EPISODE_TO_AIR_KEY));
+        if (nextEpisodeToAirMap != null) {
+            Episode nextEpisodeToAir =
+                    new Episode(((String) nextEpisodeToAirMap.get(TraktApiConstants.AIR_DATE_KEY)));
+            detailsSeriesData.setNextEpisodeToAir(nextEpisodeToAir);
+        }
+
         return detailsSeriesData;
+    }
+
+    public static String parseAndGetTraktId(String returnedJSONString) {
+        //skips code below if returnedJSONString null or empty
+        if (returnedJSONString == null || returnedJSONString.equals("")){
+            //return same series data
+            return null;
+        }
+
+        Gson gson = new Gson();
+        List returnedList = gson.fromJson(returnedJSONString, List.class);
+
+        String traktId = null;
+
+        if (returnedList.size() != 0) {
+            try {
+                Map firstResult = ((Map) returnedList.get(0));
+                //TODO: null pointer exception caught in try block
+                //noinspection ConstantConditions
+                traktId = GeneralUtils.checkAndConvertInteger(
+                        ((Map) ((Map) firstResult.get(TraktApiConstants.MEDIA_TYPE_SHOW))
+                                .get(TraktApiConstants.IDS_KEY))
+                                .get(TraktApiConstants.TRAKT_KEY));
+
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return traktId;
+    }
+    
+    public static SeriesData parseTraktDetails(String returnedJSONString, SeriesData seriesData) {
+        //skips code below if returnedJSONString null or empty
+        if (returnedJSONString == null || returnedJSONString.equals("")){
+            //return same series data
+            return seriesData;
+        }
+
+        Gson gson = new Gson();
+        Map returnedMap = gson.fromJson(returnedJSONString, Map.class);
+
+        //TODO: use trakt first aired attribute instead of tmdb(has intricate detail as to the time the series will first air)
+        Map airs = ((Map) returnedMap.get(TraktApiConstants.AIRS_KEY));
+        String airDay = (String) airs.get(TraktApiConstants.DAY_KEY);
+        String airTime = (String) airs.get(TraktApiConstants.TIME_KEY);
+        String airTimezone = (String) airs.get(TraktApiConstants.TIMEZONE_KEY);
+
+        AirSchedule airSchedule = new AirSchedule(airDay, airTime, airTimezone);
+        seriesData.setAirSchedule(airSchedule);
+
+        return seriesData;
     }
 
     private static ArrayList<String> convertToGenres(ArrayList<Map> rawGenreArray) {

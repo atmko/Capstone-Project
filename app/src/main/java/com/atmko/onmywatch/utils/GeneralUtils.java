@@ -7,8 +7,13 @@ package com.atmko.onmywatch.utils;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 
 public class GeneralUtils {
+    public static final String ISO_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
     public static final int MILLISECOND_CONVERSION = 1000;
 
+    public static String parseIsoDate(String year, String month, String dayOfMonth, String time) {
+        return year + "-" + month + "-" + dayOfMonth + "T" + time + ":00.000-0000";
+    }
+    
     public static String convertToDisplayText(String text) {
         String displayText = "";
 

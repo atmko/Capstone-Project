@@ -24,6 +24,9 @@ public class SeriesData extends MediaData{
     //primary attributes
     ArrayList<String> mCountryOfOrigin;
     @Ignore ArrayList<String> mReviews;
+    @Ignore String mNextEpisodeCountDown;
+    @Ignore AirSchedule mAirSchedule;
+    @Ignore Episode mNextEpisodeToAir;
 
     //constructor for parceler
     @Ignore
@@ -67,11 +70,13 @@ public class SeriesData extends MediaData{
         this.mReleaseDate = releaseDate;
     }
 
-    public SeriesData(@NonNull String id, String voteAverage, String title, String posterPath,
-                      String originalLanguage, String originalTitle, ArrayList<String> genres,
-                      String backdropPath, String overview, String releaseDate, String releaseStatus) {
+    public SeriesData(@NonNull String id, String traktId, String voteAverage, String title,
+                      String posterPath, String originalLanguage, String originalTitle,
+                      ArrayList<String> genres, String backdropPath, String overview,
+                      String releaseDate, String releaseStatus) {
 
         this.mId = id;
+        this.mTraktId = traktId;
         this.mVoteAverage = voteAverage;
         this.mTitle = title;
         this.mPosterPath = posterPath;
@@ -98,6 +103,26 @@ public class SeriesData extends MediaData{
 
     public String getReleaseDate() {
         return mReleaseDate;
+    }
+
+    public AirSchedule getAirSchedule() {
+        return mAirSchedule;
+    }
+
+    public Episode getNextEpisodeToAir() {
+        return mNextEpisodeToAir;
+    }
+
+    public void setNextEpisodeToAir(Episode nextEpisodeToAir) {
+        this.mNextEpisodeToAir = nextEpisodeToAir;
+    }
+
+    public void setAirSchedule(AirSchedule airSchedule) {
+        mAirSchedule = airSchedule;
+    }
+
+    public String getNextEpisodeCountDown() {
+        return mNextEpisodeCountDown;
     }
 
     @Override

@@ -75,12 +75,13 @@ public class MovieData extends MediaData{
         this.mReleaseDate = releaseDate;
     }
 
-    public MovieData(@NonNull String id, String voteAverage, String title, String posterPath,
-                     String originalLanguage, String originalTitle, ArrayList<String> genres,
-                     boolean adult, String backdropPath, String overview, String releaseDate,
-                     String releaseStatus) {
+    public MovieData(@NonNull String id, String traktId, String voteAverage, String title,
+                     String posterPath, String originalLanguage, String originalTitle,
+                     ArrayList<String> genres, boolean adult, String backdropPath, String overview,
+                     String releaseDate, String releaseStatus) {
 
         this.mId = id;
+        this.mTraktId = traktId;
         this.mVoteAverage = voteAverage;
         this.mTitle = title;
         this.mPosterPath = posterPath;

@@ -49,6 +49,9 @@ abstract public class MediaData {
     @Ignore ArrayList<Map<String, String>> mReviews;
     @ColumnInfo(name = "release_status") String mReleaseStatus;
 
+    //trakt attributes
+    @ColumnInfo(name = "trakt_id") String mTraktId;
+
     @ColumnInfo(name = "watch_status") int mWatchStatus;
     @ColumnInfo(name = "user_rating") int mUserRating;
 
@@ -124,6 +127,14 @@ abstract public class MediaData {
 
     public void setReleaseStatus(String releaseStatus) {
         this.mReleaseStatus = releaseStatus;
+    }
+
+    public String getTraktId() {
+        return mTraktId;
+    }
+
+    public void setTraktId(String traktId) {
+        this.mTraktId = traktId;
     }
 
     public ArrayList<CastData> getCast() {

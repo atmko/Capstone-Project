@@ -72,6 +72,18 @@ public class NetworkFunctions {
         return requestBuilder.build();
     }
 
+    //agnostic request for trakt
+    public static ANRequest traktAgnosticRequestById(String urlFormat, String id) {
+        //build request using Fast Android Networking
+        ANRequest.GetRequestBuilder requestBuilder = AndroidNetworking.get(urlFormat);
+        requestBuilder.addHeaders(TraktApiConstants.API_KEY_KEY, TraktApiConstants.API_KEY);
+        requestBuilder.addHeaders(TraktApiConstants.API_VERSION_KEY, TraktApiConstants.API_VERSION);
+        //add media id path parameter
+        requestBuilder.addPathParameter(ApiConstants.ID_KEY, id);
+
+        return requestBuilder.build();
+    }
+
     //loads images into ImageViews using glide
     public static void loadImage(Context context, String urlString, ImageView imageView) {
         //configure glide behaviour

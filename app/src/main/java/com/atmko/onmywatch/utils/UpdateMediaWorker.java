@@ -126,7 +126,7 @@ public class UpdateMediaWorker extends Worker {
                         } else {
                             newMediaData =
                                     SeriesDataParser.parseDetails(returnedJSONString,
-                                            ((SeriesData) oldMediaData), mContext);
+                                            ((SeriesData) oldMediaData));
 
                             //preserve the over written watch status
                             newMediaData.setWatchStatus(oldMediaData.getWatchStatus());

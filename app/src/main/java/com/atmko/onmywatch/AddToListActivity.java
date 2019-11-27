@@ -491,7 +491,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
                             } else {
                                 detailsMediaData =
                                         SeriesDataParser.parseDetails(returnedJSONString,
-                                                ((SeriesData) mMediaData), AddToListActivity.this);
+                                                ((SeriesData) mMediaData));
                             }
 
                             String releaseStatus = detailsMediaData.getReleaseStatus();
