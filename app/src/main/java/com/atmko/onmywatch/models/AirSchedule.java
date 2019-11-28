@@ -64,7 +64,6 @@ public class AirSchedule {
         long timeDifference = getTimeTillWeeklyAirtime(mediaTimeZoneCalender);
         int daysTillWeeklyAirtime = Long.valueOf(TimeUnit.MILLISECONDS.toDays(timeDifference)).intValue();
 
-
         if (daysToNextEpisode > daysTillWeeklyAirtime) {
             return daysToNextEpisode + TIME_SUFFIX_DAYS;
 
@@ -136,14 +135,17 @@ public class AirSchedule {
         //add 1 to adjust for Calender's month zero index
         String releaseMonth = String.valueOf(releaseTimeZoneCalender.get(Calendar.MONTH) + 1);
         //correct to 2 figures
-        if (releaseMonth.length() == 1) releaseMonth = "0"+releaseMonth;
+        if (releaseMonth.length() == 1) releaseMonth = "0" + releaseMonth;
 
         String releaseDayOfMonth = String.valueOf(releaseTimeZoneCalender.get(Calendar.DAY_OF_MONTH));
         //correct to 2 figures
-        if (releaseDayOfMonth.length() == 1) releaseDayOfMonth = "0"+releaseDayOfMonth;
+        if (releaseDayOfMonth.length() == 1) releaseDayOfMonth = "0" + releaseDayOfMonth;
+
+        long timezoneOffset = releaseTimeZoneCalender.get(Calendar.ZONE_OFFSET);
 
         //create iso date using year, month, day and episode air time
-        String releaseIsoFormat = parseIsoDate(releaseYear, releaseMonth, releaseDayOfMonth, time);
+        String releaseIsoFormat =
+                parseIsoDate(releaseYear, releaseMonth, releaseDayOfMonth, time, timezoneOffset);
 
         //return the difference between release timestamp and current timestamp
         try {
@@ -158,7 +160,8 @@ public class AirSchedule {
         }
     }
 
-    //returns the number of days till next episode (doesn't take weekly airtime into account s accuracy is limited)
+    //TODO: improve accuracy
+    //returns the number of days till next episode (doesn't take weekly airtime into account so accuracy is limited)
     private int getDaysToNextEpisode(String airDateString, long currentTimestamp) {
         //TODO: local format not used. Using API date format
         @SuppressLint("SimpleDateFormat")
