@@ -80,7 +80,7 @@ public class AirSchedule {
                 }
 
             } else {
-                return daysTillWeeklyAirtime + " day(s)";
+                return daysTillWeeklyAirtime + TIME_SUFFIX_DAYS;
             }
         }
     }
