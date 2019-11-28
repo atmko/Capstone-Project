@@ -119,7 +119,8 @@ public class AirSchedule {
         //get days difference between current week day and release week day
         int currentDayOfWeekValue = mediaTimeZoneCalender.get(Calendar.DAY_OF_WEEK);
         int releaseDayOfWeekValue = getWeekdayValue(day);
-        int daysDifference = getTimeDifferenceInDays(currentDayOfWeekValue, releaseDayOfWeekValue);
+        int daysDifference = getTimeDifferenceInDays(
+                currentDayOfWeekValue, releaseDayOfWeekValue, mediaTimeZoneCalender);
 
         //create release calender and advance calender by days difference
         Calendar releaseTimeZoneCalender = Calendar.getInstance(mediaTimeZoneCalender.getTimeZone());
@@ -178,14 +179,34 @@ public class AirSchedule {
     }
 
     //returns the number of days between two given days of the week
-    private int getTimeDifferenceInDays(int currentDayValue, int releaseDayValue) {
-        if (currentDayValue <= releaseDayValue) {
+    private int getTimeDifferenceInDays(int currentDayValue, int releaseDayValue,
+                                        Calendar mediaTimeZoneCalender) {
+        if (currentDayValue < releaseDayValue) {
             return releaseDayValue - currentDayValue;
+
+        } else if (currentDayValue == releaseDayValue) {
+            String mediaTimezoneHour = String.valueOf(mediaTimeZoneCalender.get(Calendar.HOUR_OF_DAY));
+            String mediaTimezoneMinute = String.valueOf(mediaTimeZoneCalender.get(Calendar.MINUTE));
+
+            int mediaTimezoneSimpleTime =
+                    getSimpleTimeInteger(mediaTimezoneHour + ":" + mediaTimezoneMinute);
+            int releaseSimpleTime = getSimpleTimeInteger(time);
+
+            if (mediaTimezoneSimpleTime < releaseSimpleTime) {
+                return 0;
+
+            } else {
+                return NUMBER_OF_WEEKDAYS;
+            }
 
         } else {
             //normalize count
             int normalizer = NUMBER_OF_WEEKDAYS - currentDayValue;
             return normalizer + releaseDayValue;
         }
+    }
+
+    private int getSimpleTimeInteger(String timeString) {
+        return Integer.parseInt(timeString.replace(":",""));
     }
 }

@@ -20,9 +20,8 @@ public class GeneralUtils {
     }
 
     private static String convertTimeZoneOffsetToString(long offset) {
-        String offsetString = String.valueOf(offset);
         //get + / - symbol
-        String polarValue = offsetString.substring(0, 1);
+        String polarValue = offset < 0 ? "-" : "+";
 
         long absoluteOffset = Math.abs(offset);
 
