@@ -40,7 +40,6 @@ import com.androidnetworking.interfaces.StringRequestListener;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.RateActivity;
 import com.atmko.onmywatch.database.AppDatabase;
-import com.atmko.onmywatch.models.AirSchedule;
 import com.atmko.onmywatch.models.MovieNotifier;
 import com.atmko.onmywatch.models.SeriesNotifier;
 import com.atmko.onmywatch.utils.GeneralUtils;
@@ -565,12 +564,7 @@ public class DetailsFragment extends Fragment {
                         mMediaData =
                                 SeriesDataParser.parseDetails(returnedJSONString, ((SeriesData) mMediaData));
 
-                        //get trakt series details if there is a next episode and the air date is available
-                        if (((SeriesData) mMediaData).getNextEpisodeToAir() != null) {
-                            if (!((SeriesData) mMediaData).getNextEpisodeToAir().airDate.equals("")) {
-                                getTraktSeriesDetails(mMediaData.getTraktId());
-                            }
-                        }
+                        getTraktNextEpisodeDetails(mMediaData.getTraktId());
                     }
 
                     //todo implement get details for people data
@@ -599,12 +593,12 @@ public class DetailsFragment extends Fragment {
         });
     }
 
-    //get series details from trakt api
-    //gets called twice: once to get matching trakt id, again to get trakt details
+    //get next episode details from trakt api
+    //gets called twice: once to get matching trakt id, again to get trakt next episode details
     //if trakt id already exists, its called only once
-    private void getTraktSeriesDetails(final String inputTraktId) {
+    private void getTraktNextEpisodeDetails(final String inputTraktId) {
         //if inputTraktId id is null make url to get trakt id
-        //otherwise make url to get trakt details
+        //otherwise make url to get next episode details
         String[] traktFetchUrls;
         ANRequest request;
 
@@ -617,8 +611,7 @@ public class DetailsFragment extends Fragment {
                     traktFetchUrl, mMediaData.getId());
 
         } else {
-            traktFetchUrls = getActivity().getResources().getStringArray(R.array.trakt_detail_urls);
-            String traktFetchUrl = traktFetchUrls[mMediaType];
+            String traktFetchUrl = getActivity().getString(R.string.trakt_next_episode_urls);
             request = NetworkFunctions.traktAgnosticRequestById(
                     traktFetchUrl, mMediaData.getTraktId());
         }
@@ -633,13 +626,21 @@ public class DetailsFragment extends Fragment {
                         //rerun the function with non null trakt id
                         if (outputTraktId != null) {
                             mMediaData.setTraktId(outputTraktId);
-                            getTraktSeriesDetails(outputTraktId);
+                            getTraktNextEpisodeDetails(outputTraktId);
                         }
 
                     } else {
+                        //parse trakt info
                         mMediaData =
-                                SeriesDataParser.parseTraktDetails(returnedJSONString, ((SeriesData) mMediaData));
-                        setCountdown();
+                                SeriesDataParser.parseTraktNextEpisodeDetails(returnedJSONString, ((SeriesData) mMediaData));
+
+                        //set count down if available
+                        String countDown = ((SeriesData) mMediaData).getNextEpisodeToAir().getCountdown();
+
+                        if (countDown != null) {
+                            mCountDownTextView.setText(countDown);
+                            mCountDownTextView.setVisibility(View.VISIBLE);
+                        }
                     }
 
                 } catch (NullPointerException e) {
@@ -688,7 +689,7 @@ public class DetailsFragment extends Fragment {
                         getMediaDetails();
 
                     } else if (coolDownRequestId == COOL_DOWN_REQUEST_TRAKT_ID){
-                        getTraktSeriesDetails(mMediaData.getTraktId());
+                        getTraktNextEpisodeDetails(mMediaData.getTraktId());
                     }
 
                 } catch (NullPointerException e) {
@@ -876,21 +877,6 @@ public class DetailsFragment extends Fragment {
             if (!mCountDownTextView.getText().toString().equals("")) {
                 mCountDownTextView.setVisibility(View.VISIBLE);
             }
-        }
-    }
-
-    //set air date countdown value
-    private void setCountdown() throws NullPointerException {
-        // TODO: NullPointerException handled in caller
-        @SuppressWarnings("ConstantConditions")
-        AirSchedule airSchedule = ((SeriesData) mMediaData).getAirSchedule();
-
-        String nextEpisodeAirDate = ((SeriesData) mMediaData).getNextEpisodeToAir().airDate;
-        String countdown = airSchedule.getCountdown(nextEpisodeAirDate);
-
-        if (countdown != null) {
-            mCountDownTextView.setVisibility(View.VISIBLE);
-            mCountDownTextView.setText(countdown);
         }
     }
 

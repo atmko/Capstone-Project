@@ -24,8 +24,6 @@ public class SeriesData extends MediaData{
     //primary attributes
     ArrayList<String> mCountryOfOrigin;
     @Ignore ArrayList<String> mReviews;
-    @Ignore String mNextEpisodeCountDown;
-    @Ignore AirSchedule mAirSchedule;
     @Ignore Episode mNextEpisodeToAir;
 
     //constructor for parceler
@@ -105,24 +103,12 @@ public class SeriesData extends MediaData{
         return mReleaseDate;
     }
 
-    public AirSchedule getAirSchedule() {
-        return mAirSchedule;
-    }
-
     public Episode getNextEpisodeToAir() {
         return mNextEpisodeToAir;
     }
 
     public void setNextEpisodeToAir(Episode nextEpisodeToAir) {
         this.mNextEpisodeToAir = nextEpisodeToAir;
-    }
-
-    public void setAirSchedule(AirSchedule airSchedule) {
-        mAirSchedule = airSchedule;
-    }
-
-    public String getNextEpisodeCountDown() {
-        return mNextEpisodeCountDown;
     }
 
     @Override

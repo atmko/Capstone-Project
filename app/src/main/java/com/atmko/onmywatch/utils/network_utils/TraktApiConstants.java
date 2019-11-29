@@ -23,8 +23,7 @@ public class TraktApiConstants {
     static final String API_VERSION = "2";
 
     //EPISODE VALUES
-    public static final String NEXT_EPISODE_TO_AIR_KEY = "next_episode_to_air";
-    public static final String AIR_DATE_KEY = "air_date";
+    public static final String FIRST_AIRED_KEY = "first_aired";
 
     //TRAKT EXTERNAL KEYS
     public static final String TRAKT_KEY = "trakt";

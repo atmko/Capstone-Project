@@ -25,6 +25,9 @@ public class SeriesApiConstants {
     public static final String EPISODE_COUNT_KEY = "episode_count";
     public static final String SEASON_NUMBER_KEY = "season_number";
 
+    //EPISODE VALUES
+    public static final String NEXT_EPISODE_TO_AIR_KEY = "next_episode_to_air";
+
     public static class SeriesTextReplacement {
         public static final String REPLACEMENT_RETURNING_SERIES = "Running";
         static final String REPLACEMENT_IN_PRODUCTION = "Production";

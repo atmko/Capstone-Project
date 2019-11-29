@@ -69,11 +69,6 @@
         <item>https://api.themoviedb.org/3/movie/{id}?api_key={api_key}&amp;language={language}&amp;append_to_response=credits,videos,reviews</item>
     </array>
 
-    <array name="trakt_detail_urls">
-        <item>https://api.trakt.tv/shows/{id}?extended=full</item>
-        <item>https://api.trakt.tv/movies/{id}?extended=full</item>
-    </array>
-
     <array name="trakt_matching_media_urls">
         <item>https://api.trakt.tv/search/tmdb/{id}?type=show</item>
         <item>https://api.trakt.tv/search/tmdb/{id}?type=movie</item>

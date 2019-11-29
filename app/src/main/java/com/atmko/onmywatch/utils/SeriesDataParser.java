@@ -6,7 +6,6 @@ package com.atmko.onmywatch.utils;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.ANRequest;
-import com.atmko.onmywatch.models.AirSchedule;
 import com.atmko.onmywatch.models.Episode;
 import com.atmko.onmywatch.utils.network_utils.SeriesApiConstants;
 import com.atmko.onmywatch.utils.network_utils.TraktApiConstants;
@@ -17,6 +16,7 @@ import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 import com.atmko.onmywatch.utils.network_utils.PeopleApiConstants;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -138,11 +138,17 @@ public class SeriesDataParser {
         String releaseStatus = ((String) returnedMap.get(ApiConstants.RELEASE_STATUS_KEY));
         detailsSeriesData.setReleaseStatus(SeriesTextReplacement.replaceText(releaseStatus));
 
-        Map nextEpisodeToAirMap = ((Map) returnedMap.get(TraktApiConstants.NEXT_EPISODE_TO_AIR_KEY));
+        Map nextEpisodeToAirMap = ((Map) returnedMap.get(SeriesApiConstants.NEXT_EPISODE_TO_AIR_KEY));
         if (nextEpisodeToAirMap != null) {
-            Episode nextEpisodeToAir =
-                    new Episode(((String) nextEpisodeToAirMap.get(TraktApiConstants.AIR_DATE_KEY)));
-            detailsSeriesData.setNextEpisodeToAir(nextEpisodeToAir);
+            Episode nextEpisodeToAir = new Episode();
+
+            try {
+                nextEpisodeToAir.setAirDate(((String) nextEpisodeToAirMap.get(SeriesApiConstants.AIR_DATE_KEY)));
+                detailsSeriesData.setNextEpisodeToAir(nextEpisodeToAir);
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
 
         return detailsSeriesData;
@@ -178,7 +184,7 @@ public class SeriesDataParser {
         return traktId;
     }
     
-    public static SeriesData parseTraktDetails(String returnedJSONString, SeriesData seriesData) {
+    public static SeriesData parseTraktNextEpisodeDetails(String returnedJSONString, SeriesData seriesData) {
         //skips code below if returnedJSONString null or empty
         if (returnedJSONString == null || returnedJSONString.equals("")){
             //return same series data
@@ -188,14 +194,15 @@ public class SeriesDataParser {
         Gson gson = new Gson();
         Map returnedMap = gson.fromJson(returnedJSONString, Map.class);
 
-        //TODO: use trakt first aired attribute instead of tmdb(has intricate detail as to the time the series will first air)
-        Map airs = ((Map) returnedMap.get(TraktApiConstants.AIRS_KEY));
-        String airDay = (String) airs.get(TraktApiConstants.DAY_KEY);
-        String airTime = (String) airs.get(TraktApiConstants.TIME_KEY);
-        String airTimezone = (String) airs.get(TraktApiConstants.TIMEZONE_KEY);
+        String firstAired = ((String) returnedMap.get(TraktApiConstants.FIRST_AIRED_KEY));
 
-        AirSchedule airSchedule = new AirSchedule(airDay, airTime, airTimezone);
-        seriesData.setAirSchedule(airSchedule);
+        try {
+            Episode nextEpisode = new Episode();
+            nextEpisode.setAirDateIso(firstAired);
+            seriesData.setNextEpisodeToAir(nextEpisode);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         return seriesData;
     }
