@@ -50,6 +50,10 @@ public class NotificationHandler {
                     //and media id and condition as unique ids
                     //show notification
                     notificationManager.notify(mediaId, condition, notification);
+
+                    //skip notifier deletion if condition is new episodes
+                    if (condition == SeriesNotifier.CONDITION_NEW_EPISODE) return;
+
                     //remove media notifier from the database
                     removeMediaNotifier(context, mediaType, mediaId, condition);
                 }
