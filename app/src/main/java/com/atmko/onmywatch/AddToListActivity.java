@@ -316,10 +316,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
 
                 }
 
-                updateReleaseNotifier(newMediaData);
-                if (newMediaData instanceof SeriesData) {
-                    updateNewEpisodeNotifier(((SeriesData) newMediaData));
-                }
+                updateNotifiers(newMediaData);
 
                 int uerListNetCountChange = updateUserListRecords();
                 int newContainingListValue = mOriginalContainingLists.size() + uerListNetCountChange;
@@ -402,6 +399,15 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
         }
 
         return netCountChange;
+    }
+
+    private void updateNotifiers(MediaData newMediaData) {
+        if (mMediaData instanceof MovieData) {
+            updateReleaseNotifier(newMediaData);
+
+        } else {
+            updateNewEpisodeNotifier(((SeriesData) newMediaData));
+        }
     }
 
     //creates release notifier if new watch status is to watch or watching,
@@ -561,10 +567,15 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
     }
 
     //creates new episode notifier if new watch status is watching,
+    //creates release notifier is status is to watch
     //otherwise delete notifier with this media id and cancel alarm
     private void updateNewEpisodeNotifier(SeriesData newMediaData) {
         int newWatchStatus = newMediaData.getWatchStatus();
-        if (newWatchStatus == MediaData.WATCH_STATUS_WATCHING) {
+
+        if (newWatchStatus == MediaData.WATCH_STATUS_TO_WATCH) {
+            updateReleaseNotifier(newMediaData);
+
+        } else if (newWatchStatus == MediaData.WATCH_STATUS_WATCHING) {
             getTraktNextEpisodeDetails(newMediaData);
 
         } else {
