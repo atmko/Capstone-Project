@@ -61,6 +61,9 @@ public class UpdateMediaWorker extends Worker {
         List<MovieData> movieDataList = mDatabase.movieDataDao()
                 .getAllMoviesAlt();
 
+        List<String> notifierMediaIds = mDatabase.movieNotifierDao()
+                .getAllMediaIdsAlt();
+
         //get movie detail url format
         String[] detailUrls = mContext.getResources().getStringArray(R.array.details_urls);
         String detailUrl = detailUrls[MEDIA_TYPE_MOVIE];
@@ -71,7 +74,14 @@ public class UpdateMediaWorker extends Worker {
         //iterate through movie list with this watch status
         for (MovieData movieData: movieDataList) {
             SystemClock.sleep(REQUEST_COOL_DOWN);
-            updateSavedMedia(movieData, detailUrl, searchPreferences);
+
+            if (notifierMediaIds.contains(movieData.getId())) {
+                updateSavedMedia(movieData, detailUrl, searchPreferences, true);
+
+            } else {
+                updateSavedMedia(movieData, detailUrl, searchPreferences, false);
+
+            }
         }
     }
 
@@ -79,6 +89,9 @@ public class UpdateMediaWorker extends Worker {
         //get all saved series
         List<SeriesData> seriesDataList = mDatabase.seriesDataDao()
                 .getAllSeriesAlt();
+
+        List<String> notifierMediaIds = mDatabase.seriesNotifierDao()
+                .getAllMediaIdsAlt();
 
         //get series detail url format
         String[] detailUrls = mContext.getResources().getStringArray(R.array.details_urls);
@@ -90,12 +103,19 @@ public class UpdateMediaWorker extends Worker {
         //iterate through series list with this watch status
         for (SeriesData seriesData: seriesDataList) {
             SystemClock.sleep(REQUEST_COOL_DOWN);
-            updateSavedMedia(seriesData, detailUrl, searchPreferences);
+
+            if (notifierMediaIds.contains(seriesData.getId())) {
+                updateSavedMedia(seriesData, detailUrl, searchPreferences, true);
+
+            } else {
+                updateSavedMedia(seriesData, detailUrl, searchPreferences, false);
+
+            }
         }
     }
 
     private void updateSavedMedia(final MediaData oldMediaData, final String detailUrl,
-                                  final SearchPreferences searchPreferences) {
+                                  final SearchPreferences searchPreferences, final boolean hasNotifiers) {
         String id = oldMediaData.getId();
 
         //build AN request
@@ -136,7 +156,7 @@ public class UpdateMediaWorker extends Worker {
 
                         }
 
-                        checkForReleaseNotifierUpdates(oldMediaData, newMediaData);
+                        if (hasNotifiers) checkForReleaseNotifierUpdates(oldMediaData, newMediaData);
 
                         Log.d(TAG, newMediaData.getTitle() + " data updated");
 
@@ -157,7 +177,7 @@ public class UpdateMediaWorker extends Worker {
     }
 
     //updates release notifications if media release date has changed
-    private void checkForReleaseNotifierUpdates( MediaData oldMediaData, MediaData newMediaData) {
+    private void checkForReleaseNotifierUpdates(MediaData oldMediaData, MediaData newMediaData) {
         //if release date has changed, get release notifier
         if (!newMediaData.getReleaseDate().equals(oldMediaData.getReleaseDate())) {
             MediaNotifier releaseNotifier;
