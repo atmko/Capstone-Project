@@ -91,8 +91,8 @@ public class DetailsFragment extends Fragment {
     public static final String QUICK_ACTION_SHARE = "qa_share";
     public static final String QUICK_ACTION_RATE = "qa_rate";
 
-    private static final int COOL_DOWN_REQUEST_TMDB_ID = 0;
-    private static final int COOL_DOWN_REQUEST_TRAKT_ID = 1;
+    public static final int COOL_DOWN_REQUEST_TMDB_ID = 0;
+    public static final int COOL_DOWN_REQUEST_TRAKT_ID = 1;
 
     private int mMediaType;
     private String mDetailUrl;

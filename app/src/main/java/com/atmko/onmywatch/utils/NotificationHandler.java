@@ -16,11 +16,13 @@ import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.MovieNotifier;
+import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesNotifier;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
@@ -138,8 +140,8 @@ public class NotificationHandler {
                                                    MediaNotifier notifier) {
         int mediaType;
 
-        Notification notification = notifier.createNotification(
-                context, MediaNotifier.CONDITION_ON_RELEASE, mediaData.getTitle());
+        Notification notification = notifier.createReleaseNotification(
+                context, mediaData.getTitle());
 
         if (mediaData instanceof MovieData) {
             mediaType = MEDIA_TYPE_MOVIE;
@@ -165,25 +167,40 @@ public class NotificationHandler {
         enableBootReceiver(context);
     }
 
+    public static void scheduleNewEpisodeNotification(Context context, SeriesData mediaData,
+                                                   SeriesNotifier notifier) {
+        Notification notification = notifier.createNewEpisodeNotification(
+                context, mediaData.getTitle());
+
+        //create pending intent to house notification for when alarm is triggered
+        PendingIntent releasePendingIntent =
+                notifier.createPendingIntent(context, MEDIA_TYPE_SERIES, mediaData.getId(), notification);
+
+        //configure calender
+        Date localAirDate = mediaData.getNextEpisodeToAir().getLocalAirDate();
+
+        AlarmManager alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        alarmMgr.set(AlarmManager.RTC_WAKEUP, localAirDate.getTime(), releasePendingIntent);
+
+        enableBootReceiver(context);
+    }
+
     //deletes notifiers and cancel alarm notifications
-    public static void cancelAlarms(Context context, List<MediaNotifier> notifiers) {
+    public static void cancelAlarm(Context context, MediaNotifier notifier) {
         AppDatabase database = AppDatabase.getInstance(context);
 
-        for (MediaNotifier notifier: notifiers) {
-            AlarmManager alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-            PendingIntent intent = notifier.createPendingIntent(context);
-            alarmMgr.cancel(intent);
+        AlarmManager alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        PendingIntent intent = notifier.createPendingIntent(context);
+        alarmMgr.cancel(intent);
 
-            if (notifier instanceof MovieNotifier) {
-                database.movieNotifierDao().deleteNotifier(((MovieNotifier) notifier));
+        if (notifier instanceof MovieNotifier) {
+            database.movieNotifierDao().deleteNotifier(((MovieNotifier) notifier));
 
-            } else {
-                database.seriesNotifierDao().deleteNotifier(((SeriesNotifier) notifier));
-            }
+        } else {
+            database.seriesNotifierDao().deleteNotifier(((SeriesNotifier) notifier));
         }
 
         //disable boot receiver if there are no notifiers in the database
-
         List<MovieNotifier> movieNotifiers = database.movieNotifierDao().getAllNotifiersAlt();
         List<SeriesNotifier> seriesNotifiers = database.seriesNotifierDao().getAllNotifiersAlt();
 

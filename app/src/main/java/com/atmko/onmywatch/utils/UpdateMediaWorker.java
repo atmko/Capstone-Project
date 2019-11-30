@@ -177,9 +177,7 @@ public class UpdateMediaWorker extends Worker {
 
             //if releaseNotifier exists, cancel old alarm notification
             if (releaseNotifier != null) {
-                //TODO: method requires list
-                //noinspection ArraysAsListWithZeroOrOneArgument
-                NotificationHandler.cancelAlarms(mContext, Arrays.asList(releaseNotifier));
+                NotificationHandler.cancelAlarm(mContext, releaseNotifier);
 
                 //set new alarm notification if new release date not empty
                 if (!newMediaData.getReleaseDate().equals("")) {

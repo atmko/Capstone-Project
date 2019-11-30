@@ -129,6 +129,11 @@
     <!--NOTIFICATION TEXT-->
     <string name="notification_new_release_title">New Release</string>
     <string name="notification_new_release_content_suffix"> has been released</string>
+
+    <string name="notification_new_episode_title">New Episode</string>
+    <string name="notification_new_episode_content_prefix">A new Episode of </string>
+    <string name="notification_new_episode_content_suffix"> has been released</string>
+
     <string name="notification_channel_releases">Releases</string>
     <string name="notification_channel_releases_description">Notifications for new releases</string>
 

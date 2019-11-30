@@ -5,6 +5,7 @@
 package com.atmko.onmywatch.models;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 
@@ -13,6 +14,7 @@ import org.parceler.Parcel;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -32,6 +34,41 @@ public class Episode {
     private Date mAirDateIso;
 
     public Episode() {
+    }
+
+    //returns the local date of episode. Uses iso date if available, otherwise regular date, otherwise null
+    public Date getLocalAirDate() {
+        if (mAirDateIso != null) {
+            //add time till next episode to current calender
+            Calendar releaseCalender = Calendar.getInstance();
+            releaseCalender.add(Calendar.MILLISECOND, getTimeDifferenceViaUtcTime().intValue());
+            return releaseCalender.getTime();
+        }
+
+        if (mAirDate != null) {
+            return mAirDate;
+
+        } else {
+            return null;
+        }
+    }
+
+    //returns the most accurate available date of episode. Uses iso date if available, otherwise regular date, otherwise null
+    public Date getBestAvailableDate() {
+        if (mAirDateIso != null) {
+            return mAirDateIso;
+        }
+
+        if (mAirDate != null) {
+            return mAirDate;
+
+        } else {
+            return null;
+        }
+    }
+
+    public void setAirDate(Date mAirDate) {
+        this.mAirDate = mAirDate;
     }
 
     public void setAirDate(String airDate) throws ParseException {
@@ -84,7 +121,7 @@ public class Episode {
     }
 
     //returns time in millis till next episode
-    private long getTimeDifferenceViaUtcTime() {
+    private Long getTimeDifferenceViaUtcTime() {
         return mAirDateIso.getTime() - new Date().getTime();
     }
 

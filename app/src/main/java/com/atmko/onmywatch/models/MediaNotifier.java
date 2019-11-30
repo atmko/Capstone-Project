@@ -59,16 +59,10 @@ public abstract class MediaNotifier {
         }
     }
 
-    public Notification createNotification(Context context, int conditionKey, String mediaTitle) {
-        String contentTitle = null;
-        String contentText = null;
-
-        if (conditionKey == CONDITION_ON_RELEASE) {
-            contentTitle = context.getString(R.string.notification_new_release_title);
-            contentText = mediaTitle
-                    + " " + context.getString(R.string.notification_new_release_content_suffix);
-
-        }
+    public Notification createReleaseNotification(Context context, String mediaTitle) {
+        String contentTitle = context.getString(R.string.notification_new_release_title);
+        String contentText = mediaTitle
+                        + context.getString(R.string.notification_new_release_content_suffix);
 
         //create intent to launch activity on click
         Intent intent = new Intent(context, MasterActivity.class);

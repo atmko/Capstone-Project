@@ -31,6 +31,7 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.atmko.onmywatch.adapters.AddToListAdapter;
 import com.atmko.onmywatch.database.AppDatabase;
+import com.atmko.onmywatch.models.Episode;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieData;
@@ -51,6 +52,7 @@ import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.utils.network_utils.MovieApiConstants;
 import com.atmko.onmywatch.utils.network_utils.NetworkFunctions;
 import com.atmko.onmywatch.utils.network_utils.SeriesApiConstants;
+import com.atmko.onmywatch.utils.network_utils.TraktApiConstants;
 import com.atmko.onmywatch.view_models.AddToListViewModel;
 import com.atmko.onmywatch.view_models.AddToListViewModelFactory;
 import com.google.android.material.snackbar.Snackbar;
@@ -64,8 +66,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static com.atmko.onmywatch.Fragments.DetailsFragment.COOL_DOWN_REQUEST_TMDB_ID;
+import static com.atmko.onmywatch.Fragments.DetailsFragment.COOL_DOWN_REQUEST_TRAKT_ID;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
+import static com.atmko.onmywatch.models.SeriesNotifier.CONDITION_NEW_EPISODE;
 import static com.atmko.onmywatch.utils.GeneralUtils.MILLISECOND_CONVERSION;
 
 public class AddToListActivity extends AppCompatActivity implements AddToListAdapter.OnListItemClickListener,
@@ -311,7 +316,10 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
 
                 }
 
-                updateReleaseNotifier(newMediaData, newMediaData.getWatchStatus());
+                updateReleaseNotifier(newMediaData);
+                if (newMediaData instanceof SeriesData) {
+                    updateNewEpisodeNotifier(((SeriesData) newMediaData));
+                }
 
                 int uerListNetCountChange = updateUserListRecords();
                 int newContainingListValue = mOriginalContainingLists.size() + uerListNetCountChange;
@@ -397,29 +405,29 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
     }
 
     //creates release notifier if new watch status is to watch or watching,
-    //otherwise delete all notifiers with this media id and cancel alarms
-    private void updateReleaseNotifier(MediaData newMediaData, int newWatchStatus) {
+    //otherwise delete notifier with this media id and cancel alarm
+    private void updateReleaseNotifier(MediaData newMediaData) {
+        int newWatchStatus = newMediaData.getWatchStatus();
         if (newWatchStatus == MediaData.WATCH_STATUS_TO_WATCH
                 || newWatchStatus == MediaData.WATCH_STATUS_WATCHING) {
 
             //if release date exists set release notifier through date caparison
             //otherwise create a notifier via release status without creating an alarm
             if (!newMediaData.getReleaseDate().equals("")) {
-                setNotifierThroughDateComparision(newMediaData);
+                setReleaseNotifierThroughDateComparision(newMediaData);
 
             } else {
-                setNotifierThroughReleaseStatus(newMediaData);
+                setReleaseNotifierThroughReleaseStatus(newMediaData);
             }
 
         } else {
-            //delete notifiers and cancel alarms
-            cancelMediaAlarms();
+            cancelMediaAlarmIfExists(MediaNotifier.CONDITION_ON_RELEASE);
         }
     }
 
     //compares release date and current date and sets release notifier if release date is in the future
     //then schedules alarm notification for future
-    private void setNotifierThroughDateComparision(MediaData newMediaData) {
+    private void setReleaseNotifierThroughDateComparision(MediaData newMediaData) {
         Date currentDate = new Date();
         Date releaseDate;
 
@@ -449,12 +457,12 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
     //used when release date doesn't exist. Checks if media has been released by getting release status via media's details
     //if release status not released, canceled, pilot, ended or returning series, save notifier object without creating accompanying alarm notification.
     //NOTE: alarm will be created when media is updated and a release date becomes available
-    private void setNotifierThroughReleaseStatus(final MediaData newMediaData) {
+    private void setReleaseNotifierThroughReleaseStatus(final MediaData newMediaData) {
         //if release status exists create notifier and return
         //otherwise fetch release status from media details, then create notifier
         //NOTE: release status will be null when not accessing this activity via DetailsFragment, because details won't have been fetched
         if (newMediaData.getReleaseStatus() != null) {
-            createNotifierPendingRelease(newMediaData);
+            createReleaseNotifierPendingRelease(newMediaData);
             return;
         }
 
@@ -496,7 +504,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
 
                             String releaseStatus = detailsMediaData.getReleaseStatus();
                             newMediaData.setReleaseStatus(releaseStatus);
-                            createNotifierPendingRelease(newMediaData);
+                            createReleaseNotifierPendingRelease(newMediaData);
                         }
                     });
 
@@ -508,7 +516,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
             @Override
             public void onError(ANError anError) {
                 if (anError.getErrorCode() == ApiConstants.TOO_MANY_REQUESTS) {
-                    retryAfterCoolDOwn(anError, newMediaData);
+                    retryAfterCoolDOwn(anError, COOL_DOWN_REQUEST_TMDB_ID, newMediaData);
 
                     return;
                 }
@@ -521,7 +529,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
     }
 
     //create notifier if media release still pending
-    private void createNotifierPendingRelease(MediaData newMediaData) {
+    private void createReleaseNotifierPendingRelease(MediaData newMediaData) {
         String releaseStatus = newMediaData.getReleaseStatus();
 
         //create notifier if media release still pending
@@ -535,8 +543,221 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
         }
     }
 
+    //creates new Media release notifier in database and returns notifier
+    private MediaNotifier createReleaseNotifier(MediaData newMediaData) {
+        //create notifier and set alarm with release notification
+        MediaNotifier releaseNotifier;
+
+        if (newMediaData instanceof MovieData) {
+            releaseNotifier = new MovieNotifier(newMediaData.getId(), MediaNotifier.CONDITION_ON_RELEASE);
+            mDatabase.movieNotifierDao().addMediaNotifier(((MovieNotifier) releaseNotifier));
+
+        } else {
+            releaseNotifier = new SeriesNotifier(newMediaData.getId(), MediaNotifier.CONDITION_ON_RELEASE);
+            mDatabase.seriesNotifierDao().addMediaNotifier(((SeriesNotifier) releaseNotifier));
+        }
+
+        return releaseNotifier;
+    }
+
+    //creates new episode notifier if new watch status is watching,
+    //otherwise delete notifier with this media id and cancel alarm
+    private void updateNewEpisodeNotifier(SeriesData newMediaData) {
+        int newWatchStatus = newMediaData.getWatchStatus();
+        if (newWatchStatus == MediaData.WATCH_STATUS_WATCHING) {
+            getTraktNextEpisodeDetails(newMediaData);
+
+        } else {
+            cancelMediaAlarmIfExists(CONDITION_NEW_EPISODE);
+        }
+    }
+
+    //get next episode details from trakt api
+    //gets called twice: once to get matching trakt id, again to get trakt next episode details
+    //if trakt id already exists, its called only once
+    private void getTraktNextEpisodeDetails(final SeriesData newMediaData) {
+        //if inputTraktId id is null make url to get trakt id
+        //otherwise make url to get next episode details
+
+        final String inputTraktId = newMediaData.getTraktId();
+
+        String[] traktFetchUrls;
+        ANRequest request;
+
+        if (inputTraktId == (null)) {
+            traktFetchUrls = getResources().getStringArray(R.array.trakt_matching_media_urls);
+            String traktFetchUrl = traktFetchUrls[mMediaType];
+            request = NetworkFunctions.traktAgnosticRequestById(
+                    traktFetchUrl, newMediaData.getId());
+
+        } else {
+            String traktFetchUrl = getString(R.string.trakt_next_episode_urls);
+            request = NetworkFunctions.traktAgnosticRequestById(
+                    traktFetchUrl, newMediaData.getTraktId());
+        }
+
+        request.getAsString(new StringRequestListener() {
+            @Override
+            public void onResponse(final String returnedJSONString) {
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            if (inputTraktId == null) {
+                                String outputTraktId = SeriesDataParser.parseAndGetTraktId(returnedJSONString);
+
+                                //rerun the function with non null trakt id
+                                if (outputTraktId != null) {
+                                    newMediaData.setTraktId(outputTraktId);
+                                    getTraktNextEpisodeDetails(newMediaData);
+                                }
+
+                            } else {
+                                //parse trakt info
+                                SeriesData detailsMediaData =
+                                        SeriesDataParser.parseTraktNextEpisodeDetails(returnedJSONString, newMediaData);
+
+                                //if there is a next episode and date, create notifier using date, otherwise try using tmdb details
+                                Episode nextEpisode = detailsMediaData.getNextEpisodeToAir();
+                                if (nextEpisode != null && nextEpisode.getBestAvailableDate() != null) {
+                                    setNewEpisodeNotifierThroughDateComparison(detailsMediaData);
+
+                                } else {
+                                    getTmdbNextEpisodeDetails(detailsMediaData);
+                                }
+                            }
+
+                        } catch (NullPointerException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onError(ANError anError) {
+                if (anError.getErrorCode() == TraktApiConstants.TOO_MANY_REQUESTS) {
+                    retryAfterCoolDOwn(anError, COOL_DOWN_REQUEST_TRAKT_ID, newMediaData);
+
+                    return;
+                }
+
+                //notify user of error
+                Snackbar.make(findViewById(R.id.top_layout),
+                        getString(R.string.details_error_message), Snackbar.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    //creates new episode notifier and notification alarm if release date exists and is in the future
+    private void setNewEpisodeNotifierThroughDateComparison(SeriesData newMediaData) {
+        //if release date is null or if release date has passed, return
+        Date releaseDate = newMediaData.getNextEpisodeToAir().getLocalAirDate();
+        if (releaseDate == null || releaseDate.before(new Date())) return;
+
+        SeriesNotifier newEpisodeNotifier = createNewEpisodeNotifier();
+
+        NotificationHandler
+                .scheduleNewEpisodeNotification(this, newMediaData, newEpisodeNotifier);
+    }
+
+    //Checks if media has been released by getting release status via media's details
+    //if episode and air date available, create notification alarm using date
+    //if no new episode and or episode date available, save notifier object without creating accompanying alarm notification.
+    private void getTmdbNextEpisodeDetails(final SeriesData newMediaData) {
+        //if release status exists create notifier and return
+        //otherwise fetch release status from media details, then create notifier
+        //NOTE: release status will be null when not accessing this activity via DetailsFragment, because details won't have been fetched
+        if (newMediaData.getReleaseStatus() != null) {
+            createNewEpisodeNotifierPendingRelease(newMediaData);
+            return;
+        }
+
+        String[] detailUrls = getResources().getStringArray(R.array.details_urls);
+        String detailUrl = null;
+
+        if (mMediaType == MEDIA_TYPE_MOVIE) {
+            detailUrl = detailUrls[MEDIA_TYPE_MOVIE];
+
+        } else if (mMediaType == MEDIA_TYPE_SERIES) {
+            detailUrl = detailUrls[MEDIA_TYPE_SERIES];
+        }
+
+        SearchPreferences searchPreferences =  new SearchPreferences();
+
+        //build AN request
+        ANRequest request = NetworkFunctions.agnosticDetailRequestById(detailUrl, newMediaData.getId(),
+                searchPreferences, this);
+
+        request.getAsString(new StringRequestListener() {
+            @Override
+            public void onResponse(final String returnedJSONString) {
+                try {
+                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            //get release status, set release status and create notifier
+                            SeriesData detailsMediaData =
+                                        SeriesDataParser.parseDetails(returnedJSONString,
+                                                ((SeriesData) mMediaData));
+
+                            String releaseStatus = detailsMediaData.getReleaseStatus();
+                            newMediaData.setReleaseStatus(releaseStatus);
+
+
+                            //if there is a next episode and date, create notifier using date, otherwise create notifier without alarm
+                            Episode nextEpisode = detailsMediaData.getNextEpisodeToAir();
+                            if (nextEpisode != null && nextEpisode.getBestAvailableDate() != null) {
+                                setNewEpisodeNotifierThroughDateComparison(newMediaData);
+
+                            } else {
+                                //NOTE: alarm will be created when media is updated and a release date becomes available
+                                createNewEpisodeNotifierPendingRelease(newMediaData);
+                            }
+                        }
+                    });
+
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(ANError anError) {
+                if (anError.getErrorCode() == ApiConstants.TOO_MANY_REQUESTS) {
+                    retryAfterCoolDOwn(anError, COOL_DOWN_REQUEST_TRAKT_ID, newMediaData);
+
+                    return;
+                }
+
+                //notify user of error
+                Snackbar.make(AddToListActivity.this.findViewById(R.id.top_layout),
+                        getString(R.string.details_error_message), Snackbar.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    //create notifier if episodes still pending
+    private void createNewEpisodeNotifierPendingRelease(SeriesData newMediaData) {
+        String releaseStatus = newMediaData.getReleaseStatus();
+
+        //create notifier if new episodes still pending
+        if (releaseStatus.equals(SeriesApiConstants.SeriesTextReplacement.REPLACEMENT_RETURNING_SERIES)) {
+            createNewEpisodeNotifier();
+        }
+    }
+
+    private SeriesNotifier createNewEpisodeNotifier() {
+        SeriesNotifier newEpisodeNotifier =
+                new SeriesNotifier(mMediaData.getId(), CONDITION_NEW_EPISODE);
+        mDatabase.seriesNotifierDao().addMediaNotifier(newEpisodeNotifier);
+
+        return newEpisodeNotifier;
+    }
+
     //retry method if api returns too may requests error
-    private void retryAfterCoolDOwn(ANError anError, final MediaData newMediaData) {
+    private void retryAfterCoolDOwn(ANError anError, final int coolDownRequestId,
+                                    final MediaData newMediaData) {
         Log.d(TAG, "retrying details fetch");
 
         int coolDown;
@@ -558,7 +779,12 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
             @Override
             public void run() {
                 try {
-                    setNotifierThroughReleaseStatus(newMediaData);
+                    if (coolDownRequestId == COOL_DOWN_REQUEST_TMDB_ID) {
+                        setReleaseNotifierThroughReleaseStatus(newMediaData);
+
+                    } else if (coolDownRequestId == COOL_DOWN_REQUEST_TRAKT_ID){
+                        getTraktNextEpisodeDetails(((SeriesData) newMediaData));
+                    }
 
                 } catch (NullPointerException e) {
                     e.printStackTrace();
@@ -568,38 +794,21 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
         }, coolDownInMilliSecs);
     }
 
-    //creates new Media release notifier in database and returns notifier
-    private MediaNotifier createReleaseNotifier(MediaData newMediaData) {
-        //create notifier and set alarm with release notification
-        MediaNotifier releaseNotifier;
-
-        if (newMediaData instanceof MovieData) {
-            releaseNotifier = new MovieNotifier(newMediaData.getId(), MediaNotifier.CONDITION_ON_RELEASE);
-            mDatabase.movieNotifierDao().addMediaNotifier(((MovieNotifier) releaseNotifier));
-
-        } else {
-            releaseNotifier = new SeriesNotifier(newMediaData.getId(), MediaNotifier.CONDITION_ON_RELEASE);
-            mDatabase.seriesNotifierDao().addMediaNotifier(((SeriesNotifier) releaseNotifier));
-        }
-
-        return releaseNotifier;
-    }
-
     //cancels all alarms with media id and deletes notifiers
-    private void cancelMediaAlarms() {
-        List notifiers;
+    private void cancelMediaAlarmIfExists(int condition) {
+        MediaNotifier notifier;
 
         if (mMediaType == MEDIA_TYPE_MOVIE) {
-            notifiers = mDatabase.movieNotifierDao().getNotifiersWithMediaIdAlt(mMediaData.getId());
+            notifier = mDatabase.movieNotifierDao().getNotifierByIdAlt(mMediaData.getId(), condition);
 
         } else {
-            notifiers = mDatabase.seriesNotifierDao().getNotifiersWithMediaIdAlt(mMediaData.getId());
+            notifier = mDatabase.seriesNotifierDao().getNotifierByIdAlt(mMediaData.getId(), condition);
         }
 
-        //cancel alarms and delete media notifiers
-        //TODO: notifiers only contains MediaNotifier objects
-        //noinspection unchecked
-        NotificationHandler.cancelAlarms(this, notifiers);
+        if (notifier != null) {
+            //cancel alarm and delete media notifier
+            NotificationHandler.cancelAlarm(this, notifier);
+        }
     }
 
     private void updateWatchListCounts() {

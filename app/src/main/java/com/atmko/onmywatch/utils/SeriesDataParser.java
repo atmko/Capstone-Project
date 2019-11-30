@@ -139,16 +139,20 @@ public class SeriesDataParser {
         detailsSeriesData.setReleaseStatus(SeriesTextReplacement.replaceText(releaseStatus));
 
         Map nextEpisodeToAirMap = ((Map) returnedMap.get(SeriesApiConstants.NEXT_EPISODE_TO_AIR_KEY));
+
         if (nextEpisodeToAirMap != null) {
-            Episode nextEpisodeToAir = new Episode();
+            Episode nextEpisode = new Episode();
+            String nextEpisodeAirDate = (String) nextEpisodeToAirMap.get(SeriesApiConstants.AIR_DATE_KEY);
 
             try {
-                nextEpisodeToAir.setAirDate(((String) nextEpisodeToAirMap.get(SeriesApiConstants.AIR_DATE_KEY)));
-                detailsSeriesData.setNextEpisodeToAir(nextEpisodeToAir);
+                nextEpisode.setAirDate(nextEpisodeAirDate);
 
             } catch (ParseException e) {
+                nextEpisode.setAirDate(seriesData.getNextEpisodeToAir().getBestAvailableDate());
                 e.printStackTrace();
             }
+
+            detailsSeriesData.setNextEpisodeToAir(nextEpisode);
         }
 
         return detailsSeriesData;
@@ -194,14 +198,19 @@ public class SeriesDataParser {
         Gson gson = new Gson();
         Map returnedMap = gson.fromJson(returnedJSONString, Map.class);
 
-        String firstAired = ((String) returnedMap.get(TraktApiConstants.FIRST_AIRED_KEY));
-
-        try {
+        if (returnedMap != null) {
             Episode nextEpisode = new Episode();
-            nextEpisode.setAirDateIso(firstAired);
+            String nextEpisodeAirDate = ((String) returnedMap.get(TraktApiConstants.FIRST_AIRED_KEY));
+
+            try {
+                nextEpisode.setAirDateIso(nextEpisodeAirDate);
+
+            } catch (ParseException e) {
+                nextEpisode.setAirDate(seriesData.getNextEpisodeToAir().getBestAvailableDate());
+                e.printStackTrace();
+            }
+
             seriesData.setNextEpisodeToAir(nextEpisode);
-        } catch (ParseException e) {
-            e.printStackTrace();
         }
 
         return seriesData;
