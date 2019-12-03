@@ -12,22 +12,25 @@ import android.content.pm.PackageManager;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.atmko.onmywatch.database.AppDatabase;
+import com.atmko.onmywatch.models.Episode;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.MovieNotifier;
+import com.atmko.onmywatch.models.ScheduledMedia;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesNotifier;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 
-import java.util.Calendar;
+import org.parceler.Parcels;
+
 import java.util.Date;
 import java.util.List;
 
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
-
+import static com.atmko.onmywatch.utils.UpdateMediaWorker.NEW_MEDIA_DATA_KEY;
 
 public class NotificationHandler {
     public static class AlarmReceiver extends BroadcastReceiver {
@@ -50,6 +53,22 @@ public class NotificationHandler {
                     //and media id and condition as unique ids
                     //show notification
                     notificationManager.notify(mediaId, condition, notification);
+
+                    if (condition == MediaNotifier.CONDITION_ON_RELEASE) {
+                        if (mediaType == MEDIA_TYPE_SERIES) {
+
+                            SeriesData seriesData = AppDatabase.getInstance(context).seriesDataDao().getSeriesByIdAlt(mediaId);
+                            if (seriesData.getWatchStatus() == MediaData.WATCH_STATUS_WATCHING) {
+                                SeriesData newMediaData =
+                                        AppDatabase.getInstance(context).seriesDataDao().getSeriesByIdAlt(mediaId);
+
+                                Intent intent = new Intent(context, UpdateNotifierService.class);
+                                intent.setAction(UpdateNotifierService.ACTION_SET);
+                                intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(newMediaData));
+                                UpdateNotifierService.enqueueWork(context, intent);
+                            }
+                        }
+                    }
 
                     //skip notifier deletion if condition is new episodes
                     if (condition == SeriesNotifier.CONDITION_NEW_EPISODE) return;
@@ -129,13 +148,16 @@ public class NotificationHandler {
         List<SeriesNotifier> notifiers = database.seriesNotifierDao().getAllNotifiersAlt();
 
         for (SeriesNotifier notifier: notifiers) {
-            MediaData mediaData = database.seriesDataDao().getSeriesByIdAlt(notifier.getMediaId());
+            //skip if release date is empty
+            if (notifier.alarmDate == null || notifier.alarmDate.equals("")) continue;
+
+            SeriesData mediaData = database.seriesDataDao().getSeriesByIdAlt(notifier.getMediaId());
 
             if (notifier.getCondition() == MediaNotifier.CONDITION_ON_RELEASE) {
-                //skip if release date is empty
-                if (mediaData.getReleaseDate().equals("")) continue;
-
                 scheduleReleaseNotification(context, mediaData, notifier);
+
+            } else if (notifier.getCondition() == SeriesNotifier.CONDITION_NEW_EPISODE) {
+                scheduleNewEpisodeNotification(context, mediaData, notifier);
             }
         }
     }
@@ -158,17 +180,9 @@ public class NotificationHandler {
         PendingIntent releasePendingIntent =
                 notifier.createPendingIntent(context, mediaType, mediaData.getId(), notification);
 
-        //configure calender
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        int[] releaseDateArray =
-                GeneralUtils.separateDateToIntegers(mediaData.getReleaseDate());
-        calendar.set(releaseDateArray[0], releaseDateArray[1], releaseDateArray[2]);
+        ScheduledMedia scheduledMedia = new ScheduledMedia();
 
-        AlarmManager alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        alarmMgr.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), releasePendingIntent);
-
-        enableBootReceiver(context);
+        setNotificationAlarm(context, releasePendingIntent, scheduledMedia, notifier);
     }
 
     public static void scheduleNewEpisodeNotification(Context context, SeriesData mediaData,
@@ -180,13 +194,25 @@ public class NotificationHandler {
         PendingIntent releasePendingIntent =
                 notifier.createPendingIntent(context, MEDIA_TYPE_SERIES, mediaData.getId(), notification);
 
-        //configure calender
-        Date localAirDate = mediaData.getNextEpisodeToAir().getLocalAirDate();
+        Episode nextEpisode = new Episode();
 
-        AlarmManager alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        alarmMgr.set(AlarmManager.RTC_WAKEUP, localAirDate.getTime(), releasePendingIntent);
+        setNotificationAlarm(context, releasePendingIntent, nextEpisode, notifier);
+    }
 
-        enableBootReceiver(context);
+    private static void setNotificationAlarm(Context context, PendingIntent releasePendingIntent,
+                                             ScheduledMedia scheduledMedia, MediaNotifier notifier) {
+        try {
+            scheduledMedia.setAirDate(notifier.alarmDate);
+
+            Date localAirDate = scheduledMedia.getBestLocalAirDate();
+
+            AlarmManager alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+            alarmMgr.set(AlarmManager.RTC_WAKEUP, localAirDate.getTime(), releasePendingIntent);
+
+            enableBootReceiver(context);
+        } catch (ScheduledMedia.DateFormatException e) {
+            e.printStackTrace();
+        }
     }
 
     //deletes notifiers and cancel alarm notifications

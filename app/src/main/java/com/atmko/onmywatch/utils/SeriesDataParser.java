@@ -7,6 +7,7 @@ package com.atmko.onmywatch.utils;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.ANRequest;
 import com.atmko.onmywatch.models.Episode;
+import com.atmko.onmywatch.models.ScheduledMedia;
 import com.atmko.onmywatch.utils.network_utils.SeriesApiConstants;
 import com.atmko.onmywatch.utils.network_utils.TraktApiConstants;
 import com.atmko.stack.Stack;
@@ -16,7 +17,6 @@ import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 import com.atmko.onmywatch.utils.network_utils.PeopleApiConstants;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -144,12 +144,19 @@ public class SeriesDataParser {
             Episode nextEpisode = new Episode();
             String nextEpisodeAirDate = (String) nextEpisodeToAirMap.get(SeriesApiConstants.AIR_DATE_KEY);
 
-            try {
-                nextEpisode.setAirDate(nextEpisodeAirDate);
+            if (nextEpisodeAirDate != null) {
+                try {
+                    nextEpisode.setAirDate(nextEpisodeAirDate);
+                } catch (ScheduledMedia.DateFormatException e) {
+                    e.printStackTrace();
+                }
 
-            } catch (ParseException e) {
-                nextEpisode.setAirDate(seriesData.getNextEpisodeToAir().getBestAvailableDate());
-                e.printStackTrace();
+            } else {
+                try {
+                    nextEpisode.setAirDate(seriesData.getNextEpisodeToAir().getBestAvailableDateString());
+                } catch (ScheduledMedia.DateFormatException e) {
+                    e.printStackTrace();
+                }
             }
 
             detailsSeriesData.setNextEpisodeToAir(nextEpisode);
@@ -202,12 +209,19 @@ public class SeriesDataParser {
             Episode nextEpisode = new Episode();
             String nextEpisodeAirDate = ((String) returnedMap.get(TraktApiConstants.FIRST_AIRED_KEY));
 
-            try {
-                nextEpisode.setAirDateIso(nextEpisodeAirDate);
+            if (nextEpisodeAirDate != null) {
+                try {
+                    nextEpisode.setAirDate(nextEpisodeAirDate);
+                } catch (ScheduledMedia.DateFormatException e) {
+                    e.printStackTrace();
+                }
 
-            } catch (ParseException e) {
-                nextEpisode.setAirDate(seriesData.getNextEpisodeToAir().getBestAvailableDate());
-                e.printStackTrace();
+            } else {
+                try {
+                    nextEpisode.setAirDate(seriesData.getNextEpisodeToAir().getBestAvailableDateString());
+                } catch (ScheduledMedia.DateFormatException e) {
+                    e.printStackTrace();
+                }
             }
 
             seriesData.setNextEpisodeToAir(nextEpisode);

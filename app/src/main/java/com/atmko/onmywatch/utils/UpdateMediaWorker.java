@@ -5,6 +5,7 @@
 package com.atmko.onmywatch.utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
@@ -19,14 +20,14 @@ import com.androidnetworking.interfaces.StringRequestListener;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MediaData;
-import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.utils.network_utils.NetworkFunctions;
 
-import java.util.Arrays;
+import org.parceler.Parcels;
+
 import java.util.List;
 
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
@@ -35,6 +36,9 @@ import static com.atmko.onmywatch.utils.GeneralUtils.MILLISECOND_CONVERSION;
 
 public class UpdateMediaWorker extends Worker {
     private static final String TAG = UpdateMediaWorker.class.getSimpleName();
+
+    public static final String NEW_MEDIA_DATA_KEY = "new_media_data";
+
     public static final int REQUEST_COOL_DOWN = 1000;
 
     private final Context mContext;
@@ -156,7 +160,12 @@ public class UpdateMediaWorker extends Worker {
 
                         }
 
-                        if (hasNotifiers) checkForReleaseNotifierUpdates(oldMediaData, newMediaData);
+                        if (hasNotifiers) {
+                            Intent intent = new Intent(getApplicationContext(), UpdateNotifierService.class);
+                            intent.setAction(UpdateNotifierService.ACTION_SET);
+                            intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(newMediaData));
+                            UpdateNotifierService.enqueueWork(mContext, intent);
+                        }
 
                         Log.d(TAG, newMediaData.getTitle() + " data updated");
 
@@ -170,45 +179,15 @@ public class UpdateMediaWorker extends Worker {
 
                 //notify user of error
                 if (anError.getErrorCode() == ApiConstants.TOO_MANY_REQUESTS) {
-                    retryAfterCoolDOwn(anError, oldMediaData, detailUrl, searchPreferences);
+                    retryAfterCoolDOwn(anError, oldMediaData, detailUrl, searchPreferences, hasNotifiers);
                 }
             }
         });
     }
 
-    //updates release notifications if media release date has changed
-    private void checkForReleaseNotifierUpdates(MediaData oldMediaData, MediaData newMediaData) {
-        //if release date has changed, get release notifier
-        if (!newMediaData.getReleaseDate().equals(oldMediaData.getReleaseDate())) {
-            MediaNotifier releaseNotifier;
-
-            if (newMediaData instanceof MovieData) {
-                releaseNotifier =
-                        mDatabase.movieNotifierDao()
-                                .getNotifierByIdAlt(newMediaData.getId(),
-                                        MediaNotifier.CONDITION_ON_RELEASE);
-
-            } else {
-                releaseNotifier =
-                        mDatabase.seriesNotifierDao()
-                                .getNotifierByIdAlt(newMediaData.getId(),
-                                        MediaNotifier.CONDITION_ON_RELEASE);
-            }
-
-            //if releaseNotifier exists, cancel old alarm notification
-            if (releaseNotifier != null) {
-                NotificationHandler.cancelAlarm(mContext, releaseNotifier);
-
-                //set new alarm notification if new release date not empty
-                if (!newMediaData.getReleaseDate().equals("")) {
-                    NotificationHandler.scheduleReleaseNotification(mContext, newMediaData, releaseNotifier);
-                }
-            }
-        }
-    }
-
     private void retryAfterCoolDOwn(ANError anError, final MediaData mediaData,
-                                    final String detailUrl, final SearchPreferences searchPreferences) {
+                                    final String detailUrl, final SearchPreferences searchPreferences,
+                                    final boolean haNotifiers) {
         Log.d(TAG, mediaData.getTitle() + " retrying update");
 
         int coolDown = Integer.valueOf(anError.getResponse().header(ApiConstants.RETRY_AFTER_KEY));
@@ -218,7 +197,7 @@ public class UpdateMediaWorker extends Worker {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                updateSavedMedia(mediaData, detailUrl, searchPreferences);
+                updateSavedMedia(mediaData, detailUrl, searchPreferences, haNotifiers);
 
             }
         }, coolDownInMilliSecs);
