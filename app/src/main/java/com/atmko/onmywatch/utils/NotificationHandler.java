@@ -54,10 +54,11 @@ public class NotificationHandler {
                     //show notification
                     notificationManager.notify(mediaId, condition, notification);
 
-                    if (condition == MediaNotifier.CONDITION_ON_RELEASE) {
-                        if (mediaType == MEDIA_TYPE_SERIES) {
-
-                            SeriesData seriesData = AppDatabase.getInstance(context).seriesDataDao().getSeriesByIdAlt(mediaId);
+                    if (mediaType == MEDIA_TYPE_SERIES) {
+                        //get saved series data
+                        SeriesData seriesData = AppDatabase.getInstance(context).seriesDataDao().getSeriesByIdAlt(mediaId);
+                        if (seriesData != null) {
+                            //if watch status is watching,
                             if (seriesData.getWatchStatus() == MediaData.WATCH_STATUS_WATCHING) {
                                 SeriesData newMediaData =
                                         AppDatabase.getInstance(context).seriesDataDao().getSeriesByIdAlt(mediaId);
@@ -66,12 +67,12 @@ public class NotificationHandler {
                                 intent.setAction(UpdateNotifierService.ACTION_SET);
                                 intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(newMediaData));
                                 UpdateNotifierService.enqueueWork(context, intent);
+
+                                //skip notifier deletion if condition is new episodes
+                                return;
                             }
                         }
                     }
-
-                    //skip notifier deletion if condition is new episodes
-                    if (condition == SeriesNotifier.CONDITION_NEW_EPISODE) return;
 
                     //remove media notifier from the database
                     removeMediaNotifier(context, mediaType, mediaId, condition);
