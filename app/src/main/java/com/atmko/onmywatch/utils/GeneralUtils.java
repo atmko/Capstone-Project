@@ -7,8 +7,14 @@ package com.atmko.onmywatch.utils;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 
 public class GeneralUtils {
-    public static final String ISO_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    public static final String ISO_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+    public static final String OFFSET_SYMBOL = "Z";
+    private static final String OFFSET_VALUE_UTC = "+0000";
     public static final int MILLISECOND_CONVERSION = 1000;
+
+    public static String replaceOffsetSymbol(String airDateString) {
+       return airDateString.replace(OFFSET_SYMBOL, OFFSET_VALUE_UTC);
+    }
 
     public static String convertToDisplayText(String text) {
         String displayText = "";

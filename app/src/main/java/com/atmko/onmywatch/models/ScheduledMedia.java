@@ -5,10 +5,10 @@
 package com.atmko.onmywatch.models;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.atmko.onmywatch.utils.GeneralUtils;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 
 import org.parceler.Parcel;
@@ -31,6 +31,7 @@ public class ScheduledMedia {
     static final String TIME_SUFFIX_DAYS = " day(s)";
     static final String TIME_SUFFIX_HOURS = " hour(s)";
     static final String TIME_SUFFIX_MINUTES = " minute(s)";
+    static final String DATE_TBD = "Date TBD";
 
     String mAirDate;
     String mAirDateIso;
@@ -42,13 +43,13 @@ public class ScheduledMedia {
     public Date getBestLocalAirDate() {
         if (mAirDateIso != null) {
             //add time till next episode to current calender
-            Calendar releaseCalender = Calendar.getInstance();
+            Calendar localCalender = Calendar.getInstance();
             try {
-                releaseCalender.add(Calendar.MILLISECOND, getTimeDifferenceViaUtcTime().intValue());
+                localCalender.add(Calendar.MILLISECOND, getTimeDifferenceViaUtcTime().intValue());
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            return releaseCalender.getTime();
+            return localCalender.getTime();
         }
 
         if (mAirDate != null) {
@@ -81,6 +82,10 @@ public class ScheduledMedia {
     public void setAirDate(@NonNull String airDate) throws DateFormatException {
         if (airDate.length() > ApiConstants.DATE_FORMAT.length()) {
             try {
+                if (airDate.contains(GeneralUtils.OFFSET_SYMBOL)) {
+                    airDate = GeneralUtils.replaceOffsetSymbol(airDate);
+                }
+
                 convertAirDateIso(airDate);
 
             } catch (ParseException e) {
@@ -133,7 +138,13 @@ public class ScheduledMedia {
 
             if (hoursValue < 1) {
                 int minutesValue = Long.valueOf(TimeUnit.MILLISECONDS.toMinutes(timeDifference)).intValue();
-                return minutesValue + TIME_SUFFIX_MINUTES;
+
+                if (minutesValue < 1) {
+                    return DATE_TBD;
+
+                } else {
+                    return minutesValue + TIME_SUFFIX_MINUTES;
+                }
 
             } else {
                 return hoursValue + TIME_SUFFIX_HOURS;
