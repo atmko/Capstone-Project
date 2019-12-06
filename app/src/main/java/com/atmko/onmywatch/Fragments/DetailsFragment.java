@@ -41,10 +41,12 @@ import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.RateActivity;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MovieNotifier;
+import com.atmko.onmywatch.models.ScheduledMedia;
 import com.atmko.onmywatch.models.SeriesNotifier;
 import com.atmko.onmywatch.utils.GeneralUtils;
 import com.atmko.onmywatch.utils.UpdateMediaWorker;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
+import com.atmko.onmywatch.utils.network_utils.MovieApiConstants;
 import com.atmko.onmywatch.utils.network_utils.TraktApiConstants;
 import com.atmko.onmywatch.view_models.DetailsViewModel;
 import com.atmko.onmywatch.view_models.DetailsViewModelFactory;
@@ -560,6 +562,8 @@ public class DetailsFragment extends Fragment {
                         mMediaData =
                                 MovieDataParser.parseDetails(returnedJSONString, ((MovieData) mMediaData));
 
+                        setMovieCountDown();
+
                     } else {
                         mMediaData =
                                 SeriesDataParser.parseDetails(returnedJSONString, ((SeriesData) mMediaData));
@@ -634,13 +638,7 @@ public class DetailsFragment extends Fragment {
                         mMediaData =
                                 SeriesDataParser.parseTraktNextEpisodeDetails(returnedJSONString, ((SeriesData) mMediaData));
 
-                        //set count down if available
-                        String countDown = ((SeriesData) mMediaData).getNextEpisodeToAir().getCountdown();
-
-                        if (countDown != null) {
-                            mCountDownTextView.setText(countDown);
-                            mCountDownTextView.setVisibility(View.VISIBLE);
-                        }
+                        setSeriesCountDown();
                     }
 
                 } catch (NullPointerException e) {
@@ -661,6 +659,42 @@ public class DetailsFragment extends Fragment {
                         getString(R.string.details_error_message), Snackbar.LENGTH_LONG).show();
             }
         });
+    }
+
+    private void setMovieCountDown() {
+        if (!mMediaData.getReleaseStatus().equals(MovieApiConstants.RELEASE_STATUS_RELEASED)) {
+            //set count down if release date available, otherwise set date to be determined
+            if (!mMediaData.getReleaseDate().equals("") && mMediaData.getReleaseDate() != null) {
+                ScheduledMedia scheduledMedia = new ScheduledMedia();
+
+                try {
+                    scheduledMedia.setAirDate(mMediaData.getReleaseDate());
+                } catch (ScheduledMedia.DateFormatException e) {
+                    e.printStackTrace();
+                    mCountDownTextView.setText(ScheduledMedia.DATE_ERROR);
+                    mCountDownTextView.setVisibility(View.VISIBLE);
+                }
+
+                if (scheduledMedia.getCountdown() != null) {
+                    mCountDownTextView.setText(scheduledMedia.getCountdown());
+                    mCountDownTextView.setVisibility(View.VISIBLE);
+                }
+
+            } else {
+                mCountDownTextView.setText(ScheduledMedia.DATE_TBD);
+                mCountDownTextView.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
+    private void setSeriesCountDown() {
+        //set count down if available
+        String countDown = ((SeriesData) mMediaData).getNextEpisodeToAir().getCountdown();
+
+        if (countDown != null) {
+            mCountDownTextView.setText(countDown);
+            mCountDownTextView.setVisibility(View.VISIBLE);
+        }
     }
 
     private void retryAfterCoolDOwn(ANError anError, final int coolDownRequestId) {
