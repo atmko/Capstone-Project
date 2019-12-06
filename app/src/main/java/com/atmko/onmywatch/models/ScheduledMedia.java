@@ -42,14 +42,20 @@ public class ScheduledMedia {
     //returns the local date of episode. Uses iso date if available, otherwise regular date, otherwise null
     public Date getBestLocalAirDate() {
         if (mAirDateIso != null) {
-            //add time till next episode to current calender
-            Calendar localCalender = Calendar.getInstance();
             try {
-                localCalender.add(Calendar.MILLISECOND, getTimeDifferenceViaUtcTime().intValue());
+                //get media'd release date in media's timezone
+                Date releaseDate = convertAirDateIso(mAirDateIso);
+
+                //set timestamp in local calender
+                Calendar localCalender = Calendar.getInstance();
+                localCalender.setTimeInMillis(releaseDate.getTime());
+
+                //return local calender's new date
+                return localCalender.getTime();
+
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            return localCalender.getTime();
         }
 
         if (mAirDate != null) {
