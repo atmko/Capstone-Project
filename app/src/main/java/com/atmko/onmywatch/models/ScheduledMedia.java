@@ -28,9 +28,9 @@ import static com.atmko.onmywatch.utils.GeneralUtils.ISO_DATE_FORMAT;
 
 @Parcel
 public class ScheduledMedia {
-    static final String TIME_SUFFIX_DAYS = " day(s)";
-    static final String TIME_SUFFIX_HOURS = " hour(s)";
-    static final String TIME_SUFFIX_MINUTES = " minute(s)";
+    private static final String TIME_SUFFIX_DAYS = " day(s)";
+    private static final String TIME_SUFFIX_HOURS = " hour(s)";
+    private static final String TIME_SUFFIX_MINUTES = " minute(s)";
     public static final String DATE_TBD = "Date TBD";
     public static final String DATE_ERROR = "Date Error";
 
