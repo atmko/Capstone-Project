@@ -101,7 +101,7 @@ public class ScheduledMedia {
 
             mAirDateIso = airDate;
 
-        } else if (airDate.length() == ApiConstants.DATE_FORMAT.length()) {
+        } else {
             try {
                 convertAirDate(airDate);
 
