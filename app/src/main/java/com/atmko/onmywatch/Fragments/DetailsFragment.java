@@ -183,12 +183,19 @@ public class DetailsFragment extends Fragment {
             //startup code moved to onCreateAnimator
 
         } else {
-            try {
-                setDetailViewValues();
-                configureDetailExtrasAdapter();
+            //check if details value exists.
+            //If so set detail values and configure extras adapter, otherwise get detail values
+            if (mMediaData.getReleaseStatus() != null) {
+                try {
+                    setDetailViewValues();
+                    configureDetailExtrasAdapter();
 
-            } catch (NullPointerException e) {
-                e.printStackTrace();
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+
+            } else {
+                getMediaDetails();
             }
         }
 
