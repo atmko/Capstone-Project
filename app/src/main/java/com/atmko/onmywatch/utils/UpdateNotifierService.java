@@ -40,6 +40,7 @@ import static com.atmko.onmywatch.Fragments.DetailsFragment.COOL_DOWN_REQUEST_TM
 import static com.atmko.onmywatch.Fragments.DetailsFragment.COOL_DOWN_REQUEST_TRAKT_ID;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
+import static com.atmko.onmywatch.models.MediaNotifier.CONDITION_ON_RELEASE;
 import static com.atmko.onmywatch.models.SeriesNotifier.CONDITION_NEW_EPISODE;
 import static com.atmko.onmywatch.utils.GeneralUtils.MILLISECOND_CONVERSION;
 import static com.atmko.onmywatch.utils.UpdateMediaWorker.NEW_MEDIA_DATA_KEY;
@@ -238,12 +239,14 @@ public class UpdateNotifierService extends JobIntentService {
         int newWatchStatus = newMediaData.getWatchStatus();
 
         if (newWatchStatus == MediaData.WATCH_STATUS_TO_WATCH) {
+            cancelMediaAlarmIfExists(CONDITION_NEW_EPISODE);
             updateReleaseNotifier();
 
         } else if (newWatchStatus == MediaData.WATCH_STATUS_WATCHING) {
             getTraktNextEpisodeDetails();
 
         } else {
+            cancelMediaAlarmIfExists(CONDITION_ON_RELEASE);
             cancelMediaAlarmIfExists(CONDITION_NEW_EPISODE);
         }
     }
