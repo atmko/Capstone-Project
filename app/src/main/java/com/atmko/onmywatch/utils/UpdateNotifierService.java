@@ -108,7 +108,7 @@ public class UpdateNotifierService extends JobIntentService {
     //compares release date and current date and sets release notifier if release date is in the future
     //then schedules alarm notification for future
     private void setReleaseNotifierThroughDateComparision() {
-        ScheduledMedia scheduledMedia = new ScheduledMedia();
+        ScheduledMedia scheduledMedia = new ScheduledMedia(new GeneralUtils.DateInject());
         try {
             scheduledMedia.setAirDate(newMediaData.getReleaseDate());
         } catch (ScheduledMedia.DateFormatException e) {

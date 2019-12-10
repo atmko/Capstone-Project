@@ -181,7 +181,7 @@ public class NotificationHandler {
         PendingIntent releasePendingIntent =
                 notifier.createPendingIntent(context, mediaType, mediaData.getId(), notification);
 
-        ScheduledMedia scheduledMedia = new ScheduledMedia();
+        ScheduledMedia scheduledMedia = new ScheduledMedia(new GeneralUtils.DateInject());
 
         setNotificationAlarm(context, releasePendingIntent, scheduledMedia, notifier);
     }
@@ -195,7 +195,7 @@ public class NotificationHandler {
         PendingIntent releasePendingIntent =
                 notifier.createPendingIntent(context, MEDIA_TYPE_SERIES, mediaData.getId(), notification);
 
-        Episode nextEpisode = new Episode();
+        Episode nextEpisode = new Episode(new GeneralUtils.DateInject());
 
         setNotificationAlarm(context, releasePendingIntent, nextEpisode, notifier);
     }

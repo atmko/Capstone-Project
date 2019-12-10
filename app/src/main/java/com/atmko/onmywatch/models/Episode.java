@@ -4,6 +4,8 @@
 
 package com.atmko.onmywatch.models;
 
+import com.atmko.onmywatch.utils.GeneralUtils;
+
 import org.parceler.Parcel;
 
 /*
@@ -13,5 +15,9 @@ import org.parceler.Parcel;
 @Parcel
 public class Episode extends ScheduledMedia {
     public Episode() {
+    }
+
+    public Episode(GeneralUtils.DateInject dateInject) {
+        this.mDateInject = dateInject;
     }
 }

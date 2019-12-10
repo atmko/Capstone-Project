@@ -141,7 +141,7 @@ public class SeriesDataParser {
         Map nextEpisodeToAirMap = ((Map) returnedMap.get(SeriesApiConstants.NEXT_EPISODE_TO_AIR_KEY));
 
         if (nextEpisodeToAirMap != null) {
-            Episode nextEpisode = new Episode();
+            Episode nextEpisode = new Episode(new GeneralUtils.DateInject());
             String nextEpisodeAirDate = (String) nextEpisodeToAirMap.get(SeriesApiConstants.AIR_DATE_KEY);
 
             if (nextEpisodeAirDate != null) {
@@ -206,7 +206,7 @@ public class SeriesDataParser {
         Map returnedMap = gson.fromJson(returnedJSONString, Map.class);
 
         if (returnedMap != null) {
-            Episode nextEpisode = new Episode();
+            Episode nextEpisode = new Episode(new GeneralUtils.DateInject());
             String nextEpisodeAirDate = ((String) returnedMap.get(TraktApiConstants.FIRST_AIRED_KEY));
 
             if (nextEpisodeAirDate != null) {

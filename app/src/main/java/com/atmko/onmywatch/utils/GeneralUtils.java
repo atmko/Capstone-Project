@@ -6,6 +6,10 @@ package com.atmko.onmywatch.utils;
 
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 
+import org.parceler.Parcel;
+
+import java.util.Date;
+
 public class GeneralUtils {
     public static final String ISO_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
     public static final String OFFSET_SYMBOL = "Z";
@@ -14,6 +18,25 @@ public class GeneralUtils {
 
     public static String replaceOffsetSymbol(String airDateString) {
        return airDateString.replace(OFFSET_SYMBOL, OFFSET_VALUE_UTC);
+    }
+
+    public interface DateCustom {
+        Date currentDate();
+    }
+
+    @Parcel
+    public
+    static class DateInject implements DateCustom {
+        public Date custom;
+
+        @Override
+        public Date currentDate() {
+            if (custom == null) {
+                return new Date();
+            } else {
+                return custom;
+            }
+        }
     }
 
     public static String convertToDisplayText(String text) {
