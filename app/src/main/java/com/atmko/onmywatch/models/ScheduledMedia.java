@@ -35,15 +35,10 @@ public class ScheduledMedia {
     public static final String DATE_TBD = "Date TBD";
     public static final String DATE_ERROR = "Date Error";
 
-    DateInject mDateInject;
     String mAirDate;
     String mAirDateIso;
 
     public ScheduledMedia() {
-    }
-
-    public ScheduledMedia(DateInject dateInject) {
-        this.mDateInject = dateInject;
     }
 
     //returns the local date of episode. Uses iso date if available, otherwise regular date, otherwise null
@@ -192,7 +187,7 @@ public class ScheduledMedia {
 
     //returns time in millis till next episode
     private Long getTimeDifferenceViaUtcTime() throws ParseException {
-        return convertAirDateIso(mAirDateIso).getTime() - mDateInject.currentDate().getTime();
+        return convertAirDateIso(mAirDateIso).getTime() - DateInject.getInstance().currentDate().getTime();
     }
 
     //returns time in millis till air date (doesn't take timezone, hours or minutes into account so accuracy is limited)

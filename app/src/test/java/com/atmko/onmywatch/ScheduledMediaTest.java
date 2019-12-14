@@ -9,6 +9,7 @@ import com.atmko.onmywatch.utils.GeneralUtils;
 import com.atmko.onmywatch.utils.GeneralUtils.DateInject;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.text.ParseException;
@@ -30,22 +31,18 @@ import static org.junit.Assert.fail;
  */
 public class ScheduledMediaTest {
     private static final long CURRENT_TIMESTAMP_STUB = 1575566616000L;
-    private DateInject dateInject;
 
-    private DateInject getDateInject() {
-        if (dateInject != null) return dateInject;
-
+    @Before
+    public void setDateInject()  {
         Calendar testCalender = Calendar.getInstance();
         testCalender.setTimeInMillis(CURRENT_TIMESTAMP_STUB);
 
-        dateInject = new DateInject();
-        dateInject.custom = testCalender.getTime();
-        return dateInject;
+        DateInject.custom = testCalender.getTime();
     }
 
     @Test
     public void getCountdownTest() {
-        ScheduledMedia releaseSchedule = new ScheduledMedia(getDateInject());
+        ScheduledMedia releaseSchedule = new ScheduledMedia();
         try {
             releaseSchedule.setAirDate("2019-12-09T05:00:00.000Z");
             String daysAnswer = 3 + TIME_SUFFIX_DAYS;
@@ -67,7 +64,7 @@ public class ScheduledMediaTest {
 
     @Test
     public void pastWithoutNextEpisodeTest() {
-        ScheduledMedia releaseSchedule = new ScheduledMedia(getDateInject());
+        ScheduledMedia releaseSchedule = new ScheduledMedia();
         try {
             releaseSchedule.setAirDate("2019-12-05T16:00:00.000Z");
         } catch (ScheduledMedia.DateFormatException e) {
@@ -80,7 +77,7 @@ public class ScheduledMediaTest {
 
     @Test
     public void getBestAvailableDateStringTest() {
-        ScheduledMedia releaseSchedule = new ScheduledMedia(getDateInject());
+        ScheduledMedia releaseSchedule = new ScheduledMedia();
         try {
             releaseSchedule.setAirDate("2019-12-05");
             String bestDateAvailable = "2019-12-05";
@@ -101,7 +98,7 @@ public class ScheduledMediaTest {
 
     @Test
     public void getBestLocalAirDateTest() {
-        ScheduledMedia releaseSchedule = new ScheduledMedia(getDateInject());
+        ScheduledMedia releaseSchedule = new ScheduledMedia();
         try {
             releaseSchedule.setAirDate("2019-12-05");
             Date bestDateAvailable = new SimpleDateFormat(ApiConstants.DATE_FORMAT).parse("2019-12-05");
@@ -124,7 +121,7 @@ public class ScheduledMediaTest {
 
     @Test
     public void setAirDateCorrectFormatTest() {
-        ScheduledMedia releaseSchedule = new ScheduledMedia(getDateInject());
+        ScheduledMedia releaseSchedule = new ScheduledMedia();
         try {
             releaseSchedule.setAirDate("2019-12-05");
             assertEquals("2019-12-05", releaseSchedule.getBestAvailableDateString());
@@ -138,7 +135,7 @@ public class ScheduledMediaTest {
 
     @Test
     public void setAirDateIncorrectFormatTest() {
-        ScheduledMedia releaseSchedule = new ScheduledMedia(getDateInject());
+        ScheduledMedia releaseSchedule = new ScheduledMedia();
         try {
             releaseSchedule.setAirDate("");
             fail();

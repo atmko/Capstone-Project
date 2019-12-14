@@ -6,8 +6,6 @@ package com.atmko.onmywatch.utils;
 
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 
-import org.parceler.Parcel;
-
 import java.util.Date;
 
 public class GeneralUtils {
@@ -24,10 +22,21 @@ public class GeneralUtils {
         Date currentDate();
     }
 
-    @Parcel
-    public
-    static class DateInject implements DateCustom {
-        public Date custom;
+    public static class DateInject implements DateCustom {
+        public static Date custom;
+        private static final Object LOCK = new Object();
+        private static DateInject sDateInject;
+
+        public static DateInject getInstance() {
+            if (sDateInject == null) {
+                synchronized (LOCK) {
+                    sDateInject = new DateInject();
+                }
+
+            }
+
+            return sDateInject;
+        }
 
         @Override
         public Date currentDate() {
