@@ -21,14 +21,17 @@ import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiSelector;
 
 import com.atmko.onmywatch.database.AppDatabase;
+import com.atmko.onmywatch.models.Episode;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.MovieNotifier;
 import com.atmko.onmywatch.models.NotificationIdlingResource;
+import com.atmko.onmywatch.models.ScheduledMedia;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesNotifier;
 import com.atmko.onmywatch.models.WatchListModel;
+import com.atmko.onmywatch.utils.UpdateNotifierService;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 
 import org.junit.Before;
@@ -122,11 +125,7 @@ public class NotificationTests {
     //tests movie release notifications when watch status is switched to "to watch" or "watching"
     @Test
     public void TestCreatingReleaseNotifierThroughReleaseStatus() {
-        //not enabling test mode because live dates and times are being used
-
-        TimeZone utcTimeZone = TimeZone.getTimeZone("UTC");
-        Calendar utcCalender = Calendar.getInstance(utcTimeZone);
-        utcCalender.add(Calendar.SECOND, 7);
+        long currentTimeMillis = System.currentTimeMillis();
 
         MovieData movieData = new MovieData("399579", "", false, "",
                 "Alita", 0, "", "", "",
@@ -144,10 +143,10 @@ public class NotificationTests {
 
         //release notifier created with either "To Watch" or "Watching" watch status
         //randomize selecting to watch and watching
-        if (utcCalender.getTime().getTime() % 2 == 0) {
+        if (currentTimeMillis % 2 == 0) {
             onView(withText("To Watch")).perform(click());
 
-        } else if (utcCalender.getTime().getTime() % 2 == 1) {
+        } else if (currentTimeMillis % 2 == 1) {
             onView(withText("Watching")).perform(click());
         }
 
@@ -164,8 +163,6 @@ public class NotificationTests {
     //tests movie release notifications when watch status is switched to "to watch" or "watching"
     @Test
     public void testMovieReleaseNotification() {
-        //not enabling test mode because live dates and times are being used
-
         TimeZone utcTimeZone = TimeZone.getTimeZone("UTC");
         Calendar utcCalender = Calendar.getInstance(utcTimeZone);
         utcCalender.add(Calendar.SECOND, 7);
@@ -246,6 +243,99 @@ public class NotificationTests {
                         SeriesNotifier.CONDITION_NEW_EPISODE);
 
         if (newEpisodeNotifier != null) fail();
+    }
+
+    //test if notification is shown when next episode date is in the future
+    @Test
+    public void testNextEpisodeInFuture() {
+        //enable testing mode to bypass changing test media during parsing
+        UpdateNotifierService.sActionMode = UpdateNotifierService.ACTION_TESTING;
+
+        SeriesData seriesData = new SeriesData("43435", "", "", "Dead",
+                0, "", "", "",
+                new ArrayList<String>(), new ArrayList<String>(), "", "", "");
+
+        seriesData.setTraktId("1393");
+        Episode nextEpisode = new Episode();
+
+        TimeZone utcTimeZone = TimeZone.getTimeZone("UTC");
+        Calendar utcCalender = Calendar.getInstance(utcTimeZone);
+        utcCalender.add(Calendar.SECOND, 7);
+
+        try {
+            nextEpisode.setAirDate(parseIsoDateFromCalender(utcCalender));
+
+        } catch (ScheduledMedia.DateFormatException e) {
+            e.printStackTrace();
+        }
+
+        seriesData.setNextEpisodeToAir(nextEpisode);
+
+        Intent intent = new Intent(getInstrumentation().getTargetContext(), AddToListActivity.class);
+        intent.putExtra(AddToListActivity.MEDIA_DATA_KEY, Parcels.wrap(seriesData));
+        intent.putExtra(AddToListActivity.MEDIA_TYPE_KEY, MasterActivity.MEDIA_TYPE_SERIES);
+
+        addToListActivityTestRule.launchActivity(intent);
+
+        registerSimpleIdleResource();
+        registerNotificationIdleResource(1);
+
+        onView(withText("Watching")).perform(click());
+        onView(withText("SAVE")).perform(click());
+
+        checkForNotification(seriesData, SeriesNotifier.CONDITION_NEW_EPISODE);
+
+        //ensure notifier isn't removed after notification
+        SeriesNotifier seriesNotifier =
+                db.seriesNotifierDao().getNotifierByIdAlt(seriesData.getId(),
+                        SeriesNotifier.CONDITION_NEW_EPISODE);
+
+        if (seriesNotifier == null) fail();
+    }
+
+    //test if notifier is created when next episode date is in the past
+    @Test
+    public void testNextEpisodeInPast() {
+        //enable testing mode to bypass changing test media during parsing
+        UpdateNotifierService.sActionMode = UpdateNotifierService.ACTION_TESTING;
+
+        SeriesData seriesData = new SeriesData("43435", "", "", "Dead",
+                0, "", "", "",
+                new ArrayList<String>(), new ArrayList<String>(), "", "", "");
+
+        seriesData.setTraktId("1393");
+        Episode nextEpisode = new Episode();
+
+        TimeZone utcTimeZone = TimeZone.getTimeZone("UTC");
+        Calendar utcCalender = Calendar.getInstance(utcTimeZone);
+        utcCalender.add(Calendar.SECOND, -1);
+
+        try {
+            nextEpisode.setAirDate(parseIsoDateFromCalender(utcCalender));
+
+        } catch (ScheduledMedia.DateFormatException e) {
+            e.printStackTrace();
+        }
+
+        seriesData.setNextEpisodeToAir(nextEpisode);
+
+        Intent intent = new Intent(getInstrumentation().getTargetContext(), AddToListActivity.class);
+        intent.putExtra(AddToListActivity.MEDIA_DATA_KEY, Parcels.wrap(seriesData));
+        intent.putExtra(AddToListActivity.MEDIA_TYPE_KEY, MasterActivity.MEDIA_TYPE_SERIES);
+
+        addToListActivityTestRule.launchActivity(intent);
+
+        registerSimpleIdleResource();
+
+        onView(withText("Watching")).perform(click());
+        onView(withText("SAVE")).perform(click());
+
+        //ensure notifier is never created
+        SeriesNotifier seriesNotifier =
+                db.seriesNotifierDao().getNotifierByIdAlt(seriesData.getId(),
+                        SeriesNotifier.CONDITION_NEW_EPISODE);
+
+        if (seriesNotifier != null) fail();
     }
 
     private void checkForNotification(MediaData mediaData, int condition) {

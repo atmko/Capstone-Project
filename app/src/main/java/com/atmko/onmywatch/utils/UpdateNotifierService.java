@@ -49,9 +49,12 @@ import static com.atmko.onmywatch.utils.UpdateMediaWorker.NEW_MEDIA_DATA_KEY;
 public class UpdateNotifierService extends JobIntentService {
     private static final String TAG = UpdateNotifierService.class.getSimpleName();
 
+    public static final String ACTION_TESTING = "testing";
     public static final String ACTION_SET = "set";
 
     public static final int JOB_ID = 20;
+
+    public static String sActionMode = ACTION_SET;
 
     private MediaData newMediaData;
     private int mMediaType;
@@ -68,15 +71,11 @@ public class UpdateNotifierService extends JobIntentService {
 
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
-        String intentAction = intent.getAction();
-
-        if (intentAction == null) return;
-
         newMediaData = Parcels.unwrap(intent.getParcelableExtra(NEW_MEDIA_DATA_KEY));
         mMediaType = newMediaData instanceof MovieData ? MEDIA_TYPE_MOVIE : MEDIA_TYPE_SERIES;
         mDatabase = AppDatabase.getInstance(getApplicationContext());
 
-        if (intentAction.equals(ACTION_SET)) {
+        if (sActionMode.equals(ACTION_SET) || sActionMode.equals(ACTION_TESTING)) {
             setNotifiers();
         }
     }
@@ -348,8 +347,11 @@ public class UpdateNotifierService extends JobIntentService {
     private void setNewEpisodeNotifierThroughDateComparison() {
         ScheduledMedia scheduledMedia = ((SeriesData) newMediaData).getNextEpisodeToAir();
 
+        boolean releaseDateInPast =
+                scheduledMedia.getBestLocalAirDate().before(GeneralUtils.DateInject.getInstance().currentDate());
+
         //if release date is null or if release date has passed, return
-        if (scheduledMedia.getBestLocalAirDate() == null || scheduledMedia.getBestLocalAirDate().before(new Date())) return;
+        if (scheduledMedia.getBestLocalAirDate() == null || releaseDateInPast) return;
 
         SeriesNotifier newEpisodeNotifier = createNewEpisodeNotifier(scheduledMedia.getBestAvailableDateString());
 

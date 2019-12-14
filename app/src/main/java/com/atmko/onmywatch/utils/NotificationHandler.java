@@ -65,9 +65,13 @@ public class NotificationHandler {
                                         AppDatabase.getInstance(context).seriesDataDao().getSeriesByIdAlt(mediaId);
 
                                 Intent intent = new Intent(context, UpdateNotifierService.class);
-                                intent.setAction(UpdateNotifierService.ACTION_SET);
                                 intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(newMediaData));
                                 UpdateNotifierService.enqueueWork(context, intent);
+
+                                // The IdlingResource is null in production.
+                                if (NotificationIdlingResource.getNotificationIdlingResource() != null) {
+                                    NotificationIdlingResource.getNotificationIdlingResource().addToIdleCounter();
+                                }
 
                                 //skip notifier deletion if condition is new episodes
                                 return;
@@ -203,6 +207,7 @@ public class NotificationHandler {
 
         Episode nextEpisode = new Episode();
 
+        System.out.println("dzhfjjh");
         setNotificationAlarm(context, releasePendingIntent, nextEpisode, notifier);
     }
 

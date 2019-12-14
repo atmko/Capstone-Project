@@ -162,7 +162,6 @@ public class UpdateMediaWorker extends Worker {
 
                         if (hasNotifiers) {
                             Intent intent = new Intent(getApplicationContext(), UpdateNotifierService.class);
-                            intent.setAction(UpdateNotifierService.ACTION_SET);
                             intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(newMediaData));
                             UpdateNotifierService.enqueueWork(mContext, intent);
                         }

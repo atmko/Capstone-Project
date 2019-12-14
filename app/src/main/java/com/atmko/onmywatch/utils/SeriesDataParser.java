@@ -196,6 +196,8 @@ public class SeriesDataParser {
     }
     
     public static SeriesData parseTraktNextEpisodeDetails(String returnedJSONString, SeriesData seriesData) {
+        if (UpdateNotifierService.sActionMode.equals(UpdateNotifierService.ACTION_TESTING)) return seriesData;
+
         //skips code below if returnedJSONString null or empty
         if (returnedJSONString == null || returnedJSONString.equals("")){
             //return same series data

@@ -395,7 +395,6 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
 
     private void setNotifiers(MediaData newMediaData) {
         Intent intent = new Intent(getApplicationContext(), UpdateNotifierService.class);
-        intent.setAction(UpdateNotifierService.ACTION_SET);
         intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(newMediaData));
         UpdateNotifierService.enqueueWork(getApplicationContext(), intent);
     }
