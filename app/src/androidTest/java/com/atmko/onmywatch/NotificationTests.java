@@ -122,6 +122,96 @@ public class NotificationTests {
         IdlingRegistry.getInstance().register(mNotificationIdlingResource);
     }
 
+    //ensures movie notifiers get canceled when watch status updated to other than "to watch" or "watching"
+    @Test
+    public void TestCancelingMovieNotifierOnWatchStatusChanged() {
+        //create media data and notifier
+        MovieData movieData = new MovieData("399579", "", false, "",
+                "", 0, "", "", "",
+                new ArrayList<String>(), "", false, "", "");
+
+        db.movieDataDao().addMovieData(movieData);
+        db.movieNotifierDao().addMediaNotifier(new MovieNotifier(movieData.getId(),
+                MovieNotifier.CONDITION_ON_RELEASE, null));
+
+        //ensure notifier is created
+        MovieNotifier movieNotifier =
+                db.movieNotifierDao().getNotifierByIdAlt(movieData.getId(),
+                        MovieNotifier.CONDITION_ON_RELEASE);
+
+        if (movieNotifier == null) fail();
+
+        //launch activity
+        Intent intent = new Intent(getInstrumentation().getTargetContext(), AddToListActivity.class);
+        intent.putExtra(AddToListActivity.MEDIA_DATA_KEY, Parcels.wrap(movieData));
+        intent.putExtra(AddToListActivity.MEDIA_TYPE_KEY, MasterActivity.MEDIA_TYPE_MOVIE);
+
+        addToListActivityTestRule.launchActivity(intent);
+
+        registerSimpleIdleResource();
+
+        //select watch status
+        //release notifier canceled with non "To Watch" or "Watching" watch status
+        onView(withText("Watched")).perform(click());
+        onView(withText("SAVE")).perform(click());
+
+        //ensure notifier is removed due to watch status change
+        movieNotifier = db.movieNotifierDao().getNotifierByIdAlt(movieData.getId(),
+                MovieNotifier.CONDITION_ON_RELEASE);
+
+        if (movieNotifier != null) fail();
+    }
+
+    //ensures series notifiers get canceled when watch status updated to other than "to watch" or "watching"
+    @Test
+    public void TestCancelingSeriesNotifierOnWatchStatusChanged() {
+        //create media data and notifier
+        SeriesData seriesData = new SeriesData("43435", "", "", "",
+                0, "", "", "",
+                new ArrayList<String>(), new ArrayList<String>(), "", "", "");
+
+        db.seriesDataDao().addSeriesData(seriesData);
+        db.seriesNotifierDao().addMediaNotifier(new SeriesNotifier(seriesData.getId(),
+                SeriesNotifier.CONDITION_ON_RELEASE, null));
+        db.seriesNotifierDao().addMediaNotifier(new SeriesNotifier(seriesData.getId(),
+                SeriesNotifier.CONDITION_NEW_EPISODE, null));
+
+        //ensure notifier is created
+        SeriesNotifier releaseNotifier =
+                db.seriesNotifierDao().getNotifierByIdAlt(seriesData.getId(),
+                        SeriesNotifier.CONDITION_ON_RELEASE);
+
+        SeriesNotifier newEpisodeNotifier =
+                db.seriesNotifierDao().getNotifierByIdAlt(seriesData.getId(),
+                        SeriesNotifier.CONDITION_NEW_EPISODE);
+
+        if (releaseNotifier == null) fail();
+        if (newEpisodeNotifier == null) fail();
+
+        //launch activity
+        Intent intent = new Intent(getInstrumentation().getTargetContext(), AddToListActivity.class);
+        intent.putExtra(AddToListActivity.MEDIA_DATA_KEY, Parcels.wrap(seriesData));
+        intent.putExtra(AddToListActivity.MEDIA_TYPE_KEY, MasterActivity.MEDIA_TYPE_SERIES);
+
+        addToListActivityTestRule.launchActivity(intent);
+
+        registerSimpleIdleResource();
+
+        //select watch status
+        //release notifier canceled with non "To Watch" or "Watching" watch status
+        onView(withText("Watched")).perform(click());
+        onView(withText("SAVE")).perform(click());
+
+        //ensure notifiers are removed due to watch status change
+        releaseNotifier = db.seriesNotifierDao().getNotifierByIdAlt(seriesData.getId(),
+                SeriesNotifier.CONDITION_ON_RELEASE);
+        newEpisodeNotifier = db.seriesNotifierDao().getNotifierByIdAlt(seriesData.getId(),
+                SeriesNotifier.CONDITION_NEW_EPISODE);
+
+        if (releaseNotifier != null) fail();
+        if (newEpisodeNotifier != null) fail();
+    }
+
     //tests movie release notifications when watch status is switched to "to watch" or "watching"
     @Test
     public void TestCreatingReleaseNotifierThroughReleaseStatus() {
