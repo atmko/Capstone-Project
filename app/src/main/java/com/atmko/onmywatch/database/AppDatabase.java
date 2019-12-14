@@ -60,6 +60,10 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     }
 
+    public static void setDatabase(AppDatabase database) {
+        sInstance = database;
+    }
+
     private static RoomDatabase.Callback databaseInitializer(final Context context) {
         //reference
         //https://medium.com/@srinuraop/database-create-and-open-callbacks-in-room-7ca98c3286ab

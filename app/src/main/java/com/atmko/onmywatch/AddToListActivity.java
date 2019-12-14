@@ -16,6 +16,8 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.lifecycle.LiveData;
@@ -23,6 +25,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.test.espresso.IdlingResource;
 
 import com.atmko.onmywatch.adapters.AddToListAdapter;
 import com.atmko.onmywatch.database.AppDatabase;
@@ -31,6 +34,7 @@ import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.MovieDataRecord;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesDataRecord;
+import com.atmko.onmywatch.models.SimpleIdlingResource;
 import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.models.WatchListModel;
 import com.atmko.onmywatch.utils.UpdateNotifierService;
@@ -76,6 +80,10 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
     private EditText mSearchEditTextView;
     private RadioGroup mWatchStatusRadioGroup;
     private Button mSaveButton;
+
+    // The Idling Resource which will be null in production.
+    @Nullable
+    private SimpleIdlingResource mIdlingResource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -278,6 +286,11 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
     }
 
     private void updateData() {
+        // The IdlingResource is null in production.
+        if (mIdlingResource != null) {
+            mIdlingResource.setIdleState(false);
+        }
+
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -302,6 +315,10 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
                 mNewWatchStatus = isDeleted? null : newMediaData.getWatchStatus();
 
                 updateWatchListCounts();
+
+                if (mIdlingResource != null) {
+                    mIdlingResource.setIdleState(true);
+                }
             }
         });
     }
@@ -496,5 +513,17 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
 
         //toggle checkbox;
         checkBox.toggle();
+    }
+
+    /**
+     * Only called from test, creates and returns a new {@link SimpleIdlingResource}.
+     */
+    @VisibleForTesting
+    @NonNull
+    public IdlingResource getIdlingResource() {
+        if (mIdlingResource == null) {
+            mIdlingResource = new SimpleIdlingResource();
+        }
+        return mIdlingResource;
     }
 }
