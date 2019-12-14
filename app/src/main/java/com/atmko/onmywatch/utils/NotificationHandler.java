@@ -17,6 +17,7 @@ import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.MovieNotifier;
+import com.atmko.onmywatch.models.NotificationIdlingResource;
 import com.atmko.onmywatch.models.ScheduledMedia;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesNotifier;
@@ -76,6 +77,11 @@ public class NotificationHandler {
 
                     //remove media notifier from the database
                     removeMediaNotifier(context, mediaType, mediaId, condition);
+
+                    // The IdlingResource is null in production.
+                    if (NotificationIdlingResource.getNotificationIdlingResource() != null) {
+                        NotificationIdlingResource.getNotificationIdlingResource().addToIdleCounter();
+                    }
                 }
             });
         }

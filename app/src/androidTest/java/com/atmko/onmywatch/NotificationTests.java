@@ -16,10 +16,17 @@ import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.IdlingResource;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.ActivityTestRule;
+import androidx.test.uiautomator.UiCollection;
+import androidx.test.uiautomator.UiDevice;
+import androidx.test.uiautomator.UiSelector;
 
 import com.atmko.onmywatch.database.AppDatabase;
+import com.atmko.onmywatch.models.MediaData;
+import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.MovieNotifier;
+import com.atmko.onmywatch.models.NotificationIdlingResource;
+import com.atmko.onmywatch.models.SeriesNotifier;
 import com.atmko.onmywatch.models.WatchListModel;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 
@@ -37,6 +44,7 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
+import static com.atmko.onmywatch.utils.GeneralUtils.parseIsoDateFromCalender;
 import static org.junit.Assert.fail;
 
 /**
@@ -47,6 +55,7 @@ import static org.junit.Assert.fail;
 @RunWith(AndroidJUnit4.class)
 public class NotificationTests {
     private IdlingResource mIdlingResource;
+    private NotificationIdlingResource mNotificationIdlingResource;
 
     private AppDatabase db;
 
@@ -103,6 +112,13 @@ public class NotificationTests {
 
     }
 
+    private void registerNotificationIdleResource(int idleCountLimit) {
+        mNotificationIdlingResource = NotificationIdlingResource.getInstance();
+        mNotificationIdlingResource.setIdleCountLimit(idleCountLimit);
+        IdlingRegistry.getInstance().register(mNotificationIdlingResource);
+    }
+
+    //tests movie release notifications when watch status is switched to "to watch" or "watching"
     @Test
     public void TestCreatingReleaseNotifierThroughReleaseStatus() {
         //not enabling test mode because live dates and times are being used
@@ -142,5 +158,73 @@ public class NotificationTests {
                         MovieNotifier.CONDITION_ON_RELEASE);
 
         if (movieNotifier == null) fail();
+    }
+
+    //tests movie release notifications when watch status is switched to "to watch" or "watching"
+    @Test
+    public void testMovieReleaseNotification() {
+        //not enabling test mode because live dates and times are being used
+
+        TimeZone utcTimeZone = TimeZone.getTimeZone("UTC");
+        Calendar utcCalender = Calendar.getInstance(utcTimeZone);
+        utcCalender.add(Calendar.SECOND, 7);
+
+        MovieData movieData = new MovieData("399579", "", false, "",
+                "Alita", 0, "", "", "",
+                new ArrayList<String>(), "", false, "",
+                parseIsoDateFromCalender(utcCalender));
+
+        Intent intent = new Intent(getInstrumentation().getTargetContext(), AddToListActivity.class);
+        intent.putExtra(AddToListActivity.MEDIA_DATA_KEY, Parcels.wrap(movieData));
+        intent.putExtra(AddToListActivity.MEDIA_TYPE_KEY, MasterActivity.MEDIA_TYPE_MOVIE);
+
+        addToListActivityTestRule.launchActivity(intent);
+
+        registerSimpleIdleResource();
+        registerNotificationIdleResource(1);
+
+        //release notifier created with either "To Watch" or "Watching" watch status
+        //randomize selecting to watch and watching
+        if (utcCalender.getTime().getTime() % 2 == 0) {
+            onView(withText("To Watch")).perform(click());
+
+        } else if (utcCalender.getTime().getTime() % 2 == 1) {
+            onView(withText("Watching")).perform(click());
+        }
+
+        onView(withText("SAVE")).perform(click());
+
+        checkForNotification(movieData, MediaNotifier.CONDITION_ON_RELEASE);
+
+        //ensure notifier is removed after notification
+        MovieNotifier movieNotifier =
+                db.movieNotifierDao().getNotifierByIdAlt(movieData.getId(),
+                        MovieNotifier.CONDITION_ON_RELEASE);
+
+        if (movieNotifier != null) fail();
+    }
+
+    private void checkForNotification(MediaData mediaData, int condition) {
+        UiDevice device = UiDevice.getInstance(getInstrumentation());
+
+        device.openNotification();
+
+        String containingText = "";
+
+        if (condition == MediaNotifier.CONDITION_ON_RELEASE) {
+            containingText = mediaData.getTitle() + " has been released";
+
+        } else if (condition == SeriesNotifier.CONDITION_NEW_EPISODE){
+            containingText = "A new episode of " + mediaData.getTitle();
+        }
+
+        UiSelector uiSelector = new UiSelector().textContains(containingText);
+        UiCollection uiCollection = new UiCollection(uiSelector);
+
+        if (!uiCollection.exists()) {
+            fail();
+        }
+
+        device.pressBack();
     }
 }

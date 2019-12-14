@@ -22,6 +22,7 @@ import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.MovieNotifier;
+import com.atmko.onmywatch.models.NotificationIdlingResource;
 import com.atmko.onmywatch.models.ScheduledMedia;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesNotifier;
@@ -57,6 +58,11 @@ public class UpdateNotifierService extends JobIntentService {
     private AppDatabase mDatabase;
 
     public static void enqueueWork(Context appContext, Intent intent) {
+        //set idle state to false
+        if (NotificationIdlingResource.getNotificationIdlingResource() != null) {
+            NotificationIdlingResource.getNotificationIdlingResource().setIdleState(false);
+        }
+
         enqueueWork(appContext, UpdateNotifierService.class, JOB_ID, intent);
     }
 
@@ -116,7 +122,14 @@ public class UpdateNotifierService extends JobIntentService {
         }
 
         //if release date has passed, return
-        if (scheduledMedia.getBestLocalAirDate().before(new Date())) return;
+        if (scheduledMedia.getBestLocalAirDate().before(new GeneralUtils.DateInject().currentDate())) {
+            //set idle state to true
+            if (NotificationIdlingResource.getNotificationIdlingResource() != null) {
+                NotificationIdlingResource.getNotificationIdlingResource().setIdleState(true);
+            }
+
+            return;
+        }
 
         //create notifier and set alarm with release notification
         MediaNotifier releaseNotifier =

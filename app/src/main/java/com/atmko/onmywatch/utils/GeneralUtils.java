@@ -6,6 +6,7 @@ package com.atmko.onmywatch.utils;
 
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 
+import java.util.Calendar;
 import java.util.Date;
 
 public class GeneralUtils {
@@ -48,6 +49,19 @@ public class GeneralUtils {
         }
     }
 
+    public static String parseIsoDateFromCalender(Calendar calendar) {
+        int utcYear = calendar.get(Calendar.YEAR);
+        //+1 adjustment for month zero index mapping
+        String utcMonth = addLeadingZero(calendar.get(Calendar.MONTH)+1);
+        String utcDay = addLeadingZero(calendar.get(Calendar.DAY_OF_MONTH));
+        int utcHour = calendar.get(Calendar.HOUR_OF_DAY);
+        String utcMinutes = addLeadingZero(calendar.get(Calendar.MINUTE));
+        String utcSeconds = addLeadingZero(calendar.get(Calendar.SECOND));
+        String utcMillis = addLeadingZero(calendar.get(Calendar.MILLISECOND));
+
+        return utcYear + "-" + utcMonth + "-" + utcDay + "T" + utcHour + ":" + utcMinutes + ":" + utcSeconds + "." + utcMillis + "Z";
+    }
+
     public static String convertToDisplayText(String text) {
         String displayText = "";
 
@@ -70,6 +84,11 @@ public class GeneralUtils {
     //check for int/double errors
     static String checkAndConvertInteger(Object number) {
         return String.valueOf(((Double) number).intValue());
+    }
+
+    //add leading zero to strings with lengths less than 2
+    private static String addLeadingZero(int value) {
+        return String.valueOf(value).length() < 2 ? "0"+ value : String.valueOf(value);
     }
 
     //Note not original code.

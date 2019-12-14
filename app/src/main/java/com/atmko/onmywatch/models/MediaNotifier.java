@@ -62,7 +62,7 @@ public abstract class MediaNotifier {
 
     public Notification createReleaseNotification(Context context, String mediaTitle) {
         String contentTitle = context.getString(R.string.notification_new_release_title);
-        String contentText = mediaTitle
+        String contentText = mediaTitle + " "
                         + context.getString(R.string.notification_new_release_content_suffix);
 
         //create intent to launch activity on click
