@@ -26,6 +26,7 @@ import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.MovieNotifier;
 import com.atmko.onmywatch.models.NotificationIdlingResource;
+import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesNotifier;
 import com.atmko.onmywatch.models.WatchListModel;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
@@ -202,6 +203,49 @@ public class NotificationTests {
                         MovieNotifier.CONDITION_ON_RELEASE);
 
         if (movieNotifier != null) fail();
+    }
+
+    //tests series release notifications when watch status is switched to "to watch"
+    @Test
+    public void testSeriesReleaseNotification() {
+        //not enabling test mode because live dates and times are being used
+
+        TimeZone utcTimeZone = TimeZone.getTimeZone("UTC");
+        Calendar utcCalender = Calendar.getInstance(utcTimeZone);
+        utcCalender.add(Calendar.SECOND, 7);
+
+        SeriesData seriesData = new SeriesData("43435", "", "", "Dead",
+                0, "", "", "",
+                new ArrayList<String>(), new ArrayList<String>(), "", "",
+                parseIsoDateFromCalender(utcCalender));
+
+        Intent intent = new Intent(getInstrumentation().getTargetContext(), AddToListActivity.class);
+        intent.putExtra(AddToListActivity.MEDIA_DATA_KEY, Parcels.wrap(seriesData));
+        intent.putExtra(AddToListActivity.MEDIA_TYPE_KEY, MasterActivity.MEDIA_TYPE_SERIES);
+
+        addToListActivityTestRule.launchActivity(intent);
+
+        registerSimpleIdleResource();
+        registerNotificationIdleResource(1);
+
+        onView(withText("To Watch")).perform(click());
+        onView(withText("SAVE")).perform(click());
+
+        checkForNotification(seriesData, MediaNotifier.CONDITION_ON_RELEASE);
+
+        //ensure release notifier is removed after notification
+        SeriesNotifier seriesReleaseNotifier =
+                db.seriesNotifierDao().getNotifierByIdAlt(seriesData.getId(),
+                        SeriesNotifier.CONDITION_ON_RELEASE);
+
+        if (seriesReleaseNotifier != null) fail();
+
+        //ensure new episode notifier isn't created after notification
+        SeriesNotifier newEpisodeNotifier =
+                db.seriesNotifierDao().getNotifierByIdAlt(seriesData.getId(),
+                        SeriesNotifier.CONDITION_NEW_EPISODE);
+
+        if (newEpisodeNotifier != null) fail();
     }
 
     private void checkForNotification(MediaData mediaData, int condition) {
