@@ -288,6 +288,9 @@ public class UpdateNotifierService extends JobIntentService {
                                 //rerun the function with non null trakt id
                                 if (outputTraktId != null) {
                                     newMediaData.setTraktId(outputTraktId);
+
+                                    //save trakt id
+                                    mDatabase.seriesDataDao().updateSeriesData(((SeriesData) newMediaData));
                                     getTraktNextEpisodeDetails();
                                 }
 
