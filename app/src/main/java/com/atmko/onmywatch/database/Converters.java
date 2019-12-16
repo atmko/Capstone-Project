@@ -6,6 +6,9 @@ package com.atmko.onmywatch.database;
 
 import androidx.room.TypeConverter;
 
+import com.atmko.onmywatch.models.Episode;
+import com.atmko.onmywatch.models.ScheduledMedia;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -28,5 +31,25 @@ public class Converters {
         }
 
         return formattedOriginString;
+    }
+
+    @TypeConverter
+    public static Episode stringToEpisode(String airDateString) {
+        Episode episode = new Episode();
+
+        if (airDateString != null) {
+            try {
+                episode.setAirDate(airDateString);
+            } catch (ScheduledMedia.DateFormatException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return episode;
+    }
+
+    @TypeConverter
+    public static String EpisodeToString(Episode episode) {
+        return episode == null ? null : episode.getBestAvailableDateString();
     }
 }

@@ -55,8 +55,6 @@ public class NotificationHandler {
                     //show notification
                     notificationManager.notify(mediaId, condition, notification);
 
-                    System.out.println("ugyfuigk");
-
                     if (mediaType == MEDIA_TYPE_SERIES) {
                         //get saved series data
                         SeriesData seriesData = AppDatabase.getInstance(context).seriesDataDao().getSeriesByIdAlt(mediaId);
@@ -161,8 +159,11 @@ public class NotificationHandler {
         List<SeriesNotifier> notifiers = database.seriesNotifierDao().getAllNotifiersAlt();
 
         for (SeriesNotifier notifier: notifiers) {
-            //skip if release date is empty
-            if (notifier.alarmDate == null || notifier.alarmDate.equals("")) continue;
+            SeriesData seriesData = database.seriesDataDao().getSeriesByIdAlt(notifier.getMediaId());
+            String alarmDate = seriesData.getNextEpisodeToAir().getBestAvailableDateString();
+
+            //skip if alarm date is empty
+            if (alarmDate == null || alarmDate.equals("")) continue;
 
             SeriesData mediaData = database.seriesDataDao().getSeriesByIdAlt(notifier.getMediaId());
 
@@ -195,7 +196,16 @@ public class NotificationHandler {
 
         ScheduledMedia scheduledMedia = new ScheduledMedia();
 
-        setNotificationAlarm(context, releasePendingIntent, scheduledMedia, notifier);
+        //TODO: make movie data have scheduled media object like series data to hold release information
+        try {
+            scheduledMedia.setAirDate(mediaData.getReleaseDate());
+        } catch (ScheduledMedia.DateFormatException e) {
+            e.printStackTrace();
+        }
+
+        long releaseTimestamp = scheduledMedia.getBestLocalAirDate().getTime();
+
+        setNotificationAlarm(context, releasePendingIntent, releaseTimestamp);
     }
 
     public static void scheduleNewEpisodeNotification(Context context, SeriesData mediaData,
@@ -207,25 +217,18 @@ public class NotificationHandler {
         PendingIntent releasePendingIntent =
                 notifier.createPendingIntent(context, MEDIA_TYPE_SERIES, mediaData.getId(), notification);
 
-        Episode nextEpisode = new Episode();
+        long releaseTimestamp = mediaData.getNextEpisodeToAir().getBestLocalAirDate().getTime();
 
-        setNotificationAlarm(context, releasePendingIntent, nextEpisode, notifier);
+        setNotificationAlarm(context, releasePendingIntent, releaseTimestamp);
     }
 
     private static void setNotificationAlarm(Context context, PendingIntent releasePendingIntent,
-                                             ScheduledMedia scheduledMedia, MediaNotifier notifier) {
-        try {
-            scheduledMedia.setAirDate(notifier.alarmDate);
+                                             long timestamp) {
 
-            Date localAirDate = scheduledMedia.getBestLocalAirDate();
+        AlarmManager alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        alarmMgr.set(AlarmManager.RTC_WAKEUP, timestamp, releasePendingIntent);
 
-            AlarmManager alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-            alarmMgr.set(AlarmManager.RTC_WAKEUP, localAirDate.getTime(), releasePendingIntent);
-
-            enableBootReceiver(context);
-        } catch (ScheduledMedia.DateFormatException e) {
-            e.printStackTrace();
-        }
+        enableBootReceiver(context);
     }
 
     //deletes notifiers and cancel alarm notifications

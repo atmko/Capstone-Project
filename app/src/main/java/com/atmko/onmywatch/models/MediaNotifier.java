@@ -32,7 +32,6 @@ public abstract class MediaNotifier {
     //condition under which notifications should be triggered
     @NonNull
     @ColumnInfo(name = "condition") int mCondition;
-    @ColumnInfo(name = "alarm_date") public String alarmDate;
 
     //TODO consider using a LinkedHashSet seeing as titles are used as though they are unique
     public int getCondition() {

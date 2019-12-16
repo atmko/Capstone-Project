@@ -23,10 +23,9 @@ import com.atmko.onmywatch.R;
 public class SeriesNotifier extends MediaNotifier {
     public static final int CONDITION_NEW_EPISODE = 1;
 
-    public SeriesNotifier(@NonNull String id, @NonNull int condition, String alarmDate) {
+    public SeriesNotifier(@NonNull String id, @NonNull int condition) {
         this.mId = id;
         this.mCondition = condition;
-        this.alarmDate = alarmDate;
     }
 
     public Notification createNewEpisodeNotification(Context context, String mediaTitle) {

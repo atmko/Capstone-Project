@@ -114,7 +114,6 @@ public class NotificationTests {
     private void registerSimpleIdleResource() {
         mIdlingResource = addToListActivityTestRule.getActivity().getIdlingResource();
         IdlingRegistry.getInstance().register(mIdlingResource);
-
     }
 
     private void registerNotificationIdleResource(int idleCountLimit) {
@@ -138,7 +137,7 @@ public class NotificationTests {
 
         db.movieDataDao().addMovieData(movieData);
         db.movieNotifierDao().addMediaNotifier(new MovieNotifier(movieData.getId(),
-                MovieNotifier.CONDITION_ON_RELEASE, null));
+                MovieNotifier.CONDITION_ON_RELEASE));
 
         //ensure notifier is created
         MovieNotifier movieNotifier =
@@ -178,9 +177,9 @@ public class NotificationTests {
 
         db.seriesDataDao().addSeriesData(seriesData);
         db.seriesNotifierDao().addMediaNotifier(new SeriesNotifier(seriesData.getId(),
-                SeriesNotifier.CONDITION_ON_RELEASE, null));
+                SeriesNotifier.CONDITION_ON_RELEASE));
         db.seriesNotifierDao().addMediaNotifier(new SeriesNotifier(seriesData.getId(),
-                SeriesNotifier.CONDITION_NEW_EPISODE, null));
+                SeriesNotifier.CONDITION_NEW_EPISODE));
 
         //ensure notifier is created
         SeriesNotifier releaseNotifier =

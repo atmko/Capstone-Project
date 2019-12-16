@@ -35,8 +35,6 @@ import com.atmko.onmywatch.utils.network_utils.TraktApiConstants;
 
 import org.parceler.Parcels;
 
-import java.util.Date;
-
 import static com.atmko.onmywatch.Fragments.DetailsFragment.COOL_DOWN_REQUEST_TMDB_ID;
 import static com.atmko.onmywatch.Fragments.DetailsFragment.COOL_DOWN_REQUEST_TRAKT_ID;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
@@ -98,7 +96,7 @@ public class UpdateNotifierService extends JobIntentService {
 
             //if release date exists set release notifier through date caparison
             //otherwise create a notifier via release status without creating an alarm
-            if (!newMediaData.getReleaseDate().equals("")) {
+            if (!newMediaData.getReleaseDate().equals("") && newMediaData.getReleaseDate() != null) {
                 setReleaseNotifierThroughDateComparision();
 
             } else {
@@ -132,7 +130,7 @@ public class UpdateNotifierService extends JobIntentService {
 
         //create notifier and set alarm with release notification
         MediaNotifier releaseNotifier =
-                createReleaseNotifier(newMediaData, scheduledMedia.getBestAvailableDateString());
+                createReleaseNotifier(newMediaData);
 
         NotificationHandler.scheduleReleaseNotification(this, newMediaData, releaseNotifier);
     }
@@ -221,23 +219,23 @@ public class UpdateNotifierService extends JobIntentService {
                 && !releaseStatus.equals(SeriesApiConstants.RELEASE_STATUS_ENDED)
                 && !releaseStatus.equals(ApiConstants.RELEASE_STATUS_CANCELED)) {
 
-            createReleaseNotifier(newMediaData, null);
+            createReleaseNotifier(newMediaData);
         }
     }
 
     //creates new Media release notifier in database and returns notifier
-    private MediaNotifier createReleaseNotifier(MediaData newMediaData, String dateString) {
+    private MediaNotifier createReleaseNotifier(MediaData newMediaData) {
         //create notifier and set alarm with release notification
         MediaNotifier releaseNotifier;
 
         if (newMediaData instanceof MovieData) {
             releaseNotifier =
-                    new MovieNotifier(newMediaData.getId(), MediaNotifier.CONDITION_ON_RELEASE, dateString);
+                    new MovieNotifier(newMediaData.getId(), MediaNotifier.CONDITION_ON_RELEASE);
             mDatabase.movieNotifierDao().addMediaNotifier(((MovieNotifier) releaseNotifier));
 
         } else {
             releaseNotifier =
-                    new SeriesNotifier(newMediaData.getId(), MediaNotifier.CONDITION_ON_RELEASE, dateString);
+                    new SeriesNotifier(newMediaData.getId(), MediaNotifier.CONDITION_ON_RELEASE);
             mDatabase.seriesNotifierDao().addMediaNotifier(((SeriesNotifier) releaseNotifier));
         }
 
@@ -356,7 +354,7 @@ public class UpdateNotifierService extends JobIntentService {
             if (scheduledMedia.getBestLocalAirDate() == null || releaseDateInPast) return;
         }
 
-        SeriesNotifier newEpisodeNotifier = createNewEpisodeNotifier(scheduledMedia.getBestAvailableDateString());
+        SeriesNotifier newEpisodeNotifier = createNewEpisodeNotifier();
 
         NotificationHandler
                 .scheduleNewEpisodeNotification(this, ((SeriesData) newMediaData), newEpisodeNotifier);
@@ -443,13 +441,13 @@ public class UpdateNotifierService extends JobIntentService {
 
         //create notifier if new episodes still pending
         if (releaseStatus.equals(SeriesApiConstants.SeriesTextReplacement.REPLACEMENT_RETURNING_SERIES)) {
-            createNewEpisodeNotifier(null);
+            createNewEpisodeNotifier();
         }
     }
 
-    private SeriesNotifier createNewEpisodeNotifier(String dateString) {
+    private SeriesNotifier createNewEpisodeNotifier() {
         SeriesNotifier newEpisodeNotifier =
-                new SeriesNotifier(newMediaData.getId(), CONDITION_NEW_EPISODE, dateString);
+                new SeriesNotifier(newMediaData.getId(), CONDITION_NEW_EPISODE);
         mDatabase.seriesNotifierDao().addMediaNotifier(newEpisodeNotifier);
 
         return newEpisodeNotifier;

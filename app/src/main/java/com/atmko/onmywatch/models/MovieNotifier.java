@@ -12,9 +12,8 @@ import androidx.room.ForeignKey;
 )
 
 public class MovieNotifier extends MediaNotifier {
-    public MovieNotifier(@NonNull String id, @NonNull int condition, String alarmDate) {
+    public MovieNotifier(@NonNull String id, @NonNull int condition) {
         this.mId = id;
         this.mCondition = condition;
-        this.alarmDate = alarmDate;
     }
 }
