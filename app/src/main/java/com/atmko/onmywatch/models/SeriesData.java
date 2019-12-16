@@ -24,7 +24,7 @@ public class SeriesData extends MediaData{
     //primary attributes
     ArrayList<String> mCountryOfOrigin;
     @Ignore ArrayList<String> mReviews;
-    @Ignore Episode mNextEpisodeToAir;
+    Episode mNextEpisodeToAir;
 
     //constructor for parceler
     @Ignore

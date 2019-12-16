@@ -15,6 +15,8 @@ public class GeneralUtils {
     private static final String OFFSET_VALUE_UTC = "+0000";
     public static final int MILLISECOND_CONVERSION = 1000;
 
+    public static boolean LOGIC_BYPASS;
+
     public static String replaceOffsetSymbol(String airDateString) {
        return airDateString.replace(OFFSET_SYMBOL, OFFSET_VALUE_UTC);
     }

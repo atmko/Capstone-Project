@@ -31,6 +31,7 @@ import com.atmko.onmywatch.models.ScheduledMedia;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesNotifier;
 import com.atmko.onmywatch.models.WatchListModel;
+import com.atmko.onmywatch.utils.GeneralUtils;
 import com.atmko.onmywatch.utils.UpdateNotifierService;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 
@@ -425,6 +426,50 @@ public class NotificationTests {
                         SeriesNotifier.CONDITION_NEW_EPISODE);
 
         if (seriesNotifier != null) fail();
+    }
+
+    //tests recurring next episode notifications
+    @Test
+    public void doubleNextEpisodeNotificationTest() {
+        SeriesData seriesData = new SeriesData("43435", "", "", "Dead",
+                0, "", "", "",
+                new ArrayList<String>(), new ArrayList<String>(), "", "", "");
+
+        seriesData.setTraktId("1393");
+        Episode nextEpisode = new Episode();
+
+        //set date in past to ensure notification first and second triggered with custom condition
+        try {
+            nextEpisode.setAirDate("2019-08-08T05:00:00.000Z");
+        } catch (ScheduledMedia.DateFormatException e) {
+            e.printStackTrace();
+        }
+
+        //bypass logic to allow past air date to be posted as notification
+        GeneralUtils.LOGIC_BYPASS = true;
+
+        seriesData.setNextEpisodeToAir(nextEpisode);
+
+        Intent intent = new Intent(getInstrumentation().getTargetContext(), AddToListActivity.class);
+        intent.putExtra(AddToListActivity.MEDIA_DATA_KEY, Parcels.wrap(seriesData));
+        intent.putExtra(AddToListActivity.MEDIA_TYPE_KEY, MasterActivity.MEDIA_TYPE_SERIES);
+
+        addToListActivityTestRule.launchActivity(intent);
+
+        registerSimpleIdleResource();
+        registerNotificationIdleResource(2);
+
+        onView(withText("Watching")).perform(click());
+        onView(withText("SAVE")).perform(click());
+
+        checkForNotification(seriesData, SeriesNotifier.CONDITION_NEW_EPISODE);
+
+        //ensure notifier isn't removed after notification
+        SeriesNotifier seriesNotifier =
+                db.seriesNotifierDao().getNotifierByIdAlt(seriesData.getId(),
+                        SeriesNotifier.CONDITION_NEW_EPISODE);
+
+        if (seriesNotifier == null) fail();
     }
 
     private void checkForNotification(MediaData mediaData, int condition) {

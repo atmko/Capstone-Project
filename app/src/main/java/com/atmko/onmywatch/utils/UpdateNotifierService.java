@@ -350,8 +350,11 @@ public class UpdateNotifierService extends JobIntentService {
         boolean releaseDateInPast =
                 scheduledMedia.getBestLocalAirDate().before(GeneralUtils.DateInject.getInstance().currentDate());
 
-        //if release date is null or if release date has passed, return
-        if (scheduledMedia.getBestLocalAirDate() == null || releaseDateInPast) return;
+        //if logic bypass is false, use production code
+        if (!GeneralUtils.LOGIC_BYPASS) {
+            //if release date is null or if release date has passed, return
+            if (scheduledMedia.getBestLocalAirDate() == null || releaseDateInPast) return;
+        }
 
         SeriesNotifier newEpisodeNotifier = createNewEpisodeNotifier(scheduledMedia.getBestAvailableDateString());
 
