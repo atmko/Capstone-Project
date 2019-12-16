@@ -122,6 +122,11 @@ public class NotificationTests {
         IdlingRegistry.getInstance().register(mNotificationIdlingResource);
     }
 
+    @Before
+    public void enableTestMode() {
+        UpdateNotifierService.sActionMode = UpdateNotifierService.ACTION_TESTING;
+    }
+
     //ensures movie notifiers get canceled when watch status updated to other than "to watch" or "watching"
     @Test
     public void TestCancelingMovieNotifierOnWatchStatusChanged() {
@@ -212,7 +217,7 @@ public class NotificationTests {
         if (newEpisodeNotifier != null) fail();
     }
 
-    //tests movie release notifications when watch status is switched to "to watch" or "watching"
+    //tests movie release notifications when release date doesn't exist by using release status
     @Test
     public void TestCreatingReleaseNotifierThroughReleaseStatus() {
         long currentTimeMillis = System.currentTimeMillis();
@@ -338,9 +343,6 @@ public class NotificationTests {
     //test if notification is shown when next episode date is in the future
     @Test
     public void testNextEpisodeInFuture() {
-        //enable testing mode to bypass changing test media during parsing
-        UpdateNotifierService.sActionMode = UpdateNotifierService.ACTION_TESTING;
-
         SeriesData seriesData = new SeriesData("43435", "", "", "Dead",
                 0, "", "", "",
                 new ArrayList<String>(), new ArrayList<String>(), "", "", "");
@@ -386,9 +388,6 @@ public class NotificationTests {
     //test if notifier is created when next episode date is in the past
     @Test
     public void testNextEpisodeInPast() {
-        //enable testing mode to bypass changing test media during parsing
-        UpdateNotifierService.sActionMode = UpdateNotifierService.ACTION_TESTING;
-
         SeriesData seriesData = new SeriesData("43435", "", "", "Dead",
                 0, "", "", "",
                 new ArrayList<String>(), new ArrayList<String>(), "", "", "");

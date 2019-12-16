@@ -55,6 +55,8 @@ public class NotificationHandler {
                     //show notification
                     notificationManager.notify(mediaId, condition, notification);
 
+                    System.out.println("ugyfuigk");
+
                     if (mediaType == MEDIA_TYPE_SERIES) {
                         //get saved series data
                         SeriesData seriesData = AppDatabase.getInstance(context).seriesDataDao().getSeriesByIdAlt(mediaId);
@@ -207,7 +209,6 @@ public class NotificationHandler {
 
         Episode nextEpisode = new Episode();
 
-        System.out.println("dzhfjjh");
         setNotificationAlarm(context, releasePendingIntent, nextEpisode, notifier);
     }
 
