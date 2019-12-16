@@ -96,11 +96,17 @@ public class NotificationHandler {
 
             if (mediaType == MEDIA_TYPE_MOVIE) {
                 notifier = database.movieNotifierDao().getNotifierByIdAlt(mediaId, condition);
-                database.movieNotifierDao().deleteNotifier(((MovieNotifier) notifier));
+                //prevent crash
+                if (notifier != null) {
+                    database.movieNotifierDao().deleteNotifier(((MovieNotifier) notifier));
+                }
 
             } else {
                 notifier = database.seriesNotifierDao().getNotifierByIdAlt(mediaId, condition);
-                database.seriesNotifierDao().deleteNotifier(((SeriesNotifier) notifier));
+                //prevent crash
+                if (notifier != null) {
+                    database.seriesNotifierDao().deleteNotifier(((SeriesNotifier) notifier));
+                }
             }
         }
     }
