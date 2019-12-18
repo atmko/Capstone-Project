@@ -33,6 +33,7 @@ import com.atmko.onmywatch.models.SeriesNotifier;
 import com.atmko.onmywatch.models.WatchListModel;
 import com.atmko.onmywatch.utils.GeneralUtils;
 import com.atmko.onmywatch.utils.UpdateNotifierService;
+import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 
 import org.junit.Before;
@@ -297,6 +298,121 @@ public class NotificationTests {
         if (movieNotifier != null) fail();
     }
 
+    @Test
+    public void testSettingNewEpisodeNotifierThroughTmdb() {
+        SeriesData seriesData = new SeriesData("43435", "", "", "Dead",
+                0, "", "", "",
+                new ArrayList<String>(), new ArrayList<String>(), "", "", "");
+
+        seriesData.setTraktId("1393");
+
+        Episode nextEpisode = new Episode();
+
+        //set date in past to ensure notification first and second triggered with bypass logic
+        try {
+            nextEpisode.setAirDate("2019-08-08T05:00:00.000Z");
+        } catch (ScheduledMedia.DateFormatException e) {
+            e.printStackTrace();
+        }
+
+        //bypass logic to allow past air date to be posted as notification
+        GeneralUtils.LOGIC_BYPASS = true;
+
+        seriesData.setNextEpisodeToAir(nextEpisode);
+
+        //feign trakt next episode NULL
+        UpdateNotifierService.ASSUME_TRAKT_NEXT_EPISODE_NULL = true;
+
+        Intent intent = new Intent(getInstrumentation().getTargetContext(), AddToListActivity.class);
+        intent.putExtra(AddToListActivity.MEDIA_DATA_KEY, Parcels.wrap(seriesData));
+        intent.putExtra(AddToListActivity.MEDIA_TYPE_KEY, MasterActivity.MEDIA_TYPE_SERIES);
+
+        addToListActivityTestRule.launchActivity(intent);
+
+        registerSimpleIdleResource();
+        registerNotificationIdleResource(1);
+
+        onView(withText("Watching")).perform(click());
+        onView(withText("SAVE")).perform(click());
+
+        checkForNotification(seriesData, SeriesNotifier.CONDITION_NEW_EPISODE);
+
+        //ensure notifier isn't removed after notification
+        SeriesNotifier seriesNotifier =
+                db.seriesNotifierDao().getNotifierByIdAlt(seriesData.getId(),
+                        SeriesNotifier.CONDITION_NEW_EPISODE);
+
+        if (seriesNotifier == null) fail();
+    }
+
+    @Test
+    public void testSettingSeriesNewEpisodeNotifierThroughReleaseStatus() {
+        SeriesData seriesData = new SeriesData("43435", "", "", "Dead",
+                0, "", "", "",
+                new ArrayList<String>(), new ArrayList<String>(), "", "", "");
+
+        seriesData.setTraktId("1393");
+        seriesData.setReleaseStatus(ApiConstants.TextReplacement.REPLACEMENT_RETURNING_SERIES);
+
+        //bypass logic to allow past air date to be posted as notification
+        GeneralUtils.LOGIC_BYPASS = true;
+
+        //feign trakt next episode NULL
+        UpdateNotifierService.ASSUME_TRAKT_NEXT_EPISODE_NULL = true;
+
+        Intent intent = new Intent(getInstrumentation().getTargetContext(), AddToListActivity.class);
+        intent.putExtra(AddToListActivity.MEDIA_DATA_KEY, Parcels.wrap(seriesData));
+        intent.putExtra(AddToListActivity.MEDIA_TYPE_KEY, MasterActivity.MEDIA_TYPE_SERIES);
+
+        addToListActivityTestRule.launchActivity(intent);
+
+        registerSimpleIdleResource();
+
+        onView(withText("Watching")).perform(click());
+        onView(withText("SAVE")).perform(click());
+
+        //ensure notifier isn't removed after notification
+        SeriesNotifier seriesNotifier =
+                db.seriesNotifierDao().getNotifierByIdAlt(seriesData.getId(),
+                        SeriesNotifier.CONDITION_NEW_EPISODE);
+
+        if (seriesNotifier == null) fail();
+    }
+
+    @Test
+    public void testSettingSeriesReleaseNotifierThroughReleaseStatus() {
+        SeriesData seriesData = new SeriesData("43435", "", "", "Dead",
+                0, "", "", "",
+                new ArrayList<String>(), new ArrayList<String>(), "", "", "");
+
+        seriesData.setTraktId("1393");
+        seriesData.setReleaseStatus(ApiConstants.TextReplacement.REPLACEMENT_IN_PRODUCTION);
+
+        //bypass logic to allow past air date to be posted as notification
+        GeneralUtils.LOGIC_BYPASS = true;
+
+        //feign trakt next episode NULL
+        UpdateNotifierService.ASSUME_TRAKT_NEXT_EPISODE_NULL = true;
+
+        Intent intent = new Intent(getInstrumentation().getTargetContext(), AddToListActivity.class);
+        intent.putExtra(AddToListActivity.MEDIA_DATA_KEY, Parcels.wrap(seriesData));
+        intent.putExtra(AddToListActivity.MEDIA_TYPE_KEY, MasterActivity.MEDIA_TYPE_SERIES);
+
+        addToListActivityTestRule.launchActivity(intent);
+
+        registerSimpleIdleResource();
+
+        onView(withText("Watching")).perform(click());
+        onView(withText("SAVE")).perform(click());
+
+        //ensure notifier isn't removed after notification
+        SeriesNotifier seriesNotifier =
+                db.seriesNotifierDao().getNotifierByIdAlt(seriesData.getId(),
+                        SeriesNotifier.CONDITION_ON_RELEASE);
+
+        if (seriesNotifier == null) fail();
+    }
+
     //tests series release notifications when watch status is switched to "to watch"
     @Test
     public void testSeriesReleaseNotification() {
@@ -437,7 +553,7 @@ public class NotificationTests {
         seriesData.setTraktId("1393");
         Episode nextEpisode = new Episode();
 
-        //set date in past to ensure notification first and second triggered with custom condition
+        //set date in past to ensure notification first and second triggered with bypass logic
         try {
             nextEpisode.setAirDate("2019-08-08T05:00:00.000Z");
         } catch (ScheduledMedia.DateFormatException e) {

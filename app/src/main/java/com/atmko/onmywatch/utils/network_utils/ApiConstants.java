@@ -74,6 +74,8 @@ public class ApiConstants {
     public static final String DATE_FORMAT = "yyyy-MM-dd";
 
     //RELEASE STATUS VALUES
+    public static final String RELEASE_STATUS_PLANNED = "Planned";
+    public static final String RELEASE_STATUS_IN_PRODUCTION = "In Production";
     public static final String RELEASE_STATUS_CANCELED = "Canceled";
 
     //HEADER VALUES
@@ -82,4 +84,20 @@ public class ApiConstants {
     //ERROR CODES
     public static final int TOO_MANY_REQUESTS = 429;
 
+    public static class TextReplacement {
+        public static final String REPLACEMENT_RETURNING_SERIES = "Running";
+        public static final String REPLACEMENT_IN_PRODUCTION = "Production";
+
+        public static String replaceText(String originalText) {
+            if (SeriesApiConstants.RELEASE_STATUS_RETURNING_SERIES.equals(originalText)) {
+                return REPLACEMENT_RETURNING_SERIES;
+
+            } else if (RELEASE_STATUS_IN_PRODUCTION.equals(originalText)) {
+                return REPLACEMENT_IN_PRODUCTION;
+
+            } else {
+                return originalText;
+            }
+        }
+    }
 }

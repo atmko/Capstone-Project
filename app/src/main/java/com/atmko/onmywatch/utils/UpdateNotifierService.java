@@ -50,6 +50,8 @@ public class UpdateNotifierService extends JobIntentService {
     public static final String ACTION_TESTING = "testing";
     public static final String ACTION_SET = "set";
 
+    public static boolean ASSUME_TRAKT_NEXT_EPISODE_NULL;
+
     public static final int JOB_ID = 20;
 
     public static String sActionMode = ACTION_SET;
@@ -214,7 +216,7 @@ public class UpdateNotifierService extends JobIntentService {
 
         //create notifier if media release still pending
         if (!releaseStatus.equals(MovieApiConstants.RELEASE_STATUS_RELEASED)
-                && !releaseStatus.equals(SeriesApiConstants.SeriesTextReplacement.REPLACEMENT_RETURNING_SERIES)
+                && !releaseStatus.equals(ApiConstants.TextReplacement.REPLACEMENT_RETURNING_SERIES)
                 && !releaseStatus.equals(SeriesApiConstants.RELEASE_STATUS_PILOT)
                 && !releaseStatus.equals(SeriesApiConstants.RELEASE_STATUS_ENDED)
                 && !releaseStatus.equals(ApiConstants.RELEASE_STATUS_CANCELED)) {
@@ -309,11 +311,16 @@ public class UpdateNotifierService extends JobIntentService {
                                 newMediaData =
                                         SeriesDataParser.parseTraktNextEpisodeDetails(returnedJSONString, ((SeriesData) newMediaData));
 
-                                //if there is a next episode and date, create notifier using date, otherwise try using tmdb details
-                                Episode nextEpisode = ((SeriesData) newMediaData).getNextEpisodeToAir();
+                                //if ASSUME_TRAKT_NEXT_EPISODE_NULL is false, use production code
+                                if (!ASSUME_TRAKT_NEXT_EPISODE_NULL) {
+                                    //if there is a next episode and date, create notifier using date, otherwise try using tmdb details
+                                    Episode nextEpisode = ((SeriesData) newMediaData).getNextEpisodeToAir();
+                                    if (nextEpisode != null && nextEpisode.getBestAvailableDateString() != null) {
+                                        setNewEpisodeNotifierThroughDateComparison();
 
-                                if (nextEpisode != null && nextEpisode.getBestAvailableDateString() != null) {
-                                    setNewEpisodeNotifierThroughDateComparison();
+                                    } else {
+                                        getTmdbNextEpisodeDetails();
+                                    }
 
                                 } else {
                                     getTmdbNextEpisodeDetails();
@@ -351,7 +358,14 @@ public class UpdateNotifierService extends JobIntentService {
         //if logic bypass is false, use production code
         if (!GeneralUtils.LOGIC_BYPASS) {
             //if release date is null or if release date has passed, return
-            if (scheduledMedia.getBestLocalAirDate() == null || releaseDateInPast) return;
+            if (scheduledMedia.getBestLocalAirDate() == null || releaseDateInPast) {
+                //set idle state to true
+                if (NotificationIdlingResource.getNotificationIdlingResource() != null) {
+                    NotificationIdlingResource.getNotificationIdlingResource().setIdleState(true);
+                }
+
+                return;
+            }
         }
 
         SeriesNotifier newEpisodeNotifier = createNewEpisodeNotifier();
@@ -367,10 +381,6 @@ public class UpdateNotifierService extends JobIntentService {
         //if release status exists create notifier and return
         //otherwise fetch release status from media details, then create notifier
         //NOTE: release status will be null when not accessing this activity via DetailsFragment, because details won't have been fetched
-        if (newMediaData.getReleaseStatus() != null) {
-            createNewEpisodeNotifierPendingRelease();
-            return;
-        }
 
         String[] detailUrls = getResources().getStringArray(R.array.details_urls);
         String detailUrl = null;
@@ -396,22 +406,18 @@ public class UpdateNotifierService extends JobIntentService {
                         @Override
                         public void run() {
                             //get release status, set release status and create notifier
-                            SeriesData detailsMediaData =
+                            newMediaData =
                                     SeriesDataParser.parseDetails(returnedJSONString,
                                             ((SeriesData) UpdateNotifierService.this.newMediaData));
 
-                            String releaseStatus = detailsMediaData.getReleaseStatus();
-                            newMediaData.setReleaseStatus(releaseStatus);
-
-
                             //if there is a next episode and date, create notifier using date, otherwise create notifier without alarm
-                            Episode nextEpisode = detailsMediaData.getNextEpisodeToAir();
+                            Episode nextEpisode = ((SeriesData) newMediaData).getNextEpisodeToAir();
                             if (nextEpisode != null && nextEpisode.getBestAvailableDateString() != null) {
                                 setNewEpisodeNotifierThroughDateComparison();
 
                             } else {
                                 //NOTE: alarm will be created when media is updated and a release date becomes available
-                                createNewEpisodeNotifierPendingRelease();
+                                createEpisodeNotifierPendingRelease();
                             }
                         }
                     });
@@ -436,12 +442,17 @@ public class UpdateNotifierService extends JobIntentService {
     }
 
     //create notifier if episodes still pending
-    private void createNewEpisodeNotifierPendingRelease() {
+    private void createEpisodeNotifierPendingRelease() {
         String releaseStatus = newMediaData.getReleaseStatus();
 
-        //create notifier if new episodes still pending
-        if (releaseStatus.equals(SeriesApiConstants.SeriesTextReplacement.REPLACEMENT_RETURNING_SERIES)) {
+        //create notifier if new episodes still pending, otherwise if series isn't yet released, set release notifier
+        if (releaseStatus.equals(ApiConstants.TextReplacement.REPLACEMENT_RETURNING_SERIES)) {
             createNewEpisodeNotifier();
+
+        } else if (releaseStatus.equals(ApiConstants.RELEASE_STATUS_PLANNED)
+                || releaseStatus.equals(ApiConstants.TextReplacement.REPLACEMENT_IN_PRODUCTION)) {
+
+            createReleaseNotifierPendingRelease(newMediaData);
         }
     }
 

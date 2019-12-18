@@ -100,6 +100,8 @@ public class SeriesDataParser {
     }
 
     public static SeriesData parseDetails(String returnedJSONString, SeriesData seriesData) {
+        if (UpdateNotifierService.sActionMode.equals(UpdateNotifierService.ACTION_TESTING)) return seriesData;
+
         //skips code below if returnedJSONString null or empty
         if (returnedJSONString == null || returnedJSONString.equals("")){
             //return same series data
@@ -136,7 +138,7 @@ public class SeriesDataParser {
         detailsSeriesData.setReviews(parseReviews(((Map) returnedMap.get(ApiConstants.REVIEWS_KEY))));
 
         String releaseStatus = ((String) returnedMap.get(ApiConstants.RELEASE_STATUS_KEY));
-        detailsSeriesData.setReleaseStatus(SeriesTextReplacement.replaceText(releaseStatus));
+        detailsSeriesData.setReleaseStatus(ApiConstants.TextReplacement.replaceText(releaseStatus));
 
         Map nextEpisodeToAirMap = ((Map) returnedMap.get(SeriesApiConstants.NEXT_EPISODE_TO_AIR_KEY));
 

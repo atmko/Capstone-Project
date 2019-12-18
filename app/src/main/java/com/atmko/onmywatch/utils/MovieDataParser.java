@@ -135,7 +135,7 @@ public class MovieDataParser {
         detailsMovieData.setReviews(parseReviews(((Map) returnedMap.get(ApiConstants.REVIEWS_KEY))));
 
         String releaseStatus = ((String) returnedMap.get(ApiConstants.RELEASE_STATUS_KEY));
-        detailsMovieData.setReleaseStatus(releaseStatus);
+        detailsMovieData.setReleaseStatus(ApiConstants.TextReplacement.replaceText(releaseStatus));
 
         return detailsMovieData;
     }

@@ -14,8 +14,7 @@ public class SeriesApiConstants {
     public static final String FIRST_AIR_DATE_KEY = "first_air_date";
 
     //RELEASE STATUS VALUES
-    private static final String RELEASE_STATUS_RETURNING_SERIES = "Returning Series";
-    private static final String RELEASE_STATUS_IN_PRODUCTION = "In Production";
+    static final String RELEASE_STATUS_RETURNING_SERIES = "Returning Series";
     public static final String RELEASE_STATUS_ENDED = "Ended";
     public static final String RELEASE_STATUS_PILOT = "Pilot";
 
@@ -27,21 +26,4 @@ public class SeriesApiConstants {
 
     //EPISODE VALUES
     public static final String NEXT_EPISODE_TO_AIR_KEY = "next_episode_to_air";
-
-    public static class SeriesTextReplacement {
-        public static final String REPLACEMENT_RETURNING_SERIES = "Running";
-        static final String REPLACEMENT_IN_PRODUCTION = "Production";
-
-        public static String replaceText(String originalText) {
-            if (originalText.equals(SeriesApiConstants.RELEASE_STATUS_RETURNING_SERIES)) {
-                return REPLACEMENT_RETURNING_SERIES;
-
-            } else if (originalText.equals(SeriesApiConstants.RELEASE_STATUS_IN_PRODUCTION)) {
-                return REPLACEMENT_IN_PRODUCTION;
-
-            } else {
-                return originalText;
-            }
-        }
-    }
 }
