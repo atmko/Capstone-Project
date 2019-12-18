@@ -107,6 +107,10 @@ public class UpdateNotifierService extends JobIntentService {
 
         } else {
             cancelMediaAlarmIfExists(MediaNotifier.CONDITION_ON_RELEASE);
+            //set idle state to true
+            if (NotificationIdlingResource.getNotificationIdlingResource() != null) {
+                NotificationIdlingResource.getNotificationIdlingResource().setIdleState(true);
+            }
         }
     }
 
@@ -222,6 +226,11 @@ public class UpdateNotifierService extends JobIntentService {
                 && !releaseStatus.equals(ApiConstants.RELEASE_STATUS_CANCELED)) {
 
             createReleaseNotifier(newMediaData);
+
+            //set idle state to true
+            if (NotificationIdlingResource.getNotificationIdlingResource() != null) {
+                NotificationIdlingResource.getNotificationIdlingResource().setIdleState(true);
+            }
         }
     }
 
@@ -260,6 +269,11 @@ public class UpdateNotifierService extends JobIntentService {
         } else {
             cancelMediaAlarmIfExists(CONDITION_ON_RELEASE);
             cancelMediaAlarmIfExists(CONDITION_NEW_EPISODE);
+
+            //set idle state to true
+            if (NotificationIdlingResource.getNotificationIdlingResource() != null) {
+                NotificationIdlingResource.getNotificationIdlingResource().setIdleState(true);
+            }
         }
     }
 
@@ -417,7 +431,7 @@ public class UpdateNotifierService extends JobIntentService {
 
                             } else {
                                 //NOTE: alarm will be created when media is updated and a release date becomes available
-                                createEpisodeNotifierPendingRelease();
+                                createEpisodeNotifierPendingDateInfo();
                             }
                         }
                     });
@@ -442,7 +456,7 @@ public class UpdateNotifierService extends JobIntentService {
     }
 
     //create notifier if episodes still pending
-    private void createEpisodeNotifierPendingRelease() {
+    private void createEpisodeNotifierPendingDateInfo() {
         String releaseStatus = newMediaData.getReleaseStatus();
 
         //create notifier if new episodes still pending, otherwise if series isn't yet released, set release notifier
@@ -453,6 +467,11 @@ public class UpdateNotifierService extends JobIntentService {
                 || releaseStatus.equals(ApiConstants.TextReplacement.REPLACEMENT_IN_PRODUCTION)) {
 
             createReleaseNotifierPendingRelease(newMediaData);
+        }
+
+        //set idle state to true
+        if (NotificationIdlingResource.getNotificationIdlingResource() != null) {
+            NotificationIdlingResource.getNotificationIdlingResource().setIdleState(true);
         }
     }
 

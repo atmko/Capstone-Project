@@ -4,8 +4,10 @@
 
 package com.atmko.onmywatch;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.service.notification.StatusBarNotification;
 
 import androidx.annotation.NonNull;
 import androidx.room.Room;
@@ -367,6 +369,7 @@ public class NotificationTests {
         addToListActivityTestRule.launchActivity(intent);
 
         registerSimpleIdleResource();
+        registerNotificationIdleResource(1);
 
         onView(withText("Watching")).perform(click());
         onView(withText("SAVE")).perform(click());
@@ -401,6 +404,7 @@ public class NotificationTests {
         addToListActivityTestRule.launchActivity(intent);
 
         registerSimpleIdleResource();
+        registerNotificationIdleResource(1);
 
         onView(withText("Watching")).perform(click());
         onView(withText("SAVE")).perform(click());
