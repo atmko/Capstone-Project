@@ -13,6 +13,7 @@ import androidx.room.Delete;
 import androidx.room.Update;
 
 import com.atmko.onmywatch.models.UserListModel;
+import com.atmko.onmywatch.models.WatchListModel;
 
 import java.util.List;
 
@@ -23,6 +24,10 @@ public interface UserListsDao {
 
     @Query("SELECT * FROM user_lists")
     LiveData<List<UserListModel>> getAllLists();
+
+    //alternate method without live data
+    @Query("SELECT * FROM user_lists WHERE id = :name")
+    UserListModel getListByNameAlt(String name);
 
     @Query("SELECT * FROM user_lists WHERE id LIKE :name")
     LiveData<List<UserListModel>> getListsWithNameLike(String name);
