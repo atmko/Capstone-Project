@@ -411,8 +411,10 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
             WatchListModel oldWatchStatusList =
                     mDatabase.watchListsDao().getListByNameAlt(oldWatchStatusName);
 
-            oldWatchStatusList.setItemCount(oldWatchStatusList.getItemCount() - 1);
-            mDatabase.watchListsDao().updateListConfiguration(oldWatchStatusList);
+            if (oldWatchStatusList.getItemCount() >= 1) {
+                oldWatchStatusList.setItemCount(oldWatchStatusList.getItemCount() - 1);
+                mDatabase.watchListsDao().updateListConfiguration(oldWatchStatusList);
+            }
         }
 
         if (mNewWatchStatus != null) {
