@@ -186,8 +186,7 @@ public class NotificationHandler {
                                                    MediaNotifier notifier) {
         int mediaType;
 
-        Notification notification = notifier.createReleaseNotification(
-                context, mediaData.getTitle());
+        Notification notification = notifier.createReleaseNotification(context, mediaData);
 
         if (mediaData instanceof MovieData) {
             mediaType = MEDIA_TYPE_MOVIE;
@@ -216,8 +215,7 @@ public class NotificationHandler {
 
     public static void scheduleNewEpisodeNotification(Context context, SeriesData mediaData,
                                                    SeriesNotifier notifier) {
-        Notification notification = notifier.createNewEpisodeNotification(
-                context, mediaData.getTitle());
+        Notification notification = notifier.createNewEpisodeNotification(context, mediaData);
 
         //create pending intent to house notification for when alarm is triggered
         PendingIntent releasePendingIntent =

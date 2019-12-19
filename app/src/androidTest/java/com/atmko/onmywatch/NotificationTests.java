@@ -4,10 +4,8 @@
 
 package com.atmko.onmywatch;
 
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-import android.service.notification.StatusBarNotification;
 
 import androidx.annotation.NonNull;
 import androidx.room.Room;
@@ -20,6 +18,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.ActivityTestRule;
 import androidx.test.uiautomator.UiCollection;
 import androidx.test.uiautomator.UiDevice;
+import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.UiSelector;
 
 import com.atmko.onmywatch.database.AppDatabase;
@@ -64,13 +63,12 @@ import static org.junit.Assert.fail;
 public class NotificationTests {
     private IdlingResource mIdlingResource;
     private NotificationIdlingResource mNotificationIdlingResource;
+    Context context = ApplicationProvider.getApplicationContext();
 
     private AppDatabase db;
 
     @Before
     public void setupTestDatabase() {
-        Context context = ApplicationProvider.getApplicationContext();
-
         RoomDatabase.Callback callback = databaseInitializer(context);
 
         db = Room.inMemoryDatabaseBuilder(context, AppDatabase.class)
@@ -218,6 +216,77 @@ public class NotificationTests {
 
         if (releaseNotifier != null) fail();
         if (newEpisodeNotifier != null) fail();
+    }
+
+    @Test
+    public void testMoviesNotificationClick() {
+        TimeZone utcTimeZone = TimeZone.getTimeZone("UTC");
+        Calendar utcCalender = Calendar.getInstance(utcTimeZone);
+        utcCalender.add(Calendar.SECOND, 7);
+
+        MovieData movieData = new MovieData("399579", "", false, "",
+                "Alita", 0, "", "", "",
+                new ArrayList<String>(), "", false, "",
+                parseIsoDateFromCalender(utcCalender));
+
+        Intent intent = new Intent(getInstrumentation().getTargetContext(), AddToListActivity.class);
+        intent.putExtra(AddToListActivity.MEDIA_DATA_KEY, Parcels.wrap(movieData));
+        intent.putExtra(AddToListActivity.MEDIA_TYPE_KEY, MasterActivity.MEDIA_TYPE_MOVIE);
+
+        addToListActivityTestRule.launchActivity(intent);
+
+        registerSimpleIdleResource();
+        registerNotificationIdleResource(1);
+
+        //release notifier created with either "To Watch" or "Watching" watch status
+        //randomize selecting to watch and watching
+        if (utcCalender.getTime().getTime() % 2 == 0) {
+            onView(withText("To Watch")).perform(click());
+
+        } else if (utcCalender.getTime().getTime() % 2 == 1) {
+            onView(withText("Watching")).perform(click());
+        }
+
+        onView(withText("SAVE")).perform(click());
+
+        clickNotification(movieData, MediaNotifier.CONDITION_ON_RELEASE);
+    }
+
+    @Test
+    public void testSeriesNotificationClick() {
+        SeriesData seriesData = new SeriesData("43435", "", "", "Dead",
+                0, "", "", "",
+                new ArrayList<String>(), new ArrayList<String>(), "", "", "");
+
+        seriesData.setTraktId("1393");
+        Episode nextEpisode = new Episode();
+
+        TimeZone utcTimeZone = TimeZone.getTimeZone("UTC");
+        Calendar utcCalender = Calendar.getInstance(utcTimeZone);
+        utcCalender.add(Calendar.SECOND, 7);
+
+        try {
+            nextEpisode.setAirDate(parseIsoDateFromCalender(utcCalender));
+
+        } catch (ScheduledMedia.DateFormatException e) {
+            e.printStackTrace();
+        }
+
+        seriesData.setNextEpisodeToAir(nextEpisode);
+
+        Intent intent = new Intent(getInstrumentation().getTargetContext(), AddToListActivity.class);
+        intent.putExtra(AddToListActivity.MEDIA_DATA_KEY, Parcels.wrap(seriesData));
+        intent.putExtra(AddToListActivity.MEDIA_TYPE_KEY, MasterActivity.MEDIA_TYPE_SERIES);
+
+        addToListActivityTestRule.launchActivity(intent);
+
+        registerSimpleIdleResource();
+        registerNotificationIdleResource(1);
+
+        onView(withText("Watching")).perform(click());
+        onView(withText("SAVE")).perform(click());
+
+        clickNotification(seriesData, SeriesNotifier.CONDITION_NEW_EPISODE);
     }
 
     //tests movie release notifications when release date doesn't exist by using release status
@@ -619,5 +688,45 @@ public class NotificationTests {
         }
 
         device.pressBack();
+    }
+
+    private void clickNotification(MediaData mediaData, int condition) {
+        UiDevice device = UiDevice.getInstance(getInstrumentation());
+
+        device.openNotification();
+
+        String containingText = "";
+
+        if (condition == MediaNotifier.CONDITION_ON_RELEASE) {
+            containingText = mediaData.getTitle() + " has been released";
+
+        } else if (condition == SeriesNotifier.CONDITION_NEW_EPISODE){
+            containingText = "A new episode of " + mediaData.getTitle();
+        }
+
+        UiSelector uiSelector = new UiSelector().textContains(containingText);
+        UiCollection uiCollection = new UiCollection(uiSelector);
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        if (!uiCollection.exists()) {
+            fail();
+        }
+
+        try {
+            uiCollection.click();
+        } catch (UiObjectNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
