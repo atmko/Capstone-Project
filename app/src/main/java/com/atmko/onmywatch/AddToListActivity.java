@@ -306,8 +306,8 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
 
                 setNotifiers(newMediaData);
 
-                int uerListNetCountChange = updateUserListRecords();
-                int newContainingListValue = mOriginalContainingLists.size() + uerListNetCountChange;
+                int userListNetCountChange = updateUserListRecords();
+                int newContainingListValue = mOriginalContainingLists.size() + userListNetCountChange;
 
                 boolean isDeleted = deleteMediaDataIfDataNotUsed(newMediaData.getWatchStatus(),
                         newContainingListValue);
