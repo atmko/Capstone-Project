@@ -37,6 +37,7 @@ import com.atmko.onmywatch.utils.UpdateNotifierService;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -67,44 +68,6 @@ public class NotificationTests {
 
     private AppDatabase db;
 
-    @Before
-    public void setupTestDatabase() {
-        RoomDatabase.Callback callback = databaseInitializer(context);
-
-        db = Room.inMemoryDatabaseBuilder(context, AppDatabase.class)
-                .addCallback(callback)
-                .build();
-
-        AppDatabase.setDatabase(db);
-    }
-
-    private static RoomDatabase.Callback databaseInitializer(final Context context) {
-        //reference
-        //https://medium.com/@srinuraop/database-create-and-open-callbacks-in-room-7ca98c3286ab
-        return new RoomDatabase.Callback() {
-            @Override
-            public void onCreate(@NonNull SupportSQLiteDatabase db) {
-                AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        String[] seriesWatchListTitles = context.getResources()
-                                .getStringArray(R.array.watch_status_series_titles);
-                        for (String title: seriesWatchListTitles) {
-                            WatchListModel watchListModel = new WatchListModel(title);
-                            AppDatabase.getInstance(context).watchListsDao()
-                                    .addList(watchListModel);
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onOpen(@NonNull SupportSQLiteDatabase db) {
-                super.onOpen(db);
-            }
-        };
-    }
-
     @Rule
     public ActivityTestRule<MasterActivity> masterActivityTestRule =
             new ActivityTestRule<>(MasterActivity.class);
@@ -112,20 +75,38 @@ public class NotificationTests {
     public ActivityTestRule<AddToListActivity> addToListActivityTestRule =
             new ActivityTestRule<>(AddToListActivity.class, true, false);
 
-    private void registerSimpleIdleResource() {
-        mIdlingResource = addToListActivityTestRule.getActivity().getIdlingResource();
-        IdlingRegistry.getInstance().register(mIdlingResource);
-    }
-
-    private void registerNotificationIdleResource(int idleCountLimit) {
-        mNotificationIdlingResource = NotificationIdlingResource.getInstance();
-        mNotificationIdlingResource.setIdleCountLimit(idleCountLimit);
-        IdlingRegistry.getInstance().register(mNotificationIdlingResource);
-    }
-
     @Before
     public void enableTestMode() {
         UpdateNotifierService.sActionMode = UpdateNotifierService.ACTION_TESTING;
+    }
+
+    @Before
+    public void setupTestDatabase() {
+        db = Room.inMemoryDatabaseBuilder(context, AppDatabase.class)
+                .build();
+
+        AppDatabase.setDatabase(db);
+    }
+
+    @Before
+    public void populateDatabase() {
+        String[] seriesWatchListTitles = context.getResources()
+                .getStringArray(R.array.watch_status_series_titles);
+        for (String title: seriesWatchListTitles) {
+            WatchListModel watchListModel = new WatchListModel(title);
+            AppDatabase.getInstance(context).watchListsDao()
+                    .addList(watchListModel);
+        }
+    }
+
+    @After
+    public void unregisterIdlingResources() {
+        IdlingRegistry.getInstance().unregister(mIdlingResource);
+    }
+
+    @After
+    public void closeDb() {
+        db.close();
     }
 
     //ensures movie notifiers get canceled when watch status updated to other than "to watch" or "watching"
@@ -658,6 +639,17 @@ public class NotificationTests {
                         SeriesNotifier.CONDITION_NEW_EPISODE);
 
         if (seriesNotifier == null) fail();
+    }
+
+    private void registerSimpleIdleResource() {
+        mIdlingResource = addToListActivityTestRule.getActivity().getIdlingResource();
+        IdlingRegistry.getInstance().register(mIdlingResource);
+    }
+
+    private void registerNotificationIdleResource(int idleCountLimit) {
+        mNotificationIdlingResource = NotificationIdlingResource.getInstance();
+        mNotificationIdlingResource.setIdleCountLimit(idleCountLimit);
+        IdlingRegistry.getInstance().register(mNotificationIdlingResource);
     }
 
     private void checkForNotification(MediaData mediaData, int condition) {
