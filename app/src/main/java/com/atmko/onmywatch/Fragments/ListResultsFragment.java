@@ -24,6 +24,7 @@ import android.widget.ImageButton;
 
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
+import com.atmko.onmywatch.adapters.CustomParams;
 import com.atmko.onmywatch.adapters.MediaDataAdapter;
 import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.atmko.onmywatch.database.AppDatabase;
@@ -119,7 +120,8 @@ public class ListResultsFragment extends Fragment
 
         mListResultsRecyclerView.setLayoutManager(configureLayoutManager());
 
-        mDataAdapter = new MediaDataAdapter(this, getActivity().getApplicationContext());
+        mDataAdapter = new MediaDataAdapter(this, getActivity().getApplicationContext(),
+                CustomParams.getSearchParams(this));
         mListResultsRecyclerView.setAdapter(mDataAdapter);
         mSearchPreferences = new SearchPreferences();
 

@@ -5,9 +5,6 @@
 package com.atmko.onmywatch.adapters;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +20,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.models.MediaData;
-import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 import com.atmko.onmywatch.utils.network_utils.NetworkFunctions;
 
 import java.util.ArrayList;
@@ -41,18 +37,20 @@ public class MediaDataAdapter
     private final OnListItemClickListener mOnListItemClickListener;
     private boolean mInPlaceholderMode;
     private final Context mContext;
+    private final int[] mParams;
 
     //layout ids
     private final int STANDARD_LAYOUT_ID = 1;
     private final int NO_POSTER_LAYOUT = 2;
     private final int EMPTY_ADAPTER_ID = 3;
 
-    public MediaDataAdapter(OnListItemClickListener clickListener, Context context) {
+    public MediaDataAdapter(OnListItemClickListener clickListener, Context context, int[] params) {
         mFragment = ((Fragment) clickListener);
         mOnListItemClickListener = clickListener;
         mAdapterData = new ArrayList<>();
         mInPlaceholderMode = false;
         mContext = context;
+        mParams = params;
     }
 
     public interface OnListItemClickListener {
@@ -120,45 +118,9 @@ public class MediaDataAdapter
     private ViewGroup.LayoutParams getPosterDimensions(View view) {
         ViewGroup.LayoutParams params = view.getLayoutParams();
 
-        DisplayMetrics displayDimensions = Resources.getSystem().getDisplayMetrics();
-
-        int masterRatio;
-        int detailRatio;
-
-        int imageColumnSpan;
-
-        //get layout weights
-        masterRatio = mFragment.getResources().getInteger(R.integer.master_fragment_layout_weight);
-        detailRatio = mFragment.getResources().getInteger(R.integer.detail_fragment_layout_weight);
-
-        imageColumnSpan = mFragment.getResources().getInteger(R.integer.search_column_span);
-
-        //get weight total
-        int weightTotal = masterRatio + detailRatio;
-
-        //get search fragment pixel width
-        int searchFragmentPixelWidth =
-                displayDimensions.widthPixels * masterRatio/weightTotal;
-
-        //get single image pixel width: (searchFragmentPixelWidth/num of columns)
-        int singleImgPixelWidth =
-                searchFragmentPixelWidth / imageColumnSpan;
-
-        //convert spacing between images to pixels
-        int imageSpacing = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                mFragment.getResources().getInteger(R.integer.search_image_spacing),
-                mFragment.getResources().getDisplayMetrics());
-
-        //new image width now that spacing is applied
-        int adjustedViewWidth = singleImgPixelWidth - imageSpacing;
-
-        //get poster height
-        Long posterHeight = Math.round(adjustedViewWidth * ApiConstants.POSTER_ASPECT_RATIO);
-
         //set layout params
-        params.width = adjustedViewWidth;
-        params.height = posterHeight.intValue();
+        params.width = mParams[0];
+        params.height = mParams[1];
 
         return params;
     }

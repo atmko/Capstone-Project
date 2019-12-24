@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
+import com.atmko.onmywatch.adapters.CustomParams;
 import com.atmko.onmywatch.adapters.MediaDataAdapter;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MediaData;
@@ -95,8 +96,8 @@ public class HomeListDisplayFragment extends Fragment
     private void defineViews() {
         mRecyclerView = getView().findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(configureLayoutManager());
-        mMediaDataAdapter = new MediaDataAdapter(this,
-                getActivity().getApplicationContext());
+        mMediaDataAdapter = new MediaDataAdapter(this, getActivity().getApplicationContext(),
+                CustomParams.getSearchParams(this));
         mRecyclerView.setAdapter(mMediaDataAdapter);
     }
 

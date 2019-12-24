@@ -2,7 +2,7 @@
 <resources>
     <!--COLUMN SPAN-->
     <integer name="search_column_span">4</integer>
-    <integer name="cast_column_span">4</integer>
+    <integer name="detail_extras_column_span">4</integer>
     <!--COLUMN SPAN-->
 
     <!--POPUP PERCENTAGES-->

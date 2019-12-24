@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.CastDataAdapter;
+import com.atmko.onmywatch.adapters.CustomParams;
 import com.atmko.onmywatch.models.CastData;
 
 import org.parceler.Parcels;
@@ -77,8 +78,8 @@ public class CastFragment extends Fragment implements CastDataAdapter.OnListItem
         RecyclerView recyclerView = getView().findViewById(R.id.cast_recycler_view);
         recyclerView.setLayoutManager(configureLayoutManager());
 
-        mAdapter = new CastDataAdapter(this,
-                getActivity().getApplicationContext());
+        mAdapter = new CastDataAdapter(this, getActivity().getApplicationContext(),
+                CustomParams.getDetailExtrasParams(this));
         recyclerView.setAdapter(mAdapter);
 
         ((CastDataAdapter) mAdapter).addAdapterData(mCastList);
@@ -86,7 +87,7 @@ public class CastFragment extends Fragment implements CastDataAdapter.OnListItem
 
     private GridLayoutManager configureLayoutManager() {
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(),
-                getResources().getInteger(R.integer.cast_column_span));
+                getResources().getInteger(R.integer.detail_extras_column_span));
 
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         return layoutManager;

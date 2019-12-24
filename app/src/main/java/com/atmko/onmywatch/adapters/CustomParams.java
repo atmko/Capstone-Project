@@ -1,0 +1,111 @@
+package com.atmko.onmywatch.adapters;
+
+import android.content.res.Resources;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
+
+import androidx.fragment.app.Fragment;
+
+import com.atmko.onmywatch.R;
+import com.atmko.onmywatch.utils.network_utils.ApiConstants;
+
+public class CustomParams {
+    public static int[] getSearchParams(Fragment fragment) {
+        DisplayMetrics displayDimensions = Resources.getSystem().getDisplayMetrics();
+
+        int masterRatio;
+        int detailRatio;
+
+        int imageColumnSpan;
+
+        //get layout weights
+        masterRatio = fragment.getResources().getInteger(R.integer.master_fragment_layout_weight);
+        detailRatio = fragment.getResources().getInteger(R.integer.detail_fragment_layout_weight);
+
+        imageColumnSpan = fragment.getResources().getInteger(R.integer.search_column_span);
+
+        //get weight total
+        int weightTotal = masterRatio + detailRatio;
+
+        //get search fragment pixel width
+        int searchFragmentPixelWidth =
+                displayDimensions.widthPixels * masterRatio/weightTotal;
+
+        //get single image pixel width: (searchFragmentPixelWidth/num of columns)
+        int singleImgPixelWidth =
+                searchFragmentPixelWidth / imageColumnSpan;
+
+        //convert spacing between images to pixels
+        int imageSpacing = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                fragment.getResources().getInteger(R.integer.search_image_spacing),
+                fragment.getResources().getDisplayMetrics());
+
+        //new image width now that spacing is applied
+        int adjustedViewWidth = singleImgPixelWidth - imageSpacing;
+
+        //get poster height
+        long posterHeight = Math.round(adjustedViewWidth * ApiConstants.POSTER_ASPECT_RATIO);
+
+        int[] params = new int[2];
+
+        //set layout params
+        params[0] = adjustedViewWidth;
+        params[1] = (int) posterHeight;
+
+        return params;
+    }
+
+    public static int[] getDetailExtrasParams(Fragment fragment) {
+        DisplayMetrics displayDimensions = Resources.getSystem().getDisplayMetrics();
+
+        int masterRatio;
+        int detailRatio;
+
+        int imageColumnSpan;
+
+        if (fragment.getResources().getBoolean(R.bool.isPhone)) {
+            //get phone layout weights
+            masterRatio = fragment.getResources().getInteger(R.integer.details_main_layout_weight);
+            detailRatio = fragment.getResources().getInteger(R.integer.details_extras_layout_weight);
+
+        } else {
+            //get tablet layout weights
+            masterRatio = fragment.getResources().getInteger(R.integer.master_fragment_layout_weight);
+            detailRatio = fragment.getResources().getInteger(R.integer.detail_fragment_layout_weight);
+        }
+
+        imageColumnSpan = fragment.getResources().getInteger(R.integer.detail_extras_column_span);
+
+        //get weight total
+        int weightTotal = masterRatio + detailRatio;
+
+        //get search fragment pixel width
+        int searchFragmentPixelWidth =
+                displayDimensions.widthPixels * masterRatio/weightTotal;
+
+        //get single image pixel width: (searchFragmentPixelWidth/num of columns)
+        int singleImgPixelWidth =
+                searchFragmentPixelWidth / imageColumnSpan;
+
+        //convert spacing between images to pixels
+        int imageSpacing = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                fragment.getResources().getInteger(R.integer.search_image_spacing),
+                fragment.getResources().getDisplayMetrics());
+
+        //new image width now that spacing is applied
+        int adjustedViewWidth = singleImgPixelWidth - imageSpacing;
+
+        //get poster height
+        long posterHeight = Math.round(adjustedViewWidth * ApiConstants.POSTER_ASPECT_RATIO);
+
+        int[] params = new int[2];
+
+        //set layout params
+        params[0] = adjustedViewWidth;
+        params[1] = (int) posterHeight;
+
+        return params;
+    }
+}

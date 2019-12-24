@@ -24,6 +24,7 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.adapters.CastDataAdapter;
+import com.atmko.onmywatch.adapters.CustomParams;
 import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.SeriesData;
@@ -207,8 +208,8 @@ public class DiscoverResultsFragment extends Fragment implements
                     getActivity().getApplicationContext());
 
         } else {
-            mDataAdapter = new MediaDataAdapter(this,
-                    getActivity().getApplicationContext());
+            mDataAdapter = new MediaDataAdapter(this, getActivity().getApplicationContext(),
+                    CustomParams.getSearchParams(this));
         }
 
         Object preloadObject = null;
