@@ -29,12 +29,12 @@
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="@string/detail_extra_cast_text_literal" />
+                tools:text="@string/detail_extra_recommended_text_literal" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="@string/detail_extra_seasons_text_literal" />
+                tools:text="@string/detail_extra_cast_text_literal" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"

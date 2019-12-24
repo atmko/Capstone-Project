@@ -222,11 +222,16 @@ public class MasterActivity extends AppCompatActivity {
         //condition for navigation
         //this removes details fragment because master container is behind detail container
         // (via frame layout) in non tablet landscape
-        if (hasFragment(R.id.detail_fragments_container) && !mIsTabletLandscape) {
-            getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
-                    .remove(detailFragment).commit();
+        if (hasFragment(R.id.detail_fragments_container)) {
+            List<MediaData> detailsHistory = DetailsFragment.mHistory;
+            if (detailsHistory != null && detailsHistory.size() != 0) {
+                ((DetailsFragment) detailFragment).popHistory();
 
+            } else if (!mIsTabletLandscape) {
+                getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
+                        .remove(detailFragment).commit();
+            }
 
         }else {
             //condition for exit animation transition
@@ -385,7 +390,7 @@ public class MasterActivity extends AppCompatActivity {
             //exclude fragments that don't have search bar
             if (!(backgroundFragment instanceof HomeFragment)) {
                 SuperEditText searchTextView =
-                backgroundFragment.getView().findViewById(R.id.search_edit_text_view);
+                        backgroundFragment.getView().findViewById(R.id.search_edit_text_view);
                 hideSearchBar(searchTextView);
             }
         }

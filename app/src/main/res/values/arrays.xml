@@ -41,7 +41,7 @@
         <item>https://api.themoviedb.org/3/movie/upcoming?api_key={api_key}&amp;language={language}&amp;page={page}&amp;region={region}</item>
     </array>
 
-<!--___________________________________________-->
+    <!--___________________________________________-->
 
     <array name="preset_series_discover_titles">
         <!--<item>latest</item>-->
@@ -65,8 +65,13 @@
     </array>
 
     <array name="details_urls">
-        <item>https://api.themoviedb.org/3/tv/{id}?api_key={api_key}&amp;language={language}&amp;append_to_response=credits,videos,reviews</item>
-        <item>https://api.themoviedb.org/3/movie/{id}?api_key={api_key}&amp;language={language}&amp;append_to_response=credits,videos,reviews</item>
+        <item>https://api.themoviedb.org/3/tv/{id}?api_key={api_key}&amp;language={language}&amp;append_to_response=credits,videos,reviews,similar</item>
+        <item>https://api.themoviedb.org/3/movie/{id}?api_key={api_key}&amp;language={language}&amp;append_to_response=credits,videos,reviews,similar</item>
+    </array>
+
+    <array name="recommendation_urls">
+        <item>https://api.themoviedb.org/3/tv/{id}/recommendations?api_key={api_key}&amp;language={language}&amp;page={page}</item>
+        <item>https://api.themoviedb.org/3/movie/{id}/recommendations?api_key={api_key}&amp;language={language}&amp;page={page}</item>
     </array>
 
     <array name="trakt_matching_media_urls">
@@ -75,11 +80,13 @@
     </array>
 
     <array name="detail_tv_extras_titles">
+        <item>@string/detail_extra_recommended_text_literal</item>
         <item>@string/detail_extra_cast_text_literal</item>
         <item>@string/detail_extra_reviews_text_literal</item>
     </array>
 
     <array name="detail_movie_extras_titles">
+        <item>@string/detail_extra_recommended_text_literal</item>
         <item>@string/detail_extra_cast_text_literal</item>
         <item>@string/detail_extra_reviews_text_literal</item>
     </array>

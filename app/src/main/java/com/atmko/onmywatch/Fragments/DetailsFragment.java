@@ -86,6 +86,8 @@ public class DetailsFragment extends Fragment {
     public static final String MEDIA_DATA_PARCELABLE_KEY = "media_data";
     private static final String SEARCH_PREFERENCES_KEY = "search_preferences";
 
+    private static final String HISTORY_KEY = "history";
+
     private String COUNTDOWN_KEY = "countdown";
 
     public static final String ACTION_LAUNCH_DETAILS = "launch_details";
@@ -100,6 +102,8 @@ public class DetailsFragment extends Fragment {
     private String mDetailUrl;
     private MediaData mMediaData;
     private SearchPreferences mSearchPreferences;
+
+    public static List<MediaData> mHistory;
 
     public static final int REVIEW_CUT_OFF_INDEX = 100;
 
@@ -183,6 +187,8 @@ public class DetailsFragment extends Fragment {
             //startup code moved to onCreateAnimator
 
         } else {
+            mHistory = Parcels.unwrap(savedInstanceState.getParcelable(HISTORY_KEY));
+
             //check if details value exists.
             //If so set detail values and configure extras adapter, otherwise get detail values
             if (mMediaData.getReleaseStatus() != null) {
@@ -275,6 +281,8 @@ public class DetailsFragment extends Fragment {
 
         outState.putString(ApiConstants.RELEASE_STATUS_KEY, mReleaseStatusTextView.getText().toString());
         outState.putString(COUNTDOWN_KEY, mCountDownTextView.getText().toString());
+
+        outState.putParcelable(HISTORY_KEY, Parcels.wrap(mHistory));
     }
 
     private static final String STATUS_BAR_IDENTIFIER = "status_bar_height";
@@ -985,6 +993,27 @@ public class DetailsFragment extends Fragment {
         intent.putExtra(RateActivity.MEDIA_ID_KEY, Parcels.wrap(mMediaData.getId()));
 
         startActivity(intent);
+    }
+
+    void stackHistory() {
+        if (mHistory == null) {
+            mHistory = new ArrayList<>();
+        }
+
+        mHistory.add(mMediaData);
+    }
+
+    public void popHistory() {
+        if (getActivity() != null) {
+            ((MasterActivity) getActivity())
+                    .launchDetailsFragment(mHistory.get(mHistory.size() - 1), null);
+
+            mHistory.remove(mHistory.size() - 1);
+        }
+
+        if (mHistory.size() == 0) {
+            mHistory = null;
+        }
     }
 
     @Override
