@@ -164,6 +164,11 @@ public class SeriesDataParser {
             detailsSeriesData.setNextEpisodeToAir(nextEpisode);
         }
 
+        //preserve the overwritten watch status, user rating and trakt id
+        detailsSeriesData.setWatchStatus(seriesData.getWatchStatus());
+        detailsSeriesData.setUserRating(seriesData.getUserRating());
+        detailsSeriesData.setTraktId(seriesData.getTraktId());
+
         return detailsSeriesData;
     }
 

@@ -41,6 +41,8 @@ public class UpdateMediaWorker extends Worker {
 
     public static final int REQUEST_COOL_DOWN = 1000;
 
+    public static String sMovieDetailsStringInject;
+    public static String sSeriesDetailsStringInject;
     private final Context mContext;
     private final AppDatabase mDatabase;
 
@@ -127,47 +129,22 @@ public class UpdateMediaWorker extends Worker {
                 NetworkFunctions
                         .agnosticDetailRequestById(detailUrl, id,  searchPreferences, mContext);
 
+        if (sSeriesDetailsStringInject != null || sMovieDetailsStringInject != null) {
+            String detailsInject =
+                    oldMediaData instanceof MovieData ? sMovieDetailsStringInject : sSeriesDetailsStringInject;
+
+            parseAndApplyUpdatedJsonString(oldMediaData, detailsInject, hasNotifiers);
+
+            return;
+        }
+
         request.getAsString(new StringRequestListener() {
             @Override
             public void onResponse(final String returnedJSONString) {
                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                     @Override
                     public void run() {
-                        MediaData newMediaData;
-
-                        //parse and populate retrieved data
-                        if (oldMediaData instanceof MovieData) {
-                            newMediaData =
-                                    MovieDataParser.parseDetails(returnedJSONString,
-                                            ((MovieData) oldMediaData));
-
-                            //preserve the overwritten watch status and user rating
-                            newMediaData.setWatchStatus(oldMediaData.getWatchStatus());
-                            newMediaData.setUserRating(oldMediaData.getUserRating());
-
-                            mDatabase.movieDataDao().updateMovieData(((MovieData) newMediaData));
-
-                        } else {
-                            newMediaData =
-                                    SeriesDataParser.parseDetails(returnedJSONString,
-                                            ((SeriesData) oldMediaData));
-
-                            //preserve the over written watch status
-                            newMediaData.setWatchStatus(oldMediaData.getWatchStatus());
-                            newMediaData.setUserRating(oldMediaData.getUserRating());
-
-                            mDatabase.seriesDataDao().updateSeriesData(((SeriesData) newMediaData));
-
-                        }
-
-                        if (hasNotifiers) {
-                            Intent intent = new Intent(getApplicationContext(), UpdateNotifierService.class);
-                            intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(newMediaData));
-                            UpdateNotifierService.enqueueWork(mContext, intent);
-                        }
-
-                        Log.d(TAG, newMediaData.getTitle() + " data updated");
-
+                        parseAndApplyUpdatedJsonString(oldMediaData, returnedJSONString, hasNotifiers);
                     }
                 });
             }
@@ -182,6 +159,34 @@ public class UpdateMediaWorker extends Worker {
                 }
             }
         });
+    }
+
+    private void parseAndApplyUpdatedJsonString(MediaData oldMediaData, String returnedJSONString, Boolean hasNotifiers) {
+        MediaData newMediaData;
+
+        //parse and populate retrieved data
+        if (oldMediaData instanceof MovieData) {
+            newMediaData =
+                    MovieDataParser.parseDetails(returnedJSONString,
+                            ((MovieData) oldMediaData));
+
+            mDatabase.movieDataDao().updateMovieData(((MovieData) newMediaData));
+
+        } else {
+            newMediaData =
+                    SeriesDataParser.parseDetails(returnedJSONString,
+                            ((SeriesData) oldMediaData));
+
+            mDatabase.seriesDataDao().updateSeriesData(((SeriesData) newMediaData));
+        }
+
+                        if (hasNotifiers) {
+                            Intent intent = new Intent(getApplicationContext(), UpdateNotifierService.class);
+                            intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(newMediaData));
+                            UpdateNotifierService.enqueueWork(mContext, intent);
+                        }
+
+        Log.d(TAG, newMediaData.getTitle() + " data updated");
     }
 
     private void retryAfterCoolDOwn(ANError anError, final MediaData mediaData,

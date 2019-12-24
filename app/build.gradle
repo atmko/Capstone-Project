@@ -92,4 +92,7 @@ dependencies {
 
     // UiAutomator Testing
     androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
+
+    //testing work manager
+    androidTestImplementation "androidx.work:work-testing:2.2.0"
 }
