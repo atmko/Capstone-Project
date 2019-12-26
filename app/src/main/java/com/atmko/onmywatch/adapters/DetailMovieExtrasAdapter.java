@@ -28,7 +28,7 @@ import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
  */
 
 public class DetailMovieExtrasAdapter extends FragmentStatePagerAdapter {
-    private static final int TAB_COUNT = 2;
+    private static final int TAB_COUNT = 3;
 
     private final MovieData mMovieData;
 
