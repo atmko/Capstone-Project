@@ -9,64 +9,41 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.atmko.onmywatch.R;
+import com.atmko.onmywatch.models.ListModel;
 import com.atmko.onmywatch.models.UserListModel;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /*
  * data adapter for UserList objects
  */
 
-public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.UserListsAdapterViewHolder> {
-
-    private final List<UserListModel> mAdapterData;
-    private final OnListItemClickListener mOnListItemClickListener;
-    private final OnSpinnerItemClickListener mOnSpinnerItemClickListener;
+public class UserListsAdapter extends ListsAdapter {
+    private OnSpinnerItemClickListener mOnSpinnerItemClickListener;
 
     public UserListsAdapter(OnListItemClickListener listItemClickListener) {
-        mOnListItemClickListener = listItemClickListener;
+        super(listItemClickListener);
         mOnSpinnerItemClickListener = ((OnSpinnerItemClickListener) listItemClickListener);
-        mAdapterData = new ArrayList<>();
-    }
-
-    public interface OnListItemClickListener {
-        void onItemClick(int position);
     }
 
     public interface OnSpinnerItemClickListener {
-        void onEditClick(UserListModel userListModel);
-        void onDeleteClick(UserListModel userListModel);
+        void onEditClick(ListModel listModel);
+        void onDeleteClick(ListModel listModel);
     }
 
-    public class UserListsAdapterViewHolder extends RecyclerView.ViewHolder
-             implements View.OnClickListener{
-
-        final TextView listNameTextView;
-        final TextView itemCountTextView;
-        final Spinner optionsSpinner;
-
-        private UserListsAdapterViewHolder(@NonNull View itemView) {
+    private class UserListsAdapterViewHolder extends ListsAdapterViewHolder {
+        private UserListsAdapterViewHolder(@NonNull View itemView, int viewType) {
             super(itemView);
 
-            listNameTextView = itemView.findViewById(R.id.list_name_text_view);
-            itemCountTextView = itemView.findViewById(R.id.item_count_text_view);
-            optionsSpinner = itemView.findViewById(R.id.options_spinner);
+            if (viewType == EMPTY_ADAPTER_ID) return;
 
-            itemView.setOnClickListener(this);
-
+            final String[] optionsTitles =
+                    itemView.getContext().getResources().getStringArray(R.array.options_spinner_titles);
             final Context context = itemView.getContext();
 
-            final String[] optionsTitles = context.getResources().getStringArray(R.array.options_spinner_titles);
             SpinnerListOptionsAdapter spinnerAdapter = new SpinnerListOptionsAdapter(optionsTitles, context);
-
             optionsSpinner.setAdapter(spinnerAdapter);
 
             //prevents initial selection of spinner
@@ -75,12 +52,14 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.User
             optionsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    UserListModel userListModel = ((UserListModel) mAdapterData.get(getAdapterPosition()));
+
                     if (position == 0) {
-                        mOnSpinnerItemClickListener.onEditClick(mAdapterData.get(getAdapterPosition()));
+                        mOnSpinnerItemClickListener.onEditClick(userListModel);
                         optionsSpinner.setSelection(optionsTitles.length - 1, false);
 
                     } else if (position == 1) {
-                        mOnSpinnerItemClickListener.onDeleteClick(mAdapterData.get(getAdapterPosition()));
+                        mOnSpinnerItemClickListener.onDeleteClick(userListModel);
                         optionsSpinner.setSelection(optionsTitles.length - 1, false);
                     }
                 }
@@ -92,58 +71,25 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.User
             });
 
         }
-
-        @Override
-        public void onClick(View v) {
-            int position = getAdapterPosition();
-            mOnListItemClickListener.onItemClick(position);
-        }
     }
 
     @NonNull
-    @Override public UserListsAdapterViewHolder onCreateViewHolder(
-            @NonNull ViewGroup viewGroup, int viewType) {
+    @Override
+    public ListsAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         Context context = viewGroup.getContext();
         LayoutInflater layoutInflater = LayoutInflater.from(context);
 
-        int resourceId = R.layout.object_list_model;
+        int resourceId;
+
+        if (viewType == EMPTY_ADAPTER_ID) {
+            resourceId = R.layout.item_list_placeholder;
+
+        } else {
+            resourceId = R.layout.object_list_model;
+        }
 
         View view = layoutInflater.inflate(resourceId, viewGroup, false);
 
-        return new UserListsAdapterViewHolder(view);
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull final UserListsAdapterViewHolder adapterViewHolder,
-                                 int position) {
-        //get current UserList
-        UserListModel currentUserListModel = mAdapterData.get(position);
-
-        adapterViewHolder.listNameTextView.setText(currentUserListModel.getName());
-        adapterViewHolder.itemCountTextView
-                .setText(String.valueOf(currentUserListModel.getItemCount()));
-    }
-
-    @Override
-    public int getItemCount() {
-        if (mAdapterData == null) {
-            return 0;
-        } else {
-            return mAdapterData.size();
-        }
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return super.getItemViewType(position);
-    }
-
-    public List<UserListModel> getAdapterData() {
-        return mAdapterData;
-    }
-
-    public void addAdapterData(List userListList) {
-        mAdapterData.addAll(userListList);
-        notifyDataSetChanged();
+        return new UserListsAdapterViewHolder(view, viewType);
     }
 }

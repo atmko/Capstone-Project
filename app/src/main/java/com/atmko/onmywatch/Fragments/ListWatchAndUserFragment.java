@@ -24,7 +24,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.atmko.onmywatch.CreateListActivity;
 import com.atmko.onmywatch.MasterActivity;
+import com.atmko.onmywatch.adapters.ListsAdapter;
 import com.atmko.onmywatch.custom_views.SuperEditText;
+import com.atmko.onmywatch.models.ListModel;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.SeriesData;
@@ -40,9 +42,8 @@ import com.atmko.onmywatch.view_models.ListsWatchAndUserViewModel;
 
 import java.util.List;
 
-public class ListWatchAndUserFragment extends Fragment
-        implements WatchListsAdapter.OnListItemClickListener,
-        UserListsAdapter.OnListItemClickListener, UserListsAdapter.OnSpinnerItemClickListener {
+public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.OnListItemClickListener,
+        UserListsAdapter.OnSpinnerItemClickListener {
 
     public static String FRAGMENT_KEY = "list_watch_and_user_fragment";
 
@@ -54,7 +55,7 @@ public class ListWatchAndUserFragment extends Fragment
     private boolean mFirstInit = true;
     private Bundle mSavedInstanceState;
     private AppDatabase mDatabase;
-    private RecyclerView.Adapter mAdapter;
+    private ListsAdapter mAdapter;
     private RecyclerView mRecyclerView;
 
     private FloatingActionButton mFab;
@@ -175,8 +176,8 @@ public class ListWatchAndUserFragment extends Fragment
             viewModel.getWatchLists().observe(getParentFragment(), new Observer<List<WatchListModel>>() {
                 @Override
                 public void onChanged(List<WatchListModel> watchListModels) {
-                    ((WatchListsAdapter) mAdapter).getAdapterData().clear();
-                    ((WatchListsAdapter) mAdapter).addAdapterData(watchListModels);
+                    mAdapter.getAdapterData().clear();
+                    mAdapter.addAdapterData(watchListModels);
 
                     //restore search if it exists
                     final ImageButton searchImageButton = getParentFragment().
@@ -193,8 +194,7 @@ public class ListWatchAndUserFragment extends Fragment
             viewModel.getUserLists().observe(getParentFragment(), new Observer<List<UserListModel>>() {
                 @Override
                 public void onChanged(List<UserListModel> userListModels) {
-                    ((UserListsAdapter) mAdapter).getAdapterData().clear();
-                    ((UserListsAdapter) mAdapter).addAdapterData(userListModels);
+                    populateAndNotifyAdapter(userListModels);
 
                     //restore search if it exists
                     final ImageButton searchImageButton = getParentFragment().
@@ -206,6 +206,17 @@ public class ListWatchAndUserFragment extends Fragment
                     mFirstInit = false;
                 }
             });
+        }
+    }
+
+    private void populateAndNotifyAdapter(List listModels) {
+        if (listModels.size() == 0) {
+            mAdapter.setInPlaceholderMode(true);
+
+        } else {
+            mAdapter.setInPlaceholderMode(false);
+            mAdapter.getAdapterData().clear();
+            mAdapter.addAdapterData(listModels);
         }
     }
 
@@ -221,9 +232,7 @@ public class ListWatchAndUserFragment extends Fragment
                 @Override
                 public void onChanged(List<WatchListModel> watchListModels) {
                     listLiveData.removeObserver(this);
-
-                    ((WatchListsAdapter) mAdapter).getAdapterData().clear();
-                    ((WatchListsAdapter) mAdapter).addAdapterData(watchListModels);
+                    populateAndNotifyAdapter(watchListModels);
                 }
             });
         }
@@ -236,9 +245,7 @@ public class ListWatchAndUserFragment extends Fragment
                 @Override
                 public void onChanged(List<UserListModel> userListModels) {
                     listLiveData.removeObserver(this);
-
-                    ((UserListsAdapter) mAdapter).getAdapterData().clear();
-                    ((UserListsAdapter) mAdapter).addAdapterData(userListModels);
+                    populateAndNotifyAdapter(userListModels);
                 }
             });
         }
@@ -255,15 +262,13 @@ public class ListWatchAndUserFragment extends Fragment
 
     @Override
     public void onItemClick(int position) {
-        String listName = null;
+        if (mAdapter.inPlaceholderMode()) {
+            launchCreateListActivity(CreateListActivity.MODE_CREATE, "", 0);
 
-        if (mAdapter instanceof WatchListsAdapter) {
-            listName = ((WatchListsAdapter) mAdapter).getAdapterData().get(position).getName();
-
-        } else if (mAdapter instanceof UserListsAdapter) {
-            listName = ((UserListsAdapter) mAdapter).getAdapterData().get(position).getName();
-
+            return;
         }
+
+        String listName = ((ListModel) mAdapter.getAdapterData().get(position)).getName();
 
         Fragment fragment = ListResultsParentFragment.newInstance(mListType, listName);
 
@@ -274,13 +279,13 @@ public class ListWatchAndUserFragment extends Fragment
     }
 
     @Override
-    public void onEditClick(UserListModel userListModel) {
+    public void onEditClick(ListModel userListModel) {
         launchCreateListActivity(CreateListActivity.MODE_EDIT,
                 userListModel.getName(), userListModel.getItemCount());
     }
 
     @Override
-    public void onDeleteClick(final UserListModel userListModel) {
+    public void onDeleteClick(final ListModel userListModel) {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {

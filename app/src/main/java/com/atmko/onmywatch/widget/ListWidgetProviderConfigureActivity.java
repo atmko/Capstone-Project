@@ -21,7 +21,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
+import com.atmko.onmywatch.adapters.ListsAdapter;
 import com.atmko.onmywatch.adapters.WatchListsAdapter;
+import com.atmko.onmywatch.models.ListModel;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.WatchListModel;
 import com.atmko.onmywatch.utils.GeneralUtils;
@@ -47,7 +49,7 @@ public class ListWidgetProviderConfigureActivity extends AppCompatActivity
 
     private int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
 
-    private RecyclerView.Adapter mAdapter;
+    private ListsAdapter mAdapter;
     private TextView mMediaTypeTextView;
     private RecyclerView mRecyclerView;
     private int mListType;
@@ -206,8 +208,8 @@ public class ListWidgetProviderConfigureActivity extends AppCompatActivity
         viewModel.getWatchLists().observe(this, new Observer<List<WatchListModel>>() {
             @Override
             public void onChanged(List<WatchListModel> watchListModels) {
-                ((WatchListsAdapter) mAdapter).getAdapterData().clear();
-                ((WatchListsAdapter) mAdapter).addAdapterData(watchListModels);
+                mAdapter.getAdapterData().clear();
+                mAdapter.addAdapterData(watchListModels);
 
                 Log.d(TAG, "update watch lists");
             }
@@ -219,7 +221,7 @@ public class ListWidgetProviderConfigureActivity extends AppCompatActivity
         final Context context = ListWidgetProviderConfigureActivity.this;
 
         // When the button is clicked, store the string locally
-        String listName = ((WatchListsAdapter) mAdapter).getAdapterData().get(position).getName();
+        String listName = ((ListModel) mAdapter.getAdapterData().get(position)).getName();
         saveTitlePref(context, mAppWidgetId, listName);
         saveMediaTypePref(context, mAppWidgetId, mMediaType);
 

@@ -125,6 +125,7 @@
     <!--PLACEHOLDER TEXT-->
     <string name="maturity_rating_placeholder">PG-13</string>
     <string name="release_date_placeholder">TBD</string>
+    <string name="create_new_list_placeholder">Create New List</string>
     <!--PLACEHOLDER TEXT-->
 
     <!--NOTIFICATION TEXT-->

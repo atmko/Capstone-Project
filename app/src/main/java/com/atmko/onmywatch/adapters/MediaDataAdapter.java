@@ -42,7 +42,7 @@ public class MediaDataAdapter
     //layout ids
     private final int STANDARD_LAYOUT_ID = 1;
     private final int NO_POSTER_LAYOUT = 2;
-    private final int EMPTY_ADAPTER_ID = 3;
+    private final int EMPTY_ADAPTER_ID = -1;
 
     public MediaDataAdapter(OnListItemClickListener clickListener, Context context, int[] params) {
         mFragment = ((Fragment) clickListener);
