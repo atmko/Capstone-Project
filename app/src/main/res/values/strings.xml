@@ -71,6 +71,11 @@
 
         <!--home text-->
         <string name="spotlight_heading_text">Spotlight</string>
+        <string name="upcoming_episodes">Upcoming Episodes</string>
+        <string name="no_release_date">No Release Date</string>
+        <string name="fully_released">Fully Released</string>
+        <string name="upcoming_movies">Upcoming Movies</string>
+        <string name="already_released">Already Released</string>
         <!--home text-->
 
         <!--lists text-->

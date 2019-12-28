@@ -49,6 +49,8 @@ abstract public class MediaData {
     @Ignore ArrayList<Map<String, String>> mReviews;
     @ColumnInfo(name = "release_status") String mReleaseStatus;
 
+    @ColumnInfo(name = "countdown") public long mCountdown;
+
     //trakt attributes
     @ColumnInfo(name = "trakt_id") String mTraktId;
 

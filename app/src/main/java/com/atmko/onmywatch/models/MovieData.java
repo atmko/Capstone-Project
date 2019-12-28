@@ -73,6 +73,21 @@ public class MovieData extends MediaData{
         this.mAdult = adult;
         this.mOverview = overview;
         this.mReleaseDate = releaseDate;
+
+        try {
+            ScheduledMedia scheduledMedia = new ScheduledMedia();
+            scheduledMedia.setAirDate(releaseDate);
+
+            if (scheduledMedia.getBestTimeDifference() > 0) {
+                this.mCountdown = scheduledMedia.getBestTimeDifference();
+
+            } else {
+                this.mCountdown = 0;
+            }
+
+        } catch (ScheduledMedia.DateFormatException e) {
+            this.mCountdown = 0;
+        }
     }
 
     public MovieData(@NonNull String id, String traktId, String voteAverage, String title,

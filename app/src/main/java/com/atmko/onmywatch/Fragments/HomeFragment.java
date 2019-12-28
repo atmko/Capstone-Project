@@ -30,13 +30,11 @@ import android.widget.TextView;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.SettingsActivity;
-import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.utils.SearchPreferences;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
-import static com.atmko.onmywatch.Fragments.ListsWatchAndUserParentFragment.LIST_TYPE_WATCH;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
 
@@ -104,9 +102,9 @@ public class HomeFragment extends Fragment {
         loadAds();
 
         //configure home list display container layout params
-        configureListContainerParams(R.id.to_watch_list_container);
-        configureListContainerParams(R.id.watching_list_container);
-        configureListContainerParams(R.id.watched_list_container);
+        configureListContainerParams(R.id.upcoming_media_container);
+        configureListContainerParams(R.id.undated_media_container);
+        configureListContainerParams(R.id.ended_media_container);
 
         TextView mediaTypeTextView = getView().findViewById(R.id.media_type_text_view);
         mediaTypeTextView.setOnClickListener(new View.OnClickListener() {
@@ -166,20 +164,20 @@ public class HomeFragment extends Fragment {
 
         if (mMediaType == MEDIA_TYPE_SERIES) {
             mediaTypeTextView.setText(getString(R.string.media_type_series_text));
+            ((TextView) getView().findViewById(R.id.upcoming_container_heading)).setText(getString(R.string.upcoming_episodes));
+            ((TextView) getView().findViewById(R.id.undated_container_heading)).setText(getString(R.string.no_release_date));
+            ((TextView) getView().findViewById(R.id.ended_container_heading)).setText(getString(R.string.fully_released));
 
         } else if (mMediaType == MEDIA_TYPE_MOVIE) {
             mediaTypeTextView.setText(getString(R.string.media_type_movies_text));
-
+            ((TextView) getView().findViewById(R.id.upcoming_container_heading)).setText(getString(R.string.upcoming_movies));
+            ((TextView) getView().findViewById(R.id.undated_container_heading)).setText(getString(R.string.no_release_date));
+            ((TextView) getView().findViewById(R.id.ended_container_heading)).setText(getString(R.string.already_released));
         }
     }
 
     private void loadHomeFragment() {
         loadMediaLabel();
-
-        String[] movieWatchStatusTitles = getResources()
-                .getStringArray(R.array.watch_status_movie_titles);
-        String[] seriesWatchStatusTitles = getResources()
-                .getStringArray(R.array.watch_status_movie_titles);
 
         SearchPreferences searchPreferences =  new SearchPreferences();
 
@@ -190,27 +188,24 @@ public class HomeFragment extends Fragment {
             HomeSpotlightFragment spotLightDisplay = HomeSpotlightFragment
                     .newInstance(mMediaType, spotlightUrl, searchPreferences);
 
-            HomeListDisplayFragment toWatchHomeList = HomeListDisplayFragment
-                    .newInstance(mMediaType, LIST_TYPE_WATCH,
-                            movieWatchStatusTitles[MediaData.WATCH_STATUS_TO_WATCH]);
+            HomeListDisplayFragment upcomingMoviesHomeList = HomeListDisplayFragment
+                    .newInstance(HomeListDisplayFragment.UPCOMING_MOVIES);
 
-            HomeListDisplayFragment watchingHomeList = HomeListDisplayFragment
-                    .newInstance(mMediaType, LIST_TYPE_WATCH,
-                            movieWatchStatusTitles[MediaData.WATCH_STATUS_WATCHING]);
+            HomeListDisplayFragment undatedMoviesHomeList = HomeListDisplayFragment
+                    .newInstance(HomeListDisplayFragment.UNDATED_MOVIES);
 
-            HomeListDisplayFragment watchedHomeList = HomeListDisplayFragment
-                    .newInstance(mMediaType, LIST_TYPE_WATCH,
-                            movieWatchStatusTitles[MediaData.WATCH_STATUS_WATCHED]);
+            HomeListDisplayFragment releasedMoviesHomeList = HomeListDisplayFragment
+                    .newInstance(HomeListDisplayFragment.ALREADY_RELEASED_MOVIES);
 
             getChildFragmentManager()
                     .beginTransaction()
                     .replace(R.id.spotlight_container, spotLightDisplay,
                             HomeSpotlightFragment.FRAGMENT_KEY)
-                    .replace(R.id.watching_list_container, watchingHomeList,
+                    .replace(R.id.upcoming_media_container, upcomingMoviesHomeList,
                             HomeListDisplayFragment.FRAGMENT_KEY)
-                    .replace(R.id.to_watch_list_container, toWatchHomeList,
+                    .replace(R.id.undated_media_container, undatedMoviesHomeList,
                             HomeListDisplayFragment.FRAGMENT_KEY)
-                    .replace(R.id.watched_list_container, watchedHomeList,
+                    .replace(R.id.ended_media_container, releasedMoviesHomeList,
                             HomeListDisplayFragment.FRAGMENT_KEY)
                     .commit();
 
@@ -221,27 +216,24 @@ public class HomeFragment extends Fragment {
             HomeSpotlightFragment spotLightDisplay = HomeSpotlightFragment
                     .newInstance(mMediaType, spotlightUrl, searchPreferences);
 
-            HomeListDisplayFragment toWatchHomeList = HomeListDisplayFragment
-                    .newInstance(mMediaType, LIST_TYPE_WATCH,
-                            seriesWatchStatusTitles[MediaData.WATCH_STATUS_TO_WATCH]);
+            HomeListDisplayFragment upcomingEpisodesHomeList = HomeListDisplayFragment
+                    .newInstance(HomeListDisplayFragment.UPCOMING_EPISODES);
 
-            HomeListDisplayFragment watchingHomeList = HomeListDisplayFragment
-                    .newInstance(mMediaType, LIST_TYPE_WATCH,
-                            seriesWatchStatusTitles[MediaData.WATCH_STATUS_WATCHING]);
+            HomeListDisplayFragment undatedSeriesHomeList = HomeListDisplayFragment
+                    .newInstance(HomeListDisplayFragment.UNDATED_SERIES);
 
-            HomeListDisplayFragment watchedHomeList = HomeListDisplayFragment
-                    .newInstance(mMediaType, LIST_TYPE_WATCH,
-                            seriesWatchStatusTitles[MediaData.WATCH_STATUS_WATCHED]);
+            HomeListDisplayFragment endedSeriesHomeList = HomeListDisplayFragment
+                    .newInstance(HomeListDisplayFragment.ENDED_SERIES);
 
             getChildFragmentManager()
                     .beginTransaction()
                     .replace(R.id.spotlight_container, spotLightDisplay,
                             HomeSpotlightFragment.FRAGMENT_KEY)
-                    .replace(R.id.watching_list_container, watchingHomeList,
+                    .replace(R.id.upcoming_media_container, upcomingEpisodesHomeList,
                             HomeListDisplayFragment.FRAGMENT_KEY)
-                    .replace(R.id.to_watch_list_container, toWatchHomeList,
+                    .replace(R.id.undated_media_container, undatedSeriesHomeList,
                             HomeListDisplayFragment.FRAGMENT_KEY)
-                    .replace(R.id.watched_list_container, watchedHomeList,
+                    .replace(R.id.ended_media_container, endedSeriesHomeList,
                             HomeListDisplayFragment.FRAGMENT_KEY)
                     .commit();
         }

@@ -87,7 +87,9 @@ public class ScheduledMedia {
         }
     }
 
-    public void setAirDate(@NonNull String airDate) throws DateFormatException {
+    public void setAirDate(String airDate) throws DateFormatException, IllegalArgumentException {
+        if (airDate == null || airDate.equals("")) return;
+
         if (airDate.length() > ApiConstants.DATE_FORMAT.length()) {
             try {
                 if (airDate.contains(GeneralUtils.OFFSET_SYMBOL)) {
@@ -163,26 +165,24 @@ public class ScheduledMedia {
         }
     }
 
-    //returns time in millis till nex air date. Uses air date if air date iso not available else returns 0
-    private long getBestTimeDifference() {
-        long timeDifference = 0;
-
+    //returns time in millis till nex air date. Uses air date if air date iso not available else returns Long.MAX_VALUE
+    long getBestTimeDifference() {
         if (mAirDateIso != null) {
             try {
-                timeDifference = getTimeDifferenceViaUtcTime();
+                return getTimeDifferenceViaUtcTime();
             } catch (ParseException e) {
                 e.printStackTrace();
             }
 
-        } else {
+        } else if (mAirDate != null){
             try {
-                timeDifference = getTimeToAirDate();
+                return getTimeToAirDate();
             } catch (ParseException e) {
                 e.printStackTrace();
             }
         }
 
-        return timeDifference;
+        return 0;
     }
 
     //returns time in millis till next episode

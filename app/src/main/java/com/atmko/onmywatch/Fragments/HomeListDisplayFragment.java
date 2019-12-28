@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,25 +23,26 @@ import com.atmko.onmywatch.adapters.CustomParams;
 import com.atmko.onmywatch.adapters.MediaDataAdapter;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MediaData;
-import com.atmko.onmywatch.models.MovieData;
-import com.atmko.onmywatch.models.SeriesData;
-import com.atmko.onmywatch.view_models.ListResultsViewModelFactory;
-import com.atmko.onmywatch.view_models.ListsResultsViewModel;
+import com.atmko.onmywatch.view_models.HomeListDisplayViewModel;
+import com.atmko.onmywatch.view_models.HomeListDisplayViewModelFactory;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class HomeListDisplayFragment extends Fragment
         implements MediaDataAdapter.OnListItemClickListener{
     public static final String FRAGMENT_KEY = "home_list_display_fragment";
 
-    private static final String LIST_TYPE_KEY = "list_type";
-    private static final String MEDIA_TYPE_KEY = "media_type";
+    public static final String UPCOMING_MOVIES = "upcoming_movies";
+    public static final String UNDATED_MOVIES = "undated_movies";
+    public static final String ALREADY_RELEASED_MOVIES = "released_movies";
+
+    public static final String UPCOMING_EPISODES = "upcoming_episodes";
+    public static final String UNDATED_SERIES = "undated_series";
+    public static final String ENDED_SERIES = "ended_series";
+
     private static final String LIST_NAME_KEY = "list_name";
 
     //fragment instantiation values
-    private int mListType;
-    private int mMediaType;
     private String mListName;
 
     //post instantiation values
@@ -52,11 +54,9 @@ public class HomeListDisplayFragment extends Fragment
         // Required empty public constructor
     }
 
-    public static HomeListDisplayFragment newInstance(int mediaType, int listType, String listName) {
+    public static HomeListDisplayFragment newInstance(String listName) {
         HomeListDisplayFragment fragment = new HomeListDisplayFragment();
         Bundle args = new Bundle();
-        args.putInt(LIST_TYPE_KEY, listType);
-        args.putInt(MEDIA_TYPE_KEY, mediaType);
         args.putString(LIST_NAME_KEY, listName);
         fragment.setArguments(args);
         return fragment;
@@ -66,8 +66,6 @@ public class HomeListDisplayFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mListType = getArguments().getInt(LIST_TYPE_KEY);
-            mMediaType = getArguments().getInt(MEDIA_TYPE_KEY);
             mListName = getArguments().getString(LIST_NAME_KEY);
         }
     }
@@ -85,12 +83,6 @@ public class HomeListDisplayFragment extends Fragment
         defineViews();
 
         observeData();
-
-        if (savedInstanceState == null) {
-
-        } else {
-
-        }
     }
 
     private void defineViews() {
@@ -102,62 +94,19 @@ public class HomeListDisplayFragment extends Fragment
     }
 
     private void observeData() {
-        final String[] watchStatusMoviesTitles = getContext().getResources()
-                .getStringArray(R.array.watch_status_movie_titles);
-        List<String> titleList = Arrays.asList(watchStatusMoviesTitles);
-
         AppDatabase database = AppDatabase.getInstance(getContext());
-        ListResultsViewModelFactory resultsViewModelFactory =
-                new ListResultsViewModelFactory(database,ListsWatchAndUserParentFragment.LIST_TYPE_WATCH,
-                        mMediaType, titleList, mListName);
+        HomeListDisplayViewModelFactory homeListDisplayViewModelFactory =
+                new HomeListDisplayViewModelFactory(database, mListName);
 
-        final ListsResultsViewModel viewModel =
-                ViewModelProviders.of(this, resultsViewModelFactory)
-                        .get(ListsResultsViewModel.class);
+        final HomeListDisplayViewModel listsViewModel = ViewModelProviders.of(this, homeListDisplayViewModelFactory)
+                .get(HomeListDisplayViewModel.class);
 
-        //if this is a watch list
-        if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
-            //if media data is movie
-            if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
-                viewModel.getAllMoviesInWatchList().observe(this, new Observer<List<MovieData>>() {
-                    @Override
-                    public void onChanged(List<MovieData> mediaDataList) {
-                        populateAndNotifyAdapter(mediaDataList);
-                    }
-                });
-
-            //if media data is series
-            } else if (mMediaType == MasterActivity.MEDIA_TYPE_SERIES) {
-                viewModel.getAllSeriesInWatchList().observe(this, new Observer<List<SeriesData>>() {
-                    @Override
-                    public void onChanged(List<SeriesData> mediaDataList) {
-                        populateAndNotifyAdapter(mediaDataList);
-                    }
-                });
+        ((LiveData<List>) listsViewModel.getHomeDisplayList()).observe(this, new Observer<List>() {
+            @Override
+            public void onChanged(List mediaDataList) {
+                populateAndNotifyAdapter(mediaDataList);
             }
-        }
-
-        //if this is a user list
-        if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_USER) {
-            //if media data is movie
-            if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
-                viewModel.getAllMoviesInUserList().observe(this, new Observer<List<MovieData>>() {
-                    @Override
-                    public void onChanged(List<MovieData> mediaDataList) {
-                        populateAndNotifyAdapter(mediaDataList);
-                    }
-                });
-
-                //if media data is series
-            } else if (mMediaType == MasterActivity.MEDIA_TYPE_SERIES) {
-                viewModel.getAllSeriesInUserList().observe(this, new Observer<List<SeriesData>>() {
-                    @Override
-                    public void onChanged(List<SeriesData> mediaDataList) {
-                        populateAndNotifyAdapter(mediaDataList);
-                    }
-                });
-            }
-        }
+        });
     }
 
     private LinearLayoutManager configureLayoutManager() {

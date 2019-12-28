@@ -7,6 +7,7 @@ package com.atmko.onmywatch.models;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 
@@ -22,9 +23,9 @@ import java.util.ArrayList;
 public class SeriesData extends MediaData{
 
     //primary attributes
-    ArrayList<String> mCountryOfOrigin;
+    @ColumnInfo(name = "country_of_origin") ArrayList<String> mCountryOfOrigin;
     @Ignore ArrayList<String> mReviews;
-    Episode mNextEpisodeToAir;
+    @ColumnInfo(name = "next_episode") Episode mNextEpisodeToAir;
 
     //constructor for parceler
     @Ignore
@@ -109,6 +110,7 @@ public class SeriesData extends MediaData{
 
     public void setNextEpisodeToAir(Episode nextEpisodeToAir) {
         this.mNextEpisodeToAir = nextEpisodeToAir;
+        this.mCountdown = nextEpisodeToAir.getBestTimeDifference();
     }
 
     @Override

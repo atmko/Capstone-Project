@@ -44,7 +44,16 @@ public interface SeriesDataDao {
 
     @Query("SELECT * FROM series WHERE watch_status = :watchStatus AND title LIKE :mediaTitle")
     LiveData<List<SeriesData>> getSeriesByWatchStatusLike(int watchStatus, String mediaTitle);
-    
+
+    @Query("SELECT * FROM series WHERE watch_status = 2 AND countdown > 0 ORDER BY countdown LIMIT 10")
+    LiveData<List<SeriesData>> getUserUpcomingEpisodes();
+
+    @Query("SELECT * FROM series WHERE watch_status IN (1, 2) AND (countdown = 0 AND release_status NOT IN ('Canceled', 'Ended', 'Running')) LIMIT 10")
+    LiveData<List<SeriesData>> getUndatedSeries();
+
+    @Query("SELECT * FROM series WHERE watch_status IN (1, 2) AND release_status IN ('Canceled', 'Ended') ORDER BY countdown LIMIT 10")
+    LiveData<List<SeriesData>> getEndedSeries();
+
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateSeriesData(SeriesData seriesData);
 
