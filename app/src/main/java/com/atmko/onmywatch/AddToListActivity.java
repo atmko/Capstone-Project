@@ -6,6 +6,7 @@ package com.atmko.onmywatch;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
@@ -27,6 +28,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.espresso.IdlingResource;
 
+import com.androidnetworking.common.ANRequest;
+import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.StringRequestListener;
 import com.atmko.onmywatch.adapters.AddToListAdapter;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MediaData;
@@ -37,8 +41,14 @@ import com.atmko.onmywatch.models.SeriesDataRecord;
 import com.atmko.onmywatch.models.SimpleIdlingResource;
 import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.models.WatchListModel;
+import com.atmko.onmywatch.utils.MovieDataParser;
+import com.atmko.onmywatch.utils.SearchPreferences;
+import com.atmko.onmywatch.utils.SeriesDataParser;
+import com.atmko.onmywatch.utils.UpdateMediaWorker;
 import com.atmko.onmywatch.utils.UpdateNotifierService;
+import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
+import com.atmko.onmywatch.utils.network_utils.NetworkFunctions;
 import com.atmko.onmywatch.view_models.AddToListViewModel;
 import com.atmko.onmywatch.view_models.AddToListViewModelFactory;
 import com.google.android.material.snackbar.Snackbar;
@@ -50,6 +60,7 @@ import java.util.List;
 
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
+import static com.atmko.onmywatch.utils.GeneralUtils.MILLISECOND_CONVERSION;
 import static com.atmko.onmywatch.utils.UpdateMediaWorker.NEW_MEDIA_DATA_KEY;
 
 public class AddToListActivity extends AppCompatActivity implements AddToListAdapter.OnListItemClickListener,
@@ -60,7 +71,6 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
     public static final String MEDIA_DATA_KEY = "media_data";
 
     //save instance keys
-    private static final String OLD_WATCH_STATUS_KEY = "old_watch_status";
     private static final String NEW_CONTAINING_LIST_KEY = "new_containing_list";
     private static final String SELECTED_WATCH_STATUS_KEY = "selected_watch_status";
 
@@ -178,7 +188,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateData();
+                getDetailsAndUpdateData();
 
                 //exit activity
                 finish();
@@ -285,34 +295,127 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
         return layoutManager;
     }
 
-    private void updateData() {
+    private void getDetailsAndUpdateData() {
+        String[] detailUrls = getResources().getStringArray(R.array.details_urls);
+        String detailUrl = null;
+
+        if (mMediaType == MEDIA_TYPE_MOVIE) {
+            detailUrl = detailUrls[MEDIA_TYPE_MOVIE];
+
+        } else if (mMediaType == MEDIA_TYPE_SERIES) {
+            detailUrl = detailUrls[MEDIA_TYPE_SERIES];
+        }
+
+        SearchPreferences searchPreferences =  new SearchPreferences();
+
+        //build AN request
+        ANRequest request = NetworkFunctions.agnosticDetailRequestById(detailUrl, mMediaData.getId(),
+                searchPreferences, this);
+
         // The IdlingResource is null in production.
         if (mIdlingResource != null) {
             mIdlingResource.setIdleState(false);
         }
 
+        request.getAsString(new StringRequestListener() {
+            @Override
+            public void onResponse(final String returnedJSONString) {
+                try {
+                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mMediaType == MEDIA_TYPE_MOVIE) {
+                                mMediaData =
+                                        MovieDataParser.parseDetails(returnedJSONString, ((MovieData) mMediaData));
+
+                            } else {
+                                mMediaData =
+                                        SeriesDataParser.parseDetails(returnedJSONString, ((SeriesData) mMediaData));
+                            }
+
+                            updateData();
+                        }
+                    });
+
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(final ANError anError) {
+                if (anError.getErrorCode() == ApiConstants.TOO_MANY_REQUESTS) {
+                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            retryAfterCoolDOwn(anError);
+                        }
+                    });
+
+                } else {
+                    updateData();
+                }
+
+                //notify user of error
+                Log.d(TAG, getString(R.string.details_error_message));
+            }
+        });
+    }
+
+    //retry method if api returns too may requests error
+    private void retryAfterCoolDOwn(ANError anError) {
+        Log.d(TAG, "retrying details fetch");
+
+        int coolDown;
+
+        try {
+            //noinspection ConstantConditions
+            coolDown = Integer.parseInt(anError.getResponse().header(ApiConstants.RETRY_AFTER_KEY));
+
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            coolDown = UpdateMediaWorker.REQUEST_COOL_DOWN;
+
+        }
+
+        int coolDownInMilliSecs = coolDown * MILLISECOND_CONVERSION;
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    getDetailsAndUpdateData();
+
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, coolDownInMilliSecs);
+    }
+
+    private void updateData() {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                MediaData newMediaData;
-
                 if (mMediaType == MEDIA_TYPE_MOVIE) {
-                    newMediaData = updateMovieData();
+                    updateMovieData();
 
                 } else {
-                    newMediaData = updateSeriesData();
+                    updateSeriesData();
 
                 }
 
-                setNotifiers(newMediaData);
+                setNotifiers();
 
                 int userListNetCountChange = updateUserListRecords();
                 int newContainingListValue = mOriginalContainingLists.size() + userListNetCountChange;
 
-                boolean isDeleted = deleteMediaDataIfDataNotUsed(newMediaData.getWatchStatus(),
+                boolean isDeleted = deleteMediaDataIfDataNotUsed(mMediaData.getWatchStatus(),
                         newContainingListValue);
 
-                mNewWatchStatus = isDeleted? null : newMediaData.getWatchStatus();
+                mNewWatchStatus = isDeleted? null : mMediaData.getWatchStatus();
 
                 updateWatchListCounts();
 
@@ -323,46 +426,40 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
         });
     }
 
-    private MovieData updateMovieData() {
-        //check if movie exists in db
+    private void updateMovieData() {
         MovieData movieData = mDatabase.movieDataDao().getMovieByIdAlt(mMediaData.getId());
-
-        //if movie exists
         if (movieData != null) {
-            movieData.setWatchStatus(mSelectedWatchStatus);
-            mDatabase.movieDataDao().updateMovieData(movieData);
-            Log.d(TAG, "update media data");
-            return movieData;
+            //set the watch status, preserve user rating and trakt id
+            mMediaData.setWatchStatus(mSelectedWatchStatus);
+            mMediaData.setUserRating(movieData.getUserRating());
+            mMediaData.setTraktId(movieData.getTraktId());
+
+            mDatabase.movieDataDao().addMovieData(((MovieData) mMediaData));
 
         } else {
-            //create new movie data
-            MovieData newMovieData = ((MovieData) mMediaData);
-            newMovieData.setWatchStatus(mSelectedWatchStatus);
-            mDatabase.movieDataDao().addMovieData(newMovieData);
-            Log.d(TAG, "creating new media data");
-            return newMovieData;
+            mMediaData.setWatchStatus(mSelectedWatchStatus);
+            mDatabase.movieDataDao().addMovieData(((MovieData) mMediaData));
         }
+
+        Log.d(TAG, "update media data");
     }
 
-    private SeriesData updateSeriesData() {
-        //check if series exists in db
+    private void updateSeriesData() {
         SeriesData seriesData = mDatabase.seriesDataDao().getSeriesByIdAlt(mMediaData.getId());
-
-        //if series exists
         if (seriesData != null) {
-            seriesData.setWatchStatus(mSelectedWatchStatus);
-            mDatabase.seriesDataDao().updateSeriesData(seriesData);
-            Log.d(TAG, "update media data");
-            return seriesData;
+            //set the watch status, preserve user rating and trakt id
+            mMediaData.setWatchStatus(mSelectedWatchStatus);
+            mMediaData.setUserRating(seriesData.getUserRating());
+            mMediaData.setTraktId(seriesData.getTraktId());
+
+            mDatabase.seriesDataDao().addSeriesData(((SeriesData) mMediaData));
 
         } else {
-            //create new series data
-            SeriesData newSeriesData = ((SeriesData) mMediaData);
-            newSeriesData.setWatchStatus(mSelectedWatchStatus);
-            mDatabase.seriesDataDao().addSeriesData(newSeriesData);
-            Log.d(TAG, "creating new media data");
-            return newSeriesData;
+            mMediaData.setWatchStatus(mSelectedWatchStatus);
+            mDatabase.seriesDataDao().addSeriesData(((SeriesData) mMediaData));
         }
+
+        Log.d(TAG, "update media data");
     }
 
     private int updateUserListRecords() {
@@ -393,9 +490,9 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
         return netCountChange;
     }
 
-    private void setNotifiers(MediaData newMediaData) {
+    private void setNotifiers() {
         Intent intent = new Intent(getApplicationContext(), UpdateNotifierService.class);
-        intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(newMediaData));
+        intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(mMediaData));
         UpdateNotifierService.enqueueWork(getApplicationContext(), intent);
     }
 

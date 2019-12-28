@@ -261,6 +261,7 @@ public class UpdateNotifierService extends JobIntentService {
 
         if (newWatchStatus == MediaData.WATCH_STATUS_TO_WATCH) {
             cancelMediaAlarmIfExists(CONDITION_NEW_EPISODE);
+            //TODO: series release notifier current does't use trakt api but uses tmdb. Make release notifier uses trakt for better accuracy
             updateReleaseNotifier();
 
         } else if (newWatchStatus == MediaData.WATCH_STATUS_WATCHING) {
@@ -315,8 +316,6 @@ public class UpdateNotifierService extends JobIntentService {
                                 if (outputTraktId != null) {
                                     newMediaData.setTraktId(outputTraktId);
 
-                                    //save trakt id
-                                    mDatabase.seriesDataDao().updateSeriesData(((SeriesData) newMediaData));
                                     getTraktNextEpisodeDetails();
                                 }
 
@@ -364,6 +363,9 @@ public class UpdateNotifierService extends JobIntentService {
 
     //creates new episode notifier and notification alarm if release date exists and is in the future
     private void setNewEpisodeNotifierThroughDateComparison() {
+        //update media data to save trakt id and countdown
+        mDatabase.seriesDataDao().updateSeriesData(((SeriesData) newMediaData));
+
         ScheduledMedia scheduledMedia = ((SeriesData) newMediaData).getNextEpisodeToAir();
 
         boolean releaseDateInPast =
@@ -395,64 +397,20 @@ public class UpdateNotifierService extends JobIntentService {
         //if release status exists create notifier and return
         //otherwise fetch release status from media details, then create notifier
         //NOTE: release status will be null when not accessing this activity via DetailsFragment, because details won't have been fetched
+        try {
+            //if there is a next episode and date, create notifier using date, otherwise create notifier without alarm
+            Episode nextEpisode = ((SeriesData) newMediaData).getNextEpisodeToAir();
+            if (nextEpisode != null && nextEpisode.getBestAvailableDateString() != null) {
+                setNewEpisodeNotifierThroughDateComparison();
 
-        String[] detailUrls = getResources().getStringArray(R.array.details_urls);
-        String detailUrl = null;
+            } else {
+                //NOTE: alarm will be created when media is updated and a release date becomes available
+                createEpisodeNotifierPendingDateInfo();
+            }
 
-        if (mMediaType == MEDIA_TYPE_MOVIE) {
-            detailUrl = detailUrls[MEDIA_TYPE_MOVIE];
-
-        } else if (mMediaType == MEDIA_TYPE_SERIES) {
-            detailUrl = detailUrls[MEDIA_TYPE_SERIES];
+        } catch (NullPointerException e) {
+            e.printStackTrace();
         }
-
-        SearchPreferences searchPreferences =  new SearchPreferences();
-
-        //build AN request
-        ANRequest request = NetworkFunctions.agnosticDetailRequestById(detailUrl, newMediaData.getId(),
-                searchPreferences, this);
-
-        request.getAsString(new StringRequestListener() {
-            @Override
-            public void onResponse(final String returnedJSONString) {
-                try {
-                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            //get release status, set release status and create notifier
-                            newMediaData =
-                                    SeriesDataParser.parseDetails(returnedJSONString,
-                                            ((SeriesData) UpdateNotifierService.this.newMediaData));
-
-                            //if there is a next episode and date, create notifier using date, otherwise create notifier without alarm
-                            Episode nextEpisode = ((SeriesData) newMediaData).getNextEpisodeToAir();
-                            if (nextEpisode != null && nextEpisode.getBestAvailableDateString() != null) {
-                                setNewEpisodeNotifierThroughDateComparison();
-
-                            } else {
-                                //NOTE: alarm will be created when media is updated and a release date becomes available
-                                createEpisodeNotifierPendingDateInfo();
-                            }
-                        }
-                    });
-
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onError(ANError anError) {
-                if (anError.getErrorCode() == ApiConstants.TOO_MANY_REQUESTS) {
-                    retryAfterCoolDOwn(anError, COOL_DOWN_REQUEST_TRAKT_ID);
-
-                    return;
-                }
-
-                //notify user of error
-                Log.d(TAG, getString(R.string.details_error_message));
-            }
-        });
     }
 
     //create notifier if episodes still pending

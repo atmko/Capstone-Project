@@ -99,6 +99,8 @@ public class MovieDataParser {
     }
 
     public static MovieData parseDetails(String returnedJSONString, MovieData movieData) {
+        if (UpdateNotifierService.sActionMode.equals(UpdateNotifierService.ACTION_TESTING)) return movieData;
+
         //skips code below if returnedJSONString null or empty
         if (returnedJSONString == null || returnedJSONString.equals("")){
             //return same movie data
