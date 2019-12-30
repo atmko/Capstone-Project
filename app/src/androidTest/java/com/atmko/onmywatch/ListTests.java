@@ -6,40 +6,27 @@ package com.atmko.onmywatch;
 
 import android.content.Context;
 import android.content.Intent;
+import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.room.Room;
-import androidx.room.RoomDatabase;
-import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.IdlingResource;
+import androidx.test.espresso.UiController;
+import androidx.test.espresso.ViewAction;
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.ActivityTestRule;
-import androidx.test.uiautomator.UiCollection;
-import androidx.test.uiautomator.UiDevice;
-import androidx.test.uiautomator.UiObjectNotFoundException;
-import androidx.test.uiautomator.UiSelector;
 
 import com.atmko.onmywatch.database.AppDatabase;
-import com.atmko.onmywatch.models.Episode;
-import com.atmko.onmywatch.models.ListModel;
 import com.atmko.onmywatch.models.MediaData;
-import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.MovieDataRecord;
-import com.atmko.onmywatch.models.MovieNotifier;
-import com.atmko.onmywatch.models.NotificationIdlingResource;
-import com.atmko.onmywatch.models.ScheduledMedia;
-import com.atmko.onmywatch.models.SeriesData;
-import com.atmko.onmywatch.models.SeriesNotifier;
 import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.models.WatchListModel;
-import com.atmko.onmywatch.utils.GeneralUtils;
 import com.atmko.onmywatch.utils.UpdateNotifierService;
-import com.atmko.onmywatch.utils.network_utils.ApiConstants;
-import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 
+import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -47,17 +34,17 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.parceler.Parcels;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.TimeZone;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItem;
+import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
+import static androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
-import static com.atmko.onmywatch.utils.GeneralUtils.parseIsoDateFromCalender;
+import static org.hamcrest.Matchers.allOf;
 import static org.junit.Assert.fail;
 
 /**
@@ -68,7 +55,7 @@ import static org.junit.Assert.fail;
 @RunWith(AndroidJUnit4.class)
 public class ListTests {
     private IdlingResource mIdlingResource;
-    Context context = ApplicationProvider.getApplicationContext();
+    private Context context = ApplicationProvider.getApplicationContext();
 
     private AppDatabase db;
 
@@ -566,8 +553,178 @@ public class ListTests {
         if (userListModel.getItemCount() != 0) fail();
     }
 
+    @Test
+    public void TestWatchListCountWhenDeletingUserListWithMediaWithWatchStatus() {
+        //create media data
+        MovieData movieData = new MovieData("399579", "", false, "",
+                "", 0, "", "", "",
+                new ArrayList<String>(), "", false, "", "");
+        //create media data
+        MovieData movieData2 = new MovieData("399579", "", false, "",
+                "", 0, "", "", "",
+                new ArrayList<String>(), "", false, "", "");
+
+        movieData.setWatchStatus(1);
+        db.movieDataDao().addMovieData(movieData);
+        movieData2.setWatchStatus(1);
+        db.movieDataDao().addMovieData(movieData2);
+
+        //update watch list
+        WatchListModel watchListModelUpdate = new WatchListModel("to watch", 2);
+        db.watchListsDao().updateListConfiguration(watchListModelUpdate);
+
+        //create user list
+        UserListModel userListModel = new UserListModel("test list", 2);
+        db.userListsDao().addList(userListModel);
+
+        //create media record
+        MovieDataRecord movieDataRecord = new MovieDataRecord(movieData.getId(), "test list");
+        db.movieDataRecordsDao().addRecord(movieDataRecord);
+        //create media record
+        MovieDataRecord movieDataRecord2 = new MovieDataRecord(movieData2.getId(), "test list");
+        db.movieDataRecordsDao().addRecord(movieDataRecord2);
+
+        onView(withText("Lists")).perform(click());
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        onView(withText("User Lists")).perform(click());
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        onView(allOf(ViewMatchers.withId(R.id.lists_recycler_view), isCompletelyDisplayed()))
+        .perform(actionOnItem(hasDescendant(withText("test list")), clickChildViewWithId(R.id.options_spinner)));
+
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        onView(withText("Delete")).perform(click());
+
+        //check user list deleted
+        UserListModel deletedList = db.userListsDao().getListByNameAlt("test list");
+        if (deletedList != null) fail();
+
+        //check media not deleted
+        MovieData savedMovieReference = db.movieDataDao().getMovieByIdAlt(movieData.getId());
+        if (savedMovieReference == null) fail();
+        MovieData savedMovieReference2 = db.movieDataDao().getMovieByIdAlt(movieData2.getId());
+        if (savedMovieReference2 == null) fail();
+
+        //check records deleted
+        MovieDataRecord savedRecordReference = db.movieDataRecordsDao().getRecordByIdAlt(movieData.getId(), "test list");
+        if (savedRecordReference != null) fail();
+        MovieDataRecord savedRecordReference2 = db.movieDataRecordsDao().getRecordByIdAlt(movieData2.getId(), "test list");
+        if (savedRecordReference2 != null) fail();
+
+        //check watchlist count
+        WatchListModel savedWatchListModel = db.watchListsDao().getListByNameAlt("to watch");
+        if (savedWatchListModel.getItemCount() != 2) fail();
+    }
+
+    @Test
+    public void TestWatchListCountWhenDeletingUserListWithMediaWithoutWatchStatus() {
+        //create media data
+        MovieData movieData = new MovieData("399579", "", false, "",
+                "", 0, "", "", "",
+                new ArrayList<String>(), "", false, "", "");
+        MovieData movieData2 = new MovieData("399579", "", false, "",
+                "", 0, "", "", "",
+                new ArrayList<String>(), "", false, "", "");
+
+        db.movieDataDao().addMovieData(movieData);
+        db.movieDataDao().addMovieData(movieData2);
+
+        //create user list
+        UserListModel userListModel = new UserListModel("test list", 2);
+        db.userListsDao().addList(userListModel);
+
+        //create media record
+        MovieDataRecord movieDataRecord = new MovieDataRecord(movieData.getId(), "test list");
+        db.movieDataRecordsDao().addRecord(movieDataRecord);
+        MovieDataRecord movieDataRecord2 = new MovieDataRecord(movieData2.getId(), "test list");
+        db.movieDataRecordsDao().addRecord(movieDataRecord2);
+
+        onView(withText("Lists")).perform(click());
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        onView(withText("User Lists")).perform(click());
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        onView(allOf(ViewMatchers.withId(R.id.lists_recycler_view), isCompletelyDisplayed()))
+                .perform(actionOnItem(hasDescendant(withText("test list")), clickChildViewWithId(R.id.options_spinner)));
+
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        onView(withText("Delete")).perform(click());
+
+        //check user list deleted
+        UserListModel deletedList = db.userListsDao().getListByNameAlt("test list");
+        if (deletedList != null) fail();
+
+        //check media is deleted
+        MovieData savedMovieReference = db.movieDataDao().getMovieByIdAlt(movieData.getId());
+        if (savedMovieReference != null) fail();
+        MovieData savedMovieReference2 = db.movieDataDao().getMovieByIdAlt(movieData2.getId());
+        if (savedMovieReference2 != null) fail();
+
+        //check records deleted
+        MovieDataRecord savedRecordReference = db.movieDataRecordsDao().getRecordByIdAlt(movieData.getId(), "test list");
+        if (savedRecordReference != null) fail();
+        MovieDataRecord savedRecordReference2 = db.movieDataRecordsDao().getRecordByIdAlt(movieData2.getId(), "test list");
+        if (savedRecordReference2 != null) fail();
+
+        //check watchlist count
+        WatchListModel savedWatchListModel = db.watchListsDao().getListByNameAlt("to watch");
+        if (savedWatchListModel.getItemCount() != 0) fail();
+    }
+
     private void registerSimpleIdleResource() {
-        mIdlingResource = addToListActivityTestRule.getActivity().getIdlingResource();
+        mIdlingResource = masterActivityTestRule.getActivity().getIdlingResource();
         IdlingRegistry.getInstance().register(mIdlingResource);
+    }
+
+    public ViewAction clickChildViewWithId(final int id) {
+        return new ViewAction() {
+            @Override
+            public Matcher<View> getConstraints() {
+                return null;
+            }
+
+            @Override
+            public String getDescription() {
+                return "Click on a child view with specified id.";
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                View v = view.findViewById(id);
+                v.performClick();
+            }
+        };
     }
 }
