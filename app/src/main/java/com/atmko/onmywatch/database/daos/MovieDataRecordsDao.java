@@ -22,6 +22,10 @@ public interface MovieDataRecordsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void addRecord(MovieDataRecord movieDataRecord);
 
+    //alternate method without live data
+    @Query("SELECT * FROM movie_data_records WHERE movie_id = :mediaId AND list_id = :listName")
+    MovieDataRecord getRecordByIdAlt( String mediaId, String listName);
+
     @Query("SELECT * FROM movie_data_records")
     LiveData<List<MovieDataRecord>> getAllRecords();
 
