@@ -322,6 +322,9 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
                 WatchListModel watchList = mDatabase.watchListsDao().getListByNameAlt(
                         MediaData.getWatchStatusTitle(watchStatus, getContext()));
 
+                //ensure list has a value higher than zero
+                if (watchList.getItemCount() <= 0) return;
+
                 watchList.setItemCount(watchList.getItemCount() - 1);
 
                 mDatabase.watchListsDao().updateListConfiguration(watchList);
@@ -346,6 +349,9 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
                 //subtract 1 from watch status list if deleted
                 WatchListModel watchList = mDatabase.watchListsDao().getListByNameAlt(
                         MediaData.getWatchStatusTitle(watchStatus, getContext()));
+
+                //ensure list has a value higher than zero
+                if (watchList.getItemCount() <= 0) return;
 
                 watchList.setItemCount(watchList.getItemCount() - 1);
 
