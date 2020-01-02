@@ -82,10 +82,10 @@ public class UpdateMediaWorker extends Worker {
             SystemClock.sleep(REQUEST_COOL_DOWN);
 
             if (notifierMediaIds.contains(movieData.getId())) {
-                updateSavedMedia(movieData, detailUrl, searchPreferences, true);
+                updateSavedMedia(movieData, detailUrl, searchPreferences);
 
             } else {
-                updateSavedMedia(movieData, detailUrl, searchPreferences, false);
+                updateSavedMedia(movieData, detailUrl, searchPreferences);
 
             }
         }
@@ -111,17 +111,17 @@ public class UpdateMediaWorker extends Worker {
             SystemClock.sleep(REQUEST_COOL_DOWN);
 
             if (notifierMediaIds.contains(seriesData.getId())) {
-                updateSavedMedia(seriesData, detailUrl, searchPreferences, true);
+                updateSavedMedia(seriesData, detailUrl, searchPreferences);
 
             } else {
-                updateSavedMedia(seriesData, detailUrl, searchPreferences, false);
+                updateSavedMedia(seriesData, detailUrl, searchPreferences);
 
             }
         }
     }
 
     private void updateSavedMedia(final MediaData oldMediaData, final String detailUrl,
-                                  final SearchPreferences searchPreferences, final boolean hasNotifiers) {
+                                  final SearchPreferences searchPreferences) {
         String id = oldMediaData.getId();
 
         //build AN request
@@ -133,7 +133,7 @@ public class UpdateMediaWorker extends Worker {
             String detailsInject =
                     oldMediaData instanceof MovieData ? sMovieDetailsStringInject : sSeriesDetailsStringInject;
 
-            parseAndApplyUpdatedJsonString(oldMediaData, detailsInject, hasNotifiers);
+            parseAndApplyUpdatedJsonString(oldMediaData, detailsInject);
 
             return;
         }
@@ -144,7 +144,7 @@ public class UpdateMediaWorker extends Worker {
                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                     @Override
                     public void run() {
-                        parseAndApplyUpdatedJsonString(oldMediaData, returnedJSONString, hasNotifiers);
+                        parseAndApplyUpdatedJsonString(oldMediaData, returnedJSONString);
                     }
                 });
             }
@@ -155,13 +155,13 @@ public class UpdateMediaWorker extends Worker {
 
                 //notify user of error
                 if (anError.getErrorCode() == ApiConstants.TOO_MANY_REQUESTS) {
-                    retryAfterCoolDOwn(anError, oldMediaData, detailUrl, searchPreferences, hasNotifiers);
+                    retryAfterCoolDOwn(anError, oldMediaData, detailUrl, searchPreferences);
                 }
             }
         });
     }
 
-    private void parseAndApplyUpdatedJsonString(MediaData oldMediaData, String returnedJSONString, Boolean hasNotifiers) {
+    private void parseAndApplyUpdatedJsonString(MediaData oldMediaData, String returnedJSONString) {
         MediaData newMediaData;
 
         //parse and populate retrieved data
@@ -180,18 +180,19 @@ public class UpdateMediaWorker extends Worker {
             mDatabase.seriesDataDao().updateSeriesData(((SeriesData) newMediaData));
         }
 
-                        if (hasNotifiers) {
-                            Intent intent = new Intent(getApplicationContext(), UpdateNotifierService.class);
-                            intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(newMediaData));
-                            UpdateNotifierService.enqueueWork(mContext, intent);
-                        }
+        //if watch status supports notifiers launch update notifier service
+        if (newMediaData.getWatchStatus() == MovieData.WATCH_STATUS_TO_WATCH
+                || newMediaData.getWatchStatus() == MovieData.WATCH_STATUS_WATCHING) {
+            Intent intent = new Intent(getApplicationContext(), UpdateNotifierService.class);
+            intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(newMediaData));
+            UpdateNotifierService.enqueueWork(mContext, intent);
+        }
 
         Log.d(TAG, newMediaData.getTitle() + " data updated");
     }
 
     private void retryAfterCoolDOwn(ANError anError, final MediaData mediaData,
-                                    final String detailUrl, final SearchPreferences searchPreferences,
-                                    final boolean haNotifiers) {
+                                    final String detailUrl, final SearchPreferences searchPreferences) {
         Log.d(TAG, mediaData.getTitle() + " retrying update");
 
         int coolDown = Integer.valueOf(anError.getResponse().header(ApiConstants.RETRY_AFTER_KEY));
@@ -201,7 +202,7 @@ public class UpdateMediaWorker extends Worker {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                updateSavedMedia(mediaData, detailUrl, searchPreferences, haNotifiers);
+                updateSavedMedia(mediaData, detailUrl, searchPreferences);
 
             }
         }, coolDownInMilliSecs);

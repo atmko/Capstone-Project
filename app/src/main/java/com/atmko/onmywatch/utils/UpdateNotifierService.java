@@ -35,7 +35,6 @@ import com.atmko.onmywatch.utils.network_utils.TraktApiConstants;
 
 import org.parceler.Parcels;
 
-import static com.atmko.onmywatch.Fragments.DetailsFragment.COOL_DOWN_REQUEST_TMDB_ID;
 import static com.atmko.onmywatch.Fragments.DetailsFragment.COOL_DOWN_REQUEST_TRAKT_ID;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
@@ -102,7 +101,7 @@ public class UpdateNotifierService extends JobIntentService {
                 setReleaseNotifierThroughDateComparision();
 
             } else {
-                setReleaseNotifierThroughReleaseStatus();
+                createReleaseNotifierPendingRelease();
             }
 
         } else {
@@ -141,81 +140,11 @@ public class UpdateNotifierService extends JobIntentService {
         NotificationHandler.scheduleReleaseNotification(this, newMediaData, releaseNotifier);
     }
 
-    //used when release date doesn't exist. Checks if media has been released by getting release status via media's details
+    //create notifier if media release still pending
+    //used when release date doesn't exist.
     //if release status not released, canceled, pilot, ended or returning series, save notifier object without creating accompanying alarm notification.
     //NOTE: alarm will be created when media is updated and a release date becomes available
-    private void setReleaseNotifierThroughReleaseStatus() {
-        //if release status exists create notifier and return
-        //otherwise fetch release status from media details, then create notifier
-        //NOTE: release status will be null when not accessing this activity via DetailsFragment, because details won't have been fetched
-        if (newMediaData.getReleaseStatus() != null) {
-            createReleaseNotifierPendingRelease(newMediaData);
-            return;
-        }
-
-        String[] detailUrls = getResources().getStringArray(R.array.details_urls);
-        String detailUrl = null;
-
-        if (mMediaType == MEDIA_TYPE_MOVIE) {
-            detailUrl = detailUrls[MEDIA_TYPE_MOVIE];
-
-        } else if (mMediaType == MEDIA_TYPE_SERIES) {
-            detailUrl = detailUrls[MEDIA_TYPE_SERIES];
-        }
-
-        SearchPreferences searchPreferences =  new SearchPreferences();
-
-        //build AN request
-        ANRequest request = NetworkFunctions.agnosticDetailRequestById(detailUrl, newMediaData.getId(),
-                searchPreferences, this);
-
-        request.getAsString(new StringRequestListener() {
-            @Override
-            public void onResponse(final String returnedJSONString) {
-                try {
-                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            //get release status, set release status and create notifier
-                            MediaData detailsMediaData;
-
-                            if (mMediaType == MEDIA_TYPE_MOVIE) {
-                                detailsMediaData =
-                                        MovieDataParser.parseDetails(returnedJSONString, ((MovieData) UpdateNotifierService.this.newMediaData));
-
-                            } else {
-                                detailsMediaData =
-                                        SeriesDataParser.parseDetails(returnedJSONString,
-                                                ((SeriesData) UpdateNotifierService.this.newMediaData));
-                            }
-
-                            String releaseStatus = detailsMediaData.getReleaseStatus();
-                            newMediaData.setReleaseStatus(releaseStatus);
-                            createReleaseNotifierPendingRelease(newMediaData);
-                        }
-                    });
-
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onError(ANError anError) {
-                if (anError.getErrorCode() == ApiConstants.TOO_MANY_REQUESTS) {
-                    retryAfterCoolDOwn(anError, COOL_DOWN_REQUEST_TMDB_ID);
-
-                    return;
-                }
-
-                //notify user of error
-                Log.d(TAG, getString(R.string.details_error_message));
-            }
-        });
-    }
-
-    //create notifier if media release still pending
-    private void createReleaseNotifierPendingRelease(MediaData newMediaData) {
+    private void createReleaseNotifierPendingRelease() {
         String releaseStatus = newMediaData.getReleaseStatus();
 
         //create notifier if media release still pending
@@ -348,15 +277,21 @@ public class UpdateNotifierService extends JobIntentService {
             }
 
             @Override
-            public void onError(ANError anError) {
-                if (anError.getErrorCode() == TraktApiConstants.TOO_MANY_REQUESTS) {
-                    retryAfterCoolDOwn(anError, COOL_DOWN_REQUEST_TRAKT_ID);
+            public void onError(final ANError anError) {
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (anError.getErrorCode() == TraktApiConstants.TOO_MANY_REQUESTS) {
+                            retryAfterCoolDOwn(anError, COOL_DOWN_REQUEST_TRAKT_ID);
 
-                    return;
-                }
+                        } else {
+                            getTmdbNextEpisodeDetails();
+                        }
 
-                //notify user of error
-                Log.d(TAG, getString(R.string.details_error_message));
+                        //notify user of error
+                        Log.d(TAG, getString(R.string.details_error_message));
+                    }
+                });
             }
         });
     }
@@ -366,15 +301,15 @@ public class UpdateNotifierService extends JobIntentService {
         //update media data to save trakt id and countdown
         mDatabase.seriesDataDao().updateSeriesData(((SeriesData) newMediaData));
 
-        ScheduledMedia scheduledMedia = ((SeriesData) newMediaData).getNextEpisodeToAir();
+        Episode nextEpisode = ((SeriesData) newMediaData).getNextEpisodeToAir();
 
         boolean releaseDateInPast =
-                scheduledMedia.getBestLocalAirDate().before(GeneralUtils.DateInject.getInstance().currentDate());
+                nextEpisode.getBestLocalAirDate().before(GeneralUtils.DateInject.getInstance().currentDate());
 
         //if logic bypass is false, use production code
         if (!GeneralUtils.LOGIC_BYPASS) {
             //if release date is null or if release date has passed, return
-            if (scheduledMedia.getBestLocalAirDate() == null || releaseDateInPast) {
+            if (nextEpisode.getBestLocalAirDate() == null || releaseDateInPast) {
                 //set idle state to true
                 if (NotificationIdlingResource.getNotificationIdlingResource() != null) {
                     NotificationIdlingResource.getNotificationIdlingResource().setIdleState(true);
@@ -390,7 +325,7 @@ public class UpdateNotifierService extends JobIntentService {
                 .scheduleNewEpisodeNotification(this, ((SeriesData) newMediaData), newEpisodeNotifier);
     }
 
-    //Checks if media has been released by getting release status via media's details
+    //Checks if media has been released
     //if episode and air date available, create notification alarm using date
     //if no new episode and or episode date available, save notifier object without creating accompanying alarm notification.
     private void getTmdbNextEpisodeDetails() {
@@ -424,7 +359,7 @@ public class UpdateNotifierService extends JobIntentService {
         } else if (releaseStatus.equals(ApiConstants.RELEASE_STATUS_PLANNED)
                 || releaseStatus.equals(ApiConstants.TextReplacement.REPLACEMENT_IN_PRODUCTION)) {
 
-            createReleaseNotifierPendingRelease(newMediaData);
+            createReleaseNotifierPendingRelease();
         }
 
         //set idle state to true
@@ -464,10 +399,7 @@ public class UpdateNotifierService extends JobIntentService {
             @Override
             public void run() {
                 try {
-                    if (coolDownRequestId == COOL_DOWN_REQUEST_TMDB_ID) {
-                        setReleaseNotifierThroughReleaseStatus();
-
-                    } else if (coolDownRequestId == COOL_DOWN_REQUEST_TRAKT_ID){
+                    if (coolDownRequestId == COOL_DOWN_REQUEST_TRAKT_ID){
                         getTraktNextEpisodeDetails();
                     }
 
