@@ -887,6 +887,7 @@ public class DetailsFragment extends Fragment {
     @SuppressWarnings("ConstantConditions")
     private void setDetailViewValues() throws NullPointerException {
         mReleaseStatusTextView.setText(mMediaData.getReleaseStatus());
+        mReleaseStatusTextView.setVisibility(View.VISIBLE);
 
         //set trailer button visibility
         try {
