@@ -189,7 +189,7 @@ public class DetailsFragment extends Fragment {
             if (mMediaData.getReleaseStatus() != null) {
                 try {
                     setDetailViewValues();
-                    configureDetailExtrasAdapter();
+                    populateDetailExtrasAdapter();
 
                 } catch (NullPointerException e) {
                     e.printStackTrace();
@@ -366,6 +366,8 @@ public class DetailsFragment extends Fragment {
         //define views dependent on retrieving details
         mDetailExtrasTabLayout = getView().findViewById(R.id.detail_extras_tab_layout);
         mDetailExtrasViewPager = getView().findViewById(R.id.details_extra_view_pager);
+
+        configureTabTitles();
 
         try {
             //configure show more overview button
@@ -583,7 +585,7 @@ public class DetailsFragment extends Fragment {
 
                     setDetailViewValues();
 
-                    configureDetailExtrasAdapter();
+                    populateDetailExtrasAdapter();
 
                 } catch (NullPointerException e) {
                     e.printStackTrace();
@@ -742,30 +744,39 @@ public class DetailsFragment extends Fragment {
         }, coolDownInMilliSecs);
     }
 
-    // TODO: NullPointerException handled in caller
-    @SuppressWarnings("ConstantConditions")
-    private void configureDetailExtrasAdapter() throws NullPointerException {
+    private void configureTabTitles() {
+        if (getContext() == null) return;
+
         //remove old tabs
         mDetailExtrasTabLayout.removeAllTabs();
 
         //add new tabs
-        String[] titleList = null;
-
-        FragmentStatePagerAdapter extrasAdapter = null;
+        String[] titleList;
 
         if (mMediaType == MEDIA_TYPE_MOVIE) {
             titleList = getContext().getResources().getStringArray(R.array.detail_movie_extras_titles);
-            extrasAdapter = new DetailMovieExtrasAdapter(getChildFragmentManager(),
-                    FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, ((MovieData) mMediaData));
 
-        } else if (mMediaType == MEDIA_TYPE_SERIES){
+        } else {
             titleList = getContext().getResources().getStringArray(R.array.detail_tv_extras_titles);
-            extrasAdapter = new DetailSeriesExtrasAdapter(getChildFragmentManager(),
-                    FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, ((SeriesData) mMediaData));
         }
 
         for (String title : titleList) {
             mDetailExtrasTabLayout.addTab(mDetailExtrasTabLayout.newTab().setText(title));
+        }
+    }
+
+    // TODO: NullPointerException handled in caller
+    @SuppressWarnings("ConstantConditions")
+    private void populateDetailExtrasAdapter() throws NullPointerException {
+        FragmentStatePagerAdapter extrasAdapter = null;
+
+        if (mMediaType == MEDIA_TYPE_MOVIE) {
+            extrasAdapter = new DetailMovieExtrasAdapter(getChildFragmentManager(),
+                    FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, ((MovieData) mMediaData));
+
+        } else if (mMediaType == MEDIA_TYPE_SERIES){
+            extrasAdapter = new DetailSeriesExtrasAdapter(getChildFragmentManager(),
+                    FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, ((SeriesData) mMediaData));
         }
 
         mDetailExtrasViewPager.setAdapter(extrasAdapter);

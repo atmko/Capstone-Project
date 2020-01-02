@@ -46,6 +46,8 @@ import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
+import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
+import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
 import static com.atmko.onmywatch.MasterActivity.sDetailsHistory;
 import static com.atmko.onmywatch.utils.GeneralUtils.MILLISECOND_CONVERSION;
 
@@ -125,7 +127,7 @@ public class PeopleDetailsFragment extends Fragment {
             if (mPersonData.getKnownForMovies() != null) {
                 try {
                     setDetailViewValues();
-                    configureDetailExtrasAdapter();
+                    populateDetailExtrasAdapter();
 
                 } catch (NullPointerException e) {
                     e.printStackTrace();
@@ -243,6 +245,8 @@ public class PeopleDetailsFragment extends Fragment {
         mDetailExtrasTabLayout = getView().findViewById(R.id.detail_extras_tab_layout);
         mDetailExtrasViewPager = getView().findViewById(R.id.details_extra_view_pager);
 
+        configureTabTitles();
+
         try {
             //configure show more overview button
             getView().findViewById(R.id.show_more_button).setOnClickListener(new View.OnClickListener() {
@@ -329,7 +333,7 @@ public class PeopleDetailsFragment extends Fragment {
 
                     setDetailViewValues();
 
-                    configureDetailExtrasAdapter();
+                    populateDetailExtrasAdapter();
 
                 } catch (NullPointerException e) {
                     e.printStackTrace();
@@ -386,20 +390,25 @@ public class PeopleDetailsFragment extends Fragment {
         }, coolDownInMilliSecs);
     }
 
-    // TODO: NullPointerException handled in caller
-    @SuppressWarnings("ConstantConditions")
-    private void configureDetailExtrasAdapter() throws NullPointerException {
+    private void configureTabTitles() {
+        if (getContext() == null) return;
+
         //remove old tabs
         mDetailExtrasTabLayout.removeAllTabs();
 
         //add new tabs
         String[] titleList = getContext().getResources().getStringArray(R.array.list_media_types);
-        FragmentStatePagerAdapter extrasAdapter = new DetailPeopleExtrasAdapter(getChildFragmentManager(),
-                FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, mPersonData);
 
         for (String title : titleList) {
             mDetailExtrasTabLayout.addTab(mDetailExtrasTabLayout.newTab().setText(title));
         }
+    }
+
+    // TODO: NullPointerException handled in caller
+    @SuppressWarnings("ConstantConditions")
+    private void populateDetailExtrasAdapter() throws NullPointerException {
+        FragmentStatePagerAdapter extrasAdapter = new DetailPeopleExtrasAdapter(getChildFragmentManager(),
+                FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, mPersonData);
 
         mDetailExtrasViewPager.setAdapter(extrasAdapter);
 
