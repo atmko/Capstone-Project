@@ -5,6 +5,7 @@
 package com.atmko.onmywatch;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -28,10 +29,13 @@ import android.widget.Toast;
 import com.atmko.onmywatch.Fragments.DetailsFragment;
 import com.atmko.onmywatch.Fragments.HomeFragment;
 import com.atmko.onmywatch.Fragments.ListResultsParentFragment;
+import com.atmko.onmywatch.Fragments.PeopleDetailsFragment;
 import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieData;
+import com.atmko.onmywatch.models.PersonData;
+import com.atmko.onmywatch.models.SimpleIdlingResource;
 import com.atmko.onmywatch.utils.SearchPreferences;
 import com.atmko.onmywatch.utils.UpdateMediaWorker;
 import com.google.android.gms.ads.MobileAds;
@@ -56,10 +60,18 @@ public class MasterActivity extends AppCompatActivity {
     private static final int REPEAT_INTERVAL = 2;
     private static final int INITIAL_DELAY = 15;
 
+    private static final String HISTORY_KEY = "history";
+
     //for restoring keyboard visibility upon configuration change
     private boolean mIsKeyboardVisible;
     private boolean mIsTabletLandscape;
     private FirebaseAnalytics mFirebaseAnalytics;
+
+    public static List sDetailsHistory;
+
+    // The Idling Resource which will be null in production.
+    @Nullable
+    private SimpleIdlingResource mIdlingResource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +104,8 @@ public class MasterActivity extends AppCompatActivity {
                     launchDetailsFromIntent(intent, extras);
                 }
             }
+        } else {
+            sDetailsHistory = Parcels.unwrap(savedInstanceState.getParcelable(HISTORY_KEY));
         }
     }
 
@@ -112,6 +126,7 @@ public class MasterActivity extends AppCompatActivity {
 
         //save keyboard visibility value
         outState.putBoolean(KEYBOARD_VISIBILITY_KEY, mIsKeyboardVisible);
+        outState.putParcelable(HISTORY_KEY, Parcels.wrap(sDetailsHistory));
     }
 
     private void initializeAdMob() {
@@ -223,9 +238,9 @@ public class MasterActivity extends AppCompatActivity {
         //this removes details fragment because master container is behind detail container
         // (via frame layout) in non tablet landscape
         if (hasFragment(R.id.detail_fragments_container)) {
-            List<MediaData> detailsHistory = DetailsFragment.mHistory;
-            if (detailsHistory != null && detailsHistory.size() != 0) {
-                ((DetailsFragment) detailFragment).popHistory();
+            //check for  details history
+            if (sDetailsHistory != null && sDetailsHistory.size() != 0) {
+                goUpHistory(detailFragment);
 
             } else if (!mIsTabletLandscape) {
                 getSupportFragmentManager().beginTransaction()
@@ -282,6 +297,29 @@ public class MasterActivity extends AppCompatActivity {
                 SuperEditText searchTextView =
                         fragment.getView().findViewById(R.id.search_edit_text_view);
                 showSearchBar(searchTextView);
+            }
+        }
+    }
+
+    //go back through details fragment history
+    private void goUpHistory(Fragment detailFragment) {
+        //if there's history and it matches with current fragment pop history
+        //else if there's history and not matches with fragment launch alternate fragment with history data
+        Object historyItem = sDetailsHistory.get(sDetailsHistory.size()-1);
+        if (detailFragment instanceof DetailsFragment) {
+            if (historyItem instanceof MediaData) {
+                ((DetailsFragment) detailFragment).popHistory();
+            } else if (historyItem instanceof PersonData){
+                launchPeopleDetailsFragment(((PersonData) sDetailsHistory.get(sDetailsHistory.size() - 1)));
+                sDetailsHistory.remove(sDetailsHistory.size() - 1);
+            }
+
+        } else if (detailFragment instanceof PeopleDetailsFragment) {
+            if (historyItem instanceof PersonData) {
+                ((PeopleDetailsFragment) detailFragment).popHistory();
+            } else if (historyItem instanceof MediaData){
+                launchDetailsFragment(((MediaData) sDetailsHistory.get(sDetailsHistory.size() - 1)), null);
+                sDetailsHistory.remove(sDetailsHistory.size() - 1);
             }
         }
     }
@@ -344,6 +382,35 @@ public class MasterActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
                 .add(R.id.detail_fragments_container, detailsFragment, DetailsFragment.FRAGMENT_KEY)
+                .commit();
+    }
+
+    public void launchPeopleDetailsFragment(PersonData selectedData) {
+        //catch error from restoring fragments after configuration change
+        try {
+            getSupportFragmentManager().executePendingTransactions();
+
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        }
+
+        SearchPreferences searchPreferences =  new SearchPreferences();
+        PeopleDetailsFragment detailsFragment =
+                PeopleDetailsFragment.newInstance(selectedData, searchPreferences);
+
+        Fragment detailContainerFragment = getSupportFragmentManager()
+                .findFragmentById(R.id.detail_fragments_container);
+
+        ///remove existing fragment
+        if (detailContainerFragment != null) {
+            getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
+                    .remove(detailContainerFragment).commit();
+        }
+
+        getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
+                .add(R.id.detail_fragments_container, detailsFragment, PeopleDetailsFragment.FRAGMENT_KEY)
                 .commit();
     }
 
@@ -491,5 +558,17 @@ public class MasterActivity extends AppCompatActivity {
     //convenience method for showing search bar edit text
     private void showSearchBar(SuperEditText searchEditText) {
         searchEditText.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Only called from test, creates and returns a new {@link SimpleIdlingResource}.
+     */
+//    @VisibleForTesting
+    @NonNull
+    public SimpleIdlingResource getIdlingResource() {
+        if (mIdlingResource == null) {
+            mIdlingResource = new SimpleIdlingResource();
+        }
+        return mIdlingResource;
     }
 }

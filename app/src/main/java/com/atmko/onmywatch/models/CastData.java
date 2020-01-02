@@ -11,16 +11,10 @@ import com.atmko.onmywatch.utils.network_utils.ApiConstants;
 import org.parceler.Parcel;
 
 //TODO: access is weaker to accommodate parceler library
-@SuppressWarnings("WeakerAccess")
 @Parcel
-public class CastData {
-    String mId;
+public class CastData extends PersonData{
     String mCreditId;
-    String mName;
-    String mGender;
     String mCharacter;
-    String mProfilePath;
-    double mPopularity;
     String mOrder;
 
     //constructor for parceler
@@ -45,59 +39,7 @@ public class CastData {
         }        this.mOrder = order;
     }
 
-    public String getId() {
-        return mId;
-    }
-
-    public void setId(String id) {
-        this.mId = id;
-    }
-
-    public String getName() {
-        return mName;
-    }
-
-    public void setName(String name) {
-        this.mName = name;
-    }
-
-    public String getGender() {
-        return mGender;
-    }
-
-    public void setGender(String gender) {
-        this.mGender = gender;
-    }
-
     public String getCharacter() {
         return mCharacter;
-    }
-
-    public void setCharacter(String character) {
-        this.mCharacter = character;
-    }
-
-    public String getProfilePath() {
-        return mProfilePath;
-    }
-
-    public void setProfilePath(String profilePath) {
-        this.mProfilePath = profilePath;
-    }
-
-    public double getPopularity() {
-        return mPopularity;
-    }
-
-    public void setPopularity(double popularity) {
-        this.mPopularity = popularity;
-    }
-
-    public String getOrder() {
-        return mOrder;
-    }
-
-    public void setOrder(String order) {
-        this.mOrder = order;
     }
 }

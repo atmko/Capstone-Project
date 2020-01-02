@@ -23,7 +23,6 @@ import com.androidnetworking.common.ANRequest;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.atmko.onmywatch.MasterActivity;
-import com.atmko.onmywatch.adapters.CastDataAdapter;
 import com.atmko.onmywatch.adapters.CustomParams;
 import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.atmko.onmywatch.models.MovieData;
@@ -42,7 +41,6 @@ import com.atmko.onmywatch.utils.SeriesDataParser;
 import com.atmko.onmywatch.utils.network_utils.NetworkFunctions;
 import com.google.android.material.snackbar.Snackbar;
 
-import org.json.JSONException;
 import org.parceler.Parcels;
 
 import java.util.Arrays;
@@ -273,8 +271,8 @@ public class DiscoverResultsFragment extends Fragment implements
 
                 } else if (mMediaType == MEDIA_TYPE_PEOPLE) {
                     dataList =
-                            PersonDataParser.parseData(returnedJSONString, mStack, mSearchPreferences);
-
+                            PersonDataParser.parseData(returnedJSONString, mStack, mSearchPreferences
+                            );
                 }
 
                 mStack.stackPage(blockNumber, targetPage, dataList, stackOperation);
@@ -357,8 +355,7 @@ public class DiscoverResultsFragment extends Fragment implements
                 firstMediaData =
                         ((MediaDataAdapter) mDataAdapter).getAdapterData().get(0);
 
-                startDetailsFragment(firstMediaData);
-
+                ((MasterActivity) getActivity()).launchDetailsFragment(firstMediaData, null);
             }
         }
     }
@@ -410,22 +407,20 @@ public class DiscoverResultsFragment extends Fragment implements
     public void onItemClick(int position) {
         Object selectedData;
 
+        if (getActivity() == null) return;
+
         if (mDataAdapter instanceof MediaDataAdapter) {
             selectedData = ((MediaDataAdapter) mDataAdapter).getAdapterData().get(position);
             //do nothing if selecting stack placeholder
             if (((MediaData) selectedData).getId() == null) return;
-            startDetailsFragment(((MediaData) selectedData));
+            ((MasterActivity) getActivity()).launchDetailsFragment(((MediaData) selectedData), null);
 
         } else {
             selectedData = ((PeopleDataAdapter) mDataAdapter).getAdapterData().get(position);
             //do nothing if selecting stack placeholder
             if (((PersonData) selectedData).getId() == null) return;
-
+            ((MasterActivity) getActivity()).launchPeopleDetailsFragment(((PersonData) selectedData));
         }
-    }
-
-    private void startDetailsFragment(MediaData selectedData) {
-        ((MasterActivity) getActivity()).launchDetailsFragment(selectedData, null);
     }
 
     @Override

@@ -130,6 +130,8 @@
     <!--PLACEHOLDER TEXT-->
     <string name="maturity_rating_placeholder">PG-13</string>
     <string name="release_date_placeholder">TBD</string>
+    <string name="date_of_birth_placeholder">unavailable</string>
+    <string name="professions_placeholder">unavailable</string>
     <string name="create_new_list_placeholder">Create New List</string>
     <!--PLACEHOLDER TEXT-->
 
@@ -159,6 +161,8 @@
     <string name="movie_base_url" translatable="false">https://www.themoviedb.org/movie</string>
     <!--the movie db series base url-->
     <string name="series_base_url" translatable="false">https://www.themoviedb.org/tv</string>
+    <!--person details url-->
+    <string name="person_details_url">https://api.themoviedb.org/3/person/{id}?api_key={api_key}&amp;language={language}&amp;append_to_response=combined_credits</string>
 
     <!--trakt urls-->
     <string name="trakt_next_episode_urls">https://api.trakt.tv/shows/{id}/next_episode?extended=full</string>

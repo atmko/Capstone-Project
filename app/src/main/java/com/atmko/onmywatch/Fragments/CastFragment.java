@@ -16,10 +16,12 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.CastDataAdapter;
 import com.atmko.onmywatch.adapters.CustomParams;
 import com.atmko.onmywatch.models.CastData;
+import com.atmko.onmywatch.models.PersonData;
 
 import org.parceler.Parcels;
 
@@ -31,7 +33,7 @@ public class CastFragment extends Fragment implements CastDataAdapter.OnListItem
     private static final String CAST_PARCELABLE_KEY = "cast_parcelable";
 
     private ArrayList<CastData> mCastList;
-    private RecyclerView.Adapter mAdapter;
+    private CastDataAdapter mAdapter;
 
     public CastFragment() {
         // Required empty public constructor
@@ -96,6 +98,13 @@ public class CastFragment extends Fragment implements CastDataAdapter.OnListItem
     //TODO implement cast details page launcher
     @Override
     public void onItemClick(int position) {
+        PersonData selectedData = mAdapter.getAdapterData().get(position);
+        //do nothing if selecting stack placeholder
+        if (selectedData.getId() == null) return;
 
+        if (getParentFragment() != null && getParentFragment().getActivity() != null) {
+            ((DetailsFragment) getParentFragment()).stackHistory();
+            ((MasterActivity) getParentFragment().getActivity()).launchPeopleDetailsFragment(selectedData);
+        }
     }
 }
