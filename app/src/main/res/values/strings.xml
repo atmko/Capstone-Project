@@ -47,6 +47,7 @@
     <string name="content_description_back_button">back button</string>
     <string name="content_description_widget_settings_button">widget settings button</string>
     <string name="content_description_add_to_list_button">add to list</string>
+    <string name="content_description_person_profile_image">person profile image</string>
     <!--CONTENT DESCRIPTIONS-->
 
     <!--VIEW TEXT-->
@@ -104,6 +105,11 @@
         <string name="detail_overview_tag_show_more" translatable="false">show more</string>
         <string name="detail_overview_tag_show_less" translatable="false">show less</string>
         <!--details text-->
+
+        <!--person details text-->
+        <string name="department_text_literal">Department</string>
+        <string name="date_of_birth_text_literal">Date of Birth</string>
+        <!--person details text-->
 
         <!--watch_status text-->
         <string name="watch_status_none_title">None</string>

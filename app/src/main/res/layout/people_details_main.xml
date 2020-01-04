@@ -5,19 +5,74 @@
     android:layout_height="wrap_content"
     android:background="@color/background">
 
-    <!--TODO fix height programmatically-->
     <ImageView
         android:id="@+id/profile_image_view"
-        android:layout_width="143.33dp"
-        android:layout_height="@dimen/detail_backdrop_placeholder_height"
-        android:layout_marginTop="@dimen/x2_layout_margin"
-        android:layout_marginEnd="@dimen/x2_layout_margin"
-        tools:layout_height="@dimen/detail_backdrop_placeholder_height"
         android:src="@drawable/backdrop"
+        android:layout_width="@dimen/person_profile_image_dimen"
+        android:layout_height="@dimen/person_profile_image_dimen"
+        android:layout_marginTop="@dimen/x5_layout_margin"
+        android:layout_marginEnd="@dimen/x2_layout_margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:scaleType="centerCrop"
-        android:contentDescription="@string/content_description_backdrop_image"/>
+        android:contentDescription="@string/content_description_person_profile_image"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/x2_layout_margin"
+        android:layout_marginLeft="@dimen/x2_layout_margin"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="@id/profile_image_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/profile_image_view">
+
+        <TextView
+            android:id="@+id/department"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/x2_layout_margin"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/headline_20_text_size"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/profession_text_view"
+            android:text="@string/department_text_literal" />
+
+        <TextView
+            android:id="@+id/profession_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/x2_layout_margin"
+            android:textSize="@dimen/subtitle_16_text_size"
+            android:textColor="@color/color_subtext"
+            app:layout_constraintBottom_toTopOf="@id/date_of_birth"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Actor/Director" />
+
+        <TextView
+            android:id="@+id/date_of_birth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/x2_layout_margin"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/headline_20_text_size"
+            app:layout_constraintBottom_toTopOf="@id/date_of_birth_text_view"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            android:text="@string/date_of_birth_text_literal" />
+
+        <TextView
+            android:id="@+id/date_of_birth_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/subtitle_16_text_size"
+            android:textColor="@color/color_subtext"
+            app:layout_constraintBottom_toBottomOf="@id/profile_image_view"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="04/02/1975" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/name_text_view"
@@ -33,31 +88,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/profile_image_view"
         tools:text="Alita Battle Angel" />
-
-    <TextView
-        android:id="@+id/profession_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/x2_layout_margin"
-        android:layout_marginLeft="@dimen/x2_layout_margin"
-        android:textSize="@dimen/headline_20_text_size"
-        android:textColor="@color/color_subtext"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/date_of_birth_text_view"
-        tools:text="Actor/Director" />
-
-    <TextView
-        android:id="@+id/date_of_birth_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/x2_layout_margin"
-        android:layout_marginLeft="@dimen/x2_layout_margin"
-        android:layout_marginBottom="@dimen/x2_layout_margin"
-        android:textSize="@dimen/headline_20_text_size"
-        android:textColor="@color/color_subtext"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="@+id/profile_image_view"
-        tools:text="04/02/1975" />
 
     <!--______________________________________________-->
 
