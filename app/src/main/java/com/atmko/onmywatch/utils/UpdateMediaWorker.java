@@ -67,9 +67,6 @@ public class UpdateMediaWorker extends Worker {
         List<MovieData> movieDataList = mDatabase.movieDataDao()
                 .getAllMoviesAlt();
 
-        List<String> notifierMediaIds = mDatabase.movieNotifierDao()
-                .getAllMediaIdsAlt();
-
         //get movie detail url format
         String[] detailUrls = mContext.getResources().getStringArray(R.array.details_urls);
         String detailUrl = detailUrls[MEDIA_TYPE_MOVIE];
@@ -81,13 +78,7 @@ public class UpdateMediaWorker extends Worker {
         for (MovieData movieData: movieDataList) {
             SystemClock.sleep(REQUEST_COOL_DOWN);
 
-            if (notifierMediaIds.contains(movieData.getId())) {
-                updateSavedMedia(movieData, detailUrl, searchPreferences);
-
-            } else {
-                updateSavedMedia(movieData, detailUrl, searchPreferences);
-
-            }
+            updateSavedMedia(movieData, detailUrl, searchPreferences);
         }
     }
 
@@ -95,9 +86,6 @@ public class UpdateMediaWorker extends Worker {
         //get all saved series
         List<SeriesData> seriesDataList = mDatabase.seriesDataDao()
                 .getAllSeriesAlt();
-
-        List<String> notifierMediaIds = mDatabase.seriesNotifierDao()
-                .getAllMediaIdsAlt();
 
         //get series detail url format
         String[] detailUrls = mContext.getResources().getStringArray(R.array.details_urls);
@@ -110,13 +98,7 @@ public class UpdateMediaWorker extends Worker {
         for (SeriesData seriesData: seriesDataList) {
             SystemClock.sleep(REQUEST_COOL_DOWN);
 
-            if (notifierMediaIds.contains(seriesData.getId())) {
-                updateSavedMedia(seriesData, detailUrl, searchPreferences);
-
-            } else {
-                updateSavedMedia(seriesData, detailUrl, searchPreferences);
-
-            }
+            updateSavedMedia(seriesData, detailUrl, searchPreferences);
         }
     }
 
