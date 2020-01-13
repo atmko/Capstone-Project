@@ -134,6 +134,7 @@ public class ListTests {
                 new ArrayList<String>(), "", false, "", "");
 
         movieData.setWatchStatus(MediaData.WATCH_STATUS_TO_WATCH);
+        movieData.setReleaseStatus("");
 
         //add media data
         db.movieDataDao().addMovieData(movieData);
@@ -482,6 +483,7 @@ public class ListTests {
                 new ArrayList<String>(), "", false, "", "");
 
         movieData.setWatchStatus(MediaData.WATCH_STATUS_TO_WATCH);
+        movieData.setReleaseStatus("");
 
         db.movieDataDao().addMovieData(movieData);
 
