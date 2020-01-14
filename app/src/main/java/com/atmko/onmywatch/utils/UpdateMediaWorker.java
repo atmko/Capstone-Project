@@ -132,13 +132,17 @@ public class UpdateMediaWorker extends Worker {
             }
 
             @Override
-            public void onError(ANError anError) {
-                Log.d(TAG, oldMediaData.getTitle() + " update data failed");
+            public void onError(final ANError anError) {
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, oldMediaData.getTitle() + " update data failed");
 
-                //notify user of error
-                if (anError.getErrorCode() == ApiConstants.TOO_MANY_REQUESTS) {
-                    retryAfterCoolDOwn(anError, oldMediaData, detailUrl, searchPreferences);
-                }
+                        //notify user of error
+                        if (anError.getErrorCode() == ApiConstants.TOO_MANY_REQUESTS) {
+                            retryAfterCoolDOwn(anError, oldMediaData, detailUrl, searchPreferences);
+                        }                    }
+                });
             }
         });
     }
