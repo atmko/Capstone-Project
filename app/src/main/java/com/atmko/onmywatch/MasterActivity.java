@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.work.Constraints;
+import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
@@ -57,6 +58,7 @@ public class MasterActivity extends AppCompatActivity {
     public static final String SEARCH_TEXT_KEY = "search_text";
     public static final String SEARCH_BAR_VISIBILITY_KEY = "visible_search_bar";
 
+    private static final String UPDATE_MEDIA_WORKER_KEY = "update_media_worker";
     private static final int REPEAT_INTERVAL = 2;
     private static final int INITIAL_DELAY = 15;
 
@@ -211,7 +213,8 @@ public class MasterActivity extends AppCompatActivity {
                         .setInitialDelay(INITIAL_DELAY, TimeUnit.MINUTES)
                         .build();
 
-        WorkManager.getInstance(this).enqueue(updateMediaDataRequest);
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+                UPDATE_MEDIA_WORKER_KEY, ExistingPeriodicWorkPolicy.KEEP, updateMediaDataRequest);
     }
 
     @Override
