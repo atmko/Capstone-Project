@@ -99,7 +99,8 @@ public abstract class MediaNotifier {
         intent.putExtra(ApiConstants.ID_KEY, mediaId);
         intent.putExtra(CONDITION_KEY, mCondition);
         intent.putExtra(MediaNotifier.NOTIFICATIONS_KEY, notification);
-        return PendingIntent.getBroadcast(context, getNotificationCode(), intent, 0);
+        return PendingIntent
+                .getBroadcast(context, getNotificationCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     //creates pending intent without notification (for canceling alarm)
