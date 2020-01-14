@@ -1415,9 +1415,9 @@ public class UpdateMediaWorkerTests {
         if (movieData.getWatchStatus() != MediaData.WATCH_STATUS_WATCHING) fail();
         //ensure user rating is preserved
         if (movieData.getUserRating() != 8.) fail();
-        //ensure watch status is preserved
+        //ensure release status is preserved
         if (!movieData.getReleaseStatus().equals(MovieApiConstants.RELEASE_STATUS_RELEASED)) fail();
-        //ensure watch status is preserved
+        //ensure trakt id is preserved
         if (!movieData.getTraktId().equals("55555")) fail();
     }
 
@@ -1482,9 +1482,9 @@ public class UpdateMediaWorkerTests {
         if (seriesData.getWatchStatus() != MediaData.WATCH_STATUS_WATCHING) fail();
         //ensure user rating is preserved
         if (seriesData.getUserRating() != 8.) fail();
-        //ensure watch status is preserved
+        //ensure release status is preserved
         if (!seriesData.getReleaseStatus().equals(ApiConstants.TextReplacement.REPLACEMENT_RETURNING_SERIES)) fail();
-        //ensure watch status is preserved
+        //ensure trakt id is preserved
         if (!seriesData.getTraktId().equals("55555")) fail();
     }
 }
