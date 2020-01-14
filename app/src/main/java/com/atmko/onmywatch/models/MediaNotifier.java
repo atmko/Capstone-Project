@@ -77,8 +77,8 @@ public abstract class MediaNotifier {
         Bundle detailsExtras = new Bundle();
         detailsIntent.putExtras(detailsExtras);
 
-        PendingIntent pendingIntent =
-                PendingIntent.getActivity(context, 0, detailsIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, getNotificationCode(),
+                detailsIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, RELEASE_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_rate)
