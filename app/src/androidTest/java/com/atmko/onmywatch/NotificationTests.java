@@ -7,10 +7,7 @@ package com.atmko.onmywatch;
 import android.content.Context;
 import android.content.Intent;
 
-import androidx.annotation.NonNull;
 import androidx.room.Room;
-import androidx.room.RoomDatabase;
-import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.IdlingResource;
@@ -35,7 +32,6 @@ import com.atmko.onmywatch.models.WatchListModel;
 import com.atmko.onmywatch.utils.GeneralUtils;
 import com.atmko.onmywatch.utils.UpdateNotifierService;
 import com.atmko.onmywatch.utils.network_utils.ApiConstants;
-import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 
 import org.junit.After;
 import org.junit.Before;
@@ -50,6 +46,8 @@ import java.util.TimeZone;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static com.atmko.onmywatch.utils.GeneralUtils.parseIsoDateFromCalender;
@@ -639,6 +637,79 @@ public class NotificationTests {
                         SeriesNotifier.CONDITION_NEW_EPISODE);
 
         if (seriesNotifier == null) fail();
+    }
+
+    //test that notification click displays correct item
+    @Test
+    public void testNotificationClickFunctionality() {
+        //test first notification displays correct item
+        SeriesData seriesData = new SeriesData("43435", "", "", "Dead",
+                0, "", "", "",
+                new ArrayList<String>(), new ArrayList<String>(), "", "", "");
+
+        seriesData.setTraktId("1393");
+        Episode nextEpisode = new Episode();
+
+        TimeZone utcTimeZone = TimeZone.getTimeZone("UTC");
+        Calendar utcCalender = Calendar.getInstance(utcTimeZone);
+        utcCalender.add(Calendar.SECOND, 7);
+
+        try {
+            nextEpisode.setAirDate(parseIsoDateFromCalender(utcCalender));
+
+        } catch (ScheduledMedia.DateFormatException e) {
+            e.printStackTrace();
+        }
+
+        seriesData.setNextEpisodeToAir(nextEpisode);
+
+        Intent intent = new Intent(getInstrumentation().getTargetContext(), AddToListActivity.class);
+        intent.putExtra(AddToListActivity.MEDIA_DATA_KEY, Parcels.wrap(seriesData));
+        intent.putExtra(AddToListActivity.MEDIA_TYPE_KEY, MasterActivity.MEDIA_TYPE_SERIES);
+
+        addToListActivityTestRule.launchActivity(intent);
+
+        registerSimpleIdleResource();
+        registerNotificationIdleResource(1);
+
+        onView(withText("Watching")).perform(click());
+        onView(withText("SAVE")).perform(click());
+
+        //test second notification displays correct item
+        //(needed because pending intent id might conflict and send old data)
+        SeriesData seriesData2 = new SeriesData("44217", "", "", "Vikings",
+                0, "", "", "",
+                new ArrayList<String>(), new ArrayList<String>(), "", "", "");
+
+        seriesData2.setTraktId("43973");
+        Episode nextEpisode2 = new Episode();
+
+        TimeZone utcTimeZone2 = TimeZone.getTimeZone("UTC");
+        Calendar utcCalender2 = Calendar.getInstance(utcTimeZone2);
+        utcCalender2.add(Calendar.SECOND, 7);
+
+        try {
+            nextEpisode2.setAirDate(parseIsoDateFromCalender(utcCalender2));
+
+        } catch (ScheduledMedia.DateFormatException e) {
+            e.printStackTrace();
+        }
+
+        seriesData2.setNextEpisodeToAir(nextEpisode2);
+
+        Intent intent2 = new Intent(getInstrumentation().getTargetContext(), AddToListActivity.class);
+        intent2.putExtra(AddToListActivity.MEDIA_DATA_KEY, Parcels.wrap(seriesData2));
+        intent2.putExtra(AddToListActivity.MEDIA_TYPE_KEY, MasterActivity.MEDIA_TYPE_SERIES);
+
+        addToListActivityTestRule.launchActivity(intent2);
+
+        onView(withText("Watching")).perform(click());
+        onView(withText("SAVE")).perform(click());
+
+        clickNotification(seriesData, SeriesNotifier.CONDITION_NEW_EPISODE);
+        onView(withId(R.id.title_text_view)).perform().check(matches(withText("Dead")));
+        clickNotification(seriesData2, SeriesNotifier.CONDITION_NEW_EPISODE);
+        onView(withId(R.id.title_text_view)).perform().check(matches(withText("Vikings")));
     }
 
     private void registerSimpleIdleResource() {
