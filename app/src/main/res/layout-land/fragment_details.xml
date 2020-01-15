@@ -48,4 +48,10 @@
 
     <include layout="@layout/up_navigation_button" />
 
+    <!--TODO use size 80dp to have similar size to mocks-->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        style="@style/fab_detail_style"
+        android:id="@+id/add_to_list_fab"
+        android:src="@drawable/ic_fab_add_to_list" />
+
 </FrameLayout>

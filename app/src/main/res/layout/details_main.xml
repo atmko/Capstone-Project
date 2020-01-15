@@ -288,25 +288,6 @@
             app:layout_constraintTop_toBottomOf="@id/share_button" />
 
         <TextView
-            android:id="@+id/rating_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/x3_layout_margin"
-            android:layout_marginRight="@dimen/x3_layout_margin"
-            android:layout_marginBottom="8dp"
-            android:fontFamily="sans-serif-black"
-            android:paddingTop="2dp"
-            android:paddingStart="@dimen/x1_layout_margin"
-            android:paddingEnd="@dimen/x1_layout_margin"
-            android:paddingBottom="2dp"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/headline_45_text_size"
-            app:layout_constraintTop_toBottomOf="@id/watch_status_shorthand_text"
-            app:layout_constraintBottom_toTopOf="@+id/overView_text_view"
-            app:layout_constraintEnd_toEndOf="parent"
-            tools:text="7.5" />
-
-        <TextView
             android:id="@+id/overView_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -339,13 +320,24 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!--TODO use size 80dp to have similar size to mocks-->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        style="@style/fab_detail_style"
-        android:id="@+id/add_to_list_fab"
-        android:src="@drawable/ic_fab_add_to_list"
+    <TextView
+        android:id="@+id/rating_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/x3_layout_margin"
+        android:layout_marginRight="@dimen/x3_layout_margin"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="sans-serif-black"
+        android:paddingTop="2dp"
+        android:paddingStart="@dimen/x1_layout_margin"
+        android:paddingEnd="@dimen/x1_layout_margin"
+        android:paddingBottom="2dp"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/headline_45_text_size"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/backdrop_image_view"
-        app:layout_constraintBottom_toBottomOf="@id/backdrop_image_view"/>
+        app:layout_constraintBottom_toBottomOf="@id/backdrop_image_view"
+        tools:text="7.5"
+        android:background="@drawable/background_box_white"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
