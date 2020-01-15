@@ -237,19 +237,19 @@ public class MasterActivity extends AppCompatActivity {
         Fragment fragment =
                 getSupportFragmentManager().findFragmentById(R.id.master_fragments_container);
 
+        //check for  details history
+        if (sDetailsHistory != null && sDetailsHistory.size() != 0) {
+            goUpHistory(detailFragment);
+            return;
+        }
+
         //condition for navigation
         //this removes details fragment because master container is behind detail container
         // (via frame layout) in non tablet landscape
-        if (hasFragment(R.id.detail_fragments_container)) {
-            //check for  details history
-            if (sDetailsHistory != null && sDetailsHistory.size() != 0) {
-                goUpHistory(detailFragment);
-
-            } else if (!mIsTabletLandscape) {
-                getSupportFragmentManager().beginTransaction()
-                        .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
-                        .remove(detailFragment).commit();
-            }
+        if (hasFragment(R.id.detail_fragments_container) && !mIsTabletLandscape) {
+            getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
+                    .remove(detailFragment).commit();
 
         }else {
             //condition for exit animation transition
