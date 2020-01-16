@@ -12,15 +12,17 @@ import com.atmko.onmywatch.BuildConfig;
 
 public class TraktApiConstants {
     //api key
-    static final String API_KEY = BuildConfig.traktApiKey;
+    public static final String API_KEY = BuildConfig.traktApiKey;
 
     public static final String MEDIA_TYPE_MOVIE = "movie";
     public static final String MEDIA_TYPE_SHOW = "show";
 
+    public static final String TRAKT_ID_KEY = "trakt_id";
+
     //REQUEST HEADER KEYS
-    static final String API_KEY_KEY = "trakt-api-key";
-    static final String API_VERSION_KEY = "trakt-api-version";
-    static final String API_VERSION = "2";
+    public static final String API_KEY_KEY = "trakt-api-key";
+    public static final String API_VERSION_KEY = "trakt-api-version";
+    public static final String API_VERSION = "2";
 
     //EPISODE VALUES
     public static final String FIRST_AIRED_KEY = "first_aired";

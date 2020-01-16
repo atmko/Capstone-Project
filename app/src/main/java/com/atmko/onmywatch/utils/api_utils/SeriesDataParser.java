@@ -2,30 +2,28 @@
  * Copyright (C) 2019 Aayat Mimiko
  */
 
-package com.atmko.onmywatch.utils;
+package com.atmko.onmywatch.utils.api_utils;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.ANRequest;
+import com.atmko.onmywatch.models.CastData;
 import com.atmko.onmywatch.models.Episode;
 import com.atmko.onmywatch.models.ScheduledMedia;
-import com.atmko.onmywatch.utils.network_utils.SeriesApiConstants;
+import com.atmko.onmywatch.models.SeriesData;
+import com.atmko.onmywatch.utils.UpdateNotifierService;
 import com.atmko.onmywatch.utils.network_utils.TraktApiConstants;
 import com.atmko.stack.Stack;
 import com.google.gson.Gson;
-import com.atmko.onmywatch.models.CastData;
-import com.atmko.onmywatch.models.SeriesData;
-import com.atmko.onmywatch.utils.network_utils.ApiConstants;
-import com.atmko.onmywatch.utils.network_utils.PeopleApiConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.atmko.onmywatch.utils.GeneralUtils.checkAndConvertNumber;
 import static com.atmko.onmywatch.utils.GeneralUtils.checkAndConvertInteger;
+import static com.atmko.onmywatch.utils.GeneralUtils.checkAndConvertNumber;
 import static com.atmko.onmywatch.utils.GeneralUtils.convertTo2Sf;
-import static com.atmko.onmywatch.utils.network_utils.SeriesApiConstants.*;
+import static com.atmko.onmywatch.utils.api_utils.SeriesApiConstants.FIRST_AIR_DATE_KEY;
 
 public class SeriesDataParser {
     public static List<SeriesData> parseData(String returnedJSONString, Stack stack,
@@ -189,7 +187,7 @@ public class SeriesDataParser {
                 Map firstResult = ((Map) returnedList.get(0));
                 //TODO: null pointer exception caught in try block
                 //noinspection ConstantConditions
-                traktId = GeneralUtils.checkAndConvertInteger(
+                traktId = checkAndConvertInteger(
                         ((Map) ((Map) firstResult.get(TraktApiConstants.MEDIA_TYPE_SHOW))
                                 .get(TraktApiConstants.IDS_KEY))
                                 .get(TraktApiConstants.TRAKT_KEY));

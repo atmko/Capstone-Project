@@ -23,42 +23,40 @@ public interface MovieDataRecordsDao {
     void addRecord(MovieDataRecord movieDataRecord);
 
     //alternate method without live data
-    @Query("SELECT * FROM movie_data_records WHERE movie_id = :mediaId AND list_id = :listName")
+    @Query("SELECT * FROM movie_data_records WHERE media_id = :mediaId AND list_id = :listName")
     MovieDataRecord getRecordByIdAlt( String mediaId, String listName);
 
     @Query("SELECT * FROM movie_data_records")
-    LiveData<List<MovieDataRecord>> getAllRecords();
+    List<MovieDataRecord> getAllRecordsAlt();
 
-    @Query("SELECT * FROM movies INNER JOIN movie_data_records ON movies.id = movie_data_records.movie_id "
+    @Query("SELECT * FROM movies INNER JOIN movie_data_records ON movies.id = media_id "
             +"WHERE movie_data_records.list_id = :listId")
     LiveData<List<MovieData>> getAllMoviesInList(String listId);
 
     //alternate method without live data
-    @Query("SELECT * FROM movies INNER JOIN movie_data_records ON movies.id = movie_data_records.movie_id "
+    @Query("SELECT * FROM movies INNER JOIN movie_data_records ON movies.id = media_id "
             +"WHERE movie_data_records.list_id = :listId")
     List<MovieData> getAllMoviesInListAlt(String listId);
 
-    @Query("SELECT * FROM movies INNER JOIN movie_data_records ON movies.id = movie_data_records.movie_id "
+    @Query("SELECT * FROM movies INNER JOIN movie_data_records ON movies.id = media_id "
             +"WHERE movie_data_records.list_id = :listId AND movies.title LIKE :mediaTitle")
     LiveData<List<MovieData>> getMoviesWithNameLike(String listId, String mediaTitle);
 
+    //alternate method without live data
     @Query("SELECT * FROM movie_data_records WHERE list_id = :listId")
-    List<MovieDataRecord> getAllRecordsOfList(String listId);
+    List<MovieDataRecord> getAllRecordsOfListAlt(String listId);
 
-    @Query("SELECT list_id FROM movie_data_records WHERE movie_id = :movieId")
+    @Query("SELECT list_id FROM movie_data_records WHERE media_id = :movieId")
     LiveData<List<String>> getAllListNamesContainingMedia(String movieId);
 
     @Query("SELECT * FROM user_lists INNER JOIN movie_data_records ON user_lists.id = movie_data_records.list_id "
-            +"WHERE movie_id = :movieId")
+            +"WHERE media_id = :movieId")
     LiveData<List<UserListModel>> getAllListsContainingMedia(String movieId);
 
     //alternate method without live data
     @Query("SELECT * FROM user_lists INNER JOIN movie_data_records ON user_lists.id = movie_data_records.list_id "
-            +"WHERE movie_id = :movieId")
+            +"WHERE media_id = :movieId")
     List<UserListModel> getAllListsContainingMediaAlt(String movieId);
-
-    @Query("SELECT COUNT(*) FROM movie_data_records WHERE list_id = :listId")
-    LiveData<Integer> getListMemberCount(String listId);
 
     @Delete
     void deleteRecord(MovieDataRecord movieDataRecord);

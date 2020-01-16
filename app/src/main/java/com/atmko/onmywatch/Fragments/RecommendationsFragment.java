@@ -27,11 +27,11 @@ import com.atmko.onmywatch.adapters.MediaDataAdapter;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.SeriesData;
-import com.atmko.onmywatch.utils.MovieDataParser;
-import com.atmko.onmywatch.utils.SearchPreferences;
-import com.atmko.onmywatch.utils.SeriesDataParser;
-import com.atmko.onmywatch.utils.network_utils.ApiConstants;
-import com.atmko.onmywatch.utils.network_utils.NetworkFunctions;
+import com.atmko.onmywatch.utils.api_utils.MovieDataParser;
+import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
+import com.atmko.onmywatch.utils.api_utils.SeriesDataParser;
+import com.atmko.onmywatch.utils.api_utils.ApiConstants;
+import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
 import com.atmko.stack.Stack;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -42,7 +42,7 @@ import java.util.List;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
 import static com.atmko.onmywatch.utils.GeneralUtils.MILLISECOND_CONVERSION;
-import static com.atmko.onmywatch.utils.UpdateMediaWorker.REQUEST_COOL_DOWN;
+import static com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker.REQUEST_COOL_DOWN;
 
 public class RecommendationsFragment extends Fragment
         implements MediaDataAdapter.OnListItemClickListener{

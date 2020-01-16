@@ -34,7 +34,7 @@ public class ListResultsUserPagerAdapter extends FragmentStatePagerAdapter {
         mListName = listName;
         mMediaTypes = context.getResources().getIntArray(R.array.list_media_types);
     }
-    
+
     @NonNull
     @Override
     public Fragment getItem(int position) {

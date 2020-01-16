@@ -31,6 +31,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
 
@@ -38,31 +39,31 @@ import com.androidnetworking.common.ANRequest;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.atmko.onmywatch.MasterActivity;
+import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.RateActivity;
+import com.atmko.onmywatch.adapters.DetailMovieExtrasAdapter;
+import com.atmko.onmywatch.adapters.DetailSeriesExtrasAdapter;
 import com.atmko.onmywatch.database.AppDatabase;
-import com.atmko.onmywatch.models.MovieNotifier;
+import com.atmko.onmywatch.models.MediaData;
+import com.atmko.onmywatch.models.MediaNotifier;
+import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.ScheduledMedia;
-import com.atmko.onmywatch.models.SeriesNotifier;
+import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.utils.GeneralUtils;
-import com.atmko.onmywatch.utils.UpdateMediaWorker;
-import com.atmko.onmywatch.utils.network_utils.ApiConstants;
-import com.atmko.onmywatch.utils.network_utils.MovieApiConstants;
+import com.atmko.onmywatch.utils.api_utils.ApiConstants;
+import com.atmko.onmywatch.utils.api_utils.MovieApiConstants;
+import com.atmko.onmywatch.utils.api_utils.MovieDataParser;
+import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
+import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
+import com.atmko.onmywatch.utils.api_utils.SeriesDataParser;
 import com.atmko.onmywatch.utils.network_utils.TraktApiConstants;
+import com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker;
 import com.atmko.onmywatch.view_models.DetailsViewModel;
 import com.atmko.onmywatch.view_models.DetailsViewModelFactory;
+import com.atmko.onmywatch.view_models.FirebaseDetailsViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
-import com.atmko.onmywatch.R;
-import com.atmko.onmywatch.adapters.DetailMovieExtrasAdapter;
-import com.atmko.onmywatch.adapters.DetailSeriesExtrasAdapter;
-import com.atmko.onmywatch.models.MediaData;
-import com.atmko.onmywatch.models.MovieData;
-import com.atmko.onmywatch.models.SeriesData;
-import com.atmko.onmywatch.utils.MovieDataParser;
-import com.atmko.onmywatch.utils.SearchPreferences;
-import com.atmko.onmywatch.utils.SeriesDataParser;
-import com.atmko.onmywatch.utils.network_utils.NetworkFunctions;
 
 import org.parceler.Parcels;
 
@@ -442,15 +443,32 @@ public class DetailsFragment extends Fragment {
     //TODO: NullPointerException handled in caller
     @SuppressWarnings("ConstantConditions")
     private void observeViewModel() throws NullPointerException{
+        final ViewModel viewModel;
+        final LiveData mediaDataLiveData;
+        final LiveData<List<String>> containingUserLists;
+        final LiveData<List<MediaNotifier>> notifiersLiveData;
+
         AppDatabase database = AppDatabase.getInstance(getContext());
         DetailsViewModelFactory viewModelFactory =
                 new DetailsViewModelFactory(database, mMediaType, mMediaData.getId());
 
-        DetailsViewModel viewModel =
-                ViewModelProviders.of(this, viewModelFactory).get(DetailsViewModel.class);
+        if (MasterActivity.isProMode()) {
+            viewModel =
+                    ViewModelProviders.of(this,
+                            viewModelFactory).get(FirebaseDetailsViewModel.class);
+            mediaDataLiveData = ((FirebaseDetailsViewModel) viewModel).getMediaData();
+            containingUserLists = ((FirebaseDetailsViewModel) viewModel).getContainingLists();
+            notifiersLiveData = null;
 
+        } else {
+            viewModel =
+                    ViewModelProviders.of(this,
+                            viewModelFactory).get(DetailsViewModel.class);
+            mediaDataLiveData = ((DetailsViewModel) viewModel).getMediaData();
+            containingUserLists = ((DetailsViewModel) viewModel).getContainingLists();
+            notifiersLiveData = ((DetailsViewModel) viewModel).getNotifiers();
+        }
 
-        LiveData mediaDataLiveData = viewModel.getMediaData();
         mediaDataLiveData.observe(this, new Observer<Object>() {
             @Override
             public void onChanged(Object mediaData) {
@@ -485,7 +503,6 @@ public class DetailsFragment extends Fragment {
             }
         });
 
-        LiveData<List<String>> containingUserLists = viewModel.getContainingLists();
         containingUserLists.observe(this, new Observer<List<String>>() {
             @Override
             public void onChanged(List<String> listNames) {
@@ -498,45 +515,21 @@ public class DetailsFragment extends Fragment {
             }
         });
 
-        LiveData<List<MovieNotifier>> movieNotifiersLiveData;
-        LiveData<List<SeriesNotifier>> seriesNotifiersLiveData;
+        notifiersLiveData.observe(this, new Observer<List<MediaNotifier>>() {
+            @Override
+            public void onChanged(List<MediaNotifier> movieNotifiers) {
+                if (movieNotifiers.size() != 0) {
+                    //set image
+                    ((ImageButton) getView().findViewById(R.id.notify_button))
+                            .setImageResource(R.drawable.ic_notify_accent);
 
-        if (mMediaType == MEDIA_TYPE_MOVIE) {
-            movieNotifiersLiveData = viewModel.getMovieNotifiers();
-            movieNotifiersLiveData.observe(this, new Observer<List<MovieNotifier>>() {
-                @Override
-                public void onChanged(List<MovieNotifier> movieNotifiers) {
-                    if (movieNotifiers.size() != 0) {
-                        //set image
-                        ((ImageButton) getView().findViewById(R.id.notify_button))
-                                .setImageResource(R.drawable.ic_notify_accent);
-
-                    } else {
-                        //set image
-                        ((ImageButton) getView().findViewById(R.id.notify_button))
-                                .setImageResource(R.drawable.ic_notify_white);
-                    }
+                } else {
+                    //set image
+                    ((ImageButton) getView().findViewById(R.id.notify_button))
+                            .setImageResource(R.drawable.ic_notify_white);
                 }
-            });
-
-        } else {
-            seriesNotifiersLiveData = viewModel.getSeriesNotifiers();
-            seriesNotifiersLiveData.observe(this, new Observer<List<SeriesNotifier>>() {
-                @Override
-                public void onChanged(List<SeriesNotifier> seriesNotifiers) {
-                    if (seriesNotifiers.size() != 0) {
-                        //set image
-                        ((ImageButton) getView().findViewById(R.id.notify_button))
-                                .setImageResource(R.drawable.ic_notify_accent);
-
-                    } else {
-                        //set image
-                        ((ImageButton) getView().findViewById(R.id.notify_button))
-                                .setImageResource(R.drawable.ic_notify_white);
-                    }
-                }
-            });
-        }
+            }
+        });
     }
 
     private void launchQuickAction() {

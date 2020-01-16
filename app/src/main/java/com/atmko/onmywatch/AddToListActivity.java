@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -41,16 +42,17 @@ import com.atmko.onmywatch.models.SeriesDataRecord;
 import com.atmko.onmywatch.models.SimpleIdlingResource;
 import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.models.WatchListModel;
-import com.atmko.onmywatch.utils.MovieDataParser;
-import com.atmko.onmywatch.utils.SearchPreferences;
-import com.atmko.onmywatch.utils.SeriesDataParser;
-import com.atmko.onmywatch.utils.UpdateMediaWorker;
+import com.atmko.onmywatch.utils.api_utils.MovieDataParser;
+import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
+import com.atmko.onmywatch.utils.api_utils.SeriesDataParser;
+import com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker;
 import com.atmko.onmywatch.utils.UpdateNotifierService;
-import com.atmko.onmywatch.utils.network_utils.ApiConstants;
+import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
-import com.atmko.onmywatch.utils.network_utils.NetworkFunctions;
+import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
 import com.atmko.onmywatch.view_models.AddToListViewModel;
 import com.atmko.onmywatch.view_models.AddToListViewModelFactory;
+import com.atmko.onmywatch.view_models.FirebaseAddToListViewModel;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.parceler.Parcels;
@@ -61,7 +63,7 @@ import java.util.List;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
 import static com.atmko.onmywatch.utils.GeneralUtils.MILLISECOND_CONVERSION;
-import static com.atmko.onmywatch.utils.UpdateMediaWorker.NEW_MEDIA_DATA_KEY;
+import static com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker.NEW_MEDIA_DATA_KEY;
 
 public class AddToListActivity extends AppCompatActivity implements AddToListAdapter.OnListItemClickListener,
         AddToListAdapter.OnListCheckListener{
@@ -81,8 +83,8 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
     private AppDatabase mDatabase;
     private AddToListAdapter mAdapter;
     private Integer mOldWatchStatus;
-    private Integer mNewWatchStatus;
     private int mSelectedWatchStatus;
+    private Integer mNewWatchStatus;// value is either null (after media is deleted) or (new media data's watch status i.e mSelectedWatchStatus)
     private ArrayList<UserListModel> mOriginalContainingLists;
     private ArrayList<UserListModel> mNewContainingLists;
 
@@ -151,20 +153,23 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String listName = s.toString();
-                listName = "%" + listName + "%";
+                //TODO: implement search for pro mode
+                if (!MasterActivity.isProMode()) {
+                    String listName = s.toString();
+                    listName = "%" + listName + "%";
 
-                //observe lists with searched name then remove observer
-                final LiveData<List<UserListModel>> listLiveData = mDatabase.userListsDao().getListsWithNameLike(listName);
-                listLiveData.observe(AddToListActivity.this, new Observer<List<UserListModel>>() {
-                    @Override
-                    public void onChanged(List<UserListModel> userListModels) {
-                        listLiveData.removeObserver(this);
+                    //observe lists with searched name then remove observer
+                    final LiveData<List<UserListModel>> listLiveData = mDatabase.userListsDao().getListsWithNameLike(listName);
+                    listLiveData.observe(AddToListActivity.this, new Observer<List<UserListModel>>() {
+                        @Override
+                        public void onChanged(List<UserListModel> userListModels) {
+                            listLiveData.removeObserver(this);
 
-                        mAdapter.getAdapterData().clear();
-                        mAdapter.addAdapterData(userListModels);
-                    }
-                });
+                            mAdapter.getAdapterData().clear();
+                            mAdapter.addAdapterData(userListModels);
+                        }
+                    });
+                }
             }
 
             @Override
@@ -188,7 +193,18 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getDetailsAndUpdateData();
+                if (MasterActivity.isProMode()) {
+                    AddToListFirebaseHelper.saveFirebaseData(
+                            mMediaData,
+                            mMediaType,
+                            mOldWatchStatus,
+                            mSelectedWatchStatus,
+                            mOriginalContainingLists,
+                            mNewContainingLists);
+
+                } else {
+                    getDetailsAndUpdateData();
+                }
 
                 //exit activity
                 finish();
@@ -197,16 +213,34 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
     }
 
     private void observeViewModel() {
-        //create view model
+        final ViewModel viewModel;
+        final LiveData<Integer> watchStatusLiveData;
+        final LiveData<List<UserListModel>> allUserListLiveData;
+        final LiveData<List<UserListModel>> containingUserListLiveData;
+
         AddToListViewModelFactory addToListViewModelFactory =
                 new AddToListViewModelFactory(mDatabase, mMediaType, mMediaData.getId());
 
-        final AddToListViewModel viewModel =
-                ViewModelProviders.of(this, addToListViewModelFactory)
-                        .get(AddToListViewModel.class);
+        if (MasterActivity.isProMode()) {
+            //create view model
+            viewModel = ViewModelProviders.of(this, addToListViewModelFactory)
+                    .get(FirebaseAddToListViewModel.class);
+
+            watchStatusLiveData = ((FirebaseAddToListViewModel) viewModel).getWatchStatus();
+            allUserListLiveData = ((FirebaseAddToListViewModel) viewModel).getAllUserLists();
+            containingUserListLiveData = ((FirebaseAddToListViewModel) viewModel).getContainingLists();
+
+        } else {
+            //create view model
+            viewModel = ViewModelProviders.of(this, addToListViewModelFactory)
+                    .get(AddToListViewModel.class);
+
+            watchStatusLiveData = ((AddToListViewModel) viewModel).getWatchStatus();
+            allUserListLiveData = ((AddToListViewModel) viewModel).getAllUserLists();
+            containingUserListLiveData = ((AddToListViewModel) viewModel).getContainingLists();
+        }
 
         //observe live data of media's watch status
-        final LiveData<Integer> watchStatusLiveData = viewModel.getWatchStatus();
         watchStatusLiveData.observe(this, new Observer<Integer>() {
             @Override
             public void onChanged(Integer watchStatus) {
@@ -237,50 +271,48 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
             }
         });
 
+        //TODO: fix bug where lists disappear on rotate
         //observe live data of all of user's lists
-        final LiveData<List<UserListModel>> allUserListLiveData = viewModel.getAllUserLists();
         allUserListLiveData.observe(this, new Observer<List<UserListModel>>() {
             @Override
             public void onChanged(final List<UserListModel> allUserLists) {
                 //if user list(s) exist
                 if (allUserLists != null) {
                     //observe live data of lists containing media
-                    final LiveData<List<UserListModel>> containingUserListLiveData =
-                            viewModel.getContainingLists();
-
                     containingUserListLiveData.observe(AddToListActivity.this, new Observer<List<UserListModel>>() {
-                        @Override
-                        public void onChanged(List<UserListModel> containingLists) {
-                            //if media is contained in user list(s)
-                            if (containingLists != null) {
-                                mOriginalContainingLists = ((ArrayList<UserListModel>) containingLists);
+                            @Override
+                            public void onChanged(List<UserListModel> containingLists) {
+                                //if media is contained in user list(s)
+                                if (containingLists != null) {
+                                    mOriginalContainingLists = ((ArrayList<UserListModel>) containingLists);
 
-                            } else {
-                                mOriginalContainingLists = new ArrayList<>();
+                                } else {
+                                    mOriginalContainingLists = new ArrayList<>();
 
+                                }
+
+                                //define mNewContainingLists
+                                if (mSavedInstanceState == null) {
+                                    mNewContainingLists = new ArrayList<>(mOriginalContainingLists);
+
+                                } else {
+                                    mNewContainingLists =
+                                            Parcels.unwrap(mSavedInstanceState
+                                                    .getParcelable(NEW_CONTAINING_LIST_KEY));
+                                }
+
+                                //setting adapter here avoids null pointer crash when restoring app...
+                                // after app is killed
+                                mRecyclerView.setAdapter(mAdapter);
+
+                                //update list so onCheckDatabaseRecords function can run
+                                mAdapter.getAdapterData().clear();
+                                mAdapter.addAdapterData(allUserLists);
                             }
-
-                            //define mNewContainingLists
-                            if (mSavedInstanceState == null) {
-                                mNewContainingLists = new ArrayList<>(mOriginalContainingLists);
-
-                            } else {
-                                mNewContainingLists =
-                                        Parcels.unwrap(mSavedInstanceState
-                                                .getParcelable(NEW_CONTAINING_LIST_KEY));
-                            }
-
-                            //setting adapter here avoids null pointer crash when restoring app...
-                            // after app is killed
-                            mRecyclerView.setAdapter(mAdapter);
-
-                            //update list so onCheckDatabaseRecords function can run
-                            mAdapter.getAdapterData().clear();
-                            mAdapter.addAdapterData(allUserLists);
-                        }
                     });
                     //else if no user list(s) exist
                 } else {
+                    //TODO: null value may never be triggered because Live Data returns empty list instead of null
                     Snackbar.make(findViewById(R.id.top_layout),
                             getString(R.string.no_created_lists_message), Snackbar.LENGTH_LONG).show();
                 }
@@ -596,6 +628,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
         }
     }
 
+    //TODO: modifying newContainingList here makes getting newContainingList value when saving redundant
     //avoids inconsistent checks when recycler view recycles views
     @Override
     public void onItemClick(final UserListModel userListModel, AppCompatCheckBox checkBox) {

@@ -17,7 +17,7 @@ import com.atmko.onmywatch.Fragments.DetailsFragment;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.utils.NotificationHandler;
-import com.atmko.onmywatch.utils.network_utils.ApiConstants;
+import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 
 import org.parceler.Parcels;
 

@@ -34,11 +34,11 @@ import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.DetailPeopleExtrasAdapter;
 import com.atmko.onmywatch.models.PersonData;
-import com.atmko.onmywatch.utils.PersonDataParser;
-import com.atmko.onmywatch.utils.SearchPreferences;
-import com.atmko.onmywatch.utils.UpdateMediaWorker;
-import com.atmko.onmywatch.utils.network_utils.ApiConstants;
-import com.atmko.onmywatch.utils.network_utils.NetworkFunctions;
+import com.atmko.onmywatch.utils.api_utils.ApiConstants;
+import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
+import com.atmko.onmywatch.utils.api_utils.PersonDataParser;
+import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
+import com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
@@ -46,8 +46,6 @@ import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
-import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
-import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
 import static com.atmko.onmywatch.MasterActivity.sDetailsHistory;
 import static com.atmko.onmywatch.utils.GeneralUtils.MILLISECOND_CONVERSION;
 

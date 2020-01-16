@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.database.AppDatabase;
 
 public class RateViewModelFactory extends ViewModelProvider.NewInstanceFactory {
@@ -26,8 +27,15 @@ public class RateViewModelFactory extends ViewModelProvider.NewInstanceFactory {
     @Override
     public @NonNull
     <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        //noinspection unchecked
-        return (T) new RateViewModel(
-                mDatabase, mMediaType, mMediaId);
+        if (MasterActivity.isProMode()) {
+            //noinspection unchecked
+            return (T) new FirebaseRateViewModel(
+                    mMediaType, mMediaId);
+
+        } else {
+            //noinspection unchecked
+            return (T) new RateViewModel(
+                    mDatabase, mMediaType, mMediaId);
+        }
     }
 }

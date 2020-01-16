@@ -12,11 +12,14 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 
 import com.atmko.onmywatch.R;
-import com.atmko.onmywatch.utils.network_utils.ApiConstants;
+import com.atmko.onmywatch.utils.api_utils.ApiConstants;
+import com.atmko.onmywatch.utils.api_utils.SeriesApiConstants;
+import com.atmko.onmywatch.utils.network_utils.TraktApiConstants;
 
 import org.parceler.Parcel;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 @Entity(tableName = "series")
 @Parcel
@@ -71,8 +74,8 @@ public class SeriesData extends MediaData{
 
     public SeriesData(@NonNull String id, String traktId, String voteAverage, String title,
                       String posterPath, String originalLanguage, String originalTitle,
-                      ArrayList<String> genres, String backdropPath, String overview,
-                      String releaseDate, String releaseStatus) {
+                      ArrayList<String> countryOfOrigin, ArrayList<String> genres, String backdropPath,
+                      String overview, String releaseDate, String releaseStatus, long countdown) {
 
         this.mId = id;
         this.mTraktId = traktId;
@@ -81,11 +84,13 @@ public class SeriesData extends MediaData{
         this.mPosterPath = posterPath;
         this.mOriginalLanguage = originalLanguage;
         this.mOriginalTitle = originalTitle;
+        this.mCountryOfOrigin = countryOfOrigin;
         this.mGenres = genres;
         this.mBackdropPath = backdropPath;
         this.mOverview = overview;
         this.mReleaseDate = releaseDate;
         this.mReleaseStatus = releaseStatus;
+        this.mCountdown = countdown;
     }
 
     public String getVoteAverage() {
@@ -116,5 +121,43 @@ public class SeriesData extends MediaData{
     @Override
     public String getMediaUrl(Context context, String mediaId) {
         return context.getString(R.string.series_base_url) + "/" + mediaId;
+    }
+
+    public Map<String, Object> parseMediaDataToDataMap() {
+        Map<String, Object> firebaseMediaDataMap = getFirebaseMediaDataMap(this);
+
+        firebaseMediaDataMap.put(SeriesApiConstants.ORIGIN_COUNTRY_KEY, getCountryOfOrigin());
+        firebaseMediaDataMap.put(SeriesApiConstants.NAME_KEY, getTitle());
+        firebaseMediaDataMap.put(SeriesApiConstants.ORIG_NAME_KEY, getOriginalTitle());
+        firebaseMediaDataMap.put(SeriesApiConstants.FIRST_AIR_DATE_KEY, getReleaseDate());
+
+        return firebaseMediaDataMap;
+    }
+
+    @SuppressWarnings({"ConstantConditions", "unchecked"})
+    public static SeriesData parseDataMapToMediaData(Map<String, Object> firebaseDataMap) {
+        SeriesData seriesData = new SeriesData(
+                (String) firebaseDataMap.get(ApiConstants.ID_KEY),
+                ((String) firebaseDataMap.get(TraktApiConstants.TRAKT_ID_KEY)),
+                (String) firebaseDataMap.get(ApiConstants.VOTE_AVERAGE_KEY),
+                (String) firebaseDataMap.get(SeriesApiConstants.NAME_KEY),
+                (String) firebaseDataMap.get(ApiConstants.POSTER_PATH_KEY),
+                (String) firebaseDataMap.get(ApiConstants.ORIG_LANG_KEY),
+                (String) firebaseDataMap.get(SeriesApiConstants.ORIG_NAME_KEY),
+                (ArrayList<String>) firebaseDataMap.get(SeriesApiConstants.ORIGIN_COUNTRY_KEY),
+                (ArrayList<String>) firebaseDataMap.get(ApiConstants.GENRES_KEY),
+                (String) firebaseDataMap.get(ApiConstants.BACKDROP_PATH_KEY),
+                (String) firebaseDataMap.get(ApiConstants.OVERVIEW_KEY),
+                (String) firebaseDataMap.get(SeriesApiConstants.FIRST_AIR_DATE_KEY),
+                (String) firebaseDataMap.get(ApiConstants.RELEASE_STATUS_KEY),
+                (long) firebaseDataMap.get(COUNTDOWN_KEY)
+        );
+
+        seriesData.setWatchStatus(
+                ((Long) firebaseDataMap.get(MediaData.WATCH_STATUS_KEY)).intValue());
+        seriesData.setUserRating(
+                ((Long) firebaseDataMap.get(MediaData.USER_RATING_KEY)).intValue());
+
+        return seriesData;
     }
 }

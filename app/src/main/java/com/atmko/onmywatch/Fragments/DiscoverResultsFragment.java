@@ -5,13 +5,6 @@
 package com.atmko.onmywatch.Fragments;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,26 +12,32 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.androidnetworking.common.ANRequest;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.atmko.onmywatch.MasterActivity;
-import com.atmko.onmywatch.adapters.CustomParams;
-import com.atmko.onmywatch.custom_views.SuperEditText;
-import com.atmko.onmywatch.models.MovieData;
-import com.atmko.onmywatch.models.SeriesData;
-import com.atmko.onmywatch.utils.network_utils.ApiConstants;
-import com.atmko.stack.Stack;
 import com.atmko.onmywatch.R;
+import com.atmko.onmywatch.adapters.CustomParams;
 import com.atmko.onmywatch.adapters.MediaDataAdapter;
 import com.atmko.onmywatch.adapters.PeopleDataAdapter;
+import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.atmko.onmywatch.models.MediaData;
+import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.PersonData;
-import com.atmko.onmywatch.utils.MovieDataParser;
-import com.atmko.onmywatch.utils.PersonDataParser;
-import com.atmko.onmywatch.utils.SearchPreferences;
-import com.atmko.onmywatch.utils.SeriesDataParser;
-import com.atmko.onmywatch.utils.network_utils.NetworkFunctions;
+import com.atmko.onmywatch.models.SeriesData;
+import com.atmko.onmywatch.utils.api_utils.ApiConstants;
+import com.atmko.onmywatch.utils.api_utils.MovieDataParser;
+import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
+import com.atmko.onmywatch.utils.api_utils.PersonDataParser;
+import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
+import com.atmko.onmywatch.utils.api_utils.SeriesDataParser;
+import com.atmko.stack.Stack;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.parceler.Parcels;
@@ -47,10 +46,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
-import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_PEOPLE;
+import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
 import static com.atmko.onmywatch.utils.GeneralUtils.MILLISECOND_CONVERSION;
-import static com.atmko.onmywatch.utils.UpdateMediaWorker.REQUEST_COOL_DOWN;
+import static com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker.REQUEST_COOL_DOWN;
 
 public class DiscoverResultsFragment extends Fragment implements
         MediaDataAdapter.OnListItemClickListener,
@@ -167,36 +166,36 @@ public class DiscoverResultsFragment extends Fragment implements
     private void defineViews() {
         Stack.PagingBlockTemplate pagingBlockTemplate =
                 new Stack.PagingBlockTemplate(new Stack.PagingBlockTemplate.OnCreatePageLoader() {
-            @Override
-            public void onPageEndReached(final int blockNumber, final int targetPage) {
-                if (targetPage == mStack.getFirstPage()) {
-                    mSearchPreferences.setTargetPage(targetPage);
-                    executeSearch(blockNumber, targetPage, Stack.GO_DOWN_ONE_BLOCK);
-
-                } else {
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
+                    @Override
+                    public void onPageEndReached(final int blockNumber, final int targetPage) {
+                        if (targetPage == mStack.getFirstPage()) {
                             mSearchPreferences.setTargetPage(targetPage);
                             executeSearch(blockNumber, targetPage, Stack.GO_DOWN_ONE_BLOCK);
-                        }
-                    }, REQUEST_COOL_DOWN);
-                }
-            }
 
-            @Override
-            public void onPageStartReached(final int blockNumber, final int targetPage) {
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mSearchPreferences.setTargetPage(targetPage);
-                        executeSearch(blockNumber, targetPage, Stack.GO_UP_ONE_BLOCK);
+                        } else {
+                            Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mSearchPreferences.setTargetPage(targetPage);
+                                    executeSearch(blockNumber, targetPage, Stack.GO_DOWN_ONE_BLOCK);
+                                }
+                            }, REQUEST_COOL_DOWN);
+                        }
                     }
-                }, REQUEST_COOL_DOWN);
-            }
-        }, ApiConstants.RESULTS_PER_PAGE, getResources().getInteger(R.integer.stack_pages_per_block));
+
+                    @Override
+                    public void onPageStartReached(final int blockNumber, final int targetPage) {
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mSearchPreferences.setTargetPage(targetPage);
+                                executeSearch(blockNumber, targetPage, Stack.GO_UP_ONE_BLOCK);
+                            }
+                        }, REQUEST_COOL_DOWN);
+                    }
+                }, ApiConstants.RESULTS_PER_PAGE, getResources().getInteger(R.integer.stack_pages_per_block));
 
         RecyclerView recyclerView = getView().findViewById(R.id.discover_results_recycler_view);
         recyclerView.setLayoutManager(configureLayoutManager());

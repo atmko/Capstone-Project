@@ -26,12 +26,14 @@ import com.atmko.onmywatch.models.NotificationIdlingResource;
 import com.atmko.onmywatch.models.ScheduledMedia;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesNotifier;
-import com.atmko.onmywatch.utils.network_utils.ApiConstants;
+import com.atmko.onmywatch.utils.api_utils.ApiConstants;
+import com.atmko.onmywatch.utils.api_utils.SeriesDataParser;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
-import com.atmko.onmywatch.utils.network_utils.MovieApiConstants;
-import com.atmko.onmywatch.utils.network_utils.NetworkFunctions;
-import com.atmko.onmywatch.utils.network_utils.SeriesApiConstants;
+import com.atmko.onmywatch.utils.api_utils.MovieApiConstants;
+import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
+import com.atmko.onmywatch.utils.api_utils.SeriesApiConstants;
 import com.atmko.onmywatch.utils.network_utils.TraktApiConstants;
+import com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker;
 
 import org.parceler.Parcels;
 
@@ -41,7 +43,7 @@ import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
 import static com.atmko.onmywatch.models.MediaNotifier.CONDITION_ON_RELEASE;
 import static com.atmko.onmywatch.models.SeriesNotifier.CONDITION_NEW_EPISODE;
 import static com.atmko.onmywatch.utils.GeneralUtils.MILLISECOND_CONVERSION;
-import static com.atmko.onmywatch.utils.UpdateMediaWorker.NEW_MEDIA_DATA_KEY;
+import static com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker.NEW_MEDIA_DATA_KEY;
 
 public class UpdateNotifierService extends JobIntentService {
     private static final String TAG = UpdateNotifierService.class.getSimpleName();

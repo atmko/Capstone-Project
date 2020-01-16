@@ -12,7 +12,6 @@ import android.content.pm.PackageManager;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.atmko.onmywatch.database.AppDatabase;
-import com.atmko.onmywatch.models.Episode;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieData;
@@ -21,17 +20,16 @@ import com.atmko.onmywatch.models.NotificationIdlingResource;
 import com.atmko.onmywatch.models.ScheduledMedia;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesNotifier;
-import com.atmko.onmywatch.utils.network_utils.ApiConstants;
+import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
+import com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker;
 
 import org.parceler.Parcels;
 
-import java.util.Date;
 import java.util.List;
 
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
-import static com.atmko.onmywatch.utils.UpdateMediaWorker.NEW_MEDIA_DATA_KEY;
 
 public class NotificationHandler {
     public static class AlarmReceiver extends BroadcastReceiver {
@@ -65,7 +63,7 @@ public class NotificationHandler {
                                         AppDatabase.getInstance(context).seriesDataDao().getSeriesByIdAlt(mediaId);
 
                                 Intent intent = new Intent(context, UpdateNotifierService.class);
-                                intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(newMediaData));
+                                intent.putExtra(UpdateMediaWorker.NEW_MEDIA_DATA_KEY, Parcels.wrap(newMediaData));
                                 UpdateNotifierService.enqueueWork(context, intent);
 
                                 // The IdlingResource is null in production.

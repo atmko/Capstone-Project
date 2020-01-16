@@ -44,7 +44,7 @@ public class AddToListAdapter extends RecyclerView.Adapter<AddToListAdapter.AddT
     }
 
     public class AddToListViewHolder extends RecyclerView.ViewHolder
-             implements View.OnClickListener{
+            implements View.OnClickListener{
 
         final TextView listNameTextView;
         final AppCompatCheckBox checkBox;

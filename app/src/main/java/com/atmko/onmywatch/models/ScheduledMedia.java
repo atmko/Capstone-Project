@@ -6,11 +6,9 @@ package com.atmko.onmywatch.models;
 
 import android.annotation.SuppressLint;
 
-import androidx.annotation.NonNull;
-
 import com.atmko.onmywatch.utils.GeneralUtils;
 import com.atmko.onmywatch.utils.GeneralUtils.DateInject;
-import com.atmko.onmywatch.utils.network_utils.ApiConstants;
+import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 
 import org.parceler.Parcel;
 

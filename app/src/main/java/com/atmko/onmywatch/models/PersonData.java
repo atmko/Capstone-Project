@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.room.Ignore;
 
 import com.atmko.onmywatch.R;
-import com.atmko.onmywatch.utils.network_utils.ApiConstants;
+import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 
 import org.parceler.Parcel;
 

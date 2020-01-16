@@ -7,7 +7,7 @@ import android.util.TypedValue;
 import androidx.fragment.app.Fragment;
 
 import com.atmko.onmywatch.R;
-import com.atmko.onmywatch.utils.network_utils.ApiConstants;
+import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 
 public class CustomParams {
     public static int[] getSearchParams(Fragment fragment) {

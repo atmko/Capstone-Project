@@ -20,31 +20,23 @@ public class AddToListViewModel extends ViewModel {
     private static final String TAG = AddToListViewModel.class.getSimpleName();
 
     private LiveData<Integer> watchStatus;
-    private final LiveData<List<UserListModel>> allUserLists;
     private LiveData<List<UserListModel>> containingUserLists;
+    private final LiveData<List<UserListModel>> allUserLists;
 
     AddToListViewModel(@NonNull AppDatabase database, int mediaType, String mediaId) {
         Log.d(TAG, "fetching watch status from the database");
+        Log.d(TAG, "fetching all user lists from the database");
+        Log.d(TAG, "fetching media records from the database");
+
+        allUserLists = database.userListsDao().getAllLists();
+
         if (mediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
             watchStatus = database.movieDataDao().getMoviesWatchStatus(mediaId);
-
+            containingUserLists = database.movieDataRecordsDao().getAllListsContainingMedia(mediaId);
 
         } else if (mediaType == MasterActivity.MEDIA_TYPE_SERIES) {
             watchStatus = database.seriesDataDao().getSeriesWatchStatus(mediaId);
-
-        }
-
-        Log.d(TAG, "fetching all user lists from the database");
-        allUserLists = database.userListsDao().getAllLists();
-
-        Log.d(TAG, "fetching all user lists from the database");
-        if (mediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
-            containingUserLists = database.movieDataRecordsDao().getAllListsContainingMedia(mediaId);
-
-
-        } else if (mediaType == MasterActivity.MEDIA_TYPE_SERIES) {
             containingUserLists = database.seriesDataRecordsDao().getAllListsContainingMedia(mediaId);
-
         }
     }
 

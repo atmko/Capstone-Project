@@ -173,7 +173,7 @@ public class ListsWatchAndUserParentFragment extends Fragment
 
         ListWatchAndUserAdapter mListWatchAndUserAdapter =
                 new ListWatchAndUserAdapter(getChildFragmentManager(),
-                FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+                        FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
 
         mListsViewPager.setAdapter(mListWatchAndUserAdapter);
 

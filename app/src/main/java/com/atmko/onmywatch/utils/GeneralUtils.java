@@ -4,7 +4,7 @@
 
 package com.atmko.onmywatch.utils;
 
-import com.atmko.onmywatch.utils.network_utils.ApiConstants;
+import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -79,12 +79,12 @@ public class GeneralUtils {
     }
 
     //check for int/double errors
-    static String checkAndConvertNumber(Object number) {
+    public static String checkAndConvertNumber(Object number) {
         return String.valueOf(number);
     }
 
     //check for int/double errors
-    static String checkAndConvertInteger(Object number) {
+    public static String checkAndConvertInteger(Object number) {
         return String.valueOf(((Double) number).intValue());
     }
 
@@ -95,7 +95,7 @@ public class GeneralUtils {
 
     //Note not original code.
     //forgotten reference
-    static double convertTo2Sf(Double number) {
+    public static double convertTo2Sf(Double number) {
         return Math.round(number * 10) / 10.0;
     }
 

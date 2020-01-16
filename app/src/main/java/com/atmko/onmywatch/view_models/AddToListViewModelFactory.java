@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.database.AppDatabase;
 
 public class AddToListViewModelFactory extends ViewModelProvider.NewInstanceFactory {
@@ -25,8 +26,14 @@ public class AddToListViewModelFactory extends ViewModelProvider.NewInstanceFact
     @Override
     public @NonNull
     <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        //noinspection unchecked
-        return (T) new AddToListViewModel(mDatabase, mMediaType, mId);
+        if (MasterActivity.isProMode()) {
+            //noinspection unchecked
+            return (T) new FirebaseAddToListViewModel(mMediaType, mId);
+
+        } else {
+            //noinspection unchecked
+            return (T) new AddToListViewModel(mDatabase, mMediaType, mId);
+        }
     }
 
 }

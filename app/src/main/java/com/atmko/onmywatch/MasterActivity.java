@@ -37,13 +37,24 @@ import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.PersonData;
 import com.atmko.onmywatch.models.SimpleIdlingResource;
-import com.atmko.onmywatch.utils.SearchPreferences;
-import com.atmko.onmywatch.utils.UpdateMediaWorker;
+import com.atmko.onmywatch.utils.network_utils.work_manager_workers.FirebaseUpdateMediaWorker;
+import com.atmko.onmywatch.utils.network_utils.ProModeMigrationService;
+import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
+import com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker;
+import com.atmko.onmywatch.utils.network_utils.UserTierWatcher;
+
+import com.firebase.ui.auth.AuthUI;
+
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.parceler.Parcels;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -64,6 +75,9 @@ public class MasterActivity extends AppCompatActivity {
 
     private static final String HISTORY_KEY = "history";
 
+    private static final String USER_COLLECTION_PATH = "users";
+    private final int SIGN_IN_REQUEST_CODE = 10;
+
     //for restoring keyboard visibility upon configuration change
     private boolean mIsKeyboardVisible;
     private boolean mIsTabletLandscape;
@@ -75,12 +89,16 @@ public class MasterActivity extends AppCompatActivity {
     @Nullable
     private SimpleIdlingResource mIdlingResource;
 
+    public static boolean sProMode;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_master);
 
         initializeAdMob();
+
+        createNotificationChannels();
 
         //set / restore values
         setValues(savedInstanceState);
@@ -90,24 +108,90 @@ public class MasterActivity extends AppCompatActivity {
         // Obtain Analytics instance.
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
+        //if saved instance is null
         if (savedInstanceState == null) {
             startHomeFragment();
-
-            createNotificationChannels();
 
             //start background work managers
             startWorkers();
 
-            if (getIntent() != null) {
-                Intent intent = getIntent();
-                Bundle extras = intent.getExtras();
+            //if pro mode
+            if (isProMode()) {
+                //if current user is null, start Firebase sign in activity
+                if (getCurrentUser() == null) {
+                    startSignInActivity();
 
-                if (intent.getAction().equals(DetailsFragment.ACTION_LAUNCH_DETAILS)) {
-                    launchDetailsFromIntent(intent, extras);
+                    //otherwise just load the UI
+                } else {
+                    //watch user_tier value
+                    UserTierWatcher.watch(getApplicationContext());
+                    loadUi();
                 }
+                //otherwise load ui
+            } else {
+                loadUi();
             }
+
         } else {
             sDetailsHistory = Parcels.unwrap(savedInstanceState.getParcelable(HISTORY_KEY));
+        }
+    }
+
+    public static boolean isProMode() {
+        return sProMode;
+    }
+
+    public static FirebaseUser getCurrentUser() {
+        return FirebaseAuth.getInstance().getCurrentUser();
+    }
+
+    public static DocumentReference getUserDbHomeReference() {
+        return FirebaseFirestore.getInstance()
+                .collection(USER_COLLECTION_PATH)
+                .document(getCurrentUser().getUid());
+    }
+
+    private void loadUi() {
+        startHomeFragment();
+        //start background work managers
+        startWorkers();
+
+        if (getIntent() != null) {
+            Intent intent = getIntent();
+            Bundle extras = intent.getExtras();
+
+            if (intent.getAction().equals(DetailsFragment.ACTION_LAUNCH_DETAILS)) {
+                launchDetailsFromIntent(intent, extras);
+            }
+        }
+    }
+
+    private void startSignInActivity() {
+        // Choose authentication providers
+        List<AuthUI.IdpConfig> providers = Arrays.asList(
+                new AuthUI.IdpConfig.EmailBuilder().build(),
+                new AuthUI.IdpConfig.GoogleBuilder().build()
+        );
+
+        // Create and launch sign-in intent
+        startActivityForResult(
+                AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setAvailableProviders(providers)
+                        .build(),
+                SIGN_IN_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        //if returning from firebase sign in activity, load the UI
+        if (requestCode == SIGN_IN_REQUEST_CODE) {
+            //watch user_tier value
+            UserTierWatcher.watch(getApplicationContext());
+            loadUi();
+
         }
     }
 
@@ -198,6 +282,7 @@ public class MasterActivity extends AppCompatActivity {
 
     private void createNotificationChannels() {
         MediaNotifier.createReleaseNotificationChannel(this);
+        ProModeMigrationService.createMigrationNotificationChannel(getApplicationContext());
     }
 
     private void startWorkers() {
@@ -206,12 +291,23 @@ public class MasterActivity extends AppCompatActivity {
                 .setRequiresStorageNotLow(true)
                 .build();
 
-        PeriodicWorkRequest updateMediaDataRequest =
-                new PeriodicWorkRequest.Builder(
-                        UpdateMediaWorker.class, REPEAT_INTERVAL, TimeUnit.HOURS)
-                        .setConstraints(constraints)
-                        .setInitialDelay(INITIAL_DELAY, TimeUnit.MINUTES)
-                        .build();
+        PeriodicWorkRequest updateMediaDataRequest;
+
+        if (isProMode()) {
+            updateMediaDataRequest =
+                    new PeriodicWorkRequest.Builder(
+                            FirebaseUpdateMediaWorker.class, REPEAT_INTERVAL, TimeUnit.HOURS)
+                            .setConstraints(constraints)
+                            .setInitialDelay(INITIAL_DELAY, TimeUnit.MINUTES)
+                            .build();
+        } else {
+            updateMediaDataRequest =
+                    new PeriodicWorkRequest.Builder(
+                            UpdateMediaWorker.class, REPEAT_INTERVAL, TimeUnit.HOURS)
+                            .setConstraints(constraints)
+                            .setInitialDelay(INITIAL_DELAY, TimeUnit.MINUTES)
+                            .build();
+        }
 
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
                 UPDATE_MEDIA_WORKER_KEY, ExistingPeriodicWorkPolicy.KEEP, updateMediaDataRequest);

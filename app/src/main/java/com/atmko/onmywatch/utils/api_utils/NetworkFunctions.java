@@ -2,25 +2,20 @@
  * Copyright (C) 2019 Aayat Mimiko
  */
 
-package com.atmko.onmywatch.utils.network_utils;
+package com.atmko.onmywatch.utils.api_utils;
 
 import android.content.Context;
 import android.widget.ImageView;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.ANRequest;
+import com.atmko.onmywatch.utils.network_utils.TraktApiConstants;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.RequestOptions;
 import com.atmko.onmywatch.R;
-import com.atmko.onmywatch.utils.SearchPreferences;
-
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketAddress;
 
 public class NetworkFunctions {
     //agnostic search request

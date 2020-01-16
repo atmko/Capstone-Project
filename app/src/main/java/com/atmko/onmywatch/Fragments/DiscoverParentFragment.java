@@ -31,7 +31,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.DiscoverManualPagerAdapter;
 import com.atmko.onmywatch.adapters.DiscoverPresetPagerAdapter;
-import com.atmko.onmywatch.utils.SearchPreferences;
+import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
 
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;

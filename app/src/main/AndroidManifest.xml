@@ -83,6 +83,16 @@
             android:theme="@style/preferences_theme"
             android:launchMode="singleTop"/>
 
+        <service android:name=".utils.network_utils.ProModeMigrationService"
+            android:exported="false"
+            android:description="@string/pro_migration_service_description"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
+
+        <service android:name=".utils.network_utils.FreeModeMigrationService"
+            android:exported="false"
+            android:description="@string/free_migration_service_description"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
+
         <service
             android:name=".widget.ListRemoteViewFactoryService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />

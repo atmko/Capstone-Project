@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.database.AppDatabase;
+import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieNotifier;
 import com.atmko.onmywatch.models.SeriesNotifier;
 
@@ -22,8 +23,7 @@ public class DetailsViewModel extends ViewModel {
 
     private LiveData mediaData;
     private LiveData<List<String>> containingUserLists;
-    private LiveData<List<MovieNotifier>> movieNotifiers;
-    private LiveData<List<SeriesNotifier>> seriesNotifiers;
+    private LiveData notifiers;
 
     DetailsViewModel(@NonNull AppDatabase database, int mediaType, String mediaId) {
         Log.d(TAG, "fetching media from the database");
@@ -33,14 +33,14 @@ public class DetailsViewModel extends ViewModel {
             mediaData = database.movieDataDao().getMovieById(mediaId);
             containingUserLists =
                     database.movieDataRecordsDao().getAllListNamesContainingMedia(mediaId);
-            movieNotifiers =
+            notifiers =
                     database.movieNotifierDao().getNotifiersWithMediaId(mediaId);
 
         } else if (mediaType == MasterActivity.MEDIA_TYPE_SERIES) {
             mediaData = database.seriesDataDao().getSeriesById(mediaId);
             containingUserLists =
                     database.seriesDataRecordsDao().getAllListNamesContainingMedia(mediaId);
-            seriesNotifiers =
+            notifiers =
                     database.seriesNotifierDao().getNotifiersWithMediaId(mediaId);
         }
     }
@@ -53,11 +53,7 @@ public class DetailsViewModel extends ViewModel {
         return containingUserLists;
     }
 
-    public LiveData<List<MovieNotifier>> getMovieNotifiers() {
-        return movieNotifiers;
-    }
-
-    public LiveData<List<SeriesNotifier>> getSeriesNotifiers() {
-        return seriesNotifiers;
+    public LiveData<List<MediaNotifier>> getNotifiers() {
+        return notifiers;
     }
 }

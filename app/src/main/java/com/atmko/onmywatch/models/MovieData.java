@@ -13,7 +13,9 @@ import androidx.room.Ignore;
 import androidx.annotation.NonNull;
 
 import com.atmko.onmywatch.R;
-import com.atmko.onmywatch.utils.network_utils.ApiConstants;
+import com.atmko.onmywatch.utils.api_utils.ApiConstants;
+import com.atmko.onmywatch.utils.api_utils.MovieApiConstants;
+import com.atmko.onmywatch.utils.network_utils.TraktApiConstants;
 
 import org.parceler.Parcel;
 
@@ -93,7 +95,7 @@ public class MovieData extends MediaData{
     public MovieData(@NonNull String id, String traktId, String voteAverage, String title,
                      String posterPath, String originalLanguage, String originalTitle,
                      ArrayList<String> genres, boolean adult, String backdropPath, String overview,
-                     String releaseDate, String releaseStatus) {
+                     String releaseDate, String releaseStatus, long countdown) {
 
         this.mId = id;
         this.mTraktId = traktId;
@@ -108,6 +110,7 @@ public class MovieData extends MediaData{
         this.mOverview = overview;
         this.mReleaseDate = releaseDate;
         this.mReleaseStatus = releaseStatus;
+        this.mCountdown = countdown;
     }
 
     public boolean isVideo() {
@@ -121,5 +124,43 @@ public class MovieData extends MediaData{
     @Override
     public String getMediaUrl(Context context, String mediaId) {
         return context.getString(R.string.movie_base_url) + "/" + mediaId;
+    }
+
+    public Map<String, Object> parseMediaDataToDataMap() {
+        Map<String, Object> firebaseMediaDataMap = getFirebaseMediaDataMap(this);
+
+        firebaseMediaDataMap.put(MovieApiConstants.ADULT_KEY, isAdult());
+        firebaseMediaDataMap.put(MovieApiConstants.TITLE_KEY, getTitle());
+        firebaseMediaDataMap.put(MovieApiConstants.ORIG_TITLE_KEY, getOriginalTitle());
+        firebaseMediaDataMap.put(MovieApiConstants.RELEASE_DATE_KEY, getReleaseDate());
+
+        return firebaseMediaDataMap;
+    }
+
+    @SuppressWarnings({"ConstantConditions", "unchecked"})
+    public static MovieData parseDataMapToMediaData(Map<String, Object> firebaseDataMap) {
+        MovieData movieData = new MovieData(
+                (String) firebaseDataMap.get(ApiConstants.ID_KEY),
+                ((String) firebaseDataMap.get(TraktApiConstants.TRAKT_ID_KEY)),
+                (String) firebaseDataMap.get(ApiConstants.VOTE_AVERAGE_KEY),
+                (String) firebaseDataMap.get(MovieApiConstants.TITLE_KEY),
+                (String) firebaseDataMap.get(ApiConstants.POSTER_PATH_KEY),
+                (String) firebaseDataMap.get(ApiConstants.ORIG_LANG_KEY),
+                (String) firebaseDataMap.get(MovieApiConstants.ORIG_TITLE_KEY),
+                (ArrayList<String>) firebaseDataMap.get(ApiConstants.GENRES_KEY),
+                (boolean) firebaseDataMap.get(MovieApiConstants.ADULT_KEY),
+                (String) firebaseDataMap.get(ApiConstants.BACKDROP_PATH_KEY),
+                (String) firebaseDataMap.get(ApiConstants.OVERVIEW_KEY),
+                (String) firebaseDataMap.get(MovieApiConstants.RELEASE_DATE_KEY),
+                (String) firebaseDataMap.get(ApiConstants.RELEASE_STATUS_KEY),
+                (long) firebaseDataMap.get(COUNTDOWN_KEY)
+        );
+
+        movieData.setWatchStatus(
+                ((Long) firebaseDataMap.get(MediaData.WATCH_STATUS_KEY)).intValue());
+        movieData.setUserRating(
+                ((Long) firebaseDataMap.get(MediaData.USER_RATING_KEY)).intValue());
+
+        return movieData;
     }
 }
