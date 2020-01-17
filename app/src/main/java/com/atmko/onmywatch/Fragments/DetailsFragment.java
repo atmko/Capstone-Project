@@ -444,7 +444,7 @@ public class DetailsFragment extends Fragment {
     @SuppressWarnings("ConstantConditions")
     private void observeViewModel() throws NullPointerException{
         final ViewModel viewModel;
-        final LiveData mediaDataLiveData;
+        final LiveData<MediaData> mediaDataLiveData;
         final LiveData<List<String>> containingUserLists;
         final LiveData<List<MediaNotifier>> notifiersLiveData;
 
@@ -453,17 +453,13 @@ public class DetailsFragment extends Fragment {
                 new DetailsViewModelFactory(database, mMediaType, mMediaData.getId());
 
         if (MasterActivity.isProMode()) {
-            viewModel =
-                    ViewModelProviders.of(this,
-                            viewModelFactory).get(FirebaseDetailsViewModel.class);
+            viewModel = ViewModelProviders.of(this, viewModelFactory).get(FirebaseDetailsViewModel.class);
             mediaDataLiveData = ((FirebaseDetailsViewModel) viewModel).getMediaData();
             containingUserLists = ((FirebaseDetailsViewModel) viewModel).getContainingLists();
-            notifiersLiveData = null;
+            notifiersLiveData = ((FirebaseDetailsViewModel) viewModel).getNotifiers();
 
         } else {
-            viewModel =
-                    ViewModelProviders.of(this,
-                            viewModelFactory).get(DetailsViewModel.class);
+            viewModel = ViewModelProviders.of(this, viewModelFactory).get(DetailsViewModel.class);
             mediaDataLiveData = ((DetailsViewModel) viewModel).getMediaData();
             containingUserLists = ((DetailsViewModel) viewModel).getContainingLists();
             notifiersLiveData = ((DetailsViewModel) viewModel).getNotifiers();
@@ -498,7 +494,6 @@ public class DetailsFragment extends Fragment {
 
                 } else {
                     getView().findViewById(R.id.user_rating_text).setVisibility(View.GONE);
-
                 }
             }
         });

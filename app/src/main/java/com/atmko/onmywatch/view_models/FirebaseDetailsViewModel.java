@@ -13,10 +13,16 @@ import androidx.lifecycle.ViewModel;
 
 import com.atmko.onmywatch.database.daos.FirebaseMovieDataDao;
 import com.atmko.onmywatch.database.daos.FirebaseMovieDataRecordsDao;
+import com.atmko.onmywatch.database.daos.FirebaseMovieNotifiersDao;
 import com.atmko.onmywatch.database.daos.FirebaseSeriesDataDao;
 import com.atmko.onmywatch.database.daos.FirebaseSeriesDataRecordsDao;
+import com.atmko.onmywatch.database.daos.FirebaseSeriesNotifiersDao;
+import com.atmko.onmywatch.models.MediaData;
+import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieData;
+import com.atmko.onmywatch.models.MovieNotifier;
 import com.atmko.onmywatch.models.SeriesData;
+import com.atmko.onmywatch.models.SeriesNotifier;
 import com.atmko.onmywatch.models.UserListModel;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -31,44 +37,54 @@ import java.util.Map;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.models.ListModel.LIST_NAME_KEY;
 
+//TODO: generics used for fluidity
+@SuppressWarnings("unchecked")
 public class FirebaseDetailsViewModel extends ViewModel {
     private static final String TAG = FirebaseDetailsViewModel.class.getSimpleName();
 
-    private MutableLiveData mediaDataLiveData;
-    private MutableLiveData<List<String>> containingUserListsLiveData;
+    private MutableLiveData mediaDataLiveData = new MutableLiveData();
+    private MutableLiveData<List<String>> containingUserListsLiveData = new MutableLiveData<>();
+    private MutableLiveData notifiers = new MutableLiveData<>();
 
     FirebaseDetailsViewModel(int mediaType, String mediaId) {
         Log.d(TAG, "fetching media from the database");
         Log.d(TAG, "fetching user containing lists from the database");
+        Log.d(TAG, "fetching notifiers from the database");
 
-        mediaDataLiveData = new MutableLiveData();
-        containingUserListsLiveData = new MutableLiveData<>();
-
-        //fetch media data from firestore
-        fetchMediaData(mediaType, mediaId);
-
-        //fetch firestore data for media containing lists
-        fetchContainingLists(mediaType, mediaId);
-    }
-
-    private void fetchMediaData(final int mediaType, String mediaId) {
         //get media data from the database (to get watch status)
-        Query mediaDataListener;
+        Query mediaDataQuery;
+        //get record of lists containing media
+        Query containingListsListener;
+        //get record of lists containing media
+        Query mediaNotifierQuery;
 
-        //TODO: consider moving type determination into dao
         if (mediaType == MEDIA_TYPE_MOVIE) {
-            //check if movie exists in db
-            mediaDataListener = FirebaseMovieDataDao.getMovieById(mediaId);
+            mediaDataQuery = FirebaseMovieDataDao.getMovieById(mediaId);
+            containingListsListener = FirebaseMovieDataRecordsDao.getAllListsContainingMedia(mediaId);
+            mediaNotifierQuery = FirebaseMovieNotifiersDao.getNotifiersWithMediaId(mediaId);
 
         } else {
-            //check if series exists in db
-            mediaDataListener = FirebaseSeriesDataDao.getSeriesById(mediaId);
-
+            mediaDataQuery = FirebaseSeriesDataDao.getSeriesById(mediaId);
+            containingListsListener = FirebaseSeriesDataRecordsDao.getAllListsContainingMedia(mediaId);
+            mediaNotifierQuery = FirebaseSeriesNotifiersDao.getNotifiersWithMediaId(mediaId);
         }
 
-        mediaDataListener.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        //fetch media data from firestore
+        fetchMediaData(mediaType, mediaDataQuery);
+
+        //fetch firestore data for media containing lists
+        fetchContainingLists(containingListsListener);
+
+        //fetch notifiers from firestore
+        fetchNotifiers(mediaType, mediaNotifierQuery);
+    }
+
+    private void fetchMediaData(final int mediaType, Query mediaDataQuery) {
+        mediaDataQuery.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
+                MediaData mediaData = null;
+
                 //TODO: make message when error occurs
                 if (e != null) return;
                 if (snapshots == null) return;
@@ -80,64 +96,75 @@ public class FirebaseDetailsViewModel extends ViewModel {
 
                     Map<String, Object> mediaDataMap = mediaDataDocument.getData();
 
+                    if (mediaDataMap == null) return;
+
                     //set watch status
                     //TODO: mediaDataMap null check already done by getting by id and checking getDocuments != 0
                     if (mediaType == MEDIA_TYPE_MOVIE) {
-                        //noinspection ConstantConditions
-                        mediaDataLiveData.setValue(MovieData.parseDataMapToMediaData(mediaDataMap));
+                        mediaData = MovieData.parseDataMapToMediaData(mediaDataMap);
+                        mediaDataLiveData.setValue(mediaData);
 
                     } else {
-                        //noinspection ConstantConditions
-                        mediaDataLiveData.setValue(SeriesData.parseDataMapToMediaData(mediaDataMap));
+                        mediaData = SeriesData.parseDataMapToMediaData(mediaDataMap);
+                        mediaDataLiveData.setValue(mediaData);
                     }
-
-                } else {
-                    mediaDataLiveData.setValue(null);
                 }
+
+                mediaDataLiveData.setValue(mediaData);
             }
         });
     }
 
-    private void fetchContainingLists(int mediaType, String mediaId) {
-        //get record of lists containing media
-        Query containingListsListener;
-
-        if (mediaType == MEDIA_TYPE_MOVIE) {
-            //check if movie exists in db
-            containingListsListener = FirebaseMovieDataRecordsDao.getAllListsContainingMedia(mediaId);
-
-        } else {
-            //check if series exists in db
-            containingListsListener = FirebaseSeriesDataRecordsDao.getAllListsContainingMedia(mediaId);
-
-        }
-
+    private void fetchContainingLists(Query containingListsListener) {
         containingListsListener.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
+                final List<UserListModel> containingLists = new ArrayList<>();
+
                 //TODO: make message when error occurs
                 if (e != null) return;
                 if (snapshots == null) return;
 
                 if (snapshots.getDocuments().size() != 0) {
-                    final List<UserListModel> containingLists = new ArrayList<>();
 
                     List<DocumentSnapshot> containingListsDocuments = snapshots.getDocuments();
 
                     for (DocumentSnapshot documentSnapshot: containingListsDocuments) {
                         String listName = ((String) documentSnapshot.get(LIST_NAME_KEY));
                         containingLists.add(parseUserListModel(listName));
-
                     }
-
-                    //set containing lists
-                    containingUserListsLiveData.setValue(
-                            UserListModel.getContainingListsNames(containingLists));
-
-                } else {
-                    containingUserListsLiveData.setValue(null);
-
                 }
+
+                containingUserListsLiveData.setValue(UserListModel.getContainingListsNames(containingLists));
+            }
+        });
+    }
+
+    private void fetchNotifiers(final int mediaType, Query mediaDataNotifierQuery) {
+        mediaDataNotifierQuery.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
+                final List<MediaNotifier> mediaNotifiers = new ArrayList<>();
+
+                //TODO: make message when error occurs
+                if (e != null) return;
+                if (snapshots == null) return;
+
+                if (snapshots.getDocuments().size() != 0) {
+                    List<DocumentSnapshot> notifierDocuments = snapshots.getDocuments();
+
+                    for (DocumentSnapshot documentSnapshot: notifierDocuments) {
+                        if (mediaType == MEDIA_TYPE_MOVIE) {
+                            mediaNotifiers.add(MovieNotifier.parseMediaNotifier(documentSnapshot));
+
+                        } else {
+                            mediaNotifiers.add(SeriesNotifier.parseMediaNotifier(documentSnapshot));
+                        }
+                    }
+                }
+
+                //set notifiers
+                notifiers.setValue(mediaNotifiers);
             }
         });
     }
@@ -152,5 +179,9 @@ public class FirebaseDetailsViewModel extends ViewModel {
 
     public LiveData<List<String>> getContainingLists() {
         return containingUserListsLiveData;
+    }
+
+    public LiveData<List<MediaNotifier>> getNotifiers() {
+        return notifiers;
     }
 }
