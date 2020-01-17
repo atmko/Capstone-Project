@@ -31,11 +31,15 @@ public abstract class MediaNotifier {
 
     public static final int CONDITION_ON_RELEASE = 0;
 
+    public final static String NOTIFIER_ID_KEY = "notifier_id";
+
     @NonNull
     @ColumnInfo(name = "media_id") public String mId;
     //condition under which notifications should be triggered
     @NonNull
     @ColumnInfo(name = "condition") int mCondition;
+
+    private String mDocumentId;
 
     //TODO consider using a LinkedHashSet seeing as titles are used as though they are unique
     public int getCondition() {
@@ -44,6 +48,14 @@ public abstract class MediaNotifier {
 
     public String getMediaId() {
         return mId;
+    }
+
+    public String getDocumentId() {
+        return mDocumentId;
+    }
+
+    public void setDocumentId(String mDocumentId) {
+        this.mDocumentId = mDocumentId;
     }
 
     public int getNotificationCode() {
@@ -66,7 +78,7 @@ public abstract class MediaNotifier {
     public Notification createReleaseNotification(Context context, MediaData mediaData) {
         String contentTitle = context.getString(R.string.notification_new_release_title);
         String contentText = mediaData.getTitle() + " "
-                        + context.getString(R.string.notification_new_release_content_suffix);
+                + context.getString(R.string.notification_new_release_content_suffix);
 
         //create intent to launch activity on click
         Intent detailsIntent = new Intent(context, MasterActivity.class);

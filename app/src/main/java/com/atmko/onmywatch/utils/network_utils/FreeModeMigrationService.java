@@ -19,14 +19,18 @@ import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.database.daos.FirebaseMovieDataDao;
 import com.atmko.onmywatch.database.daos.FirebaseMovieDataRecordsDao;
+import com.atmko.onmywatch.database.daos.FirebaseMovieNotifiersDao;
 import com.atmko.onmywatch.database.daos.FirebaseSeriesDataDao;
 import com.atmko.onmywatch.database.daos.FirebaseSeriesDataRecordsDao;
+import com.atmko.onmywatch.database.daos.FirebaseSeriesNotifiersDao;
 import com.atmko.onmywatch.database.daos.FirebaseUserListDao;
 import com.atmko.onmywatch.database.daos.FirebaseWatchListDao;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.MovieDataRecord;
+import com.atmko.onmywatch.models.MovieNotifier;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesDataRecord;
+import com.atmko.onmywatch.models.SeriesNotifier;
 import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.models.WatchListModel;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -159,6 +163,24 @@ public class FreeModeMigrationService extends JobIntentService {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
+                pullMovieNotifiers();
+            }
+        });
+    }
+
+    public void onPullMovieNotifiersComplete() {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                pullSeriesNotifiers();
+            }
+        });
+    }
+
+    public void onPullSeriesNotifiersComplete() {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
                 deleteRemotelySavedData();
                 MasterActivity.sProMode = false;
                 finishService();
@@ -209,7 +231,7 @@ public class FreeModeMigrationService extends JobIntentService {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                
+
             }
         });
     }
@@ -297,8 +319,8 @@ public class FreeModeMigrationService extends JobIntentService {
                         });
                     }
                 }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
+            @Override
+            public void onFailure(@NonNull Exception e) {
 
             }
         });
@@ -436,6 +458,94 @@ public class FreeModeMigrationService extends JobIntentService {
         });
     }
 
+    //pull remotely saved movie notifiers to local database
+    private void pullMovieNotifiers() {
+        //get locally saved movie notifiers
+        //get remotely saved movie notifiers
+        //iterate through remote movieNotifierSnapshots
+        //if local movie data records do not contain remote movie data records: add movie data record to local database
+
+        //get locally saved movie data records
+        final List<MovieNotifier> localMovieNotifiers = mDatabase.movieNotifierDao().getAllNotifiersAlt();
+
+        //get remotely saved movie data records
+        FirebaseMovieNotifiersDao.getAllNotifiers()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(final QuerySnapshot movieNotifierSnapshots) {
+                        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                //iterate through remote movieNotifierSnapshots
+                                //if local movie data records do not contain remote movie data records: add movie data record to local database
+                                for (DocumentSnapshot movieNotifierDocument: movieNotifierSnapshots.getDocuments()) {
+                                    if (movieNotifierDocument.getData() == null) continue;
+
+                                    final MovieNotifier remoteMovieNotifier =
+                                            MovieNotifier.parseMediaNotifier(movieNotifierDocument);
+
+                                    //if local user lists do not contain remote user lists: add user list to local database
+                                    if (!localMovieNotifiers.contains(remoteMovieNotifier)) {
+                                        mDatabase.movieNotifierDao().addMediaNotifier(remoteMovieNotifier);
+                                    }
+                                }
+
+                                onPullMovieNotifiersComplete();
+                            }
+                        });
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+    }
+
+    //pull remotely saved series notifiers to local database
+    private void pullSeriesNotifiers() {
+        //get locally saved series notifiers
+        //get remotely saved series notifiers
+        //iterate through remote seriesNotifierSnapshots
+        //if local series data records do not contain remote series data records: add series data record to local database
+
+        //get locally saved series data records
+        final List<SeriesNotifier> localSeriesNotifiers = mDatabase.seriesNotifierDao().getAllNotifiersAlt();
+
+        //get remotely saved series data records
+        FirebaseSeriesNotifiersDao.getAllNotifiers()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(final QuerySnapshot seriesNotifierSnapshots) {
+                        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                //iterate through remote seriesNotifierSnapshots
+                                //if local series data records do not contain remote series data records: add series data record to local database
+                                for (DocumentSnapshot seriesNotifierDocument: seriesNotifierSnapshots.getDocuments()) {
+                                    if (seriesNotifierDocument.getData() == null) continue;
+
+                                    final SeriesNotifier remoteSeriesNotifier =
+                                            SeriesNotifier.parseMediaNotifier(seriesNotifierDocument);
+
+                                    //if local user lists do not contain remote user lists: add user list to local database
+                                    if (!localSeriesNotifiers.contains(remoteSeriesNotifier)) {
+                                        mDatabase.seriesNotifierDao().addMediaNotifier(remoteSeriesNotifier);
+                                    }
+                                }
+
+                                onPullSeriesNotifiersComplete();
+                            }
+                        });
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+    }
+
     private void deleteRemotelySavedData() {
         FirebaseFunctions.getInstance().getHttpsCallable("deleteUserData").call()
                 .addOnSuccessListener(new OnSuccessListener<HttpsCallableResult>() {
@@ -444,10 +554,10 @@ public class FreeModeMigrationService extends JobIntentService {
 
                     }
                 }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
+            @Override
+            public void onFailure(@NonNull Exception e) {
 
-                    }
-                });
+            }
+        });
     }
 }

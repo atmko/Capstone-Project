@@ -14,8 +14,12 @@ import androidx.room.ForeignKey;
 import com.atmko.onmywatch.Fragments.DetailsFragment;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 import org.parceler.Parcels;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity(tableName = "series_notifiers",
         primaryKeys = {"media_id", "condition"},
@@ -59,5 +63,24 @@ public class SeriesNotifier extends MediaNotifier {
                 .setAutoCancel(true);
 
         return builder.build();
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    public static SeriesNotifier parseMediaNotifier(DocumentSnapshot document) {
+        SeriesNotifier mediaNotifier = new SeriesNotifier(
+                (String) document.get(NOTIFIER_ID_KEY),
+                ((Long) document.get(CONDITION_KEY)).intValue()
+        );
+
+        mediaNotifier.setDocumentId(document.getId());
+        return mediaNotifier;
+    }
+
+    public Map<String, Object> parseNotifierToDataMap() {
+        Map<String, Object> movieDataRecordMap = new HashMap<>();
+        movieDataRecordMap.put(NOTIFIER_ID_KEY, getMediaId());
+        movieDataRecordMap.put(CONDITION_KEY, getCondition());
+
+        return movieDataRecordMap;
     }
 }

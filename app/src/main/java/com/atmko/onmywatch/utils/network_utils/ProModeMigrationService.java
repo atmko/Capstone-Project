@@ -22,15 +22,19 @@ import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.database.daos.FirebaseMovieDataDao;
 import com.atmko.onmywatch.database.daos.FirebaseMovieDataRecordsDao;
+import com.atmko.onmywatch.database.daos.FirebaseMovieNotifiersDao;
 import com.atmko.onmywatch.database.daos.FirebaseSeriesDataDao;
 import com.atmko.onmywatch.database.daos.FirebaseSeriesDataRecordsDao;
+import com.atmko.onmywatch.database.daos.FirebaseSeriesNotifiersDao;
 import com.atmko.onmywatch.database.daos.FirebaseUserListDao;
 import com.atmko.onmywatch.database.daos.FirebaseWatchListDao;
 import com.atmko.onmywatch.models.ListModel;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.MovieDataRecord;
+import com.atmko.onmywatch.models.MovieNotifier;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesDataRecord;
+import com.atmko.onmywatch.models.SeriesNotifier;
 import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.models.WatchListModel;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
@@ -61,6 +65,8 @@ public class ProModeMigrationService extends JobIntentService {
     private List<UserListModel> localUserLists;
     private List<MovieDataRecord> localMovieDataRecords;
     private List<SeriesDataRecord> localSeriesDataRecords;
+    private List<MovieNotifier> localMovieNotifiers;
+    private List<SeriesNotifier> localSeriesNotifiers;
 
     public ProModeMigrationService() {
     }
@@ -182,6 +188,24 @@ public class ProModeMigrationService extends JobIntentService {
     }
 
     public void onPushSeriesDataRecordsComplete() {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                pushMovieNotifiers();
+            }
+        });
+    }
+
+    public void onPushMovieNotifiersComplete() {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                pushSeriesNotifiers();
+            }
+        });
+    }
+
+    public void onPushSeriesNotifiersComplete() {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -720,6 +744,130 @@ public class ProModeMigrationService extends JobIntentService {
         });
     }
 
+    //pushes locally saved movie notifiers to remote database
+    private void pushMovieNotifiers() {
+        //get locally saved movie notifiers
+        //get remotely saved movie notifiers
+        //create list of remote movie notifiers to compare with local movie notifiers
+        //compare local and remote notifiers
+        //if locally saved notifier is not in remote database: add to batchCreateList
+        //batch create
+
+        //get locally saved movie notifiers
+        localMovieNotifiers = mDatabase.movieNotifierDao().getAllNotifiersAlt();
+
+        //get remotely saved movie records
+        FirebaseMovieNotifiersDao.getAllNotifiers().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(final QuerySnapshot snapshots) {
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        //create list of remote movie notifiers to compare with local movie notifiers
+                        List<DocumentSnapshot> documentSnapshots = snapshots.getDocuments();
+                        final List<MovieNotifier> remoteMovieNotifiers = new ArrayList<>();
+                        for (DocumentSnapshot documentSnapshot : documentSnapshots) {
+                            remoteMovieNotifiers.add(MovieNotifier.parseMediaNotifier(documentSnapshot));
+                        }
+
+                        //create lists for batch writes
+                        List<Map<String, Object>> batchCreateList = new ArrayList<>();
+
+                        //compare local and remote records
+                        for (MovieNotifier localMovieNotifier : localMovieNotifiers) {
+                            //if locally saved record is not in remote database: add to batchCreateList
+                            if (!remoteMovieNotifiers.contains(localMovieNotifier)) {
+                                //add to batchCreateList for batch creates
+                                batchCreateList.add(localMovieNotifier.parseNotifierToDataMap());
+                            }
+                        }
+
+                        //batch create
+                        FirebaseMovieNotifiersDao.addMovieNotifierBatch(batchCreateList)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        onPushMovieNotifiersComplete();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+                            }
+                        });
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+    }
+
+    //pushes locally saved series notifiers to remote database
+    private void pushSeriesNotifiers() {
+        //get locally saved series notifiers
+        //get remotely saved series notifiers
+        //create list of remote series notifiers to compare with local series notifiers
+        //compare local and remote notifiers
+        //if locally saved notifier is not in remote database: add to batchCreateList
+        //batch create
+
+        //get locally saved series notifiers
+        localSeriesNotifiers = mDatabase.seriesNotifierDao().getAllNotifiersAlt();
+
+        //get remotely saved series records
+        FirebaseSeriesNotifiersDao.getAllNotifiers().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(final QuerySnapshot snapshots) {
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        //create list of remote series notifiers to compare with local series notifiers
+                        List<DocumentSnapshot> documentSnapshots = snapshots.getDocuments();
+                        final List<SeriesNotifier> remoteSeriesNotifiers = new ArrayList<>();
+                        for (DocumentSnapshot documentSnapshot : documentSnapshots) {
+                            remoteSeriesNotifiers.add(SeriesNotifier.parseMediaNotifier(documentSnapshot));
+                        }
+
+                        //create lists for batch writes
+                        List<Map<String, Object>> batchCreateList = new ArrayList<>();
+
+                        //compare local and remote records
+                        for (SeriesNotifier localSeriesNotifier : localSeriesNotifiers) {
+                            //if locally saved record is not in remote database: add to batchCreateList
+                            if (!remoteSeriesNotifiers.contains(localSeriesNotifier)) {
+                                //add to batchCreateList for batch creates
+                                batchCreateList.add(localSeriesNotifier.parseNotifierToDataMap());
+                            }
+                        }
+
+                        //batch create
+                        FirebaseSeriesNotifiersDao.addSeriesNotifierBatch(batchCreateList)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        onPushSeriesNotifiersComplete();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+                            }
+                        });
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+    }
+
     private void deleteLocallySavedData() {
         for (MovieDataRecord movieDataRecord: localMovieDataRecords) {
             mDatabase.movieDataRecordsDao().deleteRecord(movieDataRecord);
@@ -743,6 +891,14 @@ public class ProModeMigrationService extends JobIntentService {
 
         for (UserListModel userListModel: localUserLists) {
             mDatabase.userListsDao().deleteList(userListModel);
+        }
+
+        for (MovieNotifier movieNotifier: localMovieNotifiers) {
+            mDatabase.movieNotifierDao().deleteNotifier(movieNotifier);
+        }
+
+        for (SeriesNotifier seriesNotifier: localSeriesNotifiers) {
+            mDatabase.seriesNotifierDao().deleteNotifier(seriesNotifier);
         }
     }
 }
