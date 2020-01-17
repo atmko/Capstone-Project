@@ -9,6 +9,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
@@ -37,12 +39,13 @@ import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.PersonData;
 import com.atmko.onmywatch.models.SimpleIdlingResource;
+import com.atmko.onmywatch.utils.network_utils.FreeModeMigrationService;
 import com.atmko.onmywatch.utils.network_utils.work_manager_workers.FirebaseUpdateMediaWorker;
 import com.atmko.onmywatch.utils.network_utils.ProModeMigrationService;
 import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
 import com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker;
-import com.atmko.onmywatch.utils.network_utils.UserTierWatcher;
 
+import com.atmko.onmywatch.view_models.MasterActivityViewModel;
 import com.firebase.ui.auth.AuthUI;
 
 import com.google.android.gms.ads.MobileAds;
@@ -57,6 +60,11 @@ import org.parceler.Parcels;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import static com.atmko.onmywatch.utils.network_utils.FreeModeMigrationService.ACTION_USER_TIER_TO_FREE;
+import static com.atmko.onmywatch.utils.network_utils.ProModeMigrationService.ACTION_USER_TIER_TO_PRO;
+import static com.atmko.onmywatch.view_models.MasterActivityViewModel.USER_TIER_FREE;
+import static com.atmko.onmywatch.view_models.MasterActivityViewModel.USER_TIER_PRO;
 
 public class MasterActivity extends AppCompatActivity {
 
@@ -108,32 +116,18 @@ public class MasterActivity extends AppCompatActivity {
         // Obtain Analytics instance.
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
-        //if saved instance is null
-        if (savedInstanceState == null) {
-            startHomeFragment();
-
-            //start background work managers
-            startWorkers();
-
-            //if pro mode
-            if (isProMode()) {
-                //if current user is null, start Firebase sign in activity
-                if (getCurrentUser() == null) {
-                    startSignInActivity();
-
-                    //otherwise just load the UI
-                } else {
-                    //watch user_tier value
-                    UserTierWatcher.watch(getApplicationContext());
-                    loadUi();
-                }
-                //otherwise load ui
-            } else {
-                loadUi();
-            }
+        //if current user is null start login
+        if (getCurrentUser() == null) {
+            startSignInActivity();
 
         } else {
-            sDetailsHistory = Parcels.unwrap(savedInstanceState.getParcelable(HISTORY_KEY));
+            //observe user data via view model
+            observeData();
+
+            //if saved instance is null
+            if (savedInstanceState != null) {
+                sDetailsHistory = Parcels.unwrap(savedInstanceState.getParcelable(HISTORY_KEY));
+            }
         }
     }
 
@@ -151,7 +145,59 @@ public class MasterActivity extends AppCompatActivity {
                 .document(getCurrentUser().getUid());
     }
 
-    private void loadUi() {
+    //retrieve data from the activity's view model
+    private void observeData() {
+        MasterActivityViewModel masterActivityViewModel =
+                ViewModelProviders.of(this).get(MasterActivityViewModel.class);
+
+        masterActivityViewModel.getUserTierLiveData().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String userTier) {
+                if (userTier.equals(USER_TIER_PRO) || userTier.equals(USER_TIER_FREE)) {
+                    MasterActivity.sProMode = userTier.equals(USER_TIER_PRO);
+
+                    loadUi();
+
+                    //start background work managers
+                    startWorkers();
+
+                } else {
+                    //TODO: set busy screen while migration process active
+                    Intent userTierMigrationIntent;
+
+                    //start migration foreground service for appropriate user tier
+                    if (userTier.equals(ACTION_USER_TIER_TO_PRO)) {
+                        userTierMigrationIntent = new Intent(MasterActivity.this, ProModeMigrationService.class);
+                        userTierMigrationIntent.setAction(userTier);
+
+                        startForegroundService(userTierMigrationIntent);
+                        ProModeMigrationService.enqueueWork(MasterActivity.this, userTierMigrationIntent);
+
+                    } else if (userTier.equals(ACTION_USER_TIER_TO_FREE)) {
+                        userTierMigrationIntent = new Intent(MasterActivity.this, FreeModeMigrationService.class);
+                        userTierMigrationIntent.setAction(userTier);
+
+                        startForegroundService(userTierMigrationIntent);
+                        FreeModeMigrationService.enqueueWork(MasterActivity.this, userTierMigrationIntent);
+                    }
+                }
+            }
+        });
+    }
+
+    public void loadUi() {
+        //remove all fragments
+        Fragment masterFragment =
+                getSupportFragmentManager().findFragmentById(R.id.master_fragments_container);
+        if (masterFragment != null) getSupportFragmentManager().beginTransaction().remove(masterFragment);
+
+        Fragment detailsFragment =
+                getSupportFragmentManager().findFragmentById(R.id.detail_fragments_container);
+        if (detailsFragment != null) getSupportFragmentManager().beginTransaction().remove(detailsFragment);
+
+        getSupportFragmentManager().executePendingTransactions();
+
+        //start ui
         startHomeFragment();
         //start background work managers
         startWorkers();
@@ -170,7 +216,8 @@ public class MasterActivity extends AppCompatActivity {
         // Choose authentication providers
         List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.EmailBuilder().build(),
-                new AuthUI.IdpConfig.GoogleBuilder().build()
+                new AuthUI.IdpConfig.GoogleBuilder().build(),
+                new AuthUI.IdpConfig.AnonymousBuilder().build()
         );
 
         // Create and launch sign-in intent
@@ -188,10 +235,8 @@ public class MasterActivity extends AppCompatActivity {
 
         //if returning from firebase sign in activity, load the UI
         if (requestCode == SIGN_IN_REQUEST_CODE) {
-            //watch user_tier value
-            UserTierWatcher.watch(getApplicationContext());
-            loadUi();
-
+            //observe user data via view model
+            observeData();
         }
     }
 
