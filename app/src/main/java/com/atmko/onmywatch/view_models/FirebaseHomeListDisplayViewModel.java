@@ -75,13 +75,13 @@ public class FirebaseHomeListDisplayViewModel extends ViewModel {
 
         if (listQuery == null) return;
 
-        //retrieve media data list from firebase database
-        final List<MediaData> mediaDataList = new ArrayList<>();
-
         final int finalMediaType = mediaType;
         listQuery.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
+                //retrieve media data list from firebase database
+                final List<MediaData> mediaDataList = new ArrayList<>();
+
                 if (e != null) {
                     Log.d(TAG, e.getMessage());
                     return;
