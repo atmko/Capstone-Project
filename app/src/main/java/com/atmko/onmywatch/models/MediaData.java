@@ -33,8 +33,6 @@ abstract public class MediaData {
     public static final String WATCH_STATUS_KEY = "watch_status";
     public static final String USER_RATING_KEY = "user_rating";
 
-    public static final String COUNTDOWN_KEY = "user_rating";
-
     //primary attributes
     @PrimaryKey
     @NonNull
@@ -57,8 +55,6 @@ abstract public class MediaData {
     @Ignore ArrayList<Map<String, String>> mVideos;
     @Ignore ArrayList<Map<String, String>> mReviews;
     @ColumnInfo(name = "release_status") String mReleaseStatus;
-
-    @ColumnInfo(name = "countdown") public long mCountdown;
 
     //trakt attributes
     @ColumnInfo(name = "trakt_id") String mTraktId;

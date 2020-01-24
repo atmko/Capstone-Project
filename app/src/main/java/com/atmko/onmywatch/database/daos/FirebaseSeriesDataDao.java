@@ -4,10 +4,7 @@
 
 package com.atmko.onmywatch.database.daos;
 
-import androidx.lifecycle.LiveData;
-
 import com.atmko.onmywatch.MasterActivity;
-import com.atmko.onmywatch.models.SeriesData;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -20,7 +17,9 @@ import java.util.List;
 import java.util.Map;
 
 import static com.atmko.onmywatch.models.MediaData.WATCH_STATUS_KEY;
+import static com.atmko.onmywatch.models.SeriesData.NEXT_EPISODE_KEY;
 import static com.atmko.onmywatch.utils.api_utils.ApiConstants.ID_KEY;
+import static com.atmko.onmywatch.utils.api_utils.ApiConstants.RELEASE_STATUS_KEY;
 
 /*
  * SeriesData firebase Dao
@@ -71,27 +70,29 @@ public class FirebaseSeriesDataDao {
     public static Query getUserUpcomingEpisodes() {
         return MasterActivity.getUserDbHomeReference()
                 .collection(SERIES_COLLECTION_PATH)
-                .whereEqualTo("watch_status", 2)
-                .whereGreaterThan("countdown", 0)
-                .orderBy("countdown", Query.Direction.ASCENDING)
+                .whereGreaterThan(NEXT_EPISODE_KEY, 0)
+                .whereEqualTo(WATCH_STATUS_KEY, 2)
+                .orderBy(NEXT_EPISODE_KEY, Query.Direction.ASCENDING)
                 .limit(10);
     }
 
     public static Query getUndatedSeries() {
         return MasterActivity.getUserDbHomeReference()
                 .collection(SERIES_COLLECTION_PATH)
-                .whereIn("watch_status", Arrays.asList(1, 2))
-                .whereEqualTo("countdown", 0)
-                .whereIn("status", Arrays.asList("Planned", "In Production", "Pilot"))
+                .whereGreaterThan(WATCH_STATUS_KEY, 0)
+                .whereLessThan(WATCH_STATUS_KEY, 3)
+                .whereEqualTo(NEXT_EPISODE_KEY, 0)
+                .whereIn(RELEASE_STATUS_KEY, Arrays.asList("Planned", "In Production", "Pilot"))
                 .limit(10);
     }
 
     public static Query getEndedSeries() {
         return MasterActivity.getUserDbHomeReference()
                 .collection(SERIES_COLLECTION_PATH)
-                .whereIn("watch_status", Arrays.asList(1, 2))
-                .whereIn("status", Arrays.asList("Canceled", "Ended"))
-                .orderBy("countdown", Query.Direction.ASCENDING)
+                .whereGreaterThan(WATCH_STATUS_KEY, 0)
+                .whereLessThan(WATCH_STATUS_KEY, 3)
+                .whereIn(RELEASE_STATUS_KEY, Arrays.asList("Canceled", "Ended"))
+                .orderBy(WATCH_STATUS_KEY, Query.Direction.DESCENDING)
                 .limit(10);
     }
 

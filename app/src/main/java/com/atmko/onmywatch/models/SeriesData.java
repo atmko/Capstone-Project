@@ -12,6 +12,7 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 
 import com.atmko.onmywatch.R;
+import com.atmko.onmywatch.database.Converters;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 import com.atmko.onmywatch.utils.api_utils.SeriesApiConstants;
 import com.atmko.onmywatch.utils.network_utils.TraktApiConstants;
@@ -24,6 +25,7 @@ import java.util.Map;
 @Entity(tableName = "series")
 @Parcel
 public class SeriesData extends MediaData{
+    public static final String NEXT_EPISODE_KEY = "next_episode";
 
     //primary attributes
     @ColumnInfo(name = "country_of_origin") ArrayList<String> mCountryOfOrigin;
@@ -75,7 +77,7 @@ public class SeriesData extends MediaData{
     public SeriesData(@NonNull String id, String traktId, String voteAverage, String title,
                       String posterPath, String originalLanguage, String originalTitle,
                       ArrayList<String> countryOfOrigin, ArrayList<String> genres, String backdropPath,
-                      String overview, String releaseDate, String releaseStatus, long countdown) {
+                      String overview, String releaseDate, String releaseStatus, Episode nextEpisodeToAir) {
 
         this.mId = id;
         this.mTraktId = traktId;
@@ -90,7 +92,7 @@ public class SeriesData extends MediaData{
         this.mOverview = overview;
         this.mReleaseDate = releaseDate;
         this.mReleaseStatus = releaseStatus;
-        this.mCountdown = countdown;
+        this.mNextEpisodeToAir = nextEpisodeToAir;
     }
 
     public String getVoteAverage() {
@@ -115,7 +117,6 @@ public class SeriesData extends MediaData{
 
     public void setNextEpisodeToAir(Episode nextEpisodeToAir) {
         this.mNextEpisodeToAir = nextEpisodeToAir;
-        this.mCountdown = nextEpisodeToAir.getBestTimeDifference();
     }
 
     @Override
@@ -130,12 +131,17 @@ public class SeriesData extends MediaData{
         firebaseMediaDataMap.put(SeriesApiConstants.NAME_KEY, getTitle());
         firebaseMediaDataMap.put(SeriesApiConstants.ORIG_NAME_KEY, getOriginalTitle());
         firebaseMediaDataMap.put(SeriesApiConstants.FIRST_AIR_DATE_KEY, getReleaseDate());
+        firebaseMediaDataMap.put(NEXT_EPISODE_KEY,
+                Converters.scheduledMediaToLong(getNextEpisodeToAir()));
 
         return firebaseMediaDataMap;
     }
 
     @SuppressWarnings({"ConstantConditions", "unchecked"})
     public static SeriesData parseDataMapToMediaData(Map<String, Object> firebaseDataMap) {
+        Episode episode = firebaseDataMap.get(NEXT_EPISODE_KEY) == null ? null
+                : Converters.longToEpisode((long) firebaseDataMap.get(NEXT_EPISODE_KEY));
+
         SeriesData seriesData = new SeriesData(
                 (String) firebaseDataMap.get(ApiConstants.ID_KEY),
                 ((String) firebaseDataMap.get(TraktApiConstants.TRAKT_ID_KEY)),
@@ -150,7 +156,7 @@ public class SeriesData extends MediaData{
                 (String) firebaseDataMap.get(ApiConstants.OVERVIEW_KEY),
                 (String) firebaseDataMap.get(SeriesApiConstants.FIRST_AIR_DATE_KEY),
                 (String) firebaseDataMap.get(ApiConstants.RELEASE_STATUS_KEY),
-                (long) firebaseDataMap.get(COUNTDOWN_KEY)
+                episode
         );
 
         seriesData.setWatchStatus(

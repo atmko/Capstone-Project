@@ -4,10 +4,7 @@
 
 package com.atmko.onmywatch.database.daos;
 
-import androidx.lifecycle.LiveData;
-
 import com.atmko.onmywatch.MasterActivity;
-import com.atmko.onmywatch.models.MovieData;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -20,7 +17,9 @@ import java.util.List;
 import java.util.Map;
 
 import static com.atmko.onmywatch.models.MediaData.WATCH_STATUS_KEY;
+import static com.atmko.onmywatch.models.MovieData.SCHEDULED_MEDIA_KEY;
 import static com.atmko.onmywatch.utils.api_utils.ApiConstants.ID_KEY;
+import static com.atmko.onmywatch.utils.api_utils.ApiConstants.RELEASE_STATUS_KEY;
 
 /*
  * MovieData firebase Dao
@@ -71,28 +70,30 @@ public class FirebaseMovieDataDao {
     public static Query getUserUpcomingMovies() {
         return MasterActivity.getUserDbHomeReference()
                 .collection(MOVIES_COLLECTION_PATH)
-                .whereIn("watch_status", Arrays.asList(1, 2))
-                .whereGreaterThan("countdown", 0)
-                .whereIn("status", Arrays.asList("Rumored", "Planned", "In Production", "Post Production"))
-                .orderBy("countdown", Query.Direction.ASCENDING)
+                .whereGreaterThan(WATCH_STATUS_KEY, 0)
+                .whereLessThan(WATCH_STATUS_KEY, 3)
+                .whereIn(RELEASE_STATUS_KEY, Arrays.asList("Rumored", "Planned", "In Production", "Post Production"))
+                .orderBy(WATCH_STATUS_KEY, Query.Direction.DESCENDING)
+                .orderBy(SCHEDULED_MEDIA_KEY, Query.Direction.ASCENDING)
                 .limit(10);
     }
 
     public static Query getUndatedMovies() {
         return MasterActivity.getUserDbHomeReference()
                 .collection(MOVIES_COLLECTION_PATH)
-                .whereIn("watch_status", Arrays.asList(1, 2))
-                .whereEqualTo("countdown", 0)
-                .whereIn("status", Arrays.asList("Rumored", "Planned", "In Production", "Post Production"))
+                .whereGreaterThan(WATCH_STATUS_KEY, 0)
+                .whereLessThan(WATCH_STATUS_KEY, 3)
+                .whereEqualTo(SCHEDULED_MEDIA_KEY, 0)
+                .whereIn(RELEASE_STATUS_KEY, Arrays.asList("Rumored", "Planned", "In Production", "Post Production"))
                 .limit(10);
     }
 
     public static Query getReleasedMovies() {
         return MasterActivity.getUserDbHomeReference()
                 .collection(MOVIES_COLLECTION_PATH)
-                .whereIn("watch_status", Arrays.asList(1, 2))
-                .whereIn("status", Arrays.asList("Released"))
-                .orderBy("countdown", Query.Direction.ASCENDING)
+                .whereGreaterThan(WATCH_STATUS_KEY, 0)
+                .whereLessThan(WATCH_STATUS_KEY, 3)
+                .whereEqualTo(RELEASE_STATUS_KEY, "Released")
                 .limit(10);
     }
 

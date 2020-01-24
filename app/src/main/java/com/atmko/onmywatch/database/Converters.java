@@ -8,9 +8,12 @@ import androidx.room.TypeConverter;
 
 import com.atmko.onmywatch.models.Episode;
 import com.atmko.onmywatch.models.ScheduledMedia;
+import com.atmko.onmywatch.utils.GeneralUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 
 public class Converters {
     private static final String ORIGIN_SEPARATOR = ",";
@@ -34,22 +37,51 @@ public class Converters {
     }
 
     @TypeConverter
-    public static Episode stringToEpisode(String airDateString) {
-        Episode episode = new Episode();
+    public static ScheduledMedia longToScheduledMedia(long airDateTimestamp) {
+        ScheduledMedia scheduledMedia = new ScheduledMedia();
+        Date date = new Date(airDateTimestamp);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
 
-        if (airDateString != null) {
-            try {
-                episode.setAirDate(airDateString);
-            } catch (ScheduledMedia.DateFormatException e) {
-                e.printStackTrace();
-            }
+        String airDateString = GeneralUtils.parseIsoDateFromCalender(calendar);
+
+        try {
+            scheduledMedia.setAirDate(airDateString);
+        } catch (ScheduledMedia.DateFormatException e) {
+            e.printStackTrace();
+        }
+
+        return scheduledMedia;
+    }
+
+    @TypeConverter
+    public static long scheduledMediaToLong(ScheduledMedia scheduledMedia) {
+        if (scheduledMedia == null) return 0;
+        return scheduledMedia.getBestLocalAirDate() == null ? 0
+                : scheduledMedia.getBestLocalAirDate().getTime();
+    }
+
+    @TypeConverter
+    public static Episode longToEpisode(long airDateTimestamp) {
+        Episode episode = new Episode();
+        Date date = new Date(airDateTimestamp);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        String airDateString = GeneralUtils.parseIsoDateFromCalender(calendar);
+
+        try {
+            episode.setAirDate(airDateString);
+        } catch (ScheduledMedia.DateFormatException e) {
+            e.printStackTrace();
         }
 
         return episode;
     }
 
     @TypeConverter
-    public static String EpisodeToString(Episode episode) {
-        return episode == null ? null : episode.getBestAvailableDateString();
-    }
+    public static long episodeToLong(Episode episode) {
+        if (episode == null) return 0;
+        return episode.getBestLocalAirDate() == null ? 0
+                : episode.getBestLocalAirDate().getTime();    }
 }

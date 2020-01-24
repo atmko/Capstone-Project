@@ -13,6 +13,7 @@ import androidx.room.Ignore;
 import androidx.annotation.NonNull;
 
 import com.atmko.onmywatch.R;
+import com.atmko.onmywatch.database.Converters;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 import com.atmko.onmywatch.utils.api_utils.MovieApiConstants;
 import com.atmko.onmywatch.utils.network_utils.TraktApiConstants;
@@ -26,10 +27,12 @@ import java.util.Map;
 @Parcel
 @Entity(tableName = "movies")
 public class MovieData extends MediaData{
+    public static final String SCHEDULED_MEDIA_KEY = "scheduled_media";
 
     //primary attributes
     @Ignore boolean mVideo;
     @ColumnInfo(name = "adult") boolean mAdult;
+    @ColumnInfo(name = "scheduled_media") ScheduledMedia mScheduledMedia;
 
     //detail attributes
     @Ignore List<Map<String, String>> mVideos;
@@ -79,23 +82,16 @@ public class MovieData extends MediaData{
         try {
             ScheduledMedia scheduledMedia = new ScheduledMedia();
             scheduledMedia.setAirDate(releaseDate);
-
-            if (scheduledMedia.getBestTimeDifference() > 0) {
-                this.mCountdown = scheduledMedia.getBestTimeDifference();
-
-            } else {
-                this.mCountdown = 0;
-            }
-
+            this.mScheduledMedia = scheduledMedia;
         } catch (ScheduledMedia.DateFormatException e) {
-            this.mCountdown = 0;
+            e.printStackTrace();
         }
     }
 
     public MovieData(@NonNull String id, String traktId, String voteAverage, String title,
                      String posterPath, String originalLanguage, String originalTitle,
                      ArrayList<String> genres, boolean adult, String backdropPath, String overview,
-                     String releaseDate, String releaseStatus, long countdown) {
+                     String releaseDate, String releaseStatus, ScheduledMedia scheduledMedia) {
 
         this.mId = id;
         this.mTraktId = traktId;
@@ -110,7 +106,7 @@ public class MovieData extends MediaData{
         this.mOverview = overview;
         this.mReleaseDate = releaseDate;
         this.mReleaseStatus = releaseStatus;
-        this.mCountdown = countdown;
+        this.mScheduledMedia = scheduledMedia;
     }
 
     public boolean isVideo() {
@@ -119,6 +115,14 @@ public class MovieData extends MediaData{
 
     public boolean isAdult() {
         return mAdult;
+    }
+
+    public ScheduledMedia getScheduledMedia() {
+        return mScheduledMedia;
+    }
+
+    public void setScheduledMedia(ScheduledMedia scheduledMedia) {
+        this.mScheduledMedia = scheduledMedia;
     }
 
     @Override
@@ -133,12 +137,17 @@ public class MovieData extends MediaData{
         firebaseMediaDataMap.put(MovieApiConstants.TITLE_KEY, getTitle());
         firebaseMediaDataMap.put(MovieApiConstants.ORIG_TITLE_KEY, getOriginalTitle());
         firebaseMediaDataMap.put(MovieApiConstants.RELEASE_DATE_KEY, getReleaseDate());
+        firebaseMediaDataMap.put(SCHEDULED_MEDIA_KEY,
+                Converters.scheduledMediaToLong(getScheduledMedia()));
 
         return firebaseMediaDataMap;
     }
 
     @SuppressWarnings({"ConstantConditions", "unchecked"})
     public static MovieData parseDataMapToMediaData(Map<String, Object> firebaseDataMap) {
+        ScheduledMedia scheduledMedia = firebaseDataMap.get(SCHEDULED_MEDIA_KEY) == null ? null
+                : Converters.longToScheduledMedia((long) firebaseDataMap.get(SCHEDULED_MEDIA_KEY));
+
         MovieData movieData = new MovieData(
                 (String) firebaseDataMap.get(ApiConstants.ID_KEY),
                 ((String) firebaseDataMap.get(TraktApiConstants.TRAKT_ID_KEY)),
@@ -153,7 +162,7 @@ public class MovieData extends MediaData{
                 (String) firebaseDataMap.get(ApiConstants.OVERVIEW_KEY),
                 (String) firebaseDataMap.get(MovieApiConstants.RELEASE_DATE_KEY),
                 (String) firebaseDataMap.get(ApiConstants.RELEASE_STATUS_KEY),
-                (long) firebaseDataMap.get(COUNTDOWN_KEY)
+                scheduledMedia
         );
 
         movieData.setWatchStatus(
