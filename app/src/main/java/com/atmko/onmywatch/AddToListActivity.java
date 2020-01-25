@@ -207,6 +207,8 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
         watchStatusLiveData.observe(this, new Observer<Integer>() {
             @Override
             public void onChanged(Integer watchStatus) {
+                watchStatusLiveData.removeObserver(this);
+
                 mOldWatchStatus = watchStatus;
 
                 //if mSavedInstanceState is null
