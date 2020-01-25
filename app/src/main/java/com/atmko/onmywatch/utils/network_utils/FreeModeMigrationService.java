@@ -17,14 +17,6 @@ import androidx.core.app.NotificationCompat;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.database.AppDatabase;
-import com.atmko.onmywatch.database.daos.FirebaseMovieDataDao;
-import com.atmko.onmywatch.database.daos.FirebaseMovieDataRecordsDao;
-import com.atmko.onmywatch.database.daos.FirebaseMovieNotifiersDao;
-import com.atmko.onmywatch.database.daos.FirebaseSeriesDataDao;
-import com.atmko.onmywatch.database.daos.FirebaseSeriesDataRecordsDao;
-import com.atmko.onmywatch.database.daos.FirebaseSeriesNotifiersDao;
-import com.atmko.onmywatch.database.daos.FirebaseUserListDao;
-import com.atmko.onmywatch.database.daos.FirebaseWatchListDao;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.MovieDataRecord;
 import com.atmko.onmywatch.models.MovieNotifier;
@@ -35,8 +27,6 @@ import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.models.WatchListModel;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.HttpsCallableResult;
 
@@ -52,7 +42,8 @@ public class FreeModeMigrationService extends JobIntentService {
 
     public static final String ACTION_USER_TIER_TO_FREE = "to_free";
 
-    private AppDatabase mDatabase;
+    private AppDatabase mLocalDatabase;
+    private AppDatabase mRemoteDatabase;
 
     public FreeModeMigrationService() {
     }
@@ -61,7 +52,8 @@ public class FreeModeMigrationService extends JobIntentService {
     public void onCreate() {
         super.onCreate();
 
-        mDatabase = AppDatabase.getInstance(getApplicationContext());
+        mLocalDatabase = AppDatabase.getLocalDatabase(getApplicationContext());
+        mRemoteDatabase = AppDatabase.getRemoteDatabase();
 
         startForeground(JOB_ID,
                 buildNotification(getApplicationContext(),
@@ -201,39 +193,18 @@ public class FreeModeMigrationService extends JobIntentService {
         //if local movie data list does not contain remote movie data: add movie data to local database
 
         //get locally saved movies
-        final List<MovieData> localMovieDataList = mDatabase.movieDataDao().getAllMoviesAlt();
-
+        final List<MovieData> localMovieDataList = mLocalDatabase.movieDataDao().getAllMoviesAlt();
         //get remotely saved movies
-        FirebaseMovieDataDao.getAllMovies().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(final QuerySnapshot movieDataSnapshots) {
-                AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        //iterate through remote movieDataSnapshots
-                        //if local movie data list does not contain remote movie data: add movie data to local database
-                        for (DocumentSnapshot movieDataDocument: movieDataSnapshots.getDocuments()) {
-                            if (movieDataDocument.getData() == null) continue;
+        List<MovieData> remoteMovies = mRemoteDatabase.movieDataDao().getAllMoviesAlt();
 
-                            final MovieData remoteMovieData =
-                                    MovieData.parseDataMapToMediaData(movieDataDocument.getData());
-
-                            //if local movie data list does not contain remote movie data: add movie data to local database
-                            if (!localMovieDataList.contains(remoteMovieData)) {
-                                mDatabase.movieDataDao().addMovieData(remoteMovieData);
-                            }
-                        }
-
-                        onPullMovieDataComplete();
-                    }
-                });
+        for (MovieData movieData: remoteMovies) {
+            //if local movie data list does not contain remote movie data: add movie data to local database
+            if (!localMovieDataList.contains(movieData)) {
+                mLocalDatabase.movieDataDao().addMovieData(movieData);
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
+        }
 
-            }
-        });
+        onPullMovieDataComplete();
     }
 
     //pull remotely saved series to local database
@@ -244,42 +215,17 @@ public class FreeModeMigrationService extends JobIntentService {
         //if local series data list does not contain remote series data: add series data to local database
 
         //get locally saved series
-        final List<SeriesData> localSeriesDataList = mDatabase.seriesDataDao().getAllSeriesAlt();
-
+        final List<SeriesData> localSeriesDataList = mLocalDatabase.seriesDataDao().getAllSeriesAlt();
         //get remotely saved series
-        FirebaseSeriesDataDao.getAllSeries().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(final QuerySnapshot seriesDataSnapshots) {
-                AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        //iterate through remote seriesDataSnapshots
-                        //if local series data list does not contain remote series data: add series data to local database
-                        for (DocumentSnapshot seriesDataDocument: seriesDataSnapshots.getDocuments()) {
-                            if (seriesDataDocument.getData() == null) continue;
-
-                            final SeriesData remoteSeriesData =
-                                    SeriesData.parseDataMapToMediaData(seriesDataDocument.getData());
-
-                            //if local series data list does not contain remote series data: add series data to local database
-                            if (!localSeriesDataList.contains(remoteSeriesData)) {
-                                //TODO: CONTINUATION check if null is given by api or if mode by app
-                                //TODO: if by app fix the issue; if my api make typesafe catch when parsing
-                                Log.d(TAG, remoteSeriesData.getTitle());
-                                mDatabase.seriesDataDao().addSeriesData(remoteSeriesData);
-                            }
-                        }
-
-                        onPullSeriesDataComplete();
-                    }
-                });
+        List<SeriesData> remoteSeries = mRemoteDatabase.seriesDataDao().getAllSeriesAlt();
+        for (SeriesData seriesData: remoteSeries) {
+            //if local series data list does not contain remote series data: add series data to local database
+            if (!localSeriesDataList.contains(seriesData)) {
+                mLocalDatabase.seriesDataDao().addSeriesData(seriesData);
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
+        }
 
-            }
-        });
+        onPullSeriesDataComplete();
     }
 
     //pull remotely saved watch lists to local database
@@ -290,40 +236,20 @@ public class FreeModeMigrationService extends JobIntentService {
         //if local watch lists do not contain remote watch lists: add watch list to local database
 
         //get locally saved watch lists
-        final List<WatchListModel> localWatchLists = mDatabase.watchListsDao().getAllListsAlt();
-
+        final List<WatchListModel> localWatchLists = mLocalDatabase.watchListsDao().getAllListsAlt();
         //get remotely saved watch lists
-        FirebaseWatchListDao.getAllWatchLists().get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(final QuerySnapshot watchListSnapshots) {
-                        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                //iterate through remote watchListSnapshots
-                                //if local watch lists do not contain remote watch list: add watch list to local database
-                                for (DocumentSnapshot watchListDocument: watchListSnapshots.getDocuments()) {
-                                    if (watchListDocument.getData() == null) continue;
+        List<WatchListModel> remoteLists = mRemoteDatabase.watchListsDao().getAllListsAlt();
 
-                                    final WatchListModel remoteWatchList =
-                                            WatchListModel.parseWatchListModel(watchListDocument);
-
-                                    //if local watch lists do not contain remote watch lists: add watch list to local database
-                                    if (!localWatchLists.contains(remoteWatchList)) {
-                                        mDatabase.watchListsDao().addList(remoteWatchList);
-                                    }
-                                }
-
-                                onPullWatchListsComplete();
-                            }
-                        });
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
+        //iterate through remote watchListSnapshots
+        //if local watch lists do not contain remote watch list: add watch list to local database
+        for (WatchListModel watchListModel: remoteLists) {
+            //if local watch lists do not contain remote watch lists: add watch list to local database
+            if (!localWatchLists.contains(watchListModel)) {
+                mLocalDatabase.watchListsDao().addList(watchListModel);
             }
-        });
+        }
+
+        onPullWatchListsComplete();
     }
 
     //pull remotely saved user lists to local database
@@ -334,40 +260,20 @@ public class FreeModeMigrationService extends JobIntentService {
         //if local user lists do not contain remote user lists: add user list to local database
 
         //get locally saved user lists
-        final List<UserListModel> localUserLists = mDatabase.userListsDao().getAllListsAlt();
-
+        final List<UserListModel> localUserLists = mLocalDatabase.userListsDao().getAllListsAlt();
         //get remotely saved user lists
-        FirebaseUserListDao.getAllUserLists().get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(final QuerySnapshot userListSnapshots) {
-                        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                //iterate through remote userListSnapshots
-                                //if local user lists do not contain remote user list: add user list to local database
-                                for (DocumentSnapshot userListDocument: userListSnapshots.getDocuments()) {
-                                    if (userListDocument.getData() == null) continue;
+        List<UserListModel> remoteLists = mRemoteDatabase.userListsDao().getAllListsAlt();
 
-                                    final UserListModel remoteUserList =
-                                            UserListModel.parseUserListModel(userListDocument);
-
-                                    //if local user lists do not contain remote user lists: add user list to local database
-                                    if (!localUserLists.contains(remoteUserList)) {
-                                        mDatabase.userListsDao().addList(remoteUserList);
-                                    }
-                                }
-
-                                onPullUserListsComplete();
-                            }
-                        });
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
+        //iterate through remote userListSnapshots
+        //if local user lists do not contain remote user list: add user list to local database
+        for (UserListModel userListModel: remoteLists) {
+            //if local user lists do not contain remote user lists: add user list to local database
+            if (!localUserLists.contains(userListModel)) {
+                mLocalDatabase.userListsDao().addList(userListModel);
             }
-        });
+        }
+
+        onPullUserListsComplete();
     }
 
     //pull remotely saved movie data records to local database
@@ -378,40 +284,20 @@ public class FreeModeMigrationService extends JobIntentService {
         //if local movie data records do not contain remote movie data records: add movie data record to local database
 
         //get locally saved movie data records
-        final List<MovieDataRecord> localMovieDataRecords = mDatabase.movieDataRecordsDao().getAllRecordsAlt();
-
+        final List<MovieDataRecord> localMovieDataRecords = mLocalDatabase.movieDataRecordsDao().getAllRecordsAlt();
         //get remotely saved movie data records
-        FirebaseMovieDataRecordsDao.getAllMovieDataRecords()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(final QuerySnapshot movieDataRecordSnapshots) {
-                        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                //iterate through remote movieDataRecordSnapshots
-                                //if local movie data records do not contain remote movie data records: add movie data record to local database
-                                for (DocumentSnapshot movieDataRecordDocument: movieDataRecordSnapshots.getDocuments()) {
-                                    if (movieDataRecordDocument.getData() == null) continue;
+        List<MovieDataRecord> remoteDataRecords = mRemoteDatabase.movieDataRecordsDao().getAllRecordsAlt();
 
-                                    final MovieDataRecord remoteMovieDataRecord =
-                                            MovieDataRecord.parseMediaRecord(movieDataRecordDocument);
-
-                                    //if local user lists do not contain remote user lists: add user list to local database
-                                    if (!localMovieDataRecords.contains(remoteMovieDataRecord)) {
-                                        mDatabase.movieDataRecordsDao().addRecord(remoteMovieDataRecord);
-                                    }
-                                }
-
-                                onPullMovieDataRecordsComplete();
-                            }
-                        });
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
+        //iterate through remote movieDataRecordSnapshots
+        //if local movie data records do not contain remote movie data records: add movie data record to local database
+        for (MovieDataRecord movieDataRecord: remoteDataRecords) {
+            //if local user lists do not contain remote user lists: add user list to local database
+            if (!localMovieDataRecords.contains(movieDataRecord)) {
+                mLocalDatabase.movieDataRecordsDao().addRecord(movieDataRecord);
             }
-        });
+        }
+
+        onPullMovieDataRecordsComplete();
     }
 
     //pull remotely saved series data records to local database
@@ -422,40 +308,20 @@ public class FreeModeMigrationService extends JobIntentService {
         //if local series data records do not contain remote series data records: add series data record to local database
 
         //get locally saved series data records
-        final List<SeriesDataRecord> localSeriesDataRecords = mDatabase.seriesDataRecordsDao().getAllRecordsAlt();
-
+        final List<SeriesDataRecord> localSeriesDataRecords = mLocalDatabase.seriesDataRecordsDao().getAllRecordsAlt();
         //get remotely saved series data records
-        FirebaseSeriesDataRecordsDao.getAllSeriesDataRecords()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(final QuerySnapshot seriesDataRecordSnapshots) {
-                        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                //iterate through remote seriesDataRecordSnapshots
-                                //if local series data records do not contain remote series data records: add series data record to local database
-                                for (DocumentSnapshot seriesDataRecordDocument: seriesDataRecordSnapshots.getDocuments()) {
-                                    if (seriesDataRecordDocument.getData() == null) continue;
+        List<SeriesDataRecord> remoteDataRecords = mRemoteDatabase.seriesDataRecordsDao().getAllRecordsAlt();
 
-                                    final SeriesDataRecord remoteSeriesDataRecord =
-                                            SeriesDataRecord.parseMediaRecord(seriesDataRecordDocument);
-
-                                    //if local user lists do not contain remote user lists: add user list to local database
-                                    if (!localSeriesDataRecords.contains(remoteSeriesDataRecord)) {
-                                        mDatabase.seriesDataRecordsDao().addRecord(remoteSeriesDataRecord);
-                                    }
-                                }
-
-                                onPullSeriesDataRecordsComplete();
-                            }
-                        });
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
+        //iterate through remote seriesDataRecordSnapshots
+        //if local series data records do not contain remote series data records: add series data record to local database
+        for (SeriesDataRecord seriesDataRecord: remoteDataRecords) {
+            //if local user lists do not contain remote user lists: add user list to local database
+            if (!localSeriesDataRecords.contains(seriesDataRecord)) {
+                mLocalDatabase.seriesDataRecordsDao().addRecord(seriesDataRecord);
             }
-        });
+        }
+
+        onPullSeriesDataRecordsComplete();
     }
 
     //pull remotely saved movie notifiers to local database
@@ -466,40 +332,20 @@ public class FreeModeMigrationService extends JobIntentService {
         //if local movie data records do not contain remote movie data records: add movie data record to local database
 
         //get locally saved movie data records
-        final List<MovieNotifier> localMovieNotifiers = mDatabase.movieNotifierDao().getAllNotifiersAlt();
-
+        final List<MovieNotifier> localMovieNotifiers = mLocalDatabase.movieNotifierDao().getAllNotifiersAlt();
         //get remotely saved movie data records
-        FirebaseMovieNotifiersDao.getAllNotifiers()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(final QuerySnapshot movieNotifierSnapshots) {
-                        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                //iterate through remote movieNotifierSnapshots
-                                //if local movie data records do not contain remote movie data records: add movie data record to local database
-                                for (DocumentSnapshot movieNotifierDocument: movieNotifierSnapshots.getDocuments()) {
-                                    if (movieNotifierDocument.getData() == null) continue;
+        List<MovieNotifier> remoteNotifiers = mRemoteDatabase.movieNotifierDao().getAllNotifiersAlt();
 
-                                    final MovieNotifier remoteMovieNotifier =
-                                            MovieNotifier.parseMediaNotifier(movieNotifierDocument);
-
-                                    //if local user lists do not contain remote user lists: add user list to local database
-                                    if (!localMovieNotifiers.contains(remoteMovieNotifier)) {
-                                        mDatabase.movieNotifierDao().addMediaNotifier(remoteMovieNotifier);
-                                    }
-                                }
-
-                                onPullMovieNotifiersComplete();
-                            }
-                        });
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
+        //iterate through remote movieNotifierSnapshots
+        //if local movie data records do not contain remote movie data records: add movie data record to local database
+        for (MovieNotifier movieNotifier: remoteNotifiers) {
+            //if local user lists do not contain remote user lists: add user list to local database
+            if (!localMovieNotifiers.contains(movieNotifier)) {
+                mLocalDatabase.movieNotifierDao().addMediaNotifier(movieNotifier);
             }
-        });
+        }
+
+        onPullMovieNotifiersComplete();
     }
 
     //pull remotely saved series notifiers to local database
@@ -510,40 +356,20 @@ public class FreeModeMigrationService extends JobIntentService {
         //if local series data records do not contain remote series data records: add series data record to local database
 
         //get locally saved series data records
-        final List<SeriesNotifier> localSeriesNotifiers = mDatabase.seriesNotifierDao().getAllNotifiersAlt();
-
+        final List<SeriesNotifier> localSeriesNotifiers = mLocalDatabase.seriesNotifierDao().getAllNotifiersAlt();
         //get remotely saved series data records
-        FirebaseSeriesNotifiersDao.getAllNotifiers()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(final QuerySnapshot seriesNotifierSnapshots) {
-                        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                //iterate through remote seriesNotifierSnapshots
-                                //if local series data records do not contain remote series data records: add series data record to local database
-                                for (DocumentSnapshot seriesNotifierDocument: seriesNotifierSnapshots.getDocuments()) {
-                                    if (seriesNotifierDocument.getData() == null) continue;
+        List<SeriesNotifier> remoteNotifiers = mRemoteDatabase.seriesNotifierDao().getAllNotifiersAlt();
 
-                                    final SeriesNotifier remoteSeriesNotifier =
-                                            SeriesNotifier.parseMediaNotifier(seriesNotifierDocument);
-
-                                    //if local user lists do not contain remote user lists: add user list to local database
-                                    if (!localSeriesNotifiers.contains(remoteSeriesNotifier)) {
-                                        mDatabase.seriesNotifierDao().addMediaNotifier(remoteSeriesNotifier);
-                                    }
-                                }
-
-                                onPullSeriesNotifiersComplete();
-                            }
-                        });
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
+        //iterate through remote seriesNotifierSnapshots
+        //if local series data records do not contain remote series data records: add series data record to local database
+        for (SeriesNotifier seriesNotifier: remoteNotifiers) {
+            //if local user lists do not contain remote user lists: add user list to local database
+            if (!localSeriesNotifiers.contains(seriesNotifier)) {
+                mLocalDatabase.seriesNotifierDao().addMediaNotifier(seriesNotifier);
             }
-        });
+        }
+
+        onPullSeriesNotifiersComplete();
     }
 
     private void deleteRemotelySavedData() {

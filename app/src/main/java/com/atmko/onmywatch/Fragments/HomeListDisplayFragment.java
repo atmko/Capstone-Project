@@ -13,7 +13,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,7 +23,6 @@ import com.atmko.onmywatch.adapters.CustomParams;
 import com.atmko.onmywatch.adapters.MediaDataAdapter;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MediaData;
-import com.atmko.onmywatch.view_models.FirebaseHomeListDisplayViewModel;
 import com.atmko.onmywatch.view_models.HomeListDisplayViewModel;
 import com.atmko.onmywatch.view_models.HomeListDisplayViewModelFactory;
 
@@ -100,23 +98,10 @@ public class HomeListDisplayFragment extends Fragment
         HomeListDisplayViewModelFactory homeListDisplayViewModelFactory =
                 new HomeListDisplayViewModelFactory(database, mListName);
 
-        final ViewModel listsViewModel;
-        final LiveData<List> displayListLiveData;
-
-        if (MasterActivity.isProMode()) {
-            listsViewModel = ViewModelProviders.of(this, homeListDisplayViewModelFactory)
-                    .get(FirebaseHomeListDisplayViewModel.class);
-
-            //noinspection unchecked
-            displayListLiveData = ((FirebaseHomeListDisplayViewModel) listsViewModel).getHomeDisplayList();
-
-        } else {
-            listsViewModel = ViewModelProviders.of(this, homeListDisplayViewModelFactory)
-                    .get(HomeListDisplayViewModel.class);
-
-            //noinspection unchecked
-            displayListLiveData = ((HomeListDisplayViewModel) listsViewModel).getHomeDisplayList();
-        }
+        final HomeListDisplayViewModel listsViewModel = ViewModelProviders.of(this, homeListDisplayViewModelFactory)
+                .get(HomeListDisplayViewModel.class);
+        //noinspection unchecked
+        final LiveData<List> displayListLiveData = listsViewModel.getHomeDisplayList();
 
         displayListLiveData.observe(this, new Observer<List>() {
             @Override

@@ -40,7 +40,6 @@ import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.PersonData;
 import com.atmko.onmywatch.models.SimpleIdlingResource;
 import com.atmko.onmywatch.utils.network_utils.FreeModeMigrationService;
-import com.atmko.onmywatch.utils.network_utils.work_manager_workers.FirebaseUpdateMediaWorker;
 import com.atmko.onmywatch.utils.network_utils.ProModeMigrationService;
 import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
 import com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker;
@@ -195,8 +194,6 @@ public class MasterActivity extends AppCompatActivity {
                 getSupportFragmentManager().findFragmentById(R.id.detail_fragments_container);
         if (detailsFragment != null) getSupportFragmentManager().beginTransaction().remove(detailsFragment);
 
-        getSupportFragmentManager().executePendingTransactions();
-
         //start ui
         startHomeFragment();
         //start background work managers
@@ -210,6 +207,8 @@ public class MasterActivity extends AppCompatActivity {
                 launchDetailsFromIntent(intent, extras);
             }
         }
+
+        getSupportFragmentManager().executePendingTransactions();
     }
 
     private void startSignInActivity() {
@@ -336,23 +335,11 @@ public class MasterActivity extends AppCompatActivity {
                 .setRequiresStorageNotLow(true)
                 .build();
 
-        PeriodicWorkRequest updateMediaDataRequest;
-
-        if (isProMode()) {
-            updateMediaDataRequest =
-                    new PeriodicWorkRequest.Builder(
-                            FirebaseUpdateMediaWorker.class, REPEAT_INTERVAL, TimeUnit.HOURS)
-                            .setConstraints(constraints)
-                            .setInitialDelay(INITIAL_DELAY, TimeUnit.MINUTES)
-                            .build();
-        } else {
-            updateMediaDataRequest =
-                    new PeriodicWorkRequest.Builder(
-                            UpdateMediaWorker.class, REPEAT_INTERVAL, TimeUnit.HOURS)
-                            .setConstraints(constraints)
-                            .setInitialDelay(INITIAL_DELAY, TimeUnit.MINUTES)
-                            .build();
-        }
+        PeriodicWorkRequest updateMediaDataRequest = new PeriodicWorkRequest.Builder(
+                UpdateMediaWorker.class, REPEAT_INTERVAL, TimeUnit.HOURS)
+                .setConstraints(constraints)
+                .setInitialDelay(INITIAL_DELAY, TimeUnit.MINUTES)
+                .build();
 
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
                 UPDATE_MEDIA_WORKER_KEY, ExistingPeriodicWorkPolicy.KEEP, updateMediaDataRequest);

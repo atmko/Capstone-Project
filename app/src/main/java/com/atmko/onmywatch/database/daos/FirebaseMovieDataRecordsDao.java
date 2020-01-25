@@ -4,20 +4,36 @@
 
 package com.atmko.onmywatch.database.daos;
 
+import androidx.annotation.Nullable;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.models.MediaRecord;
+import com.atmko.onmywatch.models.MovieData;
+import com.atmko.onmywatch.models.MovieDataRecord;
 import com.atmko.onmywatch.models.UserListModel;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
+import static com.atmko.onmywatch.database.FirebaseDatabase.getFirstDocument;
+import static com.atmko.onmywatch.database.daos.FirebaseMovieDataDao.MOVIES_COLLECTION_PATH;
+import static com.atmko.onmywatch.database.daos.FirebaseMovieDataDao.parseDataMapToMediaData;
+import static com.atmko.onmywatch.database.daos.FirebaseUserListDao.USER_LISTS_PATH;
+import static com.atmko.onmywatch.database.daos.FirebaseUserListDao.parseUserListModel;
 import static com.atmko.onmywatch.models.ListModel.LIST_NAME_KEY;
 import static com.atmko.onmywatch.utils.api_utils.ApiConstants.ID_KEY;
 
@@ -25,87 +41,412 @@ import static com.atmko.onmywatch.utils.api_utils.ApiConstants.ID_KEY;
  * MovieDataRecords firebase Dao
  */
 
-public class FirebaseMovieDataRecordsDao {
+public class FirebaseMovieDataRecordsDao implements MovieDataRecordsDao {
 
     private static final String MOVIE_DATA_RECORDS_COLLECTION_PATH = "movie_data_records";
 
-    public static Task<Void> addMovieDataRecordBatch(List<Map<String, Object>> watchListMaps) {
+    @Override
+    public void addRecord(MovieDataRecord movieDataRecord) {
+        Task<DocumentReference> task = MasterActivity.getUserDbHomeReference()
+                .collection(MOVIE_DATA_RECORDS_COLLECTION_PATH)
+                .add(movieDataRecord.parseListModelToDataMap());
+
+        try {
+            movieDataRecord.setUniqueExternalId(Tasks.await(task).getId());
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void addMovieDataRecordBatch(List<Map<String, Object>> watchListMaps) {
         final WriteBatch batch = FirebaseFirestore.getInstance().batch();
 
-        for (Map<String, Object> watchListMap: watchListMaps) {
+        for (Map<String, Object> recordMap: watchListMaps) {
             DocumentReference documentReference = MasterActivity.getUserDbHomeReference()
                     .collection(MOVIE_DATA_RECORDS_COLLECTION_PATH)
                     .document();
 
-            batch.set(documentReference, watchListMap);
+            batch.set(documentReference, recordMap);
         }
 
-        return batch.commit();
-    }
-
-    public static Task<QuerySnapshot> getAllMovieDataRecords() {
-        return MasterActivity.getUserDbHomeReference()
-                .collection(MOVIE_DATA_RECORDS_COLLECTION_PATH)
-                .get();
-    }
-
-    public static Task<Void> addAndDeleteMediaListRecords(List<MediaRecord> mediaRecords,
-                                                          List<UserListModel> originalContainingLists,
-                                                          List<UserListModel> newContainingLists,
-                                                          String mediaId) {
-        final WriteBatch batch = FirebaseFirestore.getInstance().batch();
-
-        for (UserListModel userListModel : newContainingLists) {
-            Map<String, Object> mediaRecordMap = new HashMap<>();
-
-            if (!originalContainingLists.contains(userListModel)) {
-                //add the media record
-                mediaRecordMap.put(LIST_NAME_KEY, userListModel.getName());
-                mediaRecordMap.put(ID_KEY, mediaId);
-
-                DocumentReference documentReference =
-                        MasterActivity.getUserDbHomeReference()
-                                .collection(MOVIE_DATA_RECORDS_COLLECTION_PATH)
-                                .document();
-
-                batch.set(documentReference, mediaRecordMap);
-            }
+        try {
+            Tasks.await(batch.commit());
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-
-        for (UserListModel userListModel : originalContainingLists) {
-            if (!newContainingLists.contains(userListModel)) {
-                int correspondingRecordIndex = originalContainingLists.indexOf(userListModel);
-                MediaRecord correspondingRecord = mediaRecords.get(correspondingRecordIndex);
-
-                //delete the media record
-                DocumentReference documentReference =
-                        MasterActivity.getUserDbHomeReference()
-                                .collection(MOVIE_DATA_RECORDS_COLLECTION_PATH)
-                                .document(correspondingRecord.getDocumentId());
-
-                batch.delete(documentReference);
-            }
-        }
-
-        return batch.commit();
     }
 
-    public static Task<QuerySnapshot> getAllRecordsOfMedia(String mediaId) {
-        return MasterActivity.getUserDbHomeReference()
+    @Override
+    public MovieDataRecord getRecordByIdAlt(String mediaId, String listName) {
+        MovieDataRecord record = null;
+
+        Task<QuerySnapshot> task = MasterActivity.getUserDbHomeReference()
                 .collection(MOVIE_DATA_RECORDS_COLLECTION_PATH)
                 .whereEqualTo(ID_KEY, mediaId)
+                .whereEqualTo(LIST_NAME_KEY, listName)
                 .get();
+
+        try {
+            QuerySnapshot snapshots = Tasks.await(task);
+            DocumentSnapshot documentSnapshot = getFirstDocument(snapshots);
+
+            if (documentSnapshot != null) {
+                record = parseMediaRecord(documentSnapshot);
+            }
+
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return record;
     }
 
-    public static Query getAllListsContainingMedia(String mediaId) {
-        return MasterActivity.getUserDbHomeReference()
+    @Override
+    public List<MovieDataRecord> getAllRecordsAlt() {
+        List<MovieDataRecord> records = new ArrayList<>();
+
+        Task<QuerySnapshot> task = MasterActivity.getUserDbHomeReference()
                 .collection(MOVIE_DATA_RECORDS_COLLECTION_PATH)
-                .whereEqualTo(ID_KEY, mediaId);
+                .get();
+
+        try {
+            QuerySnapshot snapshots = Tasks.await(task);
+            for (DocumentSnapshot documentSnapshot: snapshots.getDocuments()) {
+                MovieDataRecord record = parseMediaRecord(documentSnapshot);
+                records.add(record);
+            }
+
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return records;
     }
 
-    public static Query getAllMoviesInList(String listName) {
-        return MasterActivity.getUserDbHomeReference()
+    @Override
+    public LiveData<List<MovieData>> getAllMoviesInList(String listId) {
+        final MutableLiveData<List<MovieData>> liveData = new MutableLiveData<>();
+
+        Query query = MasterActivity.getUserDbHomeReference()
                 .collection(MOVIE_DATA_RECORDS_COLLECTION_PATH)
-                .whereEqualTo(LIST_NAME_KEY, listName);
+                .whereEqualTo(LIST_NAME_KEY, listId);
+
+        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
+                final List<MediaRecord> records = new ArrayList<>();
+
+                if (snapshots != null) {
+                    List<DocumentSnapshot> documents = snapshots.getDocuments();
+
+                    for (DocumentSnapshot document: documents) {
+                        if (document.getData() == null) continue;
+
+                        MovieDataRecord record = parseMediaRecord(document);
+
+                        records.add(record);
+                    }
+                }
+
+                Query query = MasterActivity.getUserDbHomeReference()
+                        .collection(MOVIES_COLLECTION_PATH);
+
+                query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
+                        final List<MovieData> mediaList = new ArrayList<>();
+
+                        if (snapshots != null) {
+                            List<DocumentSnapshot> documents = snapshots.getDocuments();
+
+                            for (DocumentSnapshot document: documents) {
+                                if (document.getData() == null) continue;
+
+                                MovieData mediaData = parseDataMapToMediaData(document);
+
+                                mediaList.add(mediaData);
+                            }
+                        }
+
+                        List<MovieData> finalMediaList = new ArrayList<>();
+
+                        List<String> mediaNames = MediaRecord.extractMediaNames(records);
+
+                        for (MovieData mediaData: mediaList) {
+                            if (mediaNames.contains(mediaData.getId())) {
+                                finalMediaList.add(mediaData);
+                            }
+                        }
+
+                        //set lists
+                        liveData.setValue(finalMediaList);
+                    }
+                });
+            }
+        });
+
+        return liveData;
+    }
+
+    @Override
+    public List<MovieData> getAllMoviesInListAlt(String listId) {
+        List<MovieData> finalMediaList = new ArrayList<>();
+
+        Task<QuerySnapshot> task = MasterActivity.getUserDbHomeReference()
+                .collection(MOVIE_DATA_RECORDS_COLLECTION_PATH)
+                .whereEqualTo(LIST_NAME_KEY, listId)
+                .get();
+
+        Task<QuerySnapshot> task2 = MasterActivity.getUserDbHomeReference()
+                .collection(MOVIES_COLLECTION_PATH)
+                .get();
+
+        try {
+            QuerySnapshot snapshots = Tasks.await(task);
+            QuerySnapshot snapshots2 = Tasks.await(task2);
+
+            List<MediaRecord> records = new ArrayList<>();
+            List<MovieData> mediaList = new ArrayList<>();
+
+            for (DocumentSnapshot documentSnapshot: snapshots.getDocuments()) {
+                MovieDataRecord record = parseMediaRecord(documentSnapshot);
+                records.add(record);
+            }
+
+            for (DocumentSnapshot documentSnapshot: snapshots2.getDocuments()) {
+                MovieData mediaData = parseDataMapToMediaData(documentSnapshot);
+                mediaList.add(mediaData);
+            }
+
+            List<String> mediaNames = MediaRecord.extractMediaNames(records);
+
+            for (MovieData mediaData: mediaList) {
+                if (mediaNames.contains(mediaData.getId())) {
+                    finalMediaList.add(mediaData);
+                }
+            }
+
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return finalMediaList;
+    }
+
+    @Override
+    public LiveData<List<MovieData>> getMoviesWithNameLike(String listId, String mediaTitle) {
+        return null;
+    }
+
+    @Override
+    public List<MovieDataRecord> getAllRecordsOfListAlt(String listId) {
+        List<MovieDataRecord> records = new ArrayList<>();
+
+        Task<QuerySnapshot> task = MasterActivity.getUserDbHomeReference()
+                .collection(MOVIE_DATA_RECORDS_COLLECTION_PATH)
+                .whereEqualTo(LIST_NAME_KEY, listId)
+                .get();
+
+        try {
+            QuerySnapshot snapshots = Tasks.await(task);
+            for (DocumentSnapshot documentSnapshot: snapshots.getDocuments()) {
+                MovieDataRecord record = parseMediaRecord(documentSnapshot);
+                records.add(record);
+            }
+
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return records;
+    }
+
+    @Override
+    public LiveData<List<String>> getAllListNamesContainingMedia(String movieId) {
+        final MutableLiveData<List<String>> liveData = new MutableLiveData<>();
+
+        Query query = MasterActivity.getUserDbHomeReference()
+                .collection(MOVIE_DATA_RECORDS_COLLECTION_PATH)
+                .whereEqualTo(LIST_NAME_KEY, movieId);
+
+        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
+                final List<MediaRecord> records = new ArrayList<>();
+
+                if (snapshots != null) {
+                    List<DocumentSnapshot> documents = snapshots.getDocuments();
+
+                    for (DocumentSnapshot document: documents) {
+                        if (document.getData() == null) continue;
+
+                        MovieDataRecord record = parseMediaRecord(document);
+
+                        records.add(record);
+                    }
+                }
+
+                List<String> listNames = MediaRecord.extractListNames(records);
+
+                //set lists
+                liveData.setValue(listNames);
+            }
+        });
+
+        return liveData;
+    }
+
+    @Override
+    public LiveData<List<UserListModel>> getAllListsContainingMedia(String movieId) {
+        final MutableLiveData<List<UserListModel>> liveData = new MutableLiveData<>();
+
+        Query query = MasterActivity.getUserDbHomeReference()
+                .collection(MOVIE_DATA_RECORDS_COLLECTION_PATH)
+                .whereEqualTo(ID_KEY, movieId);
+
+        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
+                final List<MediaRecord> records = new ArrayList<>();
+
+                if (snapshots != null) {
+                    List<DocumentSnapshot> documents = snapshots.getDocuments();
+
+                    for (DocumentSnapshot document: documents) {
+                        if (document.getData() == null) continue;
+
+                        MovieDataRecord record = parseMediaRecord(document);
+
+                        records.add(record);
+                    }
+                }
+
+                Query query = MasterActivity.getUserDbHomeReference()
+                        .collection(USER_LISTS_PATH);
+
+                query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
+                        final List<UserListModel> lists = new ArrayList<>();
+
+                        if (snapshots != null) {
+                            List<DocumentSnapshot> documents = snapshots.getDocuments();
+
+                            for (DocumentSnapshot document: documents) {
+                                if (document.getData() == null) continue;
+
+                                UserListModel listModel = parseUserListModel(document);
+
+                                lists.add(listModel);
+                            }
+                        }
+
+                        List<UserListModel> finalLists = new ArrayList<>();
+
+                        List<String> listNames = MediaRecord.extractListNames(records);
+
+                        for (UserListModel listModel: lists) {
+                            if (listNames.contains(listModel.getName())) {
+                                finalLists.add(listModel);
+                            }
+                        }
+
+                        //set lists
+                        liveData.setValue(finalLists);
+                    }
+                });
+            }
+        });
+
+        return liveData;
+    }
+
+    //todo: separate this method into two separate live data queries later combined together in...
+    // add to list view model. This is in order to avoid 2nd query of records to get document ids for...
+    // deletion, etc , also saving quota
+    @Override
+    public List<UserListModel> getAllListsContainingMediaAlt(String movieId) {
+        List<UserListModel> finalLists = new ArrayList<>();
+
+        Task<QuerySnapshot> task = MasterActivity.getUserDbHomeReference()
+                .collection(MOVIE_DATA_RECORDS_COLLECTION_PATH)
+                .whereEqualTo(ID_KEY, movieId)
+                .get();
+
+        Task<QuerySnapshot> task2 = MasterActivity.getUserDbHomeReference()
+                .collection(USER_LISTS_PATH)
+                .get();
+
+        try {
+            QuerySnapshot snapshots = Tasks.await(task);
+            QuerySnapshot snapshots2 = Tasks.await(task2);
+
+            List<MediaRecord> records = new ArrayList<>();
+            List<UserListModel> lists = new ArrayList<>();
+
+            for (DocumentSnapshot documentSnapshot: snapshots.getDocuments()) {
+                MovieDataRecord record = parseMediaRecord(documentSnapshot);
+                records.add(record);
+            }
+
+            for (DocumentSnapshot documentSnapshot: snapshots2.getDocuments()) {
+                UserListModel listModel = parseUserListModel(documentSnapshot);
+                lists.add(listModel);
+            }
+
+            List<String> listNames = MediaRecord.extractListNames(records);
+
+            for (UserListModel listModel: lists) {
+                if (listNames.contains(listModel.getName())) {
+                    finalLists.add(listModel);
+                }
+            }
+
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return finalLists;
+    }
+
+    @Override
+    public void deleteRecord(MovieDataRecord movieDataRecord) {
+        Task<Void> task = MasterActivity.getUserDbHomeReference()
+                .collection(MOVIE_DATA_RECORDS_COLLECTION_PATH)
+                .document(movieDataRecord.getUniqueExternalId())
+                .delete();
+
+        try {
+            Tasks.await(task);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    private static MovieDataRecord parseMediaRecord(DocumentSnapshot document) {
+        MovieDataRecord mediaRecord = new MovieDataRecord(
+                (String) document.get(ID_KEY),
+                (String) document.get(LIST_NAME_KEY)
+        );
+
+        mediaRecord.setUniqueExternalId(document.getId());
+        return mediaRecord;
     }
 }

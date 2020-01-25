@@ -27,15 +27,8 @@ public class RateViewModelFactory extends ViewModelProvider.NewInstanceFactory {
     @Override
     public @NonNull
     <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        if (MasterActivity.isProMode()) {
-            //noinspection unchecked
-            return (T) new FirebaseRateViewModel(
-                    mMediaType, mMediaId);
-
-        } else {
-            //noinspection unchecked
-            return (T) new RateViewModel(
-                    mDatabase, mMediaType, mMediaId);
-        }
+        //noinspection unchecked
+        return (T) new RateViewModel(
+                mDatabase, mMediaType, mMediaId);
     }
 }

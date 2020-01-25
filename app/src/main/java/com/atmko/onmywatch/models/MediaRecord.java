@@ -11,6 +11,9 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Ignore;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity(primaryKeys = {"media_id", "list_id"},
         foreignKeys =
                 {@ForeignKey(entity = MovieData.class, parentColumns = "id", childColumns = "media_id"),
@@ -23,7 +26,8 @@ abstract public class MediaRecord {
     @ColumnInfo(name = "media_id") String mId;
     @NonNull
     @ColumnInfo(name = "list_id") String mListName;
-    @Ignore private String documentId;
+
+    @Ignore private String mUniqueExternalId;
 
     @NonNull
     public String getId() {
@@ -43,12 +47,32 @@ abstract public class MediaRecord {
         this.mListName = listName;
     }
 
-    public String getDocumentId() {
-        return documentId;
+    public String getUniqueExternalId() {
+        return mUniqueExternalId;
     }
 
-    public void setDocumentId(String documentId) {
-        this.documentId = documentId;
+    public void setUniqueExternalId(String mDocumentId) {
+        this.mUniqueExternalId = mDocumentId;
+    }
+
+    public static List<String> extractMediaNames(List<MediaRecord> mediaRecords) {
+        List<String> extractedNames = new ArrayList<>();
+
+        for (MediaRecord mediaRecord: mediaRecords) {
+            extractedNames.add(mediaRecord.getId());
+        }
+
+        return extractedNames;
+    }
+
+    public static List<String> extractListNames(List<MediaRecord> mediaRecords) {
+        List<String> extractedNames = new ArrayList<>();
+
+        for (MediaRecord mediaRecord: mediaRecords) {
+            extractedNames.add(mediaRecord.getListName());
+        }
+
+        return extractedNames;
     }
 
     @Override

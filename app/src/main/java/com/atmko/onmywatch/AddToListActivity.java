@@ -11,7 +11,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
@@ -23,7 +22,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -42,17 +40,16 @@ import com.atmko.onmywatch.models.SeriesDataRecord;
 import com.atmko.onmywatch.models.SimpleIdlingResource;
 import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.models.WatchListModel;
-import com.atmko.onmywatch.utils.api_utils.MovieDataParser;
-import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
-import com.atmko.onmywatch.utils.api_utils.SeriesDataParser;
-import com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker;
 import com.atmko.onmywatch.utils.UpdateNotifierService;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
-import com.atmko.onmywatch.utils.network_utils.AppExecutors;
+import com.atmko.onmywatch.utils.api_utils.MovieDataParser;
 import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
+import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
+import com.atmko.onmywatch.utils.api_utils.SeriesDataParser;
+import com.atmko.onmywatch.utils.network_utils.AppExecutors;
+import com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker;
 import com.atmko.onmywatch.view_models.AddToListViewModel;
 import com.atmko.onmywatch.view_models.AddToListViewModelFactory;
-import com.atmko.onmywatch.view_models.FirebaseAddToListViewModel;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.parceler.Parcels;
@@ -188,57 +185,19 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
             }
         });
 
-        //configure save button
         mSaveButton = findViewById(R.id.save_button);
-        mSaveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (MasterActivity.isProMode()) {
-                    AddToListFirebaseHelper.saveFirebaseData(
-                            mMediaData,
-                            mMediaType,
-                            mOldWatchStatus,
-                            mSelectedWatchStatus,
-                            mOriginalContainingLists,
-                            mNewContainingLists);
-
-                } else {
-                    getDetailsAndUpdateData();
-                }
-
-                //exit activity
-                finish();
-            }
-        });
     }
 
     private void observeViewModel() {
-        final ViewModel viewModel;
-        final LiveData<Integer> watchStatusLiveData;
-        final LiveData<List<UserListModel>> allUserListLiveData;
-        final LiveData<List<UserListModel>> containingUserListLiveData;
-
         AddToListViewModelFactory addToListViewModelFactory =
                 new AddToListViewModelFactory(mDatabase, mMediaType, mMediaData.getId());
 
-        if (MasterActivity.isProMode()) {
-            //create view model
-            viewModel = ViewModelProviders.of(this, addToListViewModelFactory)
-                    .get(FirebaseAddToListViewModel.class);
-
-            watchStatusLiveData = ((FirebaseAddToListViewModel) viewModel).getWatchStatus();
-            allUserListLiveData = ((FirebaseAddToListViewModel) viewModel).getAllUserLists();
-            containingUserListLiveData = ((FirebaseAddToListViewModel) viewModel).getContainingLists();
-
-        } else {
-            //create view model
-            viewModel = ViewModelProviders.of(this, addToListViewModelFactory)
-                    .get(AddToListViewModel.class);
-
-            watchStatusLiveData = ((AddToListViewModel) viewModel).getWatchStatus();
-            allUserListLiveData = ((AddToListViewModel) viewModel).getAllUserLists();
-            containingUserListLiveData = ((AddToListViewModel) viewModel).getContainingLists();
-        }
+        //create view model
+        final AddToListViewModel viewModel = ViewModelProviders.of(this, addToListViewModelFactory)
+                .get(AddToListViewModel.class);
+        final LiveData<Integer> watchStatusLiveData = viewModel.getWatchStatus();
+        final LiveData<List<UserListModel>> allUserListLiveData = viewModel.getAllUserLists();
+        final LiveData<List<UserListModel>> containingUserListLiveData = viewModel.getContainingLists();
 
         //observe live data of media's watch status
         watchStatusLiveData.observe(this, new Observer<Integer>() {
@@ -280,35 +239,35 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
                 if (allUserLists != null) {
                     //observe live data of lists containing media
                     containingUserListLiveData.observe(AddToListActivity.this, new Observer<List<UserListModel>>() {
-                            @Override
-                            public void onChanged(List<UserListModel> containingLists) {
-                                //if media is contained in user list(s)
-                                if (containingLists != null) {
-                                    mOriginalContainingLists = ((ArrayList<UserListModel>) containingLists);
+                        @Override
+                        public void onChanged(List<UserListModel> containingLists) {
+                            //if media is contained in user list(s)
+                            if (containingLists != null) {
+                                mOriginalContainingLists = ((ArrayList<UserListModel>) containingLists);
 
-                                } else {
-                                    mOriginalContainingLists = new ArrayList<>();
+                            } else {
+                                mOriginalContainingLists = new ArrayList<>();
 
-                                }
-
-                                //define mNewContainingLists
-                                if (mSavedInstanceState == null) {
-                                    mNewContainingLists = new ArrayList<>(mOriginalContainingLists);
-
-                                } else {
-                                    mNewContainingLists =
-                                            Parcels.unwrap(mSavedInstanceState
-                                                    .getParcelable(NEW_CONTAINING_LIST_KEY));
-                                }
-
-                                //setting adapter here avoids null pointer crash when restoring app...
-                                // after app is killed
-                                mRecyclerView.setAdapter(mAdapter);
-
-                                //update list so onCheckDatabaseRecords function can run
-                                mAdapter.getAdapterData().clear();
-                                mAdapter.addAdapterData(allUserLists);
                             }
+
+                            //define mNewContainingLists
+                            if (mSavedInstanceState == null) {
+                                mNewContainingLists = new ArrayList<>(mOriginalContainingLists);
+
+                            } else {
+                                mNewContainingLists =
+                                        Parcels.unwrap(mSavedInstanceState
+                                                .getParcelable(NEW_CONTAINING_LIST_KEY));
+                            }
+
+                            //setting adapter here avoids null pointer crash when restoring app...
+                            // after app is killed
+                            mRecyclerView.setAdapter(mAdapter);
+
+                            //update list so onCheckDatabaseRecords function can run
+                            mAdapter.getAdapterData().clear();
+                            mAdapter.addAdapterData(allUserLists);
+                        }
                     });
                     //else if no user list(s) exist
                 } else {

@@ -11,6 +11,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
+import com.atmko.onmywatch.models.MovieDataRecord;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesDataRecord;
 import com.atmko.onmywatch.models.UserListModel;
@@ -21,6 +22,10 @@ import java.util.List;
 public interface SeriesDataRecordsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void addRecord(SeriesDataRecord seriesDataRecord);
+
+    //alternate method without live data
+    @Query("SELECT * FROM series_data_records WHERE media_id = :mediaId AND list_id = :listName")
+    SeriesDataRecord getRecordByIdAlt(String mediaId, String listName);
 
     //alternate method without live data
     @Query("SELECT * FROM series_data_records")

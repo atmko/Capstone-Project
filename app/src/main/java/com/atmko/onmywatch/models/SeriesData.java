@@ -15,7 +15,6 @@ import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.database.Converters;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 import com.atmko.onmywatch.utils.api_utils.SeriesApiConstants;
-import com.atmko.onmywatch.utils.network_utils.TraktApiConstants;
 
 import org.parceler.Parcel;
 
@@ -135,35 +134,5 @@ public class SeriesData extends MediaData{
                 Converters.scheduledMediaToLong(getNextEpisodeToAir()));
 
         return firebaseMediaDataMap;
-    }
-
-    @SuppressWarnings({"ConstantConditions", "unchecked"})
-    public static SeriesData parseDataMapToMediaData(Map<String, Object> firebaseDataMap) {
-        Episode episode = firebaseDataMap.get(NEXT_EPISODE_KEY) == null ? null
-                : Converters.longToEpisode((long) firebaseDataMap.get(NEXT_EPISODE_KEY));
-
-        SeriesData seriesData = new SeriesData(
-                (String) firebaseDataMap.get(ApiConstants.ID_KEY),
-                ((String) firebaseDataMap.get(TraktApiConstants.TRAKT_ID_KEY)),
-                (String) firebaseDataMap.get(ApiConstants.VOTE_AVERAGE_KEY),
-                (String) firebaseDataMap.get(SeriesApiConstants.NAME_KEY),
-                (String) firebaseDataMap.get(ApiConstants.POSTER_PATH_KEY),
-                (String) firebaseDataMap.get(ApiConstants.ORIG_LANG_KEY),
-                (String) firebaseDataMap.get(SeriesApiConstants.ORIG_NAME_KEY),
-                (ArrayList<String>) firebaseDataMap.get(SeriesApiConstants.ORIGIN_COUNTRY_KEY),
-                (ArrayList<String>) firebaseDataMap.get(ApiConstants.GENRES_KEY),
-                (String) firebaseDataMap.get(ApiConstants.BACKDROP_PATH_KEY),
-                (String) firebaseDataMap.get(ApiConstants.OVERVIEW_KEY),
-                (String) firebaseDataMap.get(SeriesApiConstants.FIRST_AIR_DATE_KEY),
-                (String) firebaseDataMap.get(ApiConstants.RELEASE_STATUS_KEY),
-                episode
-        );
-
-        seriesData.setWatchStatus(
-                ((Long) firebaseDataMap.get(MediaData.WATCH_STATUS_KEY)).intValue());
-        seriesData.setUserRating(
-                ((Long) firebaseDataMap.get(MediaData.USER_RATING_KEY)).intValue());
-
-        return seriesData;
     }
 }

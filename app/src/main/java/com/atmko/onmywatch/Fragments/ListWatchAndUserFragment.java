@@ -18,7 +18,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,14 +27,10 @@ import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.adapters.ListsAdapter;
 import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.atmko.onmywatch.models.ListModel;
-import com.atmko.onmywatch.database.daos.FirebaseUserListDao;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
-import com.atmko.onmywatch.view_models.FirebaseListsWatchAndUserViewModel;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.UserListsAdapter;
@@ -44,7 +39,8 @@ import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.models.WatchListModel;
 import com.atmko.onmywatch.view_models.ListsWatchAndUserViewModel;
-import com.google.android.material.snackbar.Snackbar;
+
+import org.parceler.Parcels;
 
 import java.util.List;
 
@@ -141,7 +137,7 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
                 @Override
                 public void onClick(View v) {
                     launchCreateListActivity(
-                            CreateListActivity.MODE_CREATE, null,"", 0);
+                    );
                 }
             });
         }
@@ -179,20 +175,9 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
     }
 
     private void observeData() {
-        ViewModel viewModel;
-        LiveData<List<WatchListModel>> watchListsLiveData;
-        LiveData<List<UserListModel>> userListsLiveData;
-
-        if (MasterActivity.isProMode()) {
-            viewModel = ViewModelProviders.of(getParentFragment()).get(FirebaseListsWatchAndUserViewModel.class);
-            watchListsLiveData = ((FirebaseListsWatchAndUserViewModel) viewModel).getWatchLists();
-            userListsLiveData = ((FirebaseListsWatchAndUserViewModel) viewModel).getUserLists();
-
-        } else {
-            viewModel = ViewModelProviders.of(getParentFragment()).get(ListsWatchAndUserViewModel.class);
-            watchListsLiveData = ((ListsWatchAndUserViewModel) viewModel).getWatchLists();
-            userListsLiveData = ((ListsWatchAndUserViewModel) viewModel).getUserLists();
-        }
+        ListsWatchAndUserViewModel viewModel = ViewModelProviders.of(getParentFragment()).get(ListsWatchAndUserViewModel.class);
+        LiveData<List<WatchListModel>> watchListsLiveData = viewModel.getWatchLists();
+        LiveData<List<UserListModel>> userListsLiveData = viewModel.getUserLists();
 
         if (mAdapter instanceof WatchListsAdapter) {
             watchListsLiveData.observe(getParentFragment(), new Observer<List<WatchListModel>>() {
@@ -279,11 +264,17 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
         }
     }
 
-    private void launchCreateListActivity(int mode, String listId, String listName, int itemCount) {
+    private void launchCreateListActivity() {
         Intent intent = new Intent(getActivity().getApplicationContext(), CreateListActivity.class);
-        intent.putExtra(CreateListActivity.MODE_KEY, mode);
-        intent.putExtra(ListModel.LIST_NAME_KEY, listName);
-        intent.putExtra(ListModel.ITEM_COUNT_KEY, itemCount);
+        intent.putExtra(CreateListActivity.MODE_KEY, CreateListActivity.MODE_CREATE);
+
+        startActivity(intent);
+    }
+
+    private void launchCreateListActivity(UserListModel userListModel) {
+        Intent intent = new Intent(getActivity().getApplicationContext(), CreateListActivity.class);
+        intent.putExtra(CreateListActivity.MODE_KEY, CreateListActivity.MODE_EDIT);
+        intent.putExtra(CreateListActivity.USER_LIST_KEY, Parcels.wrap(userListModel));
 
         startActivity(intent);
     }
@@ -291,7 +282,7 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
     @Override
     public void onItemClick(int position) {
         if (mAdapter.inPlaceholderMode()) {
-            launchCreateListActivity(CreateListActivity.MODE_CREATE, "", "", 0);
+            launchCreateListActivity();
 
             return;
         }
@@ -308,54 +299,27 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
 
     @Override
     public void onEditClick(ListModel userListModel) {
-        launchCreateListActivity(CreateListActivity.MODE_EDIT, userListModel.getDocumentId(),
-                userListModel.getName(), userListModel.getItemCount());
+        launchCreateListActivity(((UserListModel) userListModel));
     }
 
     @Override
     public void onDeleteClick(final ListModel userListModel) {
-        if (MasterActivity.isProMode()) {
-            FirebaseUserListDao.deleteUserList(userListModel.getDocumentId())
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            if (getActivity() != null) {
-                                Snackbar.make(getActivity().findViewById(R.id.top_layout),
-                                        getString(R.string.list_deleted_message),
-                                        Snackbar.LENGTH_LONG).show();
-                            }
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            if (getActivity() != null) {
-                                Snackbar.make(getActivity().findViewById(R.id.top_layout),
-                                        getString(R.string.list_delete_error_message),
-                                        Snackbar.LENGTH_LONG).show();
-                            }
-                        }
-                    });
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                List<MovieData> moviesInList = mDatabase.movieDataRecordsDao()
+                        .getAllMoviesInListAlt(userListModel.getName());
 
-        } else {
-            AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                @Override
-                public void run() {
-                    List<MovieData> moviesInList = mDatabase.movieDataRecordsDao()
-                            .getAllMoviesInListAlt(userListModel.getName());
+                List<SeriesData> seriesInList = mDatabase.seriesDataRecordsDao()
+                        .getAllSeriesInListAlt(userListModel.getName());
 
-                    List<SeriesData> seriesInList = mDatabase.seriesDataRecordsDao()
-                            .getAllSeriesInListAlt(userListModel.getName());
+                mDatabase.userListsDao().deleteList(((UserListModel) userListModel));
 
-                    mDatabase.userListsDao().deleteList(new UserListModel(userListModel.getName()));
+                maintainMoviesWatchListCountIntegrity(moviesInList);
 
-                    maintainMoviesWatchListCountIntegrity(moviesInList);
-
-                    maintainSeriesWatchListCountIntegrity(seriesInList);
-
-                }
-            });
-        }
+                maintainSeriesWatchListCountIntegrity(seriesInList);
+            }
+        });
     }
 
     private void maintainMoviesWatchListCountIntegrity(List<MovieData> moviesInList) {
@@ -370,14 +334,14 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
             if (containingLists.size() == 0 && movieData.getWatchStatus() == 0) {
                 mDatabase.movieDataDao().deleteMovieData(movieData);
 
-                if (getContext() == null) return;
+                if (getContext() == null) continue;
 
                 //subtract 1 from watch status list if deleted
                 WatchListModel watchList = mDatabase.watchListsDao().getListByNameAlt(
                         MediaData.getWatchStatusTitle(watchStatus, getContext()));
 
                 //ensure list has a value higher than zero
-                if (watchList.getItemCount() <= 0) return;
+                if (watchList.getItemCount() <= 0) continue;
 
                 watchList.setItemCount(watchList.getItemCount() - 1);
 
@@ -398,14 +362,14 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
             if (containingLists.size() == 0 && seriesData.getWatchStatus() == 0) {
                 mDatabase.seriesDataDao().deleteSeriesData(seriesData);
 
-                if (getContext() == null) return;
+                if (getContext() == null) continue;
 
                 //subtract 1 from watch status list if deleted
                 WatchListModel watchList = mDatabase.watchListsDao().getListByNameAlt(
                         MediaData.getWatchStatusTitle(watchStatus, getContext()));
 
                 //ensure list has a value higher than zero
-                if (watchList.getItemCount() <= 0) return;
+                if (watchList.getItemCount() <= 0) continue;
 
                 watchList.setItemCount(watchList.getItemCount() - 1);
 

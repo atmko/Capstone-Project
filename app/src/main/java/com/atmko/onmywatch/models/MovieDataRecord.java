@@ -8,8 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 
-import com.google.firebase.firestore.DocumentSnapshot;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,17 +26,6 @@ public class MovieDataRecord extends MediaRecord {
     public MovieDataRecord(@NonNull String mId, @NonNull String mListName) {
         this.mId = mId;
         this.mListName = mListName;
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    public static MovieDataRecord parseMediaRecord(DocumentSnapshot document) {
-        MovieDataRecord mediaRecord = new MovieDataRecord(
-                (String) document.get(ID_KEY),
-                (String) document.get(LIST_NAME_KEY)
-        );
-
-        mediaRecord.setDocumentId(document.getId());
-        return mediaRecord;
     }
 
     public Map<String, Object> parseListModelToDataMap() {

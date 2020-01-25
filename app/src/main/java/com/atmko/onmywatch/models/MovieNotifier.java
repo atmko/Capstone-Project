@@ -4,8 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 
-import com.google.firebase.firestore.DocumentSnapshot;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,17 +18,6 @@ public class MovieNotifier extends MediaNotifier {
     public MovieNotifier(@NonNull String id, @NonNull int condition) {
         this.mId = id;
         this.mCondition = condition;
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    public static MovieNotifier parseMediaNotifier(DocumentSnapshot document) {
-        MovieNotifier mediaNotifier = new MovieNotifier(
-                (String) document.get(NOTIFIER_ID_KEY),
-                ((Long) document.get(CONDITION_KEY)).intValue()
-        );
-
-        mediaNotifier.setDocumentId(document.getId());
-        return mediaNotifier;
     }
 
     public Map<String, Object> parseNotifierToDataMap() {

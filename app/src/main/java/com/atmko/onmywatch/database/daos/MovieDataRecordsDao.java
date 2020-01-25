@@ -26,6 +26,7 @@ public interface MovieDataRecordsDao {
     @Query("SELECT * FROM movie_data_records WHERE media_id = :mediaId AND list_id = :listName")
     MovieDataRecord getRecordByIdAlt( String mediaId, String listName);
 
+    //alternate method without live data
     @Query("SELECT * FROM movie_data_records")
     List<MovieDataRecord> getAllRecordsAlt();
 

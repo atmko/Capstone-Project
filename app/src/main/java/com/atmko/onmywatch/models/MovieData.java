@@ -16,7 +16,6 @@ import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.database.Converters;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 import com.atmko.onmywatch.utils.api_utils.MovieApiConstants;
-import com.atmko.onmywatch.utils.network_utils.TraktApiConstants;
 
 import org.parceler.Parcel;
 
@@ -141,35 +140,5 @@ public class MovieData extends MediaData{
                 Converters.scheduledMediaToLong(getScheduledMedia()));
 
         return firebaseMediaDataMap;
-    }
-
-    @SuppressWarnings({"ConstantConditions", "unchecked"})
-    public static MovieData parseDataMapToMediaData(Map<String, Object> firebaseDataMap) {
-        ScheduledMedia scheduledMedia = firebaseDataMap.get(SCHEDULED_MEDIA_KEY) == null ? null
-                : Converters.longToScheduledMedia((long) firebaseDataMap.get(SCHEDULED_MEDIA_KEY));
-
-        MovieData movieData = new MovieData(
-                (String) firebaseDataMap.get(ApiConstants.ID_KEY),
-                ((String) firebaseDataMap.get(TraktApiConstants.TRAKT_ID_KEY)),
-                (String) firebaseDataMap.get(ApiConstants.VOTE_AVERAGE_KEY),
-                (String) firebaseDataMap.get(MovieApiConstants.TITLE_KEY),
-                (String) firebaseDataMap.get(ApiConstants.POSTER_PATH_KEY),
-                (String) firebaseDataMap.get(ApiConstants.ORIG_LANG_KEY),
-                (String) firebaseDataMap.get(MovieApiConstants.ORIG_TITLE_KEY),
-                (ArrayList<String>) firebaseDataMap.get(ApiConstants.GENRES_KEY),
-                (boolean) firebaseDataMap.get(MovieApiConstants.ADULT_KEY),
-                (String) firebaseDataMap.get(ApiConstants.BACKDROP_PATH_KEY),
-                (String) firebaseDataMap.get(ApiConstants.OVERVIEW_KEY),
-                (String) firebaseDataMap.get(MovieApiConstants.RELEASE_DATE_KEY),
-                (String) firebaseDataMap.get(ApiConstants.RELEASE_STATUS_KEY),
-                scheduledMedia
-        );
-
-        movieData.setWatchStatus(
-                ((Long) firebaseDataMap.get(MediaData.WATCH_STATUS_KEY)).intValue());
-        movieData.setUserRating(
-                ((Long) firebaseDataMap.get(MediaData.USER_RATING_KEY)).intValue());
-
-        return movieData;
     }
 }

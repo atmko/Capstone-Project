@@ -31,7 +31,6 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
 
@@ -60,7 +59,6 @@ import com.atmko.onmywatch.utils.network_utils.TraktApiConstants;
 import com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker;
 import com.atmko.onmywatch.view_models.DetailsViewModel;
 import com.atmko.onmywatch.view_models.DetailsViewModelFactory;
-import com.atmko.onmywatch.view_models.FirebaseDetailsViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
@@ -443,27 +441,14 @@ public class DetailsFragment extends Fragment {
     //TODO: NullPointerException handled in caller
     @SuppressWarnings("ConstantConditions")
     private void observeViewModel() throws NullPointerException{
-        final ViewModel viewModel;
-        final LiveData<MediaData> mediaDataLiveData;
-        final LiveData<List<String>> containingUserLists;
-        final LiveData<List<MediaNotifier>> notifiersLiveData;
-
         AppDatabase database = AppDatabase.getInstance(getContext());
         DetailsViewModelFactory viewModelFactory =
                 new DetailsViewModelFactory(database, mMediaType, mMediaData.getId());
 
-        if (MasterActivity.isProMode()) {
-            viewModel = ViewModelProviders.of(this, viewModelFactory).get(FirebaseDetailsViewModel.class);
-            mediaDataLiveData = ((FirebaseDetailsViewModel) viewModel).getMediaData();
-            containingUserLists = ((FirebaseDetailsViewModel) viewModel).getContainingLists();
-            notifiersLiveData = ((FirebaseDetailsViewModel) viewModel).getNotifiers();
-
-        } else {
-            viewModel = ViewModelProviders.of(this, viewModelFactory).get(DetailsViewModel.class);
-            mediaDataLiveData = ((DetailsViewModel) viewModel).getMediaData();
-            containingUserLists = ((DetailsViewModel) viewModel).getContainingLists();
-            notifiersLiveData = ((DetailsViewModel) viewModel).getNotifiers();
-        }
+        final DetailsViewModel viewModel = ViewModelProviders.of(this, viewModelFactory).get(DetailsViewModel.class);
+        final LiveData<MediaData> mediaDataLiveData = viewModel.getMediaData();
+        final LiveData<List<String>> containingUserLists = viewModel.getContainingLists();
+        final LiveData<List<MediaNotifier>> notifiersLiveData = viewModel.getNotifiers();
 
         mediaDataLiveData.observe(this, new Observer<Object>() {
             @Override

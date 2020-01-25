@@ -165,9 +165,12 @@ public class UpdateNotifierService extends JobIntentService {
         }
     }
 
-    //creates new Media release notifier in database and returns notifier
+    //if notifier doesn't exist, create new Media release notifier in database and return notifier
     private MediaNotifier createReleaseNotifier(MediaData newMediaData) {
-        //create notifier and set alarm with release notification
+        MediaNotifier savedNotifier = getNotifier(CONDITION_ON_RELEASE);
+        if (savedNotifier != null) return savedNotifier;
+
+        //create notifier
         MediaNotifier releaseNotifier;
 
         if (newMediaData instanceof MovieData) {
@@ -206,6 +209,15 @@ public class UpdateNotifierService extends JobIntentService {
             if (NotificationIdlingResource.getNotificationIdlingResource() != null) {
                 NotificationIdlingResource.getNotificationIdlingResource().setIdleState(true);
             }
+        }
+    }
+
+    private MediaNotifier getNotifier(int condition) {
+        if (mMediaType == MEDIA_TYPE_MOVIE) {
+            return mDatabase.movieNotifierDao().getNotifierByIdAlt(newMediaData.getId(), condition);
+
+        } else {
+            return mDatabase.seriesNotifierDao().getNotifierByIdAlt(newMediaData.getId(), condition);
         }
     }
 
@@ -371,6 +383,9 @@ public class UpdateNotifierService extends JobIntentService {
     }
 
     private SeriesNotifier createNewEpisodeNotifier() {
+        MediaNotifier savedNotifier = getNotifier(CONDITION_NEW_EPISODE);
+        if (savedNotifier != null) return ((SeriesNotifier) savedNotifier);
+
         SeriesNotifier newEpisodeNotifier =
                 new SeriesNotifier(newMediaData.getId(), CONDITION_NEW_EPISODE);
         mDatabase.seriesNotifierDao().addMediaNotifier(newEpisodeNotifier);

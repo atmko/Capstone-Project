@@ -13,6 +13,7 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.database.daos.MovieDataDao;
 import com.atmko.onmywatch.database.daos.MovieNotifierDao;
@@ -44,20 +45,45 @@ public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase sInstance;
 
     public static AppDatabase getInstance(Context context) {
-        if (sInstance == null) {
-            RoomDatabase.Callback callback = databaseInitializer(context);
+        if (sInstance != null) {
+            if (MasterActivity.sProMode && sInstance instanceof FirebaseDatabase) {
+                return sInstance;
 
-            synchronized (LOCK) {
+            } else if (!MasterActivity.sProMode && !(sInstance instanceof FirebaseDatabase)) {
+                return sInstance;
+            }
+        }
+
+        synchronized (LOCK) {
+            if (MasterActivity.sProMode) {
+                sInstance = new FirebaseDatabase();
+
+            } else {
+                RoomDatabase.Callback callback = databaseInitializer(context);
                 sInstance = Room.databaseBuilder(context, AppDatabase.class, DATABASE_NAME)
                         //TODO remove allowance of main thread queries
                         .addCallback(callback)
                         .build();
-                return sInstance;
             }
 
-        } else {
             return sInstance;
         }
+    }
+
+    public static AppDatabase getLocalDatabase(Context context) {
+        if (sInstance != null &&  !(sInstance instanceof FirebaseDatabase)) {
+            return sInstance;
+        }
+
+        return Room.databaseBuilder(context, AppDatabase.class, DATABASE_NAME).build();
+    }
+
+    public static FirebaseDatabase getRemoteDatabase() {
+        if ((sInstance instanceof FirebaseDatabase)) {
+            return ((FirebaseDatabase) sInstance);
+        }
+
+        return new FirebaseDatabase();
     }
 
     public static void setDatabase(AppDatabase database) {

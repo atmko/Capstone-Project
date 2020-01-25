@@ -16,34 +16,27 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.atmko.onmywatch.database.AppDatabase;
-import com.atmko.onmywatch.database.daos.FirebaseUserListDao;
 import com.atmko.onmywatch.models.MovieDataRecord;
 import com.atmko.onmywatch.models.SeriesDataRecord;
 import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.firestore.DocumentReference;
 
-import java.util.HashMap;
+import org.parceler.Parcels;
+
 import java.util.List;
-import java.util.Map;
-
-import static com.atmko.onmywatch.models.ListModel.DOCUMENT_ID_KEY;
-import static com.atmko.onmywatch.models.ListModel.ITEM_COUNT_KEY;
-import static com.atmko.onmywatch.models.ListModel.LIST_NAME_KEY;
 
 public class CreateListActivity extends AppCompatActivity {
     public static String FRAGMENT_KEY = "create_list_fragment";
 
     public static final String MODE_KEY = "mode";
+    public static final String USER_LIST_KEY = "user_list";
 
     public static final int MODE_CREATE = 0;
     public static final int MODE_EDIT = 1;
 
-    private int mMode, mItemCount;
-    private String mListId, mListName;
+    private int mMode;
+    private UserListModel mEditListModel;
 
     private EditText nameEditTextView;
     private Button mSaveButton;
@@ -66,9 +59,9 @@ public class CreateListActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         mMode = intent.getIntExtra(MODE_KEY, 0);
-        mListId = intent.getStringExtra(DOCUMENT_ID_KEY);
-        mListName = intent.getStringExtra(LIST_NAME_KEY);
-        mItemCount = intent.getIntExtra(ITEM_COUNT_KEY, 0);
+        if (mMode == MODE_EDIT) {
+            mEditListModel = Parcels.unwrap(intent.getParcelableExtra(USER_LIST_KEY));
+        }
 
         defineViews();
         setViewValues(savedInstanceState);
@@ -78,7 +71,7 @@ public class CreateListActivity extends AppCompatActivity {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putString(LIST_NAME_KEY, nameEditTextView.getText().toString());
+        outState.putParcelable(USER_LIST_KEY, Parcels.wrap(mEditListModel));
     }
 
     private void defineViews() {
@@ -92,141 +85,85 @@ public class CreateListActivity extends AppCompatActivity {
                     return;
                 }
 
-                //add list to database
-                if (MasterActivity.isProMode()) {
-                    // Create a new list map to save to firebase
-                    Map<String, Object> list = new HashMap<>();
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            final AppDatabase appDatabase = AppDatabase.getInstance(CreateListActivity.this);
+                            String snackBarMessage;
 
-                    list.put(LIST_NAME_KEY, nameEditTextView.getText().toString());
-                    list.put(ITEM_COUNT_KEY, mItemCount);
-
-                    String snackBarMessage;
-
-                    if (mMode == MODE_EDIT) {
-                        //edit list
-                        FirebaseUserListDao.updateUserList(mListId, list)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        //TODO:
-
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        //TODO:
-
-                                    }
-                                });
-
-                        snackBarMessage = getString(R.string.list_updated_message);
-
-                    } else {
-                        //create new list
-                        FirebaseUserListDao.addUserList(list)
-                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                    @Override
-                                    public void onSuccess(DocumentReference documentReference) {
-                                        //TODO:
-
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        //TODO:
-
-                                    }
-                                });
-
-                        snackBarMessage = getString(R.string.new_list_created_message);
-                    }
-
-                    Snackbar.make(findViewById(R.id.top_layout),
-                            snackBarMessage, Snackbar.LENGTH_LONG).show();
-
-                    //exit activity
-                    finish();
-
-                } else {
-                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
+                            if (mMode == MODE_EDIT) {
                                 UserListModel newUserListModel = new UserListModel(
-                                        nameEditTextView.getText().toString(), mItemCount);
+                                        nameEditTextView.getText().toString(), mEditListModel.getItemCount());
 
-                                final AppDatabase appDatabase =
-                                        AppDatabase.getInstance(CreateListActivity.this);
-                                String snackBarMessage;
-                                if (mMode == MODE_EDIT) {
-                                    //can't update list directly because name is changing and table id == list name
-                                    //create new updated list
-                                    appDatabase.userListsDao().addList(newUserListModel);
+                                //TODO: remove list name from being a primary key
+                                // this ensures list and list records are easily updated instead of creating new records and deleting old ones.
+                                // this will save quota in firebase implementations
+                                //can't update list directly because name is changing and table id == list name
+                                //create new updated list
+                                appDatabase.userListsDao().addList(newUserListModel);
 
-                                    //can't update records directly because name is changing and table id == list name
-                                    List<MovieDataRecord> movieRecords
-                                            = appDatabase.movieDataRecordsDao().getAllRecordsOfListAlt(mListName);
+                                //can't update records directly because name is changing and table id == list name
+                                List<MovieDataRecord> movieRecords =
+                                        appDatabase.movieDataRecordsDao().getAllRecordsOfListAlt(mEditListModel.getName());
 
-                                    for (MovieDataRecord dataRecord: movieRecords) {
-                                        //create new updated record
-                                        MovieDataRecord newDataRecord =
-                                                new MovieDataRecord(dataRecord.getId(),
-                                                        nameEditTextView.getText().toString());
+                                for (MovieDataRecord dataRecord: movieRecords) {
+                                    //create new updated record
+                                    MovieDataRecord newDataRecord =
+                                            new MovieDataRecord(dataRecord.getId(),
+                                                    nameEditTextView.getText().toString());
 
-                                        appDatabase.movieDataRecordsDao().addRecord(newDataRecord);
-
-                                    }
-
-                                    List<SeriesDataRecord> seriesRecord
-                                            = appDatabase.seriesDataRecordsDao().getAllRecordsOfListAlt(mListName);
-
-                                    for (SeriesDataRecord dataRecord: seriesRecord) {
-                                        //create new updated record
-                                        SeriesDataRecord newDataRecord =
-                                                new SeriesDataRecord(dataRecord.getId(),
-                                                        nameEditTextView.getText().toString());
-
-                                        appDatabase.seriesDataRecordsDao().addRecord(newDataRecord);
-
-                                    }
-
-                                    //delete old list from database
-                                    //old record cascades on delete when list is deleted
-                                    appDatabase.userListsDao().deleteList(new UserListModel(mListName));
-
-                                    snackBarMessage = getString(R.string.list_updated_message);
-
-                                } else {
-                                    //create new list
-                                    appDatabase.userListsDao().addList(newUserListModel);
-                                    snackBarMessage = getString(R.string.new_list_created_message);
+                                    appDatabase.movieDataRecordsDao().addRecord(newDataRecord);
                                 }
 
-                                Snackbar.make(findViewById(R.id.top_layout),
-                                        snackBarMessage, Snackbar.LENGTH_LONG).show();
+                                List<SeriesDataRecord> seriesRecord =
+                                        appDatabase.seriesDataRecordsDao().getAllRecordsOfListAlt(mEditListModel.getName());
 
-                                //exit activity
-                                finish();
+                                for (SeriesDataRecord dataRecord: seriesRecord) {
+                                    //create new updated record
+                                    SeriesDataRecord newDataRecord =
+                                            new SeriesDataRecord(dataRecord.getId(),
+                                                    nameEditTextView.getText().toString());
 
-                            } catch (SQLiteConstraintException e) {
-                                e.printStackTrace();
+                                    appDatabase.seriesDataRecordsDao().addRecord(newDataRecord);
+                                }
 
-                                Snackbar.make(findViewById(R.id.top_layout),
-                                        getString(R.string.list_already_exists_error_message),
-                                        Snackbar.LENGTH_LONG).show();
+                                //delete old list from database
+                                //old record cascades on delete when list is deleted
+                                appDatabase.userListsDao().deleteList(mEditListModel);
+
+                                snackBarMessage = getString(R.string.list_updated_message);
+
+                            } else {
+                                UserListModel userListModel =
+                                        new UserListModel(nameEditTextView.getText().toString(), 0);
+                                //create new list
+                                appDatabase.userListsDao().addList(userListModel);
+                                snackBarMessage = getString(R.string.new_list_created_message);
                             }
+
+                            Snackbar.make(findViewById(R.id.top_layout),
+                                    snackBarMessage, Snackbar.LENGTH_LONG).show();
+
+                            //exit activity
+                            finish();
+
+                        } catch (SQLiteConstraintException e) {
+                            e.printStackTrace();
+
+                            Snackbar.make(findViewById(R.id.top_layout),
+                                    getString(R.string.list_already_exists_error_message),
+                                    Snackbar.LENGTH_LONG).show();
                         }
-                    });
-                }
+                    }
+                });
             }
         });
     }
 
     private void setViewValues(Bundle savedInstanceState) {
         String editTextString =
-                savedInstanceState == null ? mListName : savedInstanceState.getString(LIST_NAME_KEY);
+                savedInstanceState == null ? "" : savedInstanceState.getString(USER_LIST_KEY);
 
         nameEditTextView.setText(editTextString);
     }

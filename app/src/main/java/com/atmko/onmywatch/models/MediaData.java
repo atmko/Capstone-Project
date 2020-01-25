@@ -62,6 +62,8 @@ abstract public class MediaData {
     @ColumnInfo(name = "watch_status") int mWatchStatus;
     @ColumnInfo(name = "user_rating") int mUserRating;
 
+    @Ignore private String mUniqueExternalId;
+
     public String getId() {
         return mId;
     }
@@ -182,6 +184,14 @@ abstract public class MediaData {
 
     public void setUserRating(int userRating) {
         this.mUserRating = userRating;
+    }
+
+    public String getUniqueExternalId() {
+        return mUniqueExternalId;
+    }
+
+    public void setUniqueExternalId(String mDocumentId) {
+        this.mUniqueExternalId = mDocumentId;
     }
 
     public static String getWatchStatusTitle(int watchStatus, Context context) {

@@ -28,7 +28,6 @@ import com.atmko.onmywatch.database.daos.FirebaseSeriesDataRecordsDao;
 import com.atmko.onmywatch.database.daos.FirebaseSeriesNotifiersDao;
 import com.atmko.onmywatch.database.daos.FirebaseUserListDao;
 import com.atmko.onmywatch.database.daos.FirebaseWatchListDao;
-import com.atmko.onmywatch.models.ListModel;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.MovieDataRecord;
 import com.atmko.onmywatch.models.MovieNotifier;
@@ -37,11 +36,6 @@ import com.atmko.onmywatch.models.SeriesDataRecord;
 import com.atmko.onmywatch.models.SeriesNotifier;
 import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.models.WatchListModel;
-import com.atmko.onmywatch.utils.api_utils.ApiConstants;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +51,8 @@ public class ProModeMigrationService extends JobIntentService {
 
     public static final String ACTION_USER_TIER_TO_PRO = "to_pro";
 
-    private AppDatabase mDatabase;
+    private AppDatabase mLocalDatabase;
+    private AppDatabase mRemoteDatabase;
 
     private List<MovieData> localMovieDataList;
     private List<SeriesData> localSeriesDataList;
@@ -75,7 +70,8 @@ public class ProModeMigrationService extends JobIntentService {
     public void onCreate() {
         super.onCreate();
 
-        mDatabase = AppDatabase.getInstance(getApplicationContext());
+        mLocalDatabase = AppDatabase.getLocalDatabase(getApplicationContext());
+        mRemoteDatabase = AppDatabase.getRemoteDatabase();
 
         startForeground(JOB_ID,
                 buildNotification(getApplicationContext(),
@@ -233,92 +229,57 @@ public class ProModeMigrationService extends JobIntentService {
         //batch create and batch update
 
         //get locally saved movies
-        localMovieDataList = mDatabase.movieDataDao().getAllMoviesAlt();
-
+        localMovieDataList = mLocalDatabase.movieDataDao().getAllMoviesAlt();
         //get remotely saved movies
-        FirebaseMovieDataDao.getAllMovies().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(final QuerySnapshot snapshots) {
-                AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        //create list of local ids to compare with remote ids
-                        final List<String> localIdList = new ArrayList<>();
-                        for (MovieData movieData: localMovieDataList) {
-                            localIdList.add(movieData.getId());
+        List<MovieData> remoteMovies = mRemoteDatabase.movieDataDao().getAllMoviesAlt();
 
-                        }
+        //create list of local ids to compare with remote ids
+        final List<String> localIdList = new ArrayList<>();
+        for (MovieData movieData : localMovieDataList) {
+            localIdList.add(movieData.getId());
+        }
 
-                        //create list of remote ids to compare with local ids
-                        List<DocumentSnapshot> documentSnapshots = snapshots.getDocuments();
-                        List<String> remoteIdList = new ArrayList<>();
-                        for (DocumentSnapshot documentSnapshot : documentSnapshots) {
-                            remoteIdList.add(((String) documentSnapshot.get(ApiConstants.ID_KEY)));
+        //create list of remote ids to compare with local ids
+        List<String> remoteIdList = new ArrayList<>();
+        for (MovieData movieData : remoteMovies) {
+            remoteIdList.add(movieData.getId());
+        }
 
-                        }
+        //create lists for batch writes
+        List<Map<String, Object>> batchCreateList = new ArrayList<>();
+        final List<String> batchUpdateIds = new ArrayList<>();
+        final List<Map<String, Object>> batchUpdateList = new ArrayList<>();
 
-                        //create lists for batch writes
-                        List<Map<String, Object>> batchCreateList = new ArrayList<>();
-                        final List<String> batchUpdateIds = new ArrayList<>();
-                        final List<Map<String, Object>> batchUpdateList = new ArrayList<>();
+        //compare their ids
+        for (String currentLocalId : localIdList) {
+            int index = localIdList.indexOf(currentLocalId);
+            //get local movie data
+            MovieData currentMovieData = localMovieDataList.get(index);
 
-                        //compare their ids
-                        for (String currentLocalId : localIdList) {
-                            int index = localIdList.indexOf(currentLocalId);
-                            //get local movie data
-                            MovieData currentMovieData = localMovieDataList.get(index);
+            //if remotely saved movie's id is in local database: add to batchUpdateList
+            if (remoteIdList.contains(currentLocalId)) {
+                //get corresponding document id
+                int correspondingRemoteIndex = remoteIdList.indexOf(currentLocalId);
+                MovieData movieData = remoteMovies.get(correspondingRemoteIndex);
+                String uniqueExternalId = movieData.getUniqueExternalId();
 
-                            //if remotely saved movie's id is in local database: add to batchUpdateList
-                            if (remoteIdList.contains(currentLocalId)) {
-                                //get corresponding document id
-                                int correspondingRemoteIndex = remoteIdList.indexOf(currentLocalId);
-                                DocumentSnapshot documentSnapshot = documentSnapshots.get(correspondingRemoteIndex);
-                                String documentId = documentSnapshot.getId();
+                //add document id to batchUpdateIds
+                batchUpdateIds.add(uniqueExternalId);
+                //add to batchUpdateList for batch updates
+                batchUpdateList.add(currentMovieData.parseMediaDataToDataMap());
 
-                                //add document id to batchUpdateIds
-                                batchUpdateIds.add(documentId);
-                                //add to batchUpdateList for batch updates
-                                batchUpdateList.add(currentMovieData.parseMediaDataToDataMap());
-
-                                //if remotely saved movie's id is not in local database: add to batchCreateList
-                            } else {
-                                //add to batchCreateList for batch creates
-                                batchCreateList.add(currentMovieData.parseMediaDataToDataMap());
-                            }
-                        }
-
-                        //batch create and batch update
-                        FirebaseMovieDataDao.addMovieDataBatch(batchCreateList).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-
-                                FirebaseMovieDataDao.updateMovieDataBatch(batchUpdateIds, batchUpdateList).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        onPushMovieDataComplete();
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-
-                                    }
-                                });
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-
-                            }
-                        });
-                    }
-                });
+                //if remotely saved movie's id is not in local database: add to batchCreateList
+            } else {
+                //add to batchCreateList for batch creates
+                batchCreateList.add(currentMovieData.parseMediaDataToDataMap());
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
+        }
 
-            }
-        });
+        //batch create and batch update
+        FirebaseMovieDataDao.addMovieDataBatch(batchCreateList);
+        FirebaseMovieDataDao.updateMovieDataBatch(batchUpdateIds, batchUpdateList);
+
+        onPushMovieDataComplete();
     }
 
     //pushes locally saved series to remote database
@@ -333,92 +294,57 @@ public class ProModeMigrationService extends JobIntentService {
         //batch create and batch update
 
         //get locally saved series
-        localSeriesDataList = mDatabase.seriesDataDao().getAllSeriesAlt();
-
+        localSeriesDataList = mLocalDatabase.seriesDataDao().getAllSeriesAlt();
         //get remotely saved series
-        FirebaseSeriesDataDao.getAllSeries().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(final QuerySnapshot snapshots) {
-                AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        //create list of local ids to compare with remote ids
-                        final List<String> localIdList = new ArrayList<>();
-                        for (SeriesData seriesData : localSeriesDataList) {
-                            localIdList.add(seriesData.getId());
+        List<SeriesData> remoteSeries = mRemoteDatabase.seriesDataDao().getAllSeriesAlt();
 
-                        }
+        //create list of local ids to compare with remote ids
+        final List<String> localIdList = new ArrayList<>();
+        for (SeriesData seriesData : localSeriesDataList) {
+            localIdList.add(seriesData.getId());
+        }
 
-                        //create list of remote ids to compare with local ids
-                        List<DocumentSnapshot> documentSnapshots = snapshots.getDocuments();
-                        List<String> remoteIdList = new ArrayList<>();
-                        for (DocumentSnapshot documentSnapshot : documentSnapshots) {
-                            remoteIdList.add(((String) documentSnapshot.get(ApiConstants.ID_KEY)));
+        //create list of remote ids to compare with local ids
+        List<String> remoteIdList = new ArrayList<>();
+        for (SeriesData seriesData : remoteSeries) {
+            remoteIdList.add(seriesData.getId());
+        }
 
-                        }
+        //create lists for batch writes
+        List<Map<String, Object>> batchCreateList = new ArrayList<>();
+        final List<String> batchUpdateIds = new ArrayList<>();
+        final List<Map<String, Object>> batchUpdateList = new ArrayList<>();
 
-                        //create lists for batch writes
-                        List<Map<String, Object>> batchCreateList = new ArrayList<>();
-                        final List<String> batchUpdateIds = new ArrayList<>();
-                        final List<Map<String, Object>> batchUpdateList = new ArrayList<>();
+        //compare their ids
+        for (String currentLocalId : localIdList) {
+            int index = localIdList.indexOf(currentLocalId);
+            //get local series data
+            SeriesData currentSeriesData = localSeriesDataList.get(index);
 
-                        //compare their ids
-                        for (String currentLocalId : localIdList) {
-                            int index = localIdList.indexOf(currentLocalId);
-                            //get local series data
-                            SeriesData currentSeriesData = localSeriesDataList.get(index);
+            //if remotely saved series's id is in local database: add to batchUpdateList
+            if (remoteIdList.contains(currentLocalId)) {
+                //get corresponding document id
+                int correspondingRemoteIndex = remoteIdList.indexOf(currentLocalId);
+                SeriesData seriesData = remoteSeries.get(correspondingRemoteIndex);
+                String uniqueExternalId = seriesData.getUniqueExternalId();
 
-                            //if remotely saved series's id is in local database: add to batchUpdateList
-                            if (remoteIdList.contains(currentLocalId)) {
-                                //get corresponding document id
-                                int correspondingRemoteIndex = remoteIdList.indexOf(currentLocalId);
-                                DocumentSnapshot documentSnapshot = documentSnapshots.get(correspondingRemoteIndex);
-                                String documentId = documentSnapshot.getId();
+                //add document id to batchUpdateIds
+                batchUpdateIds.add(uniqueExternalId);
+                //add to batchUpdateList for batch updates
+                batchUpdateList.add(currentSeriesData.parseMediaDataToDataMap());
 
-                                //add document id to batchUpdateIds
-                                batchUpdateIds.add(documentId);
-                                //add to batchUpdateList for batch updates
-                                batchUpdateList.add(currentSeriesData.parseMediaDataToDataMap());
-
-                                //if remotely saved series's id is not in local database: add to batchCreateList
-                            } else {
-                                //add to batchCreateList for batch creates
-                                batchCreateList.add(currentSeriesData.parseMediaDataToDataMap());
-                            }
-                        }
-
-                        //batch create and batch update
-                        FirebaseSeriesDataDao.addSeriesDataBatch(batchCreateList).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-
-                                FirebaseSeriesDataDao.updateSeriesDataBatch(batchUpdateIds, batchUpdateList).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        onPushSeriesDataComplete();
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-
-                                    }
-                                });
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-
-                            }
-                        });
-                    }
-                });
+                //if remotely saved series's id is not in local database: add to batchCreateList
+            } else {
+                //add to batchCreateList for batch creates
+                batchCreateList.add(currentSeriesData.parseMediaDataToDataMap());
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
+        }
 
-            }
-        });
+        //batch create and batch update
+        FirebaseSeriesDataDao.addSeriesDataBatch(batchCreateList);
+        FirebaseSeriesDataDao.updateSeriesDataBatch(batchUpdateIds, batchUpdateList);
+
+        onPushSeriesDataComplete();
     }
 
     //pushes locally saved watch lists to remote database
@@ -433,93 +359,57 @@ public class ProModeMigrationService extends JobIntentService {
         //batch create and batch update
 
         //get locally saved watchLists
-        localWatchLists = mDatabase.watchListsDao().getAllListsAlt();
-
+        localWatchLists = mLocalDatabase.watchListsDao().getAllListsAlt();
         //get remotely saved watch lists
-        FirebaseWatchListDao.getAllWatchLists().get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(final QuerySnapshot snapshots) {
-                AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        //create list of local ids to compare with remote ids
-                        final List<String> localIdList = new ArrayList<>();
-                        for (WatchListModel watchListModel : localWatchLists) {
-                            localIdList.add(watchListModel.getName());
+        List<WatchListModel> remoteLists = mRemoteDatabase.watchListsDao().getAllListsAlt();
 
-                        }
+        //create list of local ids to compare with remote ids
+        final List<String> localIdList = new ArrayList<>();
+        for (WatchListModel watchListModel : localWatchLists) {
+            localIdList.add(watchListModel.getName());
+        }
 
-                        //create list of remote ids to compare with local ids
-                        List<DocumentSnapshot> documentSnapshots = snapshots.getDocuments();
-                        List<String> remoteIdList = new ArrayList<>();
-                        for (DocumentSnapshot documentSnapshot : documentSnapshots) {
-                            remoteIdList.add(((String) documentSnapshot.get(ListModel.LIST_NAME_KEY)));
+        //create list of remote ids to compare with local ids
+        List<String> remoteIdList = new ArrayList<>();
+        for (WatchListModel watchListModel : remoteLists) {
+            remoteIdList.add(watchListModel.getName());
+        }
 
-                        }
+        //create lists for batch writes
+        List<Map<String, Object>> batchCreateList = new ArrayList<>();
+        final List<String> batchUpdateIds = new ArrayList<>();
+        final List<Map<String, Object>> batchUpdateList = new ArrayList<>();
 
-                        //create lists for batch writes
-                        List<Map<String, Object>> batchCreateList = new ArrayList<>();
-                        final List<String> batchUpdateIds = new ArrayList<>();
-                        final List<Map<String, Object>> batchUpdateList = new ArrayList<>();
+        //compare their ids
+        for (String currentLocalId : localIdList) {
+            int index = localIdList.indexOf(currentLocalId);
+            //get local watch list
+            WatchListModel currentWatchList = localWatchLists.get(index);
 
-                        //compare their ids
-                        for (String currentLocalId : localIdList) {
-                            int index = localIdList.indexOf(currentLocalId);
-                            //get local watch list
-                            WatchListModel currentWatchList = localWatchLists.get(index);
+            //if remotely saved watch list's id is in local database: add to batchUpdateList
+            if (remoteIdList.contains(currentLocalId)) {
+                //get corresponding document id
+                int correspondingRemoteIndex = remoteIdList.indexOf(currentLocalId);
+                WatchListModel watchListModel = remoteLists.get(correspondingRemoteIndex);
+                String uniqueExternalId = watchListModel.getUniqueExternalId();
 
-                            //if remotely saved watch list's id is in local database: add to batchUpdateList
-                            if (remoteIdList.contains(currentLocalId)) {
-                                //get corresponding document id
-                                int correspondingRemoteIndex = remoteIdList.indexOf(currentLocalId);
-                                DocumentSnapshot documentSnapshot = documentSnapshots.get(correspondingRemoteIndex);
-                                String documentId = documentSnapshot.getId();
+                //add document id to batchUpdateIds
+                batchUpdateIds.add(uniqueExternalId);
+                //add to batchUpdateList for batch updates
+                batchUpdateList.add(currentWatchList.parseListModelToDataMap());
 
-                                //add document id to batchUpdateIds
-                                batchUpdateIds.add(documentId);
-                                //add to batchUpdateList for batch updates
-                                batchUpdateList.add(currentWatchList.parseListModelToDataMap());
-
-                                //if remotely saved watch list's id is not in local database: add to batchCreateList
-                            } else {
-                                //add to batchCreateList for batch creates
-                                batchCreateList.add(currentWatchList.parseListModelToDataMap());
-                            }
-                        }
-
-                        //batch create and batch update
-                        FirebaseWatchListDao.addWatchListBatch(batchCreateList).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-
-                                FirebaseWatchListDao.updateWatchListBatch(batchUpdateIds, batchUpdateList)
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                onPushWatchListsComplete();
-                                            }
-                                        }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-
-                                    }
-                                });
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-
-                            }
-                        });
-                    }
-                });
+                //if remotely saved watch list's id is not in local database: add to batchCreateList
+            } else {
+                //add to batchCreateList for batch creates
+                batchCreateList.add(currentWatchList.parseListModelToDataMap());
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
+        }
 
-            }
-        });
+        //batch create and batch update
+        FirebaseWatchListDao.addWatchListBatch(batchCreateList);
+        FirebaseWatchListDao.updateWatchListBatch(batchUpdateIds, batchUpdateList);
+
+        onPushWatchListsComplete();
     }
 
     //pushes locally saved user lists to remote database
@@ -534,92 +424,57 @@ public class ProModeMigrationService extends JobIntentService {
         //batch create and batch update
 
         //get locally saved userLists
-        localUserLists = mDatabase.userListsDao().getAllListsAlt();
-
+        localUserLists = mLocalDatabase.userListsDao().getAllListsAlt();
         //get remotely saved user lists
-        FirebaseUserListDao.getAllUserLists().get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(final QuerySnapshot snapshots) {
-                AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        //create list of local ids to compare with remote ids
-                        final List<String> localIdList = new ArrayList<>();
-                        for (UserListModel userListModel : localUserLists) {
-                            localIdList.add(userListModel.getName());
+        List<UserListModel> remoteLists = mRemoteDatabase.userListsDao().getAllListsAlt();
 
-                        }
+        //create list of local ids to compare with remote ids
+        final List<String> localIdList = new ArrayList<>();
+        for (UserListModel userListModel : localUserLists) {
+            localIdList.add(userListModel.getName());
+        }
 
-                        //create list of remote ids to compare with local ids
-                        List<DocumentSnapshot> documentSnapshots = snapshots.getDocuments();
-                        List<String> remoteIdList = new ArrayList<>();
-                        for (DocumentSnapshot documentSnapshot : documentSnapshots) {
-                            remoteIdList.add(((String) documentSnapshot.get(ListModel.LIST_NAME_KEY)));
+        //create list of remote ids to compare with local ids
+        List<String> remoteIdList = new ArrayList<>();
+        for (UserListModel userListModel : remoteLists) {
+            remoteIdList.add(userListModel.getName());
+        }
 
-                        }
+        //create lists for batch writes
+        List<Map<String, Object>> batchCreateList = new ArrayList<>();
+        final List<String> batchUpdateIds = new ArrayList<>();
+        final List<Map<String, Object>> batchUpdateList = new ArrayList<>();
 
-                        //create lists for batch writes
-                        List<Map<String, Object>> batchCreateList = new ArrayList<>();
-                        final List<String> batchUpdateIds = new ArrayList<>();
-                        final List<Map<String, Object>> batchUpdateList = new ArrayList<>();
+        //compare their ids
+        for (String currentLocalId : localIdList) {
+            int index = localIdList.indexOf(currentLocalId);
+            //get local user list
+            UserListModel currentUserList = localUserLists.get(index);
 
-                        //compare their ids
-                        for (String currentLocalId : localIdList) {
-                            int index = localIdList.indexOf(currentLocalId);
-                            //get local user list
-                            UserListModel currentUserList = localUserLists.get(index);
+            //if remotely saved user list's id is in local database: add to batchUpdateList
+            if (remoteIdList.contains(currentLocalId)) {
+                //get corresponding document id
+                int correspondingRemoteIndex = remoteIdList.indexOf(currentLocalId);
+                UserListModel userListModel = remoteLists.get(correspondingRemoteIndex);
+                String uniqueExternalId = userListModel.getUniqueExternalId();
 
-                            //if remotely saved user list's id is in local database: add to batchUpdateList
-                            if (remoteIdList.contains(currentLocalId)) {
-                                //get corresponding document id
-                                int correspondingRemoteIndex = remoteIdList.indexOf(currentLocalId);
-                                DocumentSnapshot documentSnapshot = documentSnapshots.get(correspondingRemoteIndex);
-                                String documentId = documentSnapshot.getId();
+                //add document id to batchUpdateIds
+                batchUpdateIds.add(uniqueExternalId);
+                //add to batchUpdateList for batch updates
+                batchUpdateList.add(currentUserList.parseListModelToDataMap());
 
-                                //add document id to batchUpdateIds
-                                batchUpdateIds.add(documentId);
-                                //add to batchUpdateList for batch updates
-                                batchUpdateList.add(currentUserList.parseListModelToDataMap());
-
-                                //if remotely saved user list's id is not in local database: add to batchCreateList
-                            } else {
-                                //add to batchCreateList for batch creates
-                                batchCreateList.add(currentUserList.parseListModelToDataMap());
-                            }
-                        }
-
-                        //batch create and batch update
-                        FirebaseUserListDao.addUserListBatch(batchCreateList).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-
-                                FirebaseUserListDao.updateUserListBatch(batchUpdateIds, batchUpdateList).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        onPushUserListsComplete();
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-
-                                    }
-                                });
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-
-                            }
-                        });
-                    }
-                });
+                //if remotely saved user list's id is not in local database: add to batchCreateList
+            } else {
+                //add to batchCreateList for batch creates
+                batchCreateList.add(currentUserList.parseListModelToDataMap());
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
+        }
 
-            }
-        });
+        //batch create and batch update
+        FirebaseUserListDao.addUserListBatch(batchCreateList);
+        FirebaseUserListDao.updateUserListBatch(batchUpdateIds, batchUpdateList);
+
+        onPushUserListsComplete();
     }
 
     //pushes locally saved movie data records to remote database
@@ -632,55 +487,25 @@ public class ProModeMigrationService extends JobIntentService {
         //batch create
 
         //get locally saved movie records
-        localMovieDataRecords = mDatabase.movieDataRecordsDao().getAllRecordsAlt();
-
+        localMovieDataRecords = mLocalDatabase.movieDataRecordsDao().getAllRecordsAlt();
         //get remotely saved movie records
-        FirebaseMovieDataRecordsDao.getAllMovieDataRecords().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(final QuerySnapshot snapshots) {
-                AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        //create list of remote movie records to compare with local movie records
-                        List<DocumentSnapshot> documentSnapshots = snapshots.getDocuments();
-                        final List<MovieDataRecord> remoteMovieDataRecords = new ArrayList<>();
-                        for (DocumentSnapshot documentSnapshot : documentSnapshots) {
-                            remoteMovieDataRecords.add(MovieDataRecord.parseMediaRecord(documentSnapshot));
-                        }
+        List<MovieDataRecord> remoteDataRecords = mRemoteDatabase.movieDataRecordsDao().getAllRecordsAlt();
 
-                        //create lists for batch writes
-                        List<Map<String, Object>> batchCreateList = new ArrayList<>();
+        //create lists for batch writes
+        List<Map<String, Object>> batchCreateList = new ArrayList<>();
 
-                        //compare local and remote records
-                        for (MovieDataRecord localMovieDataRecord : localMovieDataRecords) {
-                            //if locally saved record is not in remote database: add to batchCreateList
-                            if (!remoteMovieDataRecords.contains(localMovieDataRecord)) {
-                                //add to batchCreateList for batch creates
-                                batchCreateList.add(localMovieDataRecord.parseListModelToDataMap());
-                            }
-                        }
-
-                        //batch create
-                        FirebaseMovieDataRecordsDao.addMovieDataRecordBatch(batchCreateList).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                onPushMovieDataRecordsComplete();
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-
-                            }
-                        });
-                    }
-                });
+        //compare local and remote records
+        for (MovieDataRecord localMovieDataRecord : localMovieDataRecords) {
+            //if locally saved record is not in remote database: add to batchCreateList
+            if (!remoteDataRecords.contains(localMovieDataRecord)) {
+                //add to batchCreateList for batch creates
+                batchCreateList.add(localMovieDataRecord.parseListModelToDataMap());
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
+        }
 
-            }
-        });
+        //batch create
+        FirebaseMovieDataRecordsDao.addMovieDataRecordBatch(batchCreateList);
+        onPushMovieDataRecordsComplete();
     }
 
     //pushes locally saved series data records to remote database
@@ -693,55 +518,25 @@ public class ProModeMigrationService extends JobIntentService {
         //batch create
 
         //get locally saved series records
-        localSeriesDataRecords = mDatabase.seriesDataRecordsDao().getAllRecordsAlt();
-
+        localSeriesDataRecords = mLocalDatabase.seriesDataRecordsDao().getAllRecordsAlt();
         //get remotely saved series records
-        FirebaseSeriesDataRecordsDao.getAllSeriesDataRecords().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(final QuerySnapshot snapshots) {
-                AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        //create list of remote series records to compare with local series records
-                        List<DocumentSnapshot> documentSnapshots = snapshots.getDocuments();
-                        final List<SeriesDataRecord> remoteSeriesDataRecords = new ArrayList<>();
-                        for (DocumentSnapshot documentSnapshot : documentSnapshots) {
-                            remoteSeriesDataRecords.add(SeriesDataRecord.parseMediaRecord(documentSnapshot));
-                        }
+        List<SeriesDataRecord> remoteDataRecords = mRemoteDatabase.seriesDataRecordsDao().getAllRecordsAlt();
 
-                        //create lists for batch writes
-                        List<Map<String, Object>> batchCreateList = new ArrayList<>();
+        //create lists for batch writes
+        List<Map<String, Object>> batchCreateList = new ArrayList<>();
 
-                        //compare local and remote records
-                        for (SeriesDataRecord localSeriesDataRecord : localSeriesDataRecords) {
-                            //if locally saved record is not in remote database: add to batchCreateList
-                            if (!remoteSeriesDataRecords.contains(localSeriesDataRecord)) {
-                                //add to batchCreateList for batch creates
-                                batchCreateList.add(localSeriesDataRecord.parseListModelToDataMap());
-                            }
-                        }
-
-                        //batch create
-                        FirebaseSeriesDataRecordsDao.addSeriesDataRecordBatch(batchCreateList).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                onPushSeriesDataRecordsComplete();
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-
-                            }
-                        });
-                    }
-                });
+        //compare local and remote records
+        for (SeriesDataRecord localSeriesDataRecord : localSeriesDataRecords) {
+            //if locally saved record is not in remote database: add to batchCreateList
+            if (!remoteDataRecords.contains(localSeriesDataRecord)) {
+                //add to batchCreateList for batch creates
+                batchCreateList.add(localSeriesDataRecord.parseListModelToDataMap());
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
+        }
 
-            }
-        });
+        //batch create
+        FirebaseSeriesDataRecordsDao.addSeriesDataRecordBatch(batchCreateList);
+        onPushSeriesDataRecordsComplete();
     }
 
     //pushes locally saved movie notifiers to remote database
@@ -754,56 +549,26 @@ public class ProModeMigrationService extends JobIntentService {
         //batch create
 
         //get locally saved movie notifiers
-        localMovieNotifiers = mDatabase.movieNotifierDao().getAllNotifiersAlt();
-
+        localMovieNotifiers = mLocalDatabase.movieNotifierDao().getAllNotifiersAlt();
         //get remotely saved movie records
-        FirebaseMovieNotifiersDao.getAllNotifiers().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(final QuerySnapshot snapshots) {
-                AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        //create list of remote movie notifiers to compare with local movie notifiers
-                        List<DocumentSnapshot> documentSnapshots = snapshots.getDocuments();
-                        final List<MovieNotifier> remoteMovieNotifiers = new ArrayList<>();
-                        for (DocumentSnapshot documentSnapshot : documentSnapshots) {
-                            remoteMovieNotifiers.add(MovieNotifier.parseMediaNotifier(documentSnapshot));
-                        }
+        List<MovieNotifier> remoteNotifiers = mRemoteDatabase.movieNotifierDao().getAllNotifiersAlt();
 
-                        //create lists for batch writes
-                        List<Map<String, Object>> batchCreateList = new ArrayList<>();
+        //create lists for batch writes
+        List<Map<String, Object>> batchCreateList = new ArrayList<>();
 
-                        //compare local and remote records
-                        for (MovieNotifier localMovieNotifier : localMovieNotifiers) {
-                            //if locally saved record is not in remote database: add to batchCreateList
-                            if (!remoteMovieNotifiers.contains(localMovieNotifier)) {
-                                //add to batchCreateList for batch creates
-                                batchCreateList.add(localMovieNotifier.parseNotifierToDataMap());
-                            }
-                        }
-
-                        //batch create
-                        FirebaseMovieNotifiersDao.addMovieNotifierBatch(batchCreateList)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        onPushMovieNotifiersComplete();
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-
-                            }
-                        });
-                    }
-                });
+        //compare local and remote records
+        for (MovieNotifier localMovieNotifier : localMovieNotifiers) {
+            //if locally saved record is not in remote database: add to batchCreateList
+            if (!remoteNotifiers.contains(localMovieNotifier)) {
+                //add to batchCreateList for batch creates
+                batchCreateList.add(localMovieNotifier.parseNotifierToDataMap());
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
+        }
 
-            }
-        });
+        //batch create
+        FirebaseMovieNotifiersDao.addMovieNotifierBatch(batchCreateList);
+
+        onPushMovieNotifiersComplete();
     }
 
     //pushes locally saved series notifiers to remote database
@@ -816,89 +581,59 @@ public class ProModeMigrationService extends JobIntentService {
         //batch create
 
         //get locally saved series notifiers
-        localSeriesNotifiers = mDatabase.seriesNotifierDao().getAllNotifiersAlt();
-
+        localSeriesNotifiers = mLocalDatabase.seriesNotifierDao().getAllNotifiersAlt();
         //get remotely saved series records
-        FirebaseSeriesNotifiersDao.getAllNotifiers().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(final QuerySnapshot snapshots) {
-                AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        //create list of remote series notifiers to compare with local series notifiers
-                        List<DocumentSnapshot> documentSnapshots = snapshots.getDocuments();
-                        final List<SeriesNotifier> remoteSeriesNotifiers = new ArrayList<>();
-                        for (DocumentSnapshot documentSnapshot : documentSnapshots) {
-                            remoteSeriesNotifiers.add(SeriesNotifier.parseMediaNotifier(documentSnapshot));
-                        }
+        List<SeriesNotifier> remoteNotifiers = mRemoteDatabase.seriesNotifierDao().getAllNotifiersAlt();
 
-                        //create lists for batch writes
-                        List<Map<String, Object>> batchCreateList = new ArrayList<>();
+        //create lists for batch writes
+        List<Map<String, Object>> batchCreateList = new ArrayList<>();
 
-                        //compare local and remote records
-                        for (SeriesNotifier localSeriesNotifier : localSeriesNotifiers) {
-                            //if locally saved record is not in remote database: add to batchCreateList
-                            if (!remoteSeriesNotifiers.contains(localSeriesNotifier)) {
-                                //add to batchCreateList for batch creates
-                                batchCreateList.add(localSeriesNotifier.parseNotifierToDataMap());
-                            }
-                        }
-
-                        //batch create
-                        FirebaseSeriesNotifiersDao.addSeriesNotifierBatch(batchCreateList)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        onPushSeriesNotifiersComplete();
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-
-                            }
-                        });
-                    }
-                });
+        //compare local and remote records
+        for (SeriesNotifier localSeriesNotifier : localSeriesNotifiers) {
+            //if locally saved record is not in remote database: add to batchCreateList
+            if (!remoteNotifiers.contains(localSeriesNotifier)) {
+                //add to batchCreateList for batch creates
+                batchCreateList.add(localSeriesNotifier.parseNotifierToDataMap());
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
+        }
 
-            }
-        });
+        //batch create
+        FirebaseSeriesNotifiersDao.addSeriesNotifierBatch(batchCreateList);
+
+        onPushSeriesNotifiersComplete();
     }
 
     private void deleteLocallySavedData() {
         for (MovieDataRecord movieDataRecord: localMovieDataRecords) {
-            mDatabase.movieDataRecordsDao().deleteRecord(movieDataRecord);
+            mLocalDatabase.movieDataRecordsDao().deleteRecord(movieDataRecord);
         }
 
         for (SeriesDataRecord seriesDataRecord: localSeriesDataRecords) {
-            mDatabase.seriesDataRecordsDao().deleteRecord(seriesDataRecord);
+            mLocalDatabase.seriesDataRecordsDao().deleteRecord(seriesDataRecord);
         }
 
         for (MovieData movieData: localMovieDataList) {
-            mDatabase.movieDataDao().deleteMovieData(movieData);
+            mLocalDatabase.movieDataDao().deleteMovieData(movieData);
         }
 
         for (SeriesData seriesData: localSeriesDataList) {
-            mDatabase.seriesDataDao().deleteSeriesData(seriesData);
+            mLocalDatabase.seriesDataDao().deleteSeriesData(seriesData);
         }
 
         for (WatchListModel watchListModel: localWatchLists) {
-            mDatabase.watchListsDao().deleteList(watchListModel);
+            mLocalDatabase.watchListsDao().deleteList(watchListModel);
         }
 
         for (UserListModel userListModel: localUserLists) {
-            mDatabase.userListsDao().deleteList(userListModel);
+            mLocalDatabase.userListsDao().deleteList(userListModel);
         }
 
         for (MovieNotifier movieNotifier: localMovieNotifiers) {
-            mDatabase.movieNotifierDao().deleteNotifier(movieNotifier);
+            mLocalDatabase.movieNotifierDao().deleteNotifier(movieNotifier);
         }
 
         for (SeriesNotifier seriesNotifier: localSeriesNotifiers) {
-            mDatabase.seriesNotifierDao().deleteNotifier(seriesNotifier);
+            mLocalDatabase.seriesNotifierDao().deleteNotifier(seriesNotifier);
         }
     }
 }

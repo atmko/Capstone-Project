@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.database.AppDatabase;
 
 public class HomeListDisplayViewModelFactory extends ViewModelProvider.NewInstanceFactory {
@@ -23,13 +22,7 @@ public class HomeListDisplayViewModelFactory extends ViewModelProvider.NewInstan
     @Override
     public @NonNull
     <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        if (MasterActivity.isProMode()) {
-            //noinspection unchecked
-            return (T) new FirebaseHomeListDisplayViewModel(mListName);
-
-        } else {
-            //noinspection unchecked
-            return (T) new HomeListDisplayViewModel(mDatabase, mListName);
-        }
+        //noinspection unchecked
+        return (T) new HomeListDisplayViewModel(mDatabase, mListName);
     }
 }

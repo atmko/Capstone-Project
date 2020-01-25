@@ -168,7 +168,7 @@ public class NotificationHandler {
 
             //skip if alarm date is empty
             if (alarmDate == null || alarmDate.equals("")) continue;
-
+            //TODO: remove redundant get(get already performed above)
             SeriesData mediaData = database.seriesDataDao().getSeriesByIdAlt(notifier.getMediaId());
 
             if (notifier.getCondition() == MediaNotifier.CONDITION_ON_RELEASE) {
@@ -246,14 +246,6 @@ public class NotificationHandler {
 
         } else {
             database.seriesNotifierDao().deleteNotifier(((SeriesNotifier) notifier));
-        }
-
-        //disable boot receiver if there are no notifiers in the database
-        List<MovieNotifier> movieNotifiers = database.movieNotifierDao().getAllNotifiersAlt();
-        List<SeriesNotifier> seriesNotifiers = database.seriesNotifierDao().getAllNotifiersAlt();
-
-        if (movieNotifiers.size() == 0 && seriesNotifiers.size() == 0) {
-            disableBootReceiver(context);
         }
     }
 

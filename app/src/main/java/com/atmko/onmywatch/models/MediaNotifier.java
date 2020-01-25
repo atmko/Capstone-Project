@@ -12,6 +12,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.room.ColumnInfo;
+import androidx.room.Ignore;
 
 import com.atmko.onmywatch.Fragments.DetailsFragment;
 import com.atmko.onmywatch.MasterActivity;
@@ -39,7 +40,7 @@ public abstract class MediaNotifier {
     @NonNull
     @ColumnInfo(name = "condition") int mCondition;
 
-    private String mDocumentId;
+    @Ignore private String mUniqueExternalId;
 
     //TODO consider using a LinkedHashSet seeing as titles are used as though they are unique
     public int getCondition() {
@@ -50,16 +51,16 @@ public abstract class MediaNotifier {
         return mId;
     }
 
-    public String getDocumentId() {
-        return mDocumentId;
-    }
-
-    public void setDocumentId(String mDocumentId) {
-        this.mDocumentId = mDocumentId;
-    }
-
     public int getNotificationCode() {
         return Integer.valueOf(getCondition() + mId);
+    }
+
+    public String getUniqueExternalId() {
+        return mUniqueExternalId;
+    }
+
+    public void setUniqueExternalId(String mDocumentId) {
+        this.mUniqueExternalId = mDocumentId;
     }
 
     public static void createReleaseNotificationChannel(Context context) {

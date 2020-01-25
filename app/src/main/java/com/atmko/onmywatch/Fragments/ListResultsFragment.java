@@ -17,7 +17,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,7 +31,6 @@ import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
-import com.atmko.onmywatch.view_models.FirebaseListsResultsViewModel;
 import com.atmko.onmywatch.view_models.ListResultsViewModelFactory;
 import com.atmko.onmywatch.view_models.ListsResultsViewModel;
 
@@ -152,36 +150,21 @@ public class ListResultsFragment extends Fragment
     }
 
     private void observeData(final Bundle savedInstanceState) {
-        final ViewModel viewModel;
-        LiveData<List<MovieData>> movieDataWatchListLiveData;
-        LiveData<List<SeriesData>> seriesDataWatchListLiveData;
-        LiveData<List<MovieData>> movieDataUserListLiveData;
-        LiveData<List<SeriesData>> seriesDataUserListLiveData;
+        AppDatabase database = AppDatabase.getInstance(getContext());
 
         final String[] watchStatusMoviesTitles = getContext().getResources()
                 .getStringArray(R.array.watch_status_movie_titles);
         List<String> titleList = Arrays.asList(watchStatusMoviesTitles);
 
-        AppDatabase database = AppDatabase.getInstance(getContext());
         ListResultsViewModelFactory resultsViewModelFactory =
                 new ListResultsViewModelFactory(database, mListType, mMediaType, titleList, mListName);
 
-        if (MasterActivity.isProMode()) {
-            viewModel = ViewModelProviders.of(this, resultsViewModelFactory)
-                    .get(FirebaseListsResultsViewModel.class);
-            movieDataWatchListLiveData = ((FirebaseListsResultsViewModel) viewModel).getAllMoviesInWatchList();
-            seriesDataWatchListLiveData = ((FirebaseListsResultsViewModel) viewModel).getAllSeriesInWatchList();
-            movieDataUserListLiveData = ((FirebaseListsResultsViewModel) viewModel).getAllMoviesInUserList();
-            seriesDataUserListLiveData = ((FirebaseListsResultsViewModel) viewModel).getAllSeriesInUserList();
-
-        } else {
-            viewModel = ViewModelProviders.of(this, resultsViewModelFactory)
-                    .get(ListsResultsViewModel.class);
-            movieDataWatchListLiveData = ((ListsResultsViewModel) viewModel).getAllMoviesInWatchList();
-            seriesDataWatchListLiveData = ((ListsResultsViewModel) viewModel).getAllSeriesInWatchList();
-            movieDataUserListLiveData = ((ListsResultsViewModel) viewModel).getAllMoviesInUserList();
-            seriesDataUserListLiveData = ((ListsResultsViewModel) viewModel).getAllSeriesInUserList();
-        }
+        final ListsResultsViewModel viewModel = ViewModelProviders.of(this, resultsViewModelFactory)
+                .get(ListsResultsViewModel.class);
+        LiveData<List<MovieData>> movieDataWatchListLiveData = viewModel.getAllMoviesInWatchList();
+        LiveData<List<SeriesData>> seriesDataWatchListLiveData = viewModel.getAllSeriesInWatchList();
+        LiveData<List<MovieData>>  movieDataUserListLiveData = viewModel.getAllMoviesInUserList();
+        LiveData<List<SeriesData>> seriesDataUserListLiveData = viewModel.getAllSeriesInUserList();
 
         //if this is a watch list
         if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
