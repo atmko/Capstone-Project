@@ -212,7 +212,7 @@ public class NotificationHandler {
     }
 
     public static void scheduleNewEpisodeNotification(Context context, SeriesData mediaData,
-                                                   SeriesNotifier notifier) {
+                                                      SeriesNotifier notifier) {
         Notification notification = notifier.createNewEpisodeNotification(context, mediaData);
 
         //create pending intent to house notification for when alarm is triggered

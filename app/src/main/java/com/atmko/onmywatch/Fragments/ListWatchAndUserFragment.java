@@ -30,6 +30,7 @@ import com.atmko.onmywatch.models.ListModel;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.SeriesData;
+import com.atmko.onmywatch.models.SimpleIdlingResource;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.atmko.onmywatch.R;
@@ -304,6 +305,10 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
 
     @Override
     public void onDeleteClick(final ListModel userListModel) {
+        if (getIdlingResource() != null) {
+            getIdlingResource().setIdleState(false);
+        }
+
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -318,8 +323,18 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
                 maintainMoviesWatchListCountIntegrity(moviesInList);
 
                 maintainSeriesWatchListCountIntegrity(seriesInList);
+
+                if (getIdlingResource() != null) {
+                    getIdlingResource().setIdleState(true);
+                }
             }
         });
+    }
+
+    private SimpleIdlingResource getIdlingResource() {
+        if (getActivity() == null) return null;
+
+        return ((MasterActivity) getActivity()).mIdlingResource;
     }
 
     private void maintainMoviesWatchListCountIntegrity(List<MovieData> moviesInList) {
