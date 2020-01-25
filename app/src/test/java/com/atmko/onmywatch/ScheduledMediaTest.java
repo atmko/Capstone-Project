@@ -7,7 +7,7 @@ package com.atmko.onmywatch;
 import com.atmko.onmywatch.models.ScheduledMedia;
 import com.atmko.onmywatch.utils.GeneralUtils;
 import com.atmko.onmywatch.utils.GeneralUtils.DateInject;
-import com.atmko.onmywatch.utils.network_utils.ApiConstants;
+import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 
 import org.junit.Before;
 import org.junit.Test;
