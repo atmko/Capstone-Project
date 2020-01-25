@@ -529,6 +529,9 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
         //get watch status lists
         //update counts
         //update lists
+
+        if (String.valueOf(mOldWatchStatus).equals(mNewWatchStatus)) return;
+
         if (mOldWatchStatus != null) {
             String oldWatchStatusName = MediaData.getWatchStatusTitle(mOldWatchStatus,
                     getApplicationContext());
