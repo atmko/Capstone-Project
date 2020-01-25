@@ -7,7 +7,6 @@ package com.atmko.onmywatch;
 import android.content.Context;
 import android.content.Intent;
 
-import androidx.room.Room;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.IdlingResource;
@@ -19,6 +18,7 @@ import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.UiSelector;
 
 import com.atmko.onmywatch.database.AppDatabase;
+import com.atmko.onmywatch.database.FirebaseDatabase;
 import com.atmko.onmywatch.models.Episode;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MediaNotifier;
@@ -32,6 +32,8 @@ import com.atmko.onmywatch.models.WatchListModel;
 import com.atmko.onmywatch.utils.GeneralUtils;
 import com.atmko.onmywatch.utils.UpdateNotifierService;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.functions.FirebaseFunctions;
 
 import org.junit.After;
 import org.junit.Before;
@@ -43,6 +45,7 @@ import org.parceler.Parcels;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
+import java.util.concurrent.ExecutionException;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -59,7 +62,7 @@ import static org.junit.Assert.fail;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 @RunWith(AndroidJUnit4.class)
-public class NotificationTests {
+public class FirebaseNotificationTests {
     private NotificationIdlingResource notificationIdlingResource;
     private IdlingResource addToListIdlingResource;
     private Context context = ApplicationProvider.getApplicationContext();
@@ -80,8 +83,7 @@ public class NotificationTests {
 
     @Before
     public void setupTestDatabase() {
-        db = Room.inMemoryDatabaseBuilder(context, AppDatabase.class)
-                .build();
+        db = new FirebaseDatabase();
 
         AppDatabase.setDatabase(db);
     }
@@ -92,8 +94,7 @@ public class NotificationTests {
                 .getStringArray(R.array.watch_status_series_titles);
         for (String title: seriesWatchListTitles) {
             WatchListModel watchListModel = new WatchListModel(title);
-            AppDatabase.getInstance(context).watchListsDao()
-                    .addList(watchListModel);
+            db.watchListsDao().addList(watchListModel);
         }
     }
 
@@ -104,8 +105,14 @@ public class NotificationTests {
     }
 
     @After
-    public void closeDb() {
-        db.close();
+    public void deleteRemotelySavedData() {
+        try {
+            Tasks.await(FirebaseFunctions.getInstance().getHttpsCallable("deleteUserData").call());
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     //ensures movie notifiers get canceled when watch status updated to other than "to watch" or "watching"

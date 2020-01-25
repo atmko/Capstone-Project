@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 
-import androidx.room.Room;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.IdlingResource;
@@ -19,12 +18,15 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.ActivityTestRule;
 
 import com.atmko.onmywatch.database.AppDatabase;
+import com.atmko.onmywatch.database.FirebaseDatabase;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.MovieDataRecord;
 import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.models.WatchListModel;
 import com.atmko.onmywatch.utils.UpdateNotifierService;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.functions.FirebaseFunctions;
 
 import org.hamcrest.Matcher;
 import org.junit.After;
@@ -36,6 +38,7 @@ import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -53,7 +56,7 @@ import static org.junit.Assert.fail;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 @RunWith(AndroidJUnit4.class)
-public class ListTests {
+public class FirebaseListTests {
     private IdlingResource masterIdlingResource;
     private IdlingResource addToListIdlingResource;
     private Context context = ApplicationProvider.getApplicationContext();
@@ -69,8 +72,7 @@ public class ListTests {
 
     @Before
     public void setupTestDatabase() {
-        db = Room.inMemoryDatabaseBuilder(context, AppDatabase.class)
-                .build();
+        db = new FirebaseDatabase();
 
         AppDatabase.setDatabase(db);
     }
@@ -97,8 +99,14 @@ public class ListTests {
     }
 
     @After
-    public void closeDb() {
-        db.close();
+    public void deleteRemotelySavedData() {
+        try {
+            Tasks.await(FirebaseFunctions.getInstance().getHttpsCallable("deleteUserData").call());
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
