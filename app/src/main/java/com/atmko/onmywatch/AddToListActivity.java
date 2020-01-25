@@ -11,6 +11,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
@@ -35,8 +36,10 @@ import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.MovieDataRecord;
+import com.atmko.onmywatch.models.MovieNotifier;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesDataRecord;
+import com.atmko.onmywatch.models.SeriesNotifier;
 import com.atmko.onmywatch.models.SimpleIdlingResource;
 import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.models.WatchListModel;
@@ -75,6 +78,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
 
     private int mMediaType;
     private MediaData mMediaData;
+    private MediaData mSavedMedia;
 
     private Bundle mSavedInstanceState;
     private AppDatabase mDatabase;
@@ -390,23 +394,25 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                if (mMediaType == MEDIA_TYPE_MOVIE) {
-                    updateMovieData();
-
-                } else {
-                    updateSeriesData();
-
-                }
-
-                setNotifiers();
-
-                int userListNetCountChange = updateUserListRecords();
+                int userListNetCountChange = getUserListNetCountChange();
                 int newContainingListValue = mOriginalContainingLists.size() + userListNetCountChange;
 
-                boolean isDeleted = deleteMediaDataIfDataNotUsed(mMediaData.getWatchStatus(),
-                        newContainingListValue);
+                boolean isMediaUnused = isMediaUnused(mSelectedWatchStatus, newContainingListValue);
 
-                mNewWatchStatus = isDeleted? null : mMediaData.getWatchStatus();
+                mSavedMedia = getSavedMedia();
+
+                if (isMediaUnused) {
+                    updateUserListRecords();
+                    deleteSavedMedia();
+                    deleteNotifiers();
+
+                } else {
+                    updateMediaData();
+                    updateUserListRecords();
+                    setNotifiers();
+                }
+
+                mNewWatchStatus = isMediaUnused? null : mSelectedWatchStatus;
 
                 updateWatchListCounts();
 
@@ -417,18 +423,39 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
         });
     }
 
-    private void updateMovieData() {
-        MovieData movieData = mDatabase.movieDataDao().getMovieByIdAlt(mMediaData.getId());
-        if (movieData != null) {
-            //set the watch status, preserve user rating and trakt id
-            mMediaData.setWatchStatus(mSelectedWatchStatus);
-            mMediaData.setUserRating(movieData.getUserRating());
-            mMediaData.setTraktId(movieData.getTraktId());
-
-            mDatabase.movieDataDao().addMovieData(((MovieData) mMediaData));
+    private MediaData getSavedMedia() {
+        MediaData mediaData;
+        if (mMediaType == MEDIA_TYPE_MOVIE) {
+            mediaData = mDatabase.movieDataDao().getMovieByIdAlt(mMediaData.getId());
 
         } else {
-            mMediaData.setWatchStatus(mSelectedWatchStatus);
+            mediaData = mDatabase.seriesDataDao().getSeriesByIdAlt(mMediaData.getId());
+        }
+
+        return mediaData;
+    }
+
+    private void updateMediaData() {
+        if (mMediaType == MEDIA_TYPE_MOVIE) {
+            updateMovieData();
+
+        } else {
+            updateSeriesData();
+        }
+    }
+
+    private void updateMovieData() {
+        mMediaData.setWatchStatus(mSelectedWatchStatus);
+
+        if (mSavedMedia != null) {
+            //preserve user rating, trakt id and unique externalId
+            mMediaData.setUserRating(mSavedMedia.getUserRating());
+            mMediaData.setTraktId(mSavedMedia.getTraktId());
+            mMediaData.setUniqueExternalId(mSavedMedia.getUniqueExternalId());
+
+            mDatabase.movieDataDao().updateMovieData(((MovieData) mMediaData));
+
+        } else {
             mDatabase.movieDataDao().addMovieData(((MovieData) mMediaData));
         }
 
@@ -436,34 +463,48 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
     }
 
     private void updateSeriesData() {
-        SeriesData seriesData = mDatabase.seriesDataDao().getSeriesByIdAlt(mMediaData.getId());
-        if (seriesData != null) {
-            //set the watch status, preserve user rating and trakt id
-            mMediaData.setWatchStatus(mSelectedWatchStatus);
-            mMediaData.setUserRating(seriesData.getUserRating());
-            mMediaData.setTraktId(seriesData.getTraktId());
+        mMediaData.setWatchStatus(mSelectedWatchStatus);
 
-            mDatabase.seriesDataDao().addSeriesData(((SeriesData) mMediaData));
+        if (mSavedMedia != null) {
+            //preserve user rating, trakt id and unique externalId
+            mMediaData.setUserRating(mSavedMedia.getUserRating());
+            mMediaData.setTraktId(mSavedMedia.getTraktId());
+            mMediaData.setUniqueExternalId(mSavedMedia.getUniqueExternalId());
+
+            mDatabase.seriesDataDao().updateSeriesData(((SeriesData) mMediaData));
 
         } else {
-            mMediaData.setWatchStatus(mSelectedWatchStatus);
             mDatabase.seriesDataDao().addSeriesData(((SeriesData) mMediaData));
         }
 
         Log.d(TAG, "update media data");
     }
 
-    private int updateUserListRecords() {
+    private int getUserListNetCountChange() {
         int netCountChange = 0;
 
+        for (UserListModel userListModel : mNewContainingLists) {
+            if (!mOriginalContainingLists.contains(userListModel)) {
+                netCountChange += 1;
+            }
+        }
+
+        for (UserListModel userListModel : mOriginalContainingLists) {
+            if (!mNewContainingLists.contains(userListModel)) {
+                netCountChange -= 1;
+            }
+        }
+
+        return netCountChange;
+    }
+
+    private void updateUserListRecords() {
         for (UserListModel userListModel : mNewContainingLists) {
             if (!mOriginalContainingLists.contains(userListModel)) {
                 //add the media to the list
                 Log.d(TAG, "adding to list");
                 addToList(userListModel);
                 updateListCount(userListModel, +1);
-
-                netCountChange += 1;
             }
         }
 
@@ -473,12 +514,8 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
                 Log.d(TAG, "removing from list");
                 removeFromList(userListModel);
                 updateListCount(userListModel, -1);
-
-                netCountChange -= 1;
             }
         }
-
-        return netCountChange;
     }
 
     private void setNotifiers() {
@@ -520,12 +557,16 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
     private void removeFromList(final UserListModel userListModel) {
         if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
             //remove record from list
-            MovieDataRecord dataRecord = new MovieDataRecord(mMediaData.getId(), userListModel.getName());
+            //todo: to avoid 2nd query, instead separate getAllListsContainingMedia query into two queries and use the media record to delete
+            MovieDataRecord dataRecord = mDatabase.movieDataRecordsDao()
+                    .getRecordByIdAlt(mMediaData.getId(), userListModel.getName());
             mDatabase.movieDataRecordsDao().deleteRecord((dataRecord));
 
         } else if (mMediaType == MasterActivity.MEDIA_TYPE_SERIES) {
             //remove record from list
-            SeriesDataRecord dataRecord = new SeriesDataRecord(mMediaData.getId(), userListModel.getName());
+            //todo: to avoid 2nd query, instead separate getAllListsContainingMedia query into two queries and use the media record to delete
+            SeriesDataRecord dataRecord = mDatabase.seriesDataRecordsDao()
+                    .getRecordByIdAlt(mMediaData.getId(), userListModel.getName());
             mDatabase.seriesDataRecordsDao().deleteRecord((dataRecord));
 
         }
@@ -556,25 +597,40 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
         Log.d(TAG, "update list count");
     }
 
-    private boolean deleteMediaDataIfDataNotUsed(int newWatchStatus, int newContainingListValue) {
+    private boolean isMediaUnused(int newWatchStatus, int newContainingListValue) {
         //if watch status is none and if there are no lists containing this media
-        if (newWatchStatus == MediaData.WATCH_STATUS_NONE
-                && newContainingListValue == 0) {
-            //delete the media from the database
-            Log.d(TAG, "deleting empty media data");
+        return newWatchStatus == MediaData.WATCH_STATUS_NONE
+                && newContainingListValue == 0;
+    }
 
-            if (mMediaType == MEDIA_TYPE_MOVIE) {
-                mDatabase.movieDataDao().deleteMovieData(((MovieData) mMediaData));
+    private void deleteSavedMedia() {
+        if (mSavedMedia == null) return;
 
-            } else if (mMediaType == MEDIA_TYPE_SERIES) {
-                mDatabase.seriesDataDao().deleteSeriesData(((SeriesData) mMediaData));
+        if (mMediaType == MEDIA_TYPE_MOVIE) {
+            mDatabase.movieDataDao().deleteMovieData(((MovieData) mSavedMedia));
 
+        } else if (mMediaType == MEDIA_TYPE_SERIES) {
+            mDatabase.seriesDataDao().deleteSeriesData(((SeriesData) mSavedMedia));
+        }
+    }
+
+    private void deleteNotifiers() {
+        if (mMediaType == MEDIA_TYPE_MOVIE) {
+            List<MovieNotifier> movieNotifiers =
+                    mDatabase.movieNotifierDao().getNotifiersWithMediaIdAlt(mMediaData.getId());
+
+            for (MovieNotifier movieNotifier : movieNotifiers) {
+                mDatabase.movieNotifierDao().deleteNotifier(movieNotifier);
             }
 
-            return true;
-        }
+        } else if (mMediaType == MEDIA_TYPE_SERIES) {
+            List<SeriesNotifier> seriesNotifiers =
+                    mDatabase.seriesNotifierDao().getNotifiersWithMediaIdAlt(mMediaData.getId());
 
-        return false;
+            for (SeriesNotifier seriesNotifier : seriesNotifiers) {
+                mDatabase.seriesNotifierDao().deleteNotifier(seriesNotifier);
+            }
+        }
     }
 
     @Override
