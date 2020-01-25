@@ -4,6 +4,7 @@
 
 package com.atmko.onmywatch.database.daos;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -13,6 +14,8 @@ import com.atmko.onmywatch.models.MediaRecord;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesDataRecord;
 import com.atmko.onmywatch.models.UserListModel;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentReference;
@@ -47,37 +50,48 @@ public class FirebaseSeriesDataRecordsDao implements SeriesDataRecordsDao {
 
     @Override
     public void addRecord(SeriesDataRecord seriesDataRecord) {
-        Task<DocumentReference> task = MasterActivity.getUserDbHomeReference()
+        DocumentReference documentReference = MasterActivity.getUserDbHomeReference()
                 .collection(SERIES_DATA_RECORDS_COLLECTION_PATH)
-                .add(seriesDataRecord.parseListModelToDataMap());
+                .document();
 
-        try {
-            seriesDataRecord.setUniqueExternalId(Tasks.await(task).getId());
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        seriesDataRecord.setUniqueExternalId(documentReference.getId());
+
+        documentReference.set(seriesDataRecord.parseListModelToDataMap())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
     }
 
-    public static void addSeriesDataRecordBatch(List<Map<String, Object>> watchListMaps) {
+    public static void addSeriesDataRecordBatch(List<Map<String, Object>> recordsMaps) {
         final WriteBatch batch = FirebaseFirestore.getInstance().batch();
 
-        for (Map<String, Object> recordMap: watchListMaps) {
+        for (Map<String, Object> seriesDataMap: recordsMaps) {
             DocumentReference documentReference = MasterActivity.getUserDbHomeReference()
                     .collection(SERIES_DATA_RECORDS_COLLECTION_PATH)
                     .document();
 
-            batch.set(documentReference, recordMap);
+            batch.set(documentReference, seriesDataMap);
         }
 
-        try {
-            Tasks.await(batch.commit());
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        batch.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
     }
 
     @Override
@@ -422,18 +436,21 @@ public class FirebaseSeriesDataRecordsDao implements SeriesDataRecordsDao {
 
     @Override
     public void deleteRecord(SeriesDataRecord seriesDataRecord) {
-        Task<Void> task = MasterActivity.getUserDbHomeReference()
+        MasterActivity.getUserDbHomeReference()
                 .collection(SERIES_DATA_RECORDS_COLLECTION_PATH)
                 .document(seriesDataRecord.getUniqueExternalId())
-                .delete();
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
 
-        try {
-            Tasks.await(task);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
     }
 
     @SuppressWarnings("ConstantConditions")

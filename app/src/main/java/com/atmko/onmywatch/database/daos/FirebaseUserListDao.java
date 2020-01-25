@@ -4,12 +4,15 @@
 
 package com.atmko.onmywatch.database.daos;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.models.UserListModel;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentReference;
@@ -42,17 +45,24 @@ public class FirebaseUserListDao implements UserListsDao{
 
     @Override
     public void addList(UserListModel userListModel) {
-        Task<DocumentReference> task = MasterActivity.getUserDbHomeReference()
+        DocumentReference documentReference = MasterActivity.getUserDbHomeReference()
                 .collection(USER_LISTS_PATH)
-                .add(userListModel.parseListModelToDataMap());
+                .document();
 
-        try {
-            userListModel.setUniqueExternalId(Tasks.await(task).getId());
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        userListModel.setUniqueExternalId(documentReference.getId());
+
+        documentReference.set(userListModel.parseListModelToDataMap())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
     }
 
     public static void addUserListBatch(List<Map<String, Object>> userListMaps) {
@@ -66,13 +76,17 @@ public class FirebaseUserListDao implements UserListsDao{
             batch.set(documentReference, userListMap);
         }
 
-        try {
-            Tasks.await(batch.commit());
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        batch.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
     }
 
     @Override
@@ -164,18 +178,21 @@ public class FirebaseUserListDao implements UserListsDao{
 
     @Override
     public void updateListConfiguration(UserListModel userListModel) {
-        Task<Void> task = MasterActivity.getUserDbHomeReference()
+        MasterActivity.getUserDbHomeReference()
                 .collection(USER_LISTS_PATH)
                 .document(userListModel.getUniqueExternalId())
-                .update(userListModel.parseListModelToDataMap());
+                .update(userListModel.parseListModelToDataMap())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
 
-        try {
-            Tasks.await(task);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
     }
 
     public static void updateUserListBatch(List<String> batchDocumentIds, List<Map<String,
@@ -190,33 +207,48 @@ public class FirebaseUserListDao implements UserListsDao{
             batch.update(documentReference, userListMaps.get(i));
         }
 
-        try {
-            Tasks.await(batch.commit());
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        batch.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
     }
 
     @Override
-    public void deleteList(UserListModel userListModel) {
-        Task<Void> task = MasterActivity.getUserDbHomeReference()
+    public void deleteList(final UserListModel userListModel) {
+        MasterActivity.getUserDbHomeReference()
                 .collection(USER_LISTS_PATH)
                 .document(userListModel.getUniqueExternalId())
-                .delete();
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        FirebaseFunctions.getInstance().getHttpsCallable("onDeleteList")
+                                .call(userListModel.getName())
+                                .addOnSuccessListener(new OnSuccessListener<HttpsCallableResult>() {
+                                    @Override
+                                    public void onSuccess(HttpsCallableResult httpsCallableResult) {
 
-        Task<HttpsCallableResult> task2 = FirebaseFunctions.getInstance()
-                .getHttpsCallable("onDeleteList").call(userListModel.getName());
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
 
-        try {
-            Tasks.await(task);
-            Tasks.await(task2);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+                                    }
+                                });
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
     }
 
     //TODO: list name and list count are never null when retrieved from the database

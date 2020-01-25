@@ -4,6 +4,7 @@
 
 package com.atmko.onmywatch.database.daos;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -16,6 +17,8 @@ import com.atmko.onmywatch.models.ScheduledMedia;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 import com.atmko.onmywatch.utils.api_utils.MovieApiConstants;
 import com.atmko.onmywatch.utils.network_utils.TraktApiConstants;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentReference;
@@ -48,19 +51,27 @@ public class FirebaseMovieDataDao implements MovieDataDao {
 
     @Override
     public void addMovieData(MovieData movieData) {
-        Task<DocumentReference> task = MasterActivity.getUserDbHomeReference()
+        DocumentReference documentReference = MasterActivity.getUserDbHomeReference()
                 .collection(MOVIES_COLLECTION_PATH)
-                .add(movieData.parseMediaDataToDataMap());
+                .document();
 
-        try {
-            movieData.setUniqueExternalId(Tasks.await(task).getId());
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        movieData.setUniqueExternalId(documentReference.getId());
+
+        documentReference.set(movieData.parseMediaDataToDataMap())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
     }
 
+    //TODO: remove update code from pro migrations since set method can handle create and updates
     public static void addMovieDataBatch(List<Map<String, Object>> movieDataMapList) {
         final WriteBatch batch = FirebaseFirestore.getInstance().batch();
 
@@ -72,13 +83,17 @@ public class FirebaseMovieDataDao implements MovieDataDao {
             batch.set(documentReference, movieDataMap);
         }
 
-        try {
-            Tasks.await(batch.commit());
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        batch.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
     }
 
     @Override
@@ -370,18 +385,21 @@ public class FirebaseMovieDataDao implements MovieDataDao {
 
     @Override
     public void updateMovieData(MovieData movieData) {
-        Task<Void> task = MasterActivity.getUserDbHomeReference()
+        MasterActivity.getUserDbHomeReference()
                 .collection(MOVIES_COLLECTION_PATH)
                 .document(movieData.getUniqueExternalId())
-                .update(movieData.parseMediaDataToDataMap());
+                .update(movieData.parseMediaDataToDataMap())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
 
-        try {
-            Tasks.await(task);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
     }
 
     public static void updateMovieDataBatch(List<String> batchDocumentIds, List<Map<String,
@@ -396,29 +414,36 @@ public class FirebaseMovieDataDao implements MovieDataDao {
             batch.update(documentReference, movieDataMapList.get(i));
         }
 
-        try {
-            Tasks.await(batch.commit());
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        batch.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
     }
 
     @Override
     public void deleteMovieData(MovieData movieData) {
-        Task<Void> task = MasterActivity.getUserDbHomeReference()
+        MasterActivity.getUserDbHomeReference()
                 .collection(MOVIES_COLLECTION_PATH)
                 .document(movieData.getUniqueExternalId())
-                .delete();
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
 
-        try {
-            Tasks.await(task);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+        });
     }
 
     @SuppressWarnings({"ConstantConditions", "unchecked"})

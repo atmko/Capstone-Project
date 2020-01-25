@@ -4,12 +4,15 @@
 
 package com.atmko.onmywatch.database.daos;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.models.WatchListModel;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentReference;
@@ -40,17 +43,24 @@ public class FirebaseWatchListDao implements WatchListsDao {
 
     @Override
     public void addList(WatchListModel watchListModel) {
-        Task<DocumentReference> task = MasterActivity.getUserDbHomeReference()
+        DocumentReference documentReference = MasterActivity.getUserDbHomeReference()
                 .collection(WATCH_LISTS_PATH)
-                .add(watchListModel.parseListModelToDataMap());
+                .document();
 
-        try {
-            watchListModel.setUniqueExternalId(Tasks.await(task).getId());
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        watchListModel.setUniqueExternalId(documentReference.getId());
+
+        documentReference.set(watchListModel.parseListModelToDataMap())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
     }
 
     public static void addWatchListBatch(List<Map<String, Object>> watchListMaps) {
@@ -64,13 +74,17 @@ public class FirebaseWatchListDao implements WatchListsDao {
             batch.set(documentReference, watchListMap);
         }
 
-        try {
-            Tasks.await(batch.commit());
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        batch.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
     }
 
     @Override
@@ -162,18 +176,21 @@ public class FirebaseWatchListDao implements WatchListsDao {
 
     @Override
     public void updateListConfiguration(WatchListModel watchListModel) {
-        Task<Void> task = MasterActivity.getUserDbHomeReference()
+        MasterActivity.getUserDbHomeReference()
                 .collection(WATCH_LISTS_PATH)
                 .document(watchListModel.getUniqueExternalId())
-                .update(watchListModel.parseListModelToDataMap());
+                .update(watchListModel.parseListModelToDataMap())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
 
-        try {
-            Tasks.await(task);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
     }
 
     public static void updateWatchListBatch(List<String> batchDocumentIds, List<Map<String,
@@ -188,29 +205,36 @@ public class FirebaseWatchListDao implements WatchListsDao {
             batch.update(documentReference, watchListMaps.get(i));
         }
 
-        try {
-            Tasks.await(batch.commit());
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        batch.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
     }
 
     @Override
     public void deleteList(WatchListModel watchListModel) {
-        Task<Void> task = MasterActivity.getUserDbHomeReference()
+        MasterActivity.getUserDbHomeReference()
                 .collection(WATCH_LISTS_PATH)
                 .document(watchListModel.getUniqueExternalId())
-                .delete();
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
 
-        try {
-            Tasks.await(task);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
     }
 
     //TODO: list name and list count are never null when retrieved from the database

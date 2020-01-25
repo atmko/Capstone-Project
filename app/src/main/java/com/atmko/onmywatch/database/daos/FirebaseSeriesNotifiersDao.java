@@ -4,15 +4,15 @@
 
 package com.atmko.onmywatch.database.daos;
 
-import android.util.Log;
-
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.atmko.onmywatch.MasterActivity;
-import com.atmko.onmywatch.models.MovieNotifier;
 import com.atmko.onmywatch.models.SeriesNotifier;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentReference;
@@ -43,37 +43,48 @@ public class FirebaseSeriesNotifiersDao implements SeriesNotifierDao {
 
     @Override
     public void addMediaNotifier(SeriesNotifier seriesNotifier) {
-        Task<DocumentReference> task = MasterActivity.getUserDbHomeReference()
+        DocumentReference documentReference = MasterActivity.getUserDbHomeReference()
                 .collection(SERIES_NOTIFIERS_COLLECTION_PATH)
-                .add(seriesNotifier.parseNotifierToDataMap());
+                .document();
 
-        try {
-            seriesNotifier.setUniqueExternalId(Tasks.await(task).getId());
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        seriesNotifier.setUniqueExternalId(documentReference.getId());
+
+        documentReference.set(seriesNotifier.parseNotifierToDataMap())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
     }
 
     public static void addSeriesNotifierBatch(List<Map<String, Object>> notifierMapList) {
         final WriteBatch batch = FirebaseFirestore.getInstance().batch();
 
-        for (Map<String, Object> notifierMap: notifierMapList) {
+        for (Map<String, Object> movieDataMap: notifierMapList) {
             DocumentReference documentReference = MasterActivity.getUserDbHomeReference()
                     .collection(SERIES_NOTIFIERS_COLLECTION_PATH)
                     .document();
 
-            batch.set(documentReference, notifierMap);
+            batch.set(documentReference, movieDataMap);
         }
 
-        try {
-            Tasks.await(batch.commit());
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        batch.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
     }
 
     @Override
@@ -192,18 +203,21 @@ public class FirebaseSeriesNotifiersDao implements SeriesNotifierDao {
 
     @Override
     public void deleteNotifier(SeriesNotifier notifier) {
-        Task<Void> task = MasterActivity.getUserDbHomeReference()
+        MasterActivity.getUserDbHomeReference()
                 .collection(SERIES_NOTIFIERS_COLLECTION_PATH)
                 .document(notifier.getUniqueExternalId())
-                .delete();
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
 
-        try {
-            Tasks.await(task);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
     }
 
     @SuppressWarnings("ConstantConditions")
