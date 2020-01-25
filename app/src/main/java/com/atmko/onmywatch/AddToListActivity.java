@@ -193,6 +193,10 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
     }
 
     private void observeViewModel() {
+        if (mIdlingResource != null) {
+            mIdlingResource.setIdleState(false);
+        }
+
         AddToListViewModelFactory addToListViewModelFactory =
                 new AddToListViewModelFactory(mDatabase, mMediaType, mMediaData.getId());
 
@@ -273,6 +277,8 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
                             //update list so onCheckDatabaseRecords function can run
                             mAdapter.getAdapterData().clear();
                             mAdapter.addAdapterData(allUserLists);
+
+                            allowSave();
                         }
                     });
                     //else if no user list(s) exist
@@ -283,6 +289,23 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
                 }
             }
         });
+    }
+
+    private void allowSave() {
+        //configure save button
+        mSaveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getDetailsAndUpdateData();
+
+                //exit activity
+                finish();
+            }
+        });
+
+        if (mIdlingResource != null) {
+            mIdlingResource.setIdleState(true);
+        }
     }
 
     private LinearLayoutManager configureLayoutManager() {

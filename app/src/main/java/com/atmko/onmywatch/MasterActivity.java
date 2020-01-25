@@ -94,7 +94,7 @@ public class MasterActivity extends AppCompatActivity {
 
     // The Idling Resource which will be null in production.
     @Nullable
-    private SimpleIdlingResource mIdlingResource;
+    public SimpleIdlingResource mIdlingResource;
 
     public static boolean sProMode;
 
@@ -146,6 +146,10 @@ public class MasterActivity extends AppCompatActivity {
 
     //retrieve data from the activity's view model
     private void observeData() {
+        if (mIdlingResource != null) {
+            mIdlingResource.setIdleState(false);
+        }
+
         MasterActivityViewModel masterActivityViewModel =
                 ViewModelProviders.of(this).get(MasterActivityViewModel.class);
 
@@ -209,6 +213,10 @@ public class MasterActivity extends AppCompatActivity {
         }
 
         getSupportFragmentManager().executePendingTransactions();
+
+        if (mIdlingResource != null) {
+            mIdlingResource.setIdleState(true);
+        }
     }
 
     private void startSignInActivity() {
