@@ -137,10 +137,11 @@ public class MovieDataParser {
         String releaseStatus = ((String) returnedMap.get(ApiConstants.RELEASE_STATUS_KEY));
         detailsMovieData.setReleaseStatus(ApiConstants.TextReplacement.replaceText(releaseStatus));
 
-        //preserve the overwritten watch status, user rating and trakt id
+        //preserve the overwritten watch status, user rating, trakt id and unique external id
         detailsMovieData.setWatchStatus(movieData.getWatchStatus());
         detailsMovieData.setUserRating(movieData.getUserRating());
         detailsMovieData.setTraktId(movieData.getTraktId());
+        detailsMovieData.setUniqueExternalId(movieData.getUniqueExternalId());
 
         return detailsMovieData;
     }
