@@ -90,6 +90,7 @@ public class MasterActivity extends AppCompatActivity {
     private boolean mIsTabletLandscape;
     private FirebaseAnalytics mFirebaseAnalytics;
 
+    private Bundle mSavedInstanceState;
     public static List sDetailsHistory;
 
     // The Idling Resource which will be null in production.
@@ -159,7 +160,9 @@ public class MasterActivity extends AppCompatActivity {
                 if (userTier.equals(USER_TIER_PRO) || userTier.equals(USER_TIER_FREE)) {
                     MasterActivity.sProMode = userTier.equals(USER_TIER_PRO);
 
-                    loadUi();
+                    if (mSavedInstanceState == null) {
+                        loadUi();
+                    }
 
                     //start background work managers
                     startWorkers();
@@ -285,6 +288,8 @@ public class MasterActivity extends AppCompatActivity {
     }
 
     private void setValues(Bundle savedInstanceState) {
+        mSavedInstanceState = savedInstanceState;
+
         if (savedInstanceState != null) {
             //restore keyboard visibility value
             mIsKeyboardVisible =
