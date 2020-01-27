@@ -253,7 +253,12 @@ public class Stack extends RecyclerView.OnScrollListener {
             int correctionDifference = mPagingBlockTemplate.pageCapacity - dataList.size();
 
             for (int i = 0; i < correctionDifference; i++) {
-                getAdapterData().remove(getAdapterData().size() - 1);
+                try {
+                    getAdapterData().remove(getAdapterData().size() - 1);
+
+                } catch (IndexOutOfBoundsException e) {
+                    e.printStackTrace();
+                }
 
             }
 
