@@ -17,6 +17,7 @@ import androidx.core.app.NotificationCompat;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.database.AppDatabase;
+import com.atmko.onmywatch.database.daos.FirebaseUserDataDao;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.MovieDataRecord;
 import com.atmko.onmywatch.models.MovieNotifier;
@@ -32,6 +33,9 @@ import com.google.firebase.functions.HttpsCallableResult;
 
 import java.util.List;
 
+import static com.atmko.onmywatch.database.daos.FirebaseUserDataDao.MIGRATION_LOCAL;
+import static com.atmko.onmywatch.database.daos.FirebaseUserDataDao.MIGRATION_TO_LOCAL;
+
 public class FreeModeMigrationService extends JobIntentService {
     private static final String TAG = FreeModeMigrationService.class.getSimpleName();
 
@@ -39,8 +43,6 @@ public class FreeModeMigrationService extends JobIntentService {
 
     //notification channel ids
     public static final String MIGRATION_CHANNEL_ID = "Migration Channel";
-
-    public static final String ACTION_USER_TIER_TO_FREE = "to_free";
 
     private AppDatabase mLocalDatabase;
     private AppDatabase mRemoteDatabase;
@@ -74,7 +76,7 @@ public class FreeModeMigrationService extends JobIntentService {
         try {
             if (intentAction == null) throw new NullPointerException("no intent action specified");
 
-            if (intentAction.equals(ACTION_USER_TIER_TO_FREE)) {
+            if (intentAction.equals(MIGRATION_TO_LOCAL)) {
                 Log.d(TAG, "migrating to free");
                 migrateToLocalDatabase();
             }
@@ -174,7 +176,7 @@ public class FreeModeMigrationService extends JobIntentService {
             @Override
             public void run() {
                 deleteRemotelySavedData();
-                MasterActivity.sProMode = false;
+                FirebaseUserDataDao.setMigrationValue(MIGRATION_LOCAL);
                 finishService();
             }
         });

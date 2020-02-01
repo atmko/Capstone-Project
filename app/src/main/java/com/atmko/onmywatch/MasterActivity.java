@@ -27,7 +27,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.atmko.onmywatch.Fragments.DetailsFragment;
 import com.atmko.onmywatch.Fragments.HomeFragment;
@@ -60,10 +59,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static com.atmko.onmywatch.utils.network_utils.FreeModeMigrationService.ACTION_USER_TIER_TO_FREE;
-import static com.atmko.onmywatch.utils.network_utils.ProModeMigrationService.ACTION_USER_TIER_TO_PRO;
-import static com.atmko.onmywatch.view_models.MasterActivityViewModel.USER_TIER_FREE;
-import static com.atmko.onmywatch.view_models.MasterActivityViewModel.USER_TIER_PRO;
+import static com.atmko.onmywatch.database.daos.FirebaseUserDataDao.MIGRATION_CLOUD;
+import static com.atmko.onmywatch.database.daos.FirebaseUserDataDao.MIGRATION_LOCAL;
+import static com.atmko.onmywatch.database.daos.FirebaseUserDataDao.MIGRATION_TO_CLOUD;
+import static com.atmko.onmywatch.database.daos.FirebaseUserDataDao.MIGRATION_TO_LOCAL;
 
 public class MasterActivity extends AppCompatActivity {
 
@@ -97,7 +96,8 @@ public class MasterActivity extends AppCompatActivity {
     @Nullable
     public SimpleIdlingResource mIdlingResource;
 
-    public static boolean sProMode;
+    public static boolean sIsProMode;
+    public static boolean sAllowCloudBackup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,10 +131,6 @@ public class MasterActivity extends AppCompatActivity {
         }
     }
 
-    public static boolean isProMode() {
-        return sProMode;
-    }
-
     public static FirebaseUser getCurrentUser() {
         return FirebaseAuth.getInstance().getCurrentUser();
     }
@@ -154,12 +150,28 @@ public class MasterActivity extends AppCompatActivity {
         MasterActivityViewModel masterActivityViewModel =
                 ViewModelProviders.of(this).get(MasterActivityViewModel.class);
 
-        masterActivityViewModel.getUserTierLiveData().observe(this, new Observer<String>() {
+        masterActivityViewModel.getIsProModeLiveData().observe(this, new Observer<Boolean>() {
             @Override
-            public void onChanged(String userTier) {
-                if (userTier.equals(USER_TIER_PRO) || userTier.equals(USER_TIER_FREE)) {
-                    MasterActivity.sProMode = userTier.equals(USER_TIER_PRO);
+            public void onChanged(Boolean isProMode) {
+                if (isProMode != null) {
+                    MasterActivity.sIsProMode = isProMode;
+                }
+            }
+        });
 
+        masterActivityViewModel.getAllowCloudBackupLiveData().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean allowCloudBackup) {
+                if (allowCloudBackup != null) {
+                    MasterActivity.sAllowCloudBackup = allowCloudBackup;
+                }
+            }
+        });
+
+        masterActivityViewModel.getMigrationLiveData().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String migration) {
+                if (migration.equals(MIGRATION_CLOUD) || migration.equals(MIGRATION_LOCAL)) {
                     if (mSavedInstanceState == null) {
                         loadUi();
                     }
@@ -172,16 +184,16 @@ public class MasterActivity extends AppCompatActivity {
                     Intent userTierMigrationIntent;
 
                     //start migration foreground service for appropriate user tier
-                    if (userTier.equals(ACTION_USER_TIER_TO_PRO)) {
+                    if (migration.equals(MIGRATION_TO_CLOUD)) {
                         userTierMigrationIntent = new Intent(MasterActivity.this, ProModeMigrationService.class);
-                        userTierMigrationIntent.setAction(userTier);
+                        userTierMigrationIntent.setAction(migration);
 
                         startForegroundService(userTierMigrationIntent);
                         ProModeMigrationService.enqueueWork(MasterActivity.this, userTierMigrationIntent);
 
-                    } else if (userTier.equals(ACTION_USER_TIER_TO_FREE)) {
+                    } else if (migration.equals(MIGRATION_TO_LOCAL)) {
                         userTierMigrationIntent = new Intent(MasterActivity.this, FreeModeMigrationService.class);
-                        userTierMigrationIntent.setAction(userTier);
+                        userTierMigrationIntent.setAction(migration);
 
                         startForegroundService(userTierMigrationIntent);
                         FreeModeMigrationService.enqueueWork(MasterActivity.this, userTierMigrationIntent);
@@ -594,7 +606,6 @@ public class MasterActivity extends AppCompatActivity {
                 backgroundFragment = fragments.get(backgroundFragmentIndex);
             }
 
-            Toast.makeText(this, backgroundFragment.getClass().getSimpleName(), Toast.LENGTH_SHORT).show();
             hideFragment(backgroundFragment);
 
             //hide search bar and dismiss keyboard

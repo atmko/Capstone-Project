@@ -136,8 +136,8 @@ public class ListResultsFragment extends Fragment
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                //TODO: implement search for pro mode
-                if (!MasterActivity.isProMode()) {
+                //TODO: implement search for cloud backup
+                if (!MasterActivity.sAllowCloudBackup) {
                     onSearchTextChanged(s);
                 }
             }
@@ -176,8 +176,8 @@ public class ListResultsFragment extends Fragment
                             public void onChanged(List<MovieData> mediaDataList) {
                                 populateAndNotifyAdapter(mediaDataList);
 
-                                //TODO: implement search for pro mode
-                                if (!MasterActivity.isProMode()) {
+                                //TODO: implement search for cloud backup
+                                if (!MasterActivity.sAllowCloudBackup) {
                                     //restore search if it exists
                                     final ImageButton searchImageButton = getParentFragment().
                                             getView().findViewById(R.id.search_image_button);
@@ -197,8 +197,8 @@ public class ListResultsFragment extends Fragment
                     public void onChanged(List<SeriesData> mediaDataList) {
                         populateAndNotifyAdapter(mediaDataList);
 
-                        //TODO: implement search for pro mode
-                        if (!MasterActivity.isProMode()) {
+                        //TODO: implement search for cloud backup
+                        if (!MasterActivity.sAllowCloudBackup) {
                             //restore search if it exists
                             final ImageButton searchImageButton = getParentFragment().
                                     getView().findViewById(R.id.search_image_button);
@@ -222,8 +222,8 @@ public class ListResultsFragment extends Fragment
                     public void onChanged(List<MovieData> mediaDataList) {
                         populateAndNotifyAdapter(mediaDataList);
 
-                        //TODO: implement search for pro mode
-                        if (!MasterActivity.isProMode()) {
+                        //TODO: implement search for cloud backup
+                        if (!MasterActivity.sAllowCloudBackup) {
                             //restore search if it exists
                             final ImageButton searchImageButton = getParentFragment().
                                     getView().findViewById(R.id.search_image_button);
@@ -243,8 +243,8 @@ public class ListResultsFragment extends Fragment
                     public void onChanged(List<SeriesData> mediaDataList) {
                         populateAndNotifyAdapter(mediaDataList);
 
-                        //TODO: implement search for pro mode
-                        if (!MasterActivity.isProMode()) {
+                        //TODO: implement search for cloud backup
+                        if (!MasterActivity.sAllowCloudBackup) {
                             //restore search if it exists
                             final ImageButton searchImageButton = getParentFragment().
                                     getView().findViewById(R.id.search_image_button);

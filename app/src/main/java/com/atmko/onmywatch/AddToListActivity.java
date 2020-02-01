@@ -154,8 +154,8 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                //TODO: implement search for pro mode
-                if (!MasterActivity.isProMode()) {
+                //TODO: implement search for cloud backup
+                if (!MasterActivity.sAllowCloudBackup) {
                     String listName = s.toString();
                     listName = "%" + listName + "%";
 

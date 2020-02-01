@@ -156,7 +156,7 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 //TODO: implement search for pro mode
-                if (!MasterActivity.isProMode()) {
+                if (!MasterActivity.sAllowCloudBackup) {
                     onSearchTextChanged(s);
                 }
             }
@@ -188,7 +188,7 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
                     mAdapter.addAdapterData(watchListModels);
 
                     //TODO: implement search for pro mode
-                    if (!MasterActivity.isProMode()) {
+                    if (!MasterActivity.sAllowCloudBackup) {
                         //restore search if it exists
                         final ImageButton searchImageButton = getParentFragment().
                                 getView().findViewById(R.id.search_image_button);
@@ -208,7 +208,7 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
                     populateAndNotifyAdapter(userListModels);
 
                     //TODO: implement search for pro mode
-                    if (!MasterActivity.isProMode()) {
+                    if (!MasterActivity.sAllowCloudBackup) {
                         //restore search if it exists
                         final ImageButton searchImageButton = getParentFragment().
                                 getView().findViewById(R.id.search_image_button);

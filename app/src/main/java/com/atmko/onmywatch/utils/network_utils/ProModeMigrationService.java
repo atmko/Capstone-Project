@@ -26,6 +26,7 @@ import com.atmko.onmywatch.database.daos.FirebaseMovieNotifiersDao;
 import com.atmko.onmywatch.database.daos.FirebaseSeriesDataDao;
 import com.atmko.onmywatch.database.daos.FirebaseSeriesDataRecordsDao;
 import com.atmko.onmywatch.database.daos.FirebaseSeriesNotifiersDao;
+import com.atmko.onmywatch.database.daos.FirebaseUserDataDao;
 import com.atmko.onmywatch.database.daos.FirebaseUserListDao;
 import com.atmko.onmywatch.database.daos.FirebaseWatchListDao;
 import com.atmko.onmywatch.models.MovieData;
@@ -41,6 +42,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.atmko.onmywatch.database.daos.FirebaseUserDataDao.MIGRATION_CLOUD;
+import static com.atmko.onmywatch.database.daos.FirebaseUserDataDao.MIGRATION_TO_CLOUD;
+
 public class ProModeMigrationService extends JobIntentService {
     private static final String TAG = ProModeMigrationService.class.getSimpleName();
 
@@ -48,8 +52,6 @@ public class ProModeMigrationService extends JobIntentService {
 
     //notification channel ids
     public static final String MIGRATION_CHANNEL_ID = "Migration Channel";
-
-    public static final String ACTION_USER_TIER_TO_PRO = "to_pro";
 
     private AppDatabase mLocalDatabase;
     private AppDatabase mRemoteDatabase;
@@ -92,7 +94,7 @@ public class ProModeMigrationService extends JobIntentService {
         try {
             if (intentAction == null) throw new NullPointerException("no intent action specified");
 
-            if (intentAction.equals(ACTION_USER_TIER_TO_PRO)) {
+            if (intentAction.equals(MIGRATION_TO_CLOUD)) {
                 Log.d(TAG, "migrating to pro");
                 migrateToRemoteDatabase();
 
@@ -206,7 +208,7 @@ public class ProModeMigrationService extends JobIntentService {
             @Override
             public void run() {
                 deleteLocallySavedData();
-                MasterActivity.sProMode = false;
+                FirebaseUserDataDao.setMigrationValue(MIGRATION_CLOUD);
                 finishService();
             }
         });

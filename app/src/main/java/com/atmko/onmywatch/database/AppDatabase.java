@@ -46,16 +46,16 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public static AppDatabase getInstance(Context context) {
         if (sInstance != null) {
-            if (MasterActivity.sProMode && sInstance instanceof FirebaseDatabase) {
+            if (MasterActivity.sAllowCloudBackup && sInstance instanceof FirebaseDatabase) {
                 return sInstance;
 
-            } else if (!MasterActivity.sProMode && !(sInstance instanceof FirebaseDatabase)) {
+            } else if (!MasterActivity.sAllowCloudBackup && !(sInstance instanceof FirebaseDatabase)) {
                 return sInstance;
             }
         }
 
         synchronized (LOCK) {
-            if (MasterActivity.sProMode) {
+            if (MasterActivity.sAllowCloudBackup) {
                 sInstance = new FirebaseDatabase();
 
             } else {
