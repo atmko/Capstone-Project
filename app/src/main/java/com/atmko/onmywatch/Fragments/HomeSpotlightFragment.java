@@ -99,7 +99,6 @@ public class HomeSpotlightFragment extends Fragment implements
 
         if (savedInstanceState == null) {
             mSearchPreferences.setTargetPage(1);
-            executeSearch();
 
         } else {
             //get saved adapter data list
