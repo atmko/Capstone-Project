@@ -79,8 +79,6 @@ public class MasterActivity extends AppCompatActivity {
     private static final int REPEAT_INTERVAL = 2;
     private static final int INITIAL_DELAY = 15;
 
-    private static final String HISTORY_KEY = "history";
-
     private static final String USER_COLLECTION_PATH = "users";
     private final int SIGN_IN_REQUEST_CODE = 10;
 
@@ -90,7 +88,6 @@ public class MasterActivity extends AppCompatActivity {
     private FirebaseAnalytics mFirebaseAnalytics;
 
     private Bundle mSavedInstanceState;
-    public static List sDetailsHistory;
 
     // The Idling Resource which will be null in production.
     @Nullable
@@ -126,7 +123,7 @@ public class MasterActivity extends AppCompatActivity {
 
             //if saved instance is null
             if (savedInstanceState != null) {
-                sDetailsHistory = Parcels.unwrap(savedInstanceState.getParcelable(HISTORY_KEY));
+
             }
         }
     }
@@ -279,7 +276,6 @@ public class MasterActivity extends AppCompatActivity {
 
         //save keyboard visibility value
         outState.putBoolean(KEYBOARD_VISIBILITY_KEY, mIsKeyboardVisible);
-        outState.putParcelable(HISTORY_KEY, Parcels.wrap(sDetailsHistory));
     }
 
     private void initializeAdMob() {
@@ -385,97 +381,62 @@ public class MasterActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Fragment detailFragment =
-                getSupportFragmentManager().findFragmentById(R.id.detail_fragments_container);
-        Fragment fragment =
-                getSupportFragmentManager().findFragmentById(R.id.master_fragments_container);
+        List<Fragment> fragments = getSupportFragmentManager().getFragments();
+        Fragment fragment = fragments.get(fragments.size() - 1);
 
-        //check for  details history
-        if (sDetailsHistory != null && sDetailsHistory.size() != 0) {
-            goUpHistory(detailFragment);
+        if (fragments.size() == 1) {
+            finish();
             return;
         }
 
         //condition for navigation
         //this removes details fragment because master container is behind detail container
         // (via frame layout) in non tablet landscape
-        if (hasFragment(R.id.detail_fragments_container) && !mIsTabletLandscape) {
+        if (fragment instanceof DetailsFragment || fragment instanceof PeopleDetailsFragment) {
             getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
-                    .remove(detailFragment).commit();
+                    .remove(fragment).commit();
 
-        }else {
+        } else {
             //condition for exit animation transition
             if (fragment instanceof ListResultsParentFragment) {
                 getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
                         .remove(fragment).commit();
 
-
-            //has fragment
-            //&&fragment is home fragment
-            } else if (hasFragment(R.id.master_fragments_container) && fragment instanceof HomeFragment) {
-                finish();
-
-
             //condition for navigation
-            } else if (hasFragment(R.id.master_fragments_container)) {
+            } else {
                 getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.slide_down_entry, R.anim.slide_up_exit)
                         .remove(fragment)
                         .commit();
-
-
-            } else {
-                super.onBackPressed();
-
             }
         }
 
         //finish above transaction to prevent null data
         getSupportFragmentManager().executePendingTransactions();
-        fragment = getSupportFragmentManager().findFragmentById(R.id.master_fragments_container);
+        fragments = getSupportFragmentManager().getFragments();
+        fragment = fragments.get(fragments.size() - 1);
 
         //show hidden background fragment
         fragment.getView().findViewById(R.id.top_layout).setVisibility(View.VISIBLE);
 
-        //set toolbar
-        Toolbar toolbar = fragment.getView().findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        if (!(fragment instanceof DetailsFragment || fragment instanceof PeopleDetailsFragment)) {
+            //set toolbar
+            Toolbar toolbar = fragment.getView().findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
 
-        //restore search bar visibility if title is hidden
-        //exclude fragments that don't have search bar
-        if (!(fragment instanceof HomeFragment)) {
-            TextView titleTextView =
-                    fragment.getView().findViewById(R.id.title_text_view);
+            //restore search bar visibility if title is hidden
+            //exclude fragments that don't have search bar
+            if (!(fragment instanceof HomeFragment)) {
+                TextView titleTextView =
+                        fragment.getView().findViewById(R.id.title_text_view);
 
-            if (titleTextView.getVisibility() != View.VISIBLE) {
-                SuperEditText searchTextView =
-                        fragment.getView().findViewById(R.id.search_edit_text_view);
-                showSearchBar(searchTextView);
-            }
-        }
-    }
-
-    //go back through details fragment history
-    private void goUpHistory(Fragment detailFragment) {
-        //if there's history and it matches with current fragment pop history
-        //else if there's history and not matches with fragment launch alternate fragment with history data
-        Object historyItem = sDetailsHistory.get(sDetailsHistory.size()-1);
-        if (detailFragment instanceof DetailsFragment) {
-            if (historyItem instanceof MediaData) {
-                ((DetailsFragment) detailFragment).popHistory();
-            } else if (historyItem instanceof PersonData){
-                launchPeopleDetailsFragment(((PersonData) sDetailsHistory.get(sDetailsHistory.size() - 1)));
-                sDetailsHistory.remove(sDetailsHistory.size() - 1);
-            }
-
-        } else if (detailFragment instanceof PeopleDetailsFragment) {
-            if (historyItem instanceof PersonData) {
-                ((PeopleDetailsFragment) detailFragment).popHistory();
-            } else if (historyItem instanceof MediaData){
-                launchDetailsFragment(((MediaData) sDetailsHistory.get(sDetailsHistory.size() - 1)), null);
-                sDetailsHistory.remove(sDetailsHistory.size() - 1);
+                if (titleTextView.getVisibility() != View.VISIBLE) {
+                    SuperEditText searchTextView =
+                            fragment.getView().findViewById(R.id.search_edit_text_view);
+                    showSearchBar(searchTextView);
+                }
             }
         }
     }
@@ -490,8 +451,7 @@ public class MasterActivity extends AppCompatActivity {
         return fragment != null;
     }
 
-    public void launchDetailsFragment(MediaData selectedData,
-                                      String quickAction) {
+    public void launchDetailsFragment(MediaData selectedData, String quickAction) {
         //catch error from restoring fragments after configuration change
         try {
             getSupportFragmentManager().executePendingTransactions();
@@ -524,17 +484,6 @@ public class MasterActivity extends AppCompatActivity {
 
         }
 
-        Fragment detailContainerFragment = getSupportFragmentManager()
-                .findFragmentById(R.id.detail_fragments_container);
-
-        ///remove existing fragment
-        if (detailContainerFragment != null) {
-            getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
-                    .remove(detailContainerFragment).commit();
-
-        }
-
         getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
                 .add(R.id.detail_fragments_container, detailsFragment, DetailsFragment.FRAGMENT_KEY)
@@ -553,16 +502,6 @@ public class MasterActivity extends AppCompatActivity {
         SearchPreferences searchPreferences =  new SearchPreferences();
         PeopleDetailsFragment detailsFragment =
                 PeopleDetailsFragment.newInstance(selectedData, searchPreferences);
-
-        Fragment detailContainerFragment = getSupportFragmentManager()
-                .findFragmentById(R.id.detail_fragments_container);
-
-        ///remove existing fragment
-        if (detailContainerFragment != null) {
-            getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
-                    .remove(detailContainerFragment).commit();
-        }
 
         getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
@@ -596,6 +535,8 @@ public class MasterActivity extends AppCompatActivity {
         if (fragment.getView() != null) {
             List<Fragment> fragments = getSupportFragmentManager().getFragments();
 
+            //TODO: check if fragment is always last index(size -1), if so, no need to use indexOf() for fragment index,...
+            // instead use size - 1
             int fragmentIndex = fragments.indexOf(fragment);
             int backgroundFragmentIndex = fragmentIndex - 1;
 
@@ -610,7 +551,9 @@ public class MasterActivity extends AppCompatActivity {
 
             //hide search bar and dismiss keyboard
             //exclude fragments that don't have search bar
-            if (!(backgroundFragment instanceof HomeFragment)) {
+            if (!(backgroundFragment instanceof HomeFragment)
+                    && !(backgroundFragment instanceof DetailsFragment)
+                    && !(backgroundFragment instanceof PeopleDetailsFragment)) {
                 SuperEditText searchTextView =
                         backgroundFragment.getView().findViewById(R.id.search_edit_text_view);
                 hideSearchBar(searchTextView);

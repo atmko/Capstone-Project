@@ -277,7 +277,6 @@ public class RecommendationsFragment extends Fragment
         if (selectedData.getId() == null) return;
 
         if (getParentFragment() != null && getParentFragment().getActivity() != null) {
-            ((DetailsFragment) getParentFragment()).stackHistory();
             ((MasterActivity) getParentFragment().getActivity()).launchDetailsFragment(selectedData, null);
         }
     }

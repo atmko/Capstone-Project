@@ -103,7 +103,6 @@ public class CastFragment extends Fragment implements CastDataAdapter.OnListItem
         if (selectedData.getId() == null) return;
 
         if (getParentFragment() != null && getParentFragment().getActivity() != null) {
-            ((DetailsFragment) getParentFragment()).stackHistory();
             ((MasterActivity) getParentFragment().getActivity()).launchPeopleDetailsFragment(selectedData);
         }
     }

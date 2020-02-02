@@ -116,7 +116,6 @@ public class KnownForFragment extends Fragment implements MediaDataAdapter.OnLis
         if (selectedData.getId() == null) return;
 
         if (getParentFragment() != null && getParentFragment().getActivity() != null) {
-            ((PeopleDetailsFragment) getParentFragment()).stackHistory();
             ((MasterActivity) getParentFragment().getActivity()).launchDetailsFragment(selectedData, null);
         }
     }

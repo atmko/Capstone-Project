@@ -44,9 +44,6 @@ import com.google.android.material.tabs.TabLayout;
 
 import org.parceler.Parcels;
 
-import java.util.ArrayList;
-
-import static com.atmko.onmywatch.MasterActivity.sDetailsHistory;
 import static com.atmko.onmywatch.utils.GeneralUtils.MILLISECOND_CONVERSION;
 
 public class PeopleDetailsFragment extends Fragment {
@@ -492,29 +489,6 @@ public class PeopleDetailsFragment extends Fragment {
             showMoreButton.setTag(getString(R.string.detail_overview_tag_show_less));
 
             return fullText;
-        }
-    }
-
-    void stackHistory() {
-        if (sDetailsHistory == null) {
-            sDetailsHistory = new ArrayList<>();
-        }
-
-        //TODO: history list is meant to hold media data and people data
-        //noinspection unchecked
-        sDetailsHistory.add(mPersonData);
-    }
-
-    public void popHistory() {
-        if (getActivity() != null) {
-            ((MasterActivity) getActivity())
-                    .launchPeopleDetailsFragment(((PersonData) sDetailsHistory.get(sDetailsHistory.size() - 1)));
-
-            sDetailsHistory.remove(sDetailsHistory.size() - 1);
-        }
-
-        if (sDetailsHistory.size() == 0) {
-            sDetailsHistory = null;
         }
     }
 
