@@ -384,7 +384,11 @@ public class MasterActivity extends AppCompatActivity {
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
         Fragment fragment = fragments.get(fragments.size() - 1);
 
-        if (fragments.size() == 1) {
+        //if in tablet landscape and there are only 2 fragments left, finish
+        //OR if not in tablet landscape and there is only 1 fragment, finish
+        if ((isTabletLandscape() && fragments.size() == 2)
+                || (!isTabletLandscape() && fragments.size() == 1)
+                && fragment instanceof HomeFragment) {
             finish();
             return;
         }
@@ -415,26 +419,39 @@ public class MasterActivity extends AppCompatActivity {
 
         //finish above transaction to prevent null data
         getSupportFragmentManager().executePendingTransactions();
-        fragments = getSupportFragmentManager().getFragments();
-        fragment = fragments.get(fragments.size() - 1);
+
+        Fragment backgroundFragment;
+        if (fragment instanceof DetailsFragment || fragment instanceof PeopleDetailsFragment) {
+            fragments = getSupportFragmentManager().getFragments();
+            backgroundFragment = fragments.get(fragments.size() - 1);
+
+        } else {
+            backgroundFragment = getSupportFragmentManager().findFragmentById(R.id.master_fragments_container);
+        }
+
+        if (backgroundFragment != null) showBackgroundFragment(backgroundFragment);
+    }
+
+    private void showBackgroundFragment(@NonNull Fragment backgroundFragment) {
+        if (backgroundFragment.getView() == null) return;
 
         //show hidden background fragment
-        fragment.getView().findViewById(R.id.top_layout).setVisibility(View.VISIBLE);
+        backgroundFragment.getView().findViewById(R.id.top_layout).setVisibility(View.VISIBLE);
 
-        if (!(fragment instanceof DetailsFragment || fragment instanceof PeopleDetailsFragment)) {
+        if (!(backgroundFragment instanceof DetailsFragment || backgroundFragment instanceof PeopleDetailsFragment)) {
             //set toolbar
-            Toolbar toolbar = fragment.getView().findViewById(R.id.toolbar);
+            Toolbar toolbar = backgroundFragment.getView().findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
 
             //restore search bar visibility if title is hidden
             //exclude fragments that don't have search bar
-            if (!(fragment instanceof HomeFragment)) {
+            if (!(backgroundFragment instanceof HomeFragment)) {
                 TextView titleTextView =
-                        fragment.getView().findViewById(R.id.title_text_view);
+                        backgroundFragment.getView().findViewById(R.id.title_text_view);
 
                 if (titleTextView.getVisibility() != View.VISIBLE) {
                     SuperEditText searchTextView =
-                            fragment.getView().findViewById(R.id.search_edit_text_view);
+                            backgroundFragment.getView().findViewById(R.id.search_edit_text_view);
                     showSearchBar(searchTextView);
                 }
             }
