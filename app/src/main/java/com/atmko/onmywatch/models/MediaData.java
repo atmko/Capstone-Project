@@ -17,6 +17,7 @@ import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 import com.atmko.onmywatch.utils.network_utils.TraktApiConstants;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -132,6 +133,38 @@ abstract public class MediaData {
 
     public String getReleaseDate() {
         return mReleaseDate;
+    }
+
+    public void createTags() {
+        searchTags = new ArrayList<>();
+        List objectToParse = Arrays.asList(mTitle, mOriginalTitle);
+        parseTags(objectToParse);
+    }
+
+    public void parseTags(Object objectToParse) {
+        //if list iterate through list and repeat method for each item
+        if (objectToParse instanceof List) {
+            for (Object listItem: ((List) objectToParse)) {
+                parseTags(listItem);
+            }
+
+            //if string, trim string, if there are spaces, split and repeat method otherwise, create tag
+        } else if (objectToParse instanceof String) {
+            String trimmedString = ((String) objectToParse).trim();
+
+            if (trimmedString.contains(" ")) {
+                String[] strings = ((String) objectToParse).split(" ");
+                for (String string: strings) {
+                    parseTags(string);
+                }
+
+            } else {
+                SearchTag searchTag = new SearchTag(trimmedString);
+                if (!searchTags.contains(searchTag)) {
+                    searchTags.add(searchTag);
+                }
+            }
+        }
     }
 
     public String getReleaseStatus() {

@@ -37,6 +37,7 @@ import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.MovieDataRecord;
 import com.atmko.onmywatch.models.MovieNotifier;
+import com.atmko.onmywatch.models.SearchTag;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesDataRecord;
 import com.atmko.onmywatch.models.SeriesNotifier;
@@ -429,9 +430,11 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
                 if (isMediaUnused) {
                     updateUserListRecords();
                     deleteSavedMedia();
+                    deleteTags();
                     deleteNotifiers();
 
                 } else {
+                    saveTags();
                     updateMediaData();
                     updateUserListRecords();
                     setNotifiers();
@@ -503,6 +506,41 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
         }
 
         Log.d(TAG, "update media data");
+    }
+
+    private void saveTags() {
+        mMediaData.createTags();
+
+        AppDatabase localDb = AppDatabase.getLocalDatabase(this);
+        for (SearchTag tag: mMediaData.searchTags) {
+            SearchTag savedTag = localDb.searchTagsDao().getTagAlt(tag.mTag);
+
+            if (savedTag == null) {
+                localDb.searchTagsDao().addTag(tag);
+            }
+        }
+    }
+
+    private void deleteTags() {
+        if (mMediaData.searchTags == null) return;
+
+        for (SearchTag tag: mMediaData.searchTags) {
+            int tagUsage;
+
+            AppDatabase localDb = AppDatabase.getLocalDatabase(this);
+            if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
+                tagUsage = localDb.movieDataDao().getAllMediaWithTagAlt(tag.mTag).size()
+                        + localDb.movieDataDao().getAllMediaWithTagAlt(tag.mTag).size();
+
+            } else {
+                tagUsage = localDb.seriesDataDao().getAllMediaWithTagAlt(tag.mTag).size()
+                        + localDb.seriesDataDao().getAllMediaWithTagAlt(tag.mTag).size();
+            }
+
+            if (tagUsage == 0) {
+                localDb.searchTagsDao().deleteTag(tag);
+            }
+        }
     }
 
     private int getUserListNetCountChange() {

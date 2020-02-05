@@ -25,6 +25,19 @@ public interface MovieDataDao {
     @Query("SELECT * FROM movies")
     List<MovieData> getAllMoviesAlt();
 
+    //alternate method without live data
+    @Query("SELECT * FROM movies WHERE tags LIKE :tag")
+    List<MovieData> getAllMediaWithTagAlt(String tag);
+
+    @Query("SELECT * FROM movies WHERE watch_status = :watchStatus INTERSECT "
+            + "SELECT * FROM movies " + "WHERE tags LIKE '%'||:tag1||'%' "
+            + "AND tags LIKE '%'||:tag2||'%' " + "AND tags LIKE '%'||:tag3||'%' "
+            + "AND tags LIKE '%'||:tag4||'%' " + "AND tags LIKE '%'||:tag5||'%' "
+            + "AND tags LIKE '%'||:tag6||'%' " + "AND tags LIKE '%'||:tag7||'%'")
+    LiveData<List<MovieData>> getAllMediaWithWatchStatusAndTags(int watchStatus, String tag1, String tag2,
+                                                                String tag3, String tag4, String tag5,
+                                                                String tag6, String tag7);
+
     @Query("SELECT * FROM movies WHERE id = :movieId")
     LiveData<MovieData> getMovieById(String movieId);
 
@@ -41,9 +54,6 @@ public interface MovieDataDao {
     //alternate method without live data
     @Query("SELECT * FROM movies WHERE watch_status = :watchStatus")
     List<MovieData> getMoviesByWatchStatusAlt(int watchStatus);
-
-    @Query("SELECT * FROM movies WHERE watch_status = :watchStatus AND title LIKE :mediaTitle")
-    LiveData<List<MovieData>> getMoviesByWatchStatusLike(int watchStatus, String mediaTitle);
 
     @Query("SELECT * FROM movies WHERE (watch_status = 1 OR watch_status = 2) AND (scheduled_media > 0 AND release_status != 'Released') ORDER BY scheduled_media ASC LIMIT 10")
     LiveData<List<MovieData>> getUserUpcomingMovies();

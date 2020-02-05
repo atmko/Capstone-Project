@@ -13,6 +13,7 @@ import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.database.Converters;
 import com.atmko.onmywatch.models.Episode;
 import com.atmko.onmywatch.models.MediaData;
+import com.atmko.onmywatch.models.SearchTag;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 import com.atmko.onmywatch.utils.api_utils.SeriesApiConstants;
@@ -37,6 +38,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import static com.atmko.onmywatch.database.FirebaseDatabase.getFirstDocument;
+import static com.atmko.onmywatch.models.MediaData.TAGS_KEY;
 import static com.atmko.onmywatch.models.MediaData.WATCH_STATUS_KEY;
 import static com.atmko.onmywatch.models.SeriesData.NEXT_EPISODE_KEY;
 import static com.atmko.onmywatch.utils.api_utils.ApiConstants.ID_KEY;
@@ -118,6 +120,89 @@ public class FirebaseSeriesDataDao implements SeriesDataDao {
         }
 
         return seriesList;
+    }
+
+    @Override
+    public List<SeriesData> getAllMediaWithTagAlt(String tag) {
+        List<SeriesData> seriesList = new ArrayList<>();
+
+        Task<QuerySnapshot> task = MasterActivity.getUserDbHomeReference()
+                .collection(SERIES_COLLECTION_PATH)
+                .whereArrayContains(TAGS_KEY, tag)
+                .get();
+
+        try {
+            QuerySnapshot snapshots = Tasks.await(task);
+            for (DocumentSnapshot documentSnapshot: snapshots.getDocuments()) {
+                SeriesData mediaData = parseDataMapToMediaData(documentSnapshot);
+                seriesList.add(mediaData);
+            }
+
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return seriesList;
+    }
+
+    @Override
+    public LiveData<List<SeriesData>> getAllMediaWithWatchStatusAndTags(int watchStatus, String tag1,
+                                                                        String tag2, String tag3,
+                                                                        String tag4, String tag5,
+                                                                        String tag6, String tag7) {
+        //remove empty tags
+        final ArrayList<String> tagList = new ArrayList<>();
+        for (String tag: Arrays.asList(tag1, tag2, tag3, tag4, tag5, tag6, tag7)) {
+            if (!tag.equals("")) {
+                tagList.add(tag);
+            }
+        }
+
+        final MutableLiveData<List<SeriesData>> liveData = new MutableLiveData<>();
+
+        Query query = MasterActivity.getUserDbHomeReference()
+                .collection(SERIES_COLLECTION_PATH)
+                .whereEqualTo(WATCH_STATUS_KEY, watchStatus);
+
+        //query if tags there are tags requested
+        if (tagList.size() != 0) query = query.whereArrayContainsAny(TAGS_KEY, tagList);
+
+        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
+                final List<SeriesData> seriesList = new ArrayList<>();
+
+                if (snapshots != null) {
+                    List<DocumentSnapshot> documents = snapshots.getDocuments();
+
+                    for (DocumentSnapshot document: documents) {
+                        if (document.getData() == null) continue;
+
+                        //TODO: document.get(TAGS_KEY) always produces a string list
+                        @SuppressWarnings("unchecked")
+                        ArrayList<String> mediaTags = ((ArrayList<String>) document.get(TAGS_KEY));
+
+                        if (mediaTags == null) continue;
+
+                        mediaTags.retainAll(tagList);
+
+                        if (mediaTags.size() == tagList.size()) {
+                            SeriesData mediaData = parseDataMapToMediaData(document);
+                            seriesList.add(mediaData);
+                        }
+                    }
+
+                    liveData.setValue(seriesList);
+
+                } else {
+                    liveData.setValue(seriesList);
+                }
+            }
+        });
+
+        return liveData;
     }
 
     @Override
@@ -262,11 +347,6 @@ public class FirebaseSeriesDataDao implements SeriesDataDao {
         }
 
         return seriesList;
-    }
-
-    @Override
-    public LiveData<List<SeriesData>> getSeriesByWatchStatusLike(int watchStatus, String mediaTitle) {
-        return null;
     }
 
     @Override
@@ -441,10 +521,10 @@ public class FirebaseSeriesDataDao implements SeriesDataDao {
 
                     }
                 }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
+            @Override
+            public void onFailure(@NonNull Exception e) {
 
-                    }
+            }
         });
     }
 
@@ -452,6 +532,12 @@ public class FirebaseSeriesDataDao implements SeriesDataDao {
     static SeriesData parseDataMapToMediaData(DocumentSnapshot document) {
         Episode episode = document.get(NEXT_EPISODE_KEY) == null ? null
                 : Converters.longToEpisode((long) document.get(NEXT_EPISODE_KEY));
+
+        List<String> tagStrings = (ArrayList<String>) document.get(TAGS_KEY);
+        List<SearchTag> searchTags = new ArrayList<>();
+        for (String tagString: tagStrings) {
+            searchTags.add(new SearchTag(tagString));
+        }
 
         SeriesData seriesData = new SeriesData(
                 (String) document.get(ApiConstants.ID_KEY),
@@ -467,6 +553,7 @@ public class FirebaseSeriesDataDao implements SeriesDataDao {
                 (String) document.get(ApiConstants.OVERVIEW_KEY),
                 (String) document.get(SeriesApiConstants.FIRST_AIR_DATE_KEY),
                 (String) document.get(ApiConstants.RELEASE_STATUS_KEY),
+                searchTags,
                 episode
         );
 

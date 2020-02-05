@@ -14,6 +14,7 @@ import com.atmko.onmywatch.database.Converters;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.ScheduledMedia;
+import com.atmko.onmywatch.models.SearchTag;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 import com.atmko.onmywatch.utils.api_utils.MovieApiConstants;
 import com.atmko.onmywatch.utils.network_utils.TraktApiConstants;
@@ -37,6 +38,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import static com.atmko.onmywatch.database.FirebaseDatabase.getFirstDocument;
+import static com.atmko.onmywatch.models.MediaData.TAGS_KEY;
 import static com.atmko.onmywatch.models.MediaData.WATCH_STATUS_KEY;
 import static com.atmko.onmywatch.models.MovieData.SCHEDULED_MEDIA_KEY;
 import static com.atmko.onmywatch.utils.api_utils.ApiConstants.ID_KEY;
@@ -59,11 +61,11 @@ public class FirebaseMovieDataDao implements MovieDataDao {
 
         documentReference.set(movieData.parseMediaDataToDataMap())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
+                    @Override
+                    public void onSuccess(Void aVoid) {
 
-            }
-        }).addOnFailureListener(new OnFailureListener() {
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
 
@@ -118,6 +120,89 @@ public class FirebaseMovieDataDao implements MovieDataDao {
         }
 
         return movieList;
+    }
+
+    @Override
+    public List<MovieData> getAllMediaWithTagAlt(String tag) {
+        List<MovieData> movieList = new ArrayList<>();
+
+        Task<QuerySnapshot> task = MasterActivity.getUserDbHomeReference()
+                .collection(MOVIES_COLLECTION_PATH)
+                .whereArrayContains(TAGS_KEY, tag)
+                .get();
+
+        try {
+            QuerySnapshot snapshots = Tasks.await(task);
+            for (DocumentSnapshot documentSnapshot: snapshots.getDocuments()) {
+                MovieData mediaData = parseDataMapToMediaData(documentSnapshot);
+                movieList.add(mediaData);
+            }
+
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return movieList;
+    }
+
+    @Override
+    public LiveData<List<MovieData>> getAllMediaWithWatchStatusAndTags(int watchStatus, String tag1,
+                                                                       String tag2, String tag3,
+                                                                       String tag4, String tag5,
+                                                                       String tag6, String tag7) {
+        //remove empty tags
+        final ArrayList<String> tagList = new ArrayList<>();
+        for (String tag: Arrays.asList(tag1, tag2, tag3, tag4, tag5, tag6, tag7)) {
+            if (!tag.equals("")) {
+                tagList.add(tag);
+            }
+        }
+
+        final MutableLiveData<List<MovieData>> liveData = new MutableLiveData<>();
+
+        Query query = MasterActivity.getUserDbHomeReference()
+                .collection(MOVIES_COLLECTION_PATH)
+                .whereEqualTo(WATCH_STATUS_KEY, watchStatus);
+
+        //query if tags there are tags requested
+        if (tagList.size() != 0) query = query.whereArrayContainsAny(TAGS_KEY, tagList);
+
+        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
+                final List<MovieData> movieList = new ArrayList<>();
+
+                if (snapshots != null) {
+                    List<DocumentSnapshot> documents = snapshots.getDocuments();
+
+                    for (DocumentSnapshot document: documents) {
+                        if (document.getData() == null) continue;
+
+                        //TODO: document.get(TAGS_KEY) always produces a string list
+                        @SuppressWarnings("unchecked")
+                        ArrayList<String> mediaTags = ((ArrayList<String>) document.get(TAGS_KEY));
+
+                        if (mediaTags == null) continue;
+
+                        mediaTags.retainAll(tagList);
+
+                        if (mediaTags.size() == tagList.size()) {
+                            MovieData mediaData = parseDataMapToMediaData(document);
+                            movieList.add(mediaData);
+                        }
+                    }
+
+                    liveData.setValue(movieList);
+
+                } else {
+                    liveData.setValue(movieList);
+                }
+            }
+        });
+
+        return liveData;
     }
 
     @Override
@@ -265,11 +350,6 @@ public class FirebaseMovieDataDao implements MovieDataDao {
     }
 
     @Override
-    public LiveData<List<MovieData>> getMoviesByWatchStatusLike(int watchStatus, String mediaTitle) {
-        return null;
-    }
-
-    @Override
     public LiveData<List<MovieData>> getUserUpcomingMovies() {
         final MutableLiveData<List<MovieData>> liveData = new MutableLiveData<>();
 
@@ -395,11 +475,11 @@ public class FirebaseMovieDataDao implements MovieDataDao {
 
                     }
                 }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
+            @Override
+            public void onFailure(@NonNull Exception e) {
 
-                    }
-                });
+            }
+        });
     }
 
     public static void updateMovieDataBatch(List<String> batchDocumentIds, List<Map<String,
@@ -439,10 +519,10 @@ public class FirebaseMovieDataDao implements MovieDataDao {
 
                     }
                 }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
+            @Override
+            public void onFailure(@NonNull Exception e) {
 
-                    }
+            }
         });
     }
 
@@ -450,6 +530,12 @@ public class FirebaseMovieDataDao implements MovieDataDao {
     static MovieData parseDataMapToMediaData(DocumentSnapshot document) {
         ScheduledMedia scheduledMedia = document.get(SCHEDULED_MEDIA_KEY) == null ? null
                 : Converters.longToScheduledMedia((long) document.get(SCHEDULED_MEDIA_KEY));
+
+        List<String> tagStrings = (ArrayList<String>) document.get(TAGS_KEY);
+        List<SearchTag> searchTags = new ArrayList<>();
+        for (String tagString: tagStrings) {
+            searchTags.add(new SearchTag(tagString));
+        }
 
         MovieData movieData = new MovieData(
                 (String) document.get(ApiConstants.ID_KEY),
@@ -465,6 +551,7 @@ public class FirebaseMovieDataDao implements MovieDataDao {
                 (String) document.get(ApiConstants.OVERVIEW_KEY),
                 (String) document.get(MovieApiConstants.RELEASE_DATE_KEY),
                 (String) document.get(ApiConstants.RELEASE_STATUS_KEY),
+                searchTags,
                 scheduledMedia
         );
 
