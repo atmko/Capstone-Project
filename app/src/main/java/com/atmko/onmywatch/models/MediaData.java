@@ -18,6 +18,7 @@ import com.atmko.onmywatch.utils.network_utils.TraktApiConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 //TODO: access is weaker to accommodate parceler library
@@ -32,6 +33,8 @@ abstract public class MediaData {
 
     public static final String WATCH_STATUS_KEY = "watch_status";
     public static final String USER_RATING_KEY = "user_rating";
+
+    public static final String TAGS_KEY = "tags";
 
     //primary attributes
     @PrimaryKey
@@ -49,6 +52,7 @@ abstract public class MediaData {
     @ColumnInfo(name = "backdrop_path") String mBackdropPath;
     @ColumnInfo(name = "overview") String mOverview;
     @ColumnInfo(name = "release_date") String mReleaseDate;
+    public @ColumnInfo(name = "tags") List<SearchTag> searchTags;
 
     //secondary attributes(details)
     @Ignore ArrayList<CastData> mCast;

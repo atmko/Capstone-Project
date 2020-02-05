@@ -90,7 +90,8 @@ public class MovieData extends MediaData{
     public MovieData(@NonNull String id, String traktId, String voteAverage, String title,
                      String posterPath, String originalLanguage, String originalTitle,
                      ArrayList<String> genres, boolean adult, String backdropPath, String overview,
-                     String releaseDate, String releaseStatus, ScheduledMedia scheduledMedia) {
+                     String releaseDate, String releaseStatus, List<SearchTag> searchTags,
+                     ScheduledMedia scheduledMedia) {
 
         this.mId = id;
         this.mTraktId = traktId;
@@ -106,6 +107,7 @@ public class MovieData extends MediaData{
         this.mReleaseDate = releaseDate;
         this.mReleaseStatus = releaseStatus;
         this.mScheduledMedia = scheduledMedia;
+        this.searchTags = searchTags;
     }
 
     public boolean isVideo() {
@@ -132,10 +134,16 @@ public class MovieData extends MediaData{
     public Map<String, Object> parseMediaDataToDataMap() {
         Map<String, Object> firebaseMediaDataMap = getFirebaseMediaDataMap(this);
 
+        List<String> tagStrings = new ArrayList<>();
+        for (SearchTag searchTag: searchTags) {
+            tagStrings.add(searchTag.mTag);
+        }
+
         firebaseMediaDataMap.put(MovieApiConstants.ADULT_KEY, isAdult());
         firebaseMediaDataMap.put(MovieApiConstants.TITLE_KEY, getTitle());
         firebaseMediaDataMap.put(MovieApiConstants.ORIG_TITLE_KEY, getOriginalTitle());
         firebaseMediaDataMap.put(MovieApiConstants.RELEASE_DATE_KEY, getReleaseDate());
+        firebaseMediaDataMap.put(TAGS_KEY, tagStrings);
         firebaseMediaDataMap.put(SCHEDULED_MEDIA_KEY,
                 Converters.scheduledMediaToLong(getScheduledMedia()));
 

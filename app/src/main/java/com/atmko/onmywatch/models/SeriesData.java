@@ -19,6 +19,7 @@ import com.atmko.onmywatch.utils.api_utils.SeriesApiConstants;
 import org.parceler.Parcel;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Entity(tableName = "series")
@@ -76,7 +77,8 @@ public class SeriesData extends MediaData{
     public SeriesData(@NonNull String id, String traktId, String voteAverage, String title,
                       String posterPath, String originalLanguage, String originalTitle,
                       ArrayList<String> countryOfOrigin, ArrayList<String> genres, String backdropPath,
-                      String overview, String releaseDate, String releaseStatus, Episode nextEpisodeToAir) {
+                      String overview, String releaseDate, String releaseStatus,
+                      List<SearchTag> searchTags, Episode nextEpisodeToAir) {
 
         this.mId = id;
         this.mTraktId = traktId;
@@ -92,6 +94,7 @@ public class SeriesData extends MediaData{
         this.mReleaseDate = releaseDate;
         this.mReleaseStatus = releaseStatus;
         this.mNextEpisodeToAir = nextEpisodeToAir;
+        this.searchTags = searchTags;
     }
 
     public String getVoteAverage() {
@@ -126,10 +129,16 @@ public class SeriesData extends MediaData{
     public Map<String, Object> parseMediaDataToDataMap() {
         Map<String, Object> firebaseMediaDataMap = getFirebaseMediaDataMap(this);
 
+        List<String> tagStrings = new ArrayList<>();
+        for (SearchTag searchTag: searchTags) {
+            tagStrings.add(searchTag.mTag);
+        }
+
         firebaseMediaDataMap.put(SeriesApiConstants.ORIGIN_COUNTRY_KEY, getCountryOfOrigin());
         firebaseMediaDataMap.put(SeriesApiConstants.NAME_KEY, getTitle());
         firebaseMediaDataMap.put(SeriesApiConstants.ORIG_NAME_KEY, getOriginalTitle());
         firebaseMediaDataMap.put(SeriesApiConstants.FIRST_AIR_DATE_KEY, getReleaseDate());
+        firebaseMediaDataMap.put(TAGS_KEY, tagStrings);
         firebaseMediaDataMap.put(NEXT_EPISODE_KEY,
                 Converters.scheduledMediaToLong(getNextEpisodeToAir()));
 
