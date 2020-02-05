@@ -21,6 +21,7 @@ import com.atmko.onmywatch.database.daos.FirebaseWatchListDao;
 import com.atmko.onmywatch.database.daos.MovieDataDao;
 import com.atmko.onmywatch.database.daos.MovieDataRecordsDao;
 import com.atmko.onmywatch.database.daos.MovieNotifierDao;
+import com.atmko.onmywatch.database.daos.SearchTagsDao;
 import com.atmko.onmywatch.database.daos.SeriesDataDao;
 import com.atmko.onmywatch.database.daos.SeriesDataRecordsDao;
 import com.atmko.onmywatch.database.daos.SeriesNotifierDao;
@@ -69,6 +70,12 @@ public class FirebaseDatabase extends AppDatabase {
     @Override
     public SeriesNotifierDao seriesNotifierDao() {
         return new FirebaseSeriesNotifiersDao();
+    }
+
+    //search tags dao only available on local db
+    @Override
+    public SearchTagsDao searchTagsDao() {
+        return null;
     }
 
     public static DocumentSnapshot getFirstDocument(QuerySnapshot snapshots) {
