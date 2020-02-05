@@ -29,6 +29,7 @@ import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.atmko.onmywatch.models.ListModel;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
+import com.atmko.onmywatch.models.SearchTag;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SimpleIdlingResource;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
@@ -337,6 +338,19 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
         return ((MasterActivity) getActivity()).mIdlingResource;
     }
 
+    private void deleteTags(MediaData mediaData) {
+        if (mediaData.searchTags == null) return;
+
+        for (SearchTag tag: mediaData.searchTags) {
+            int tagUsage = mDatabase.movieDataDao().getAllMediaWithTagAlt(tag.mTag).size()
+                    + mDatabase.movieDataDao().getAllMediaWithTagAlt(tag.mTag).size();
+
+            if (tagUsage == 0) {
+                mDatabase.searchTagsDao().deleteTag(tag);
+            }
+        }
+    }
+
     private void maintainMoviesWatchListCountIntegrity(List<MovieData> moviesInList) {
         for (MovieData movieData: moviesInList) {
             //delete if containing lists size = 0 and if watch status is none(0)
@@ -346,8 +360,10 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
 
             int watchStatus = movieData.getWatchStatus();
 
+            //TODO delete notifiers when item is unused
             if (containingLists.size() == 0 && movieData.getWatchStatus() == 0) {
                 mDatabase.movieDataDao().deleteMovieData(movieData);
+                deleteTags(movieData);
 
                 if (getContext() == null) continue;
 
@@ -374,8 +390,10 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
 
             int watchStatus = seriesData.getWatchStatus();
 
+            //TODO delete notifiers when item is unused
             if (containingLists.size() == 0 && seriesData.getWatchStatus() == 0) {
                 mDatabase.seriesDataDao().deleteSeriesData(seriesData);
+                deleteTags(seriesData);
 
                 if (getContext() == null) continue;
 
