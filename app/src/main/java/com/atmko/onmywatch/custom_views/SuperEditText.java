@@ -11,6 +11,7 @@ import android.widget.AutoCompleteTextView;
 
 public class SuperEditText extends AutoCompleteTextView {
     private OnKeyBoardDismissListener mKeyBoardDismissListener;
+    int activeTextIndex;
 
     public SuperEditText(Context context) {
         super(context);
@@ -42,5 +43,33 @@ public class SuperEditText extends AutoCompleteTextView {
         }
 
         return super.onKeyPreIme(keyCode, event);
+    }
+
+    //get the text touching cursor
+    public String getActiveText() {
+        int cursorIndex = getSelectionStart() > 0? getSelectionStart()-1 : 0;
+        String[] splitText = getText().toString().split(" ");
+
+        String activeText = "";
+
+        int indexTotal = 0;
+
+        for (int i = 0; i < splitText.length ; i++) {
+            String word = splitText[i];
+            indexTotal += word.length();
+
+            if (cursorIndex <= indexTotal) {
+                activeText = word;
+
+                //define active index
+                activeTextIndex = i;
+                break;
+            }
+
+            //+= 1 represents the space after each word)
+            indexTotal += 1;
+        }
+
+        return activeText;
     }
 }
