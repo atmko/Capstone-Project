@@ -37,8 +37,6 @@ import com.atmko.onmywatch.view_models.ListsResultsViewModel;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
-
 public class ListResultsFragment extends Fragment
         implements MediaDataAdapter.OnListItemClickListener{
     public static final String FRAGMENT_KEY = "list_results_fragment";
@@ -138,7 +136,7 @@ public class ListResultsFragment extends Fragment
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 //TODO: implement search for cloud backup
                 if (!MasterActivity.sAllowCloudBackup) {
-                    onSearchTextChanged(s);
+                    onSearchTextChanged();
                 }
             }
 
@@ -260,73 +258,8 @@ public class ListResultsFragment extends Fragment
         }
     }
 
-    private void onSearchTextChanged(CharSequence searchText) {
-        final String[] watchStatusMoviesTitles = getContext().getResources()
-                .getStringArray(R.array.watch_status_movie_titles);
-        List<String> titleList = Arrays.asList(watchStatusMoviesTitles);
+    private void onSearchTextChanged() {
 
-        final AppDatabase database = AppDatabase.getInstance(getContext());
-
-        String mediaTitle = searchText.toString();
-        mediaTitle = "%" + mediaTitle + "%";
-
-        if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
-            //if media data is movie
-            if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
-                final LiveData<List<MovieData>> listLiveData = database.movieDataDao()
-                        .getMoviesByWatchStatusLike(titleList.indexOf(mListName), mediaTitle);
-
-                listLiveData.observe(getParentFragment(), new Observer<List<MovieData>>() {
-                    @Override
-                    public void onChanged(List<MovieData> movieDataList) {
-                        listLiveData.removeObserver(this);
-                        populateAndNotifyAdapter(movieDataList);
-                    }
-                });
-
-                //if media data is series
-            } else if (mMediaType == MasterActivity.MEDIA_TYPE_SERIES) {
-                final LiveData<List<SeriesData>> listLiveData = database.seriesDataDao()
-                        .getSeriesByWatchStatusLike(titleList.indexOf(mListName), mediaTitle);
-
-                listLiveData.observe(getParentFragment(), new Observer<List<SeriesData>>() {
-                    @Override
-                    public void onChanged(List<SeriesData> seriesDataList) {
-                        listLiveData.removeObserver(this);
-                        populateAndNotifyAdapter(seriesDataList);
-                    }
-                });
-            }
-        }
-
-        if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_USER) {
-            if (mMediaType == MEDIA_TYPE_MOVIE) {
-                //observe lists with searched name then remove observer
-                final LiveData<List<MovieData>> listLiveData = database.movieDataRecordsDao()
-                        .getMoviesWithNameLike(mListName, mediaTitle);
-                listLiveData.observe(getParentFragment(),
-                        new Observer<List<MovieData>>() {
-                            @Override
-                            public void onChanged(List<MovieData> movieDataList) {
-                                listLiveData.removeObserver(this);
-                                populateAndNotifyAdapter(movieDataList);
-                            }
-                        });
-
-            } else {
-                //observe lists with searched name then remove observer
-                final LiveData<List<SeriesData>> listLiveData = database.seriesDataRecordsDao()
-                        .getSeriesWithNameLike(mListName, mediaTitle);
-                listLiveData.observe(getParentFragment(),
-                        new Observer<List<SeriesData>>() {
-                            @Override
-                            public void onChanged(List<SeriesData> seriesDataList) {
-                                listLiveData.removeObserver(this);
-                                populateAndNotifyAdapter(seriesDataList);
-                            }
-                        });
-            }
-        }
     }
 
     private GridLayoutManager configureLayoutManager() {
