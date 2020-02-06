@@ -7,9 +7,9 @@ package com.atmko.onmywatch.custom_views;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
-import android.widget.EditText;
+import android.widget.AutoCompleteTextView;
 
-public class SuperEditText extends EditText {
+public class SuperEditText extends AutoCompleteTextView {
     private OnKeyBoardDismissListener mKeyBoardDismissListener;
 
     public SuperEditText(Context context) {
