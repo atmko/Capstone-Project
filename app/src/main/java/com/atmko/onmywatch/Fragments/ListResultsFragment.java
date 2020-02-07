@@ -57,6 +57,7 @@ public class ListResultsFragment extends Fragment
     private int mMediaType;
     private String mListName;
 
+    private AppDatabase database;
     private MediaDataAdapter mDataAdapter;
     private SearchPreferences mSearchPreferences;
     private SuperEditText mSearchTextView;
@@ -162,7 +163,7 @@ public class ListResultsFragment extends Fragment
     }
 
     private void observeData(final Bundle savedInstanceState) {
-        AppDatabase database = AppDatabase.getInstance(getContext());
+        database = AppDatabase.getInstance(getContext());
 
         final String[] watchStatusMoviesTitles = getContext().getResources()
                 .getStringArray(R.array.watch_status_movie_titles);
@@ -272,6 +273,7 @@ public class ListResultsFragment extends Fragment
         }
     }
 
+    private static final int TAG_COUNT_LIMIT = 7;
     private void onSearchTextChanged() {
         if (getContext() == null) return;
 
@@ -298,8 +300,98 @@ public class ListResultsFragment extends Fragment
                 tagAdapter.clear();
                 tagAdapter.addAll(searchTags);
                 tagAdapter.notifyDataSetChanged();
+
+                performFullSearchWithTags(listId);
             }
         });
+    }
+
+    private void performFullSearchWithTags(Object listId) {
+        String searchBoxStrings = mSearchTextView.getText().toString();
+        String[] terms = searchBoxStrings.split(" ");
+        final List<String> formattedTags = new ArrayList<>();
+
+        for (int i = 0; i < TAG_COUNT_LIMIT; i++) {
+            if (!(i > terms.length - 1)) {
+                formattedTags.add(terms[i]);
+
+            } else {
+                formattedTags.add("");
+            }
+        }
+
+        if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
+            searchInWatchList(formattedTags, ((int) listId));
+
+        } else {
+            searchInUserList(formattedTags, ((String) listId));
+        }
+    }
+
+    private void searchInWatchList(List<String> formattedTags, int listId) {
+        if (getParentFragment() == null) return;
+
+        //if media data is movie
+        if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
+            final LiveData<List<MovieData>> listLiveData = database.movieDataDao()
+                    .getAllMediaWithWatchStatusAndTags(listId, formattedTags.get(0),
+                            formattedTags.get(1), formattedTags.get(2), formattedTags.get(3),
+                            formattedTags.get(4), formattedTags.get(5), formattedTags.get(6));
+
+            listLiveData.observe(getParentFragment(), new Observer<List<MovieData>>() {
+                @Override
+                public void onChanged(List<MovieData> seriesDataList) {
+                    listLiveData.removeObserver(this);
+                    populateAndNotifyAdapter(seriesDataList);
+                }
+            });
+        } else {
+            final LiveData<List<SeriesData>> listLiveData = database.seriesDataDao()
+                    .getAllMediaWithWatchStatusAndTags(listId, formattedTags.get(0),
+                            formattedTags.get(1), formattedTags.get(2), formattedTags.get(3),
+                            formattedTags.get(4), formattedTags.get(5), formattedTags.get(6));
+
+            listLiveData.observe(getParentFragment(), new Observer<List<SeriesData>>() {
+                @Override
+                public void onChanged(List<SeriesData> seriesDataList) {
+                    listLiveData.removeObserver(this);
+                    populateAndNotifyAdapter(seriesDataList);
+                }
+            });
+        }
+    }
+
+    private void searchInUserList(List<String> formattedTags, String listId) {
+        if (getParentFragment() == null) return;
+
+        //if media data is movie
+        if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
+            final LiveData<List<MovieData>> listLiveData = database.movieDataRecordsDao()
+                    .getMediaInListLike(listId, formattedTags.get(0),
+                            formattedTags.get(1), formattedTags.get(2), formattedTags.get(3),
+                            formattedTags.get(4), formattedTags.get(5), formattedTags.get(6));
+
+            listLiveData.observe(getParentFragment(), new Observer<List<MovieData>>() {
+                @Override
+                public void onChanged(List<MovieData> seriesDataList) {
+                    listLiveData.removeObserver(this);
+                    populateAndNotifyAdapter(seriesDataList);
+                }
+            });
+        } else {
+            final LiveData<List<SeriesData>> listLiveData = database.seriesDataRecordsDao()
+                    .getMediaInListLike(listId, formattedTags.get(0),
+                            formattedTags.get(1), formattedTags.get(2), formattedTags.get(3),
+                            formattedTags.get(4), formattedTags.get(5), formattedTags.get(6));
+
+            listLiveData.observe(getParentFragment(), new Observer<List<SeriesData>>() {
+                @Override
+                public void onChanged(List<SeriesData> seriesDataList) {
+                    listLiveData.removeObserver(this);
+                    populateAndNotifyAdapter(seriesDataList);
+                }
+            });
+        }
     }
 
     private GridLayoutManager configureLayoutManager() {
