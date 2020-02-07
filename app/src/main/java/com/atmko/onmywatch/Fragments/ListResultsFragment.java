@@ -26,6 +26,7 @@ import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.CustomParams;
 import com.atmko.onmywatch.adapters.MediaDataAdapter;
+import com.atmko.onmywatch.adapters.TagAdapter;
 import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MediaData;
@@ -35,6 +36,7 @@ import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
 import com.atmko.onmywatch.view_models.ListResultsViewModelFactory;
 import com.atmko.onmywatch.view_models.ListsResultsViewModel;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -58,6 +60,7 @@ public class ListResultsFragment extends Fragment
     private MediaDataAdapter mDataAdapter;
     private SearchPreferences mSearchPreferences;
     private SuperEditText mSearchTextView;
+    private TagAdapter tagAdapter;
 
     public ListResultsFragment() {
         // Required empty public constructor
@@ -146,6 +149,16 @@ public class ListResultsFragment extends Fragment
 
             }
         });
+
+        tagAdapter = new TagAdapter(
+                getParentFragment().getContext(),
+                R.layout.fragment_list_results_parent,
+                R.id.search_edit_text_view,
+                new ArrayList<String>()
+        );
+
+        mSearchTextView.setAdapter(tagAdapter);
+        mSearchTextView.setThreshold(1);
     }
 
     private void observeData(final Bundle savedInstanceState) {
@@ -278,6 +291,15 @@ public class ListResultsFragment extends Fragment
         String activeText = mSearchTextView.getActiveText();
         final List<String> searchTags = AppDatabase.getLocalDatabase(getContext()).searchMediaTagsDao()
                 .getTagsLikeAlt(activeText);
+
+        new MainThreadExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                tagAdapter.clear();
+                tagAdapter.addAll(searchTags);
+                tagAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     private GridLayoutManager configureLayoutManager() {
