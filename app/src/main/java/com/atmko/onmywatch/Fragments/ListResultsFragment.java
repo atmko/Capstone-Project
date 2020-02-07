@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.androidnetworking.core.MainThreadExecutor;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.CustomParams;
@@ -259,7 +260,24 @@ public class ListResultsFragment extends Fragment
     }
 
     private void onSearchTextChanged() {
+        if (getContext() == null) return;
 
+        //define list id
+        final Object listId;
+
+        if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
+            final String[] watchStatusMoviesTitles = getContext().getResources()
+                    .getStringArray(R.array.watch_status_movie_titles);
+            listId = Arrays.asList(watchStatusMoviesTitles).indexOf(mListName);
+
+        } else {
+            listId = mListName;
+        }
+
+        //get tag from db like text currently touching cursor
+        String activeText = mSearchTextView.getActiveText();
+        final List<String> searchTags = AppDatabase.getLocalDatabase(getContext()).searchMediaTagsDao()
+                .getTagsLikeAlt(activeText);
     }
 
     private GridLayoutManager configureLayoutManager() {
