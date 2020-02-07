@@ -40,8 +40,14 @@ public interface MovieDataRecordsDao {
     List<MovieData> getAllMoviesInListAlt(String listId);
 
     @Query("SELECT * FROM movies INNER JOIN movie_data_records ON movies.id = media_id "
-            +"WHERE movie_data_records.list_id = :listId AND movies.title LIKE :mediaTitle")
-    LiveData<List<MovieData>> getMoviesWithNameLike(String listId, String mediaTitle);
+            +"WHERE movie_data_records.list_id = :listId "
+            + "AND movies.tags LIKE :tag1 " + "AND movies.tags LIKE :tag2 "
+            + "AND movies.tags LIKE :tag3 " + "AND movies.tags LIKE :tag4 "
+            + "AND movies.tags LIKE :tag5 " + "AND movies.tags LIKE :tag6 "
+            + "AND movies.tags LIKE :tag7")
+    LiveData<List<MovieData>> getMediaInListLike(String listId, String tag1, String tag2,
+                                                 String tag3, String tag4, String tag5,
+                                                 String tag6, String tag7);
 
     //alternate method without live data
     @Query("SELECT * FROM movie_data_records WHERE list_id = :listId")
