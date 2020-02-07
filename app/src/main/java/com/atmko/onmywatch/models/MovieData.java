@@ -90,7 +90,7 @@ public class MovieData extends MediaData{
     public MovieData(@NonNull String id, String traktId, String voteAverage, String title,
                      String posterPath, String originalLanguage, String originalTitle,
                      ArrayList<String> genres, boolean adult, String backdropPath, String overview,
-                     String releaseDate, String releaseStatus, List<SearchTag> searchTags,
+                     String releaseDate, String releaseStatus, List<SearchMediaTag> searchTags,
                      ScheduledMedia scheduledMedia) {
 
         this.mId = id;

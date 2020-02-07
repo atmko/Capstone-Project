@@ -78,7 +78,7 @@ public class SeriesData extends MediaData{
                       String posterPath, String originalLanguage, String originalTitle,
                       ArrayList<String> countryOfOrigin, ArrayList<String> genres, String backdropPath,
                       String overview, String releaseDate, String releaseStatus,
-                      List<SearchTag> searchTags, Episode nextEpisodeToAir) {
+                      List<SearchMediaTag> searchTags, Episode nextEpisodeToAir) {
 
         this.mId = id;
         this.mTraktId = traktId;

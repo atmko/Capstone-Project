@@ -53,7 +53,7 @@ abstract public class MediaData {
     @ColumnInfo(name = "backdrop_path") String mBackdropPath;
     @ColumnInfo(name = "overview") String mOverview;
     @ColumnInfo(name = "release_date") String mReleaseDate;
-    public @ColumnInfo(name = "tags") List<SearchTag> searchTags;
+    public @ColumnInfo(name = "tags") List<SearchMediaTag> searchTags;
 
     //secondary attributes(details)
     @Ignore ArrayList<CastData> mCast;
@@ -159,7 +159,7 @@ abstract public class MediaData {
                 }
 
             } else {
-                SearchTag searchTag = new SearchTag(trimmedString);
+                SearchMediaTag searchTag = new SearchMediaTag(trimmedString);
                 if (!searchTags.contains(searchTag)) {
                     searchTags.add(searchTag);
                 }
