@@ -29,6 +29,7 @@ import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.atmko.onmywatch.models.ListModel;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
+import com.atmko.onmywatch.models.SearchMediaTag;
 import com.atmko.onmywatch.models.SearchTag;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SimpleIdlingResource;
@@ -338,15 +339,17 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
         return ((MasterActivity) getActivity()).mIdlingResource;
     }
 
-    private void deleteTags(MediaData mediaData) {
+    //checks if media tags are in use and deletes them if not
+    private void deleteMediaTags(MediaData mediaData) {
+        //delete media tags
         if (mediaData.searchTags == null) return;
 
-        for (SearchTag tag: mediaData.searchTags) {
+        for (SearchMediaTag tag: mediaData.searchTags) {
             int tagUsage = mDatabase.movieDataDao().getAllMediaWithTagAlt(tag.mTag).size()
                     + mDatabase.movieDataDao().getAllMediaWithTagAlt(tag.mTag).size();
 
             if (tagUsage == 0) {
-                mDatabase.searchTagsDao().deleteTag(tag);
+                mDatabase.searchMediaTagsDao().deleteTag(tag);
             }
         }
     }
@@ -363,7 +366,7 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
             //TODO delete notifiers when item is unused
             if (containingLists.size() == 0 && movieData.getWatchStatus() == 0) {
                 mDatabase.movieDataDao().deleteMovieData(movieData);
-                deleteTags(movieData);
+                deleteMediaTags(movieData);
 
                 if (getContext() == null) continue;
 
@@ -393,7 +396,7 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
             //TODO delete notifiers when item is unused
             if (containingLists.size() == 0 && seriesData.getWatchStatus() == 0) {
                 mDatabase.seriesDataDao().deleteSeriesData(seriesData);
-                deleteTags(seriesData);
+                deleteMediaTags(seriesData);
 
                 if (getContext() == null) continue;
 
