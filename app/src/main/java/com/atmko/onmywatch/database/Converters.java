@@ -8,12 +8,15 @@ import androidx.room.TypeConverter;
 
 import com.atmko.onmywatch.models.Episode;
 import com.atmko.onmywatch.models.ScheduledMedia;
+import com.atmko.onmywatch.models.SearchMediaTag;
+import com.atmko.onmywatch.models.SearchTag;
 import com.atmko.onmywatch.utils.GeneralUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class Converters {
     private static final String ORIGIN_SEPARATOR = ",";
@@ -83,5 +86,33 @@ public class Converters {
     public static long episodeToLong(Episode episode) {
         if (episode == null) return 0;
         return episode.getBestLocalAirDate() == null ? 0
-                : episode.getBestLocalAirDate().getTime();    }
+                : episode.getBestLocalAirDate().getTime();
+    }
+
+    @TypeConverter
+    public static String searchTagsToString(List<SearchMediaTag> searchTags) {
+        StringBuilder stringOfTags = new StringBuilder();
+        for (SearchTag searchTag : searchTags) {
+            stringOfTags.append(searchTag.mTag);
+            stringOfTags.append(" ");
+        }
+
+        return stringOfTags.toString();
+    }
+
+    @TypeConverter
+    public static List<SearchMediaTag> stringToSearchTags(String tagString) {
+        List<SearchMediaTag> searchTags = new ArrayList<>();
+
+        String trimmedString = tagString.trim();
+
+        if (trimmedString.contains(" ")) {
+            String[] strings = tagString.split(" ");
+            for (String tag : strings) {
+                searchTags.add(new SearchMediaTag(tag));
+            }
+        }
+
+        return searchTags;
+    }
 }
