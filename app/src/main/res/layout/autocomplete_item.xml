@@ -9,10 +9,10 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Medium Text"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
+        android:paddingLeft="@dimen/x1_layout_margin"
+        android:paddingRight="@dimen/x1_layout_margin"
+        android:paddingTop="@dimen/x2_layout_margin"
+        android:paddingBottom="@dimen/x2_layout_margin"
         android:textColor="@android:color/white"
         android:id="@+id/lbl_name" />
 </RelativeLayout>
