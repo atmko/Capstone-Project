@@ -13,7 +13,7 @@ import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.database.Converters;
 import com.atmko.onmywatch.models.Episode;
 import com.atmko.onmywatch.models.MediaData;
-import com.atmko.onmywatch.models.SearchTag;
+import com.atmko.onmywatch.models.SearchMediaTag;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 import com.atmko.onmywatch.utils.api_utils.SeriesApiConstants;
@@ -534,9 +534,9 @@ public class FirebaseSeriesDataDao implements SeriesDataDao {
                 : Converters.longToEpisode((long) document.get(NEXT_EPISODE_KEY));
 
         List<String> tagStrings = (ArrayList<String>) document.get(TAGS_KEY);
-        List<SearchTag> searchTags = new ArrayList<>();
+        List<SearchMediaTag> searchTags = new ArrayList<>();
         for (String tagString: tagStrings) {
-            searchTags.add(new SearchTag(tagString));
+            searchTags.add(new SearchMediaTag(tagString));
         }
 
         SeriesData seriesData = new SeriesData(

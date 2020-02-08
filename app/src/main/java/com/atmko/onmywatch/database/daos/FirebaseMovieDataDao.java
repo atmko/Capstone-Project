@@ -14,7 +14,7 @@ import com.atmko.onmywatch.database.Converters;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.ScheduledMedia;
-import com.atmko.onmywatch.models.SearchTag;
+import com.atmko.onmywatch.models.SearchMediaTag;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 import com.atmko.onmywatch.utils.api_utils.MovieApiConstants;
 import com.atmko.onmywatch.utils.network_utils.TraktApiConstants;
@@ -166,7 +166,7 @@ public class FirebaseMovieDataDao implements MovieDataDao {
                 .collection(MOVIES_COLLECTION_PATH)
                 .whereEqualTo(WATCH_STATUS_KEY, watchStatus);
 
-        //query if tags there are tags requested
+        //query if there are tags requested
         if (tagList.size() != 0) query = query.whereArrayContainsAny(TAGS_KEY, tagList);
 
         query.addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -532,9 +532,9 @@ public class FirebaseMovieDataDao implements MovieDataDao {
                 : Converters.longToScheduledMedia((long) document.get(SCHEDULED_MEDIA_KEY));
 
         List<String> tagStrings = (ArrayList<String>) document.get(TAGS_KEY);
-        List<SearchTag> searchTags = new ArrayList<>();
+        List<SearchMediaTag> searchTags = new ArrayList<>();
         for (String tagString: tagStrings) {
-            searchTags.add(new SearchTag(tagString));
+            searchTags.add(new SearchMediaTag(tagString));
         }
 
         MovieData movieData = new MovieData(
