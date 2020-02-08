@@ -84,8 +84,6 @@ public class MasterActivity extends AppCompatActivity {
     private static final int REPEAT_INTERVAL = 2;
     private static final int INITIAL_DELAY = 15;
 
-    private static final String HISTORY_KEY = "history";
-
     private static final String USER_COLLECTION_PATH = "users";
     private final int SIGN_IN_REQUEST_CODE = 10;
 
@@ -107,8 +105,6 @@ public class MasterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_master);
-
-        initializeAdMob();
 
         createNotificationChannels();
 
@@ -152,8 +148,12 @@ public class MasterActivity extends AppCompatActivity {
         masterActivityViewModel.getIsProModeLiveData().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean isProMode) {
-                if (isProMode != null) {
-                    MasterActivity.sIsProMode = isProMode;
+                if (isProMode == null) return;
+
+                sIsProMode = isProMode;
+
+                if (!sIsProMode) {
+                    initializeAdMob();
                 }
             }
         });
@@ -214,8 +214,6 @@ public class MasterActivity extends AppCompatActivity {
 
         //start ui
         startHomeFragment();
-        //start background work managers
-        startWorkers();
 
         if (getIntent() != null) {
             Intent intent = getIntent();
