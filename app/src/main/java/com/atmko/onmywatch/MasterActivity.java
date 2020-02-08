@@ -571,6 +571,8 @@ public class MasterActivity extends AppCompatActivity {
         if (fragment.getView() != null) {
             List<Fragment> fragments = getSupportFragmentManager().getFragments();
 
+            //TODO: check if fragment is always last index(size -1), if so, no need to use indexOf() for fragment index,...
+            // instead use size - 1
             int fragmentIndex = fragments.indexOf(fragment);
             int backgroundFragmentIndex = fragmentIndex - 1;
 
@@ -585,7 +587,9 @@ public class MasterActivity extends AppCompatActivity {
 
             //hide search bar and dismiss keyboard
             //exclude fragments that don't have search bar
-            if (!(backgroundFragment instanceof HomeFragment)) {
+            if (!(backgroundFragment instanceof HomeFragment)
+                    && !(backgroundFragment instanceof DetailsFragment)
+                    && !(backgroundFragment instanceof PeopleDetailsFragment)) {
                 SuperEditText searchTextView =
                         backgroundFragment.getView().findViewById(R.id.search_edit_text_view);
                 hideSearchBar(searchTextView);
