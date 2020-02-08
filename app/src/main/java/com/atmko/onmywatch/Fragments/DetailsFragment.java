@@ -71,7 +71,6 @@ import java.util.Map;
 
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
-import static com.atmko.onmywatch.MasterActivity.sDetailsHistory;
 import static com.atmko.onmywatch.models.MediaData.WATCH_STATUS_DROPPED;
 import static com.atmko.onmywatch.models.MediaData.WATCH_STATUS_WATCHED;
 import static com.atmko.onmywatch.models.MediaData.WATCH_STATUS_WATCHING;
@@ -971,29 +970,6 @@ public class DetailsFragment extends Fragment {
         intent.putExtra(RateActivity.MEDIA_ID_KEY, Parcels.wrap(mMediaData.getId()));
 
         startActivity(intent);
-    }
-
-    void stackHistory() {
-        if (sDetailsHistory == null) {
-            sDetailsHistory = new ArrayList<>();
-        }
-
-        //TODO: history list is meant to hold media data and people data
-        //noinspection unchecked
-        sDetailsHistory.add(mMediaData);
-    }
-
-    public void popHistory() {
-        if (getActivity() != null) {
-            ((MasterActivity) getActivity())
-                    .launchDetailsFragment(((MediaData) sDetailsHistory.get(sDetailsHistory.size() - 1)), null);
-
-            sDetailsHistory.remove(sDetailsHistory.size() - 1);
-        }
-
-        if (sDetailsHistory.size() == 0) {
-            sDetailsHistory = null;
-        }
     }
 
     @Override
