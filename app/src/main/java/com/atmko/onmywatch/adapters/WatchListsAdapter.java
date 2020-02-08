@@ -29,6 +29,7 @@ public class WatchListsAdapter extends ListsAdapter {
             if (viewType == EMPTY_ADAPTER_ID) return;
 
             optionsSpinner.setVisibility(View.GONE);
+            checkBox.setVisibility(View.GONE);
         }
     }
 

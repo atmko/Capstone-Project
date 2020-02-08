@@ -17,6 +17,7 @@ import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.database.daos.MovieDataDao;
 import com.atmko.onmywatch.database.daos.MovieNotifierDao;
+import com.atmko.onmywatch.database.daos.SearchListTagsDao;
 import com.atmko.onmywatch.database.daos.SearchMediaTagsDao;
 import com.atmko.onmywatch.database.daos.SeriesDataDao;
 import com.atmko.onmywatch.database.daos.SeriesNotifierDao;
@@ -25,6 +26,7 @@ import com.atmko.onmywatch.database.daos.MovieDataRecordsDao;
 import com.atmko.onmywatch.database.daos.SeriesDataRecordsDao;
 import com.atmko.onmywatch.database.daos.WatchListsDao;
 import com.atmko.onmywatch.models.MovieNotifier;
+import com.atmko.onmywatch.models.SearchListTag;
 import com.atmko.onmywatch.models.SearchMediaTag;
 import com.atmko.onmywatch.models.SeriesNotifier;
 import com.atmko.onmywatch.models.UserListModel;
@@ -37,7 +39,7 @@ import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 
 @Database(entities = {WatchListModel.class, UserListModel.class, MovieData.class, SeriesData.class,
         MovieDataRecord.class, SeriesDataRecord.class, MovieNotifier.class, SeriesNotifier.class,
-        SearchMediaTag.class},
+        SearchMediaTag.class, SearchListTag.class},
         version = 1, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
@@ -129,4 +131,5 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract MovieNotifierDao movieNotifierDao();
     public abstract SeriesNotifierDao seriesNotifierDao();
     public abstract SearchMediaTagsDao searchMediaTagsDao();
+    public abstract SearchListTagsDao searchListTagsDao();
 }

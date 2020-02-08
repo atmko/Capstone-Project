@@ -27,6 +27,7 @@ import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.HttpsCallableResult;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -172,8 +173,56 @@ public class FirebaseUserListDao implements UserListsDao{
     }
 
     @Override
-    public LiveData<List<UserListModel>> getListsWithNameLike(String name) {
-        return null;
+    public LiveData<List<UserListModel>> getListsWithNameLike(String tag1, String tag2,
+                                                              String tag3, String tag4, String tag5,
+                                                              String tag6, String tag7) {
+        //remove empty tags
+        final ArrayList<String> tagList = new ArrayList<>();
+        for (String tag: Arrays.asList(tag1, tag2, tag3, tag4, tag5, tag6, tag7)) {
+            if (!tag.equals("")) {
+                tagList.add(tag);
+            }
+        }
+
+        final MutableLiveData<List<UserListModel>> liveData = new MutableLiveData<>();
+
+        Query query = MasterActivity.getUserDbHomeReference()
+                .collection(USER_LISTS_PATH);
+
+        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
+                final List<UserListModel> userListModels = new ArrayList<>();
+
+                if (snapshots != null) {
+                    List<DocumentSnapshot> documents = snapshots.getDocuments();
+
+                    for (DocumentSnapshot document: documents) {
+                        if (document.getData() == null) continue;
+
+                        String listName = ((String) document.getData().get(LIST_NAME_KEY));
+                        if (listName == null) continue;
+
+                        List<String> mediaTags = new ArrayList<>();
+                        mediaTags.add(listName);
+
+                        mediaTags.retainAll(tagList);
+
+                        if (mediaTags.size() == tagList.size()) {
+                            UserListModel listModel = parseUserListModel(document);
+                            userListModels.add(listModel);
+                        }
+                    }
+
+                    liveData.setValue(userListModels);
+
+                } else {
+                    liveData.setValue(userListModels);
+                }
+            }
+        });
+
+        return liveData;
     }
 
     @Override

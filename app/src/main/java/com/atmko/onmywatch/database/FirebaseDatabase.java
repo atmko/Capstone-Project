@@ -21,6 +21,7 @@ import com.atmko.onmywatch.database.daos.FirebaseWatchListDao;
 import com.atmko.onmywatch.database.daos.MovieDataDao;
 import com.atmko.onmywatch.database.daos.MovieDataRecordsDao;
 import com.atmko.onmywatch.database.daos.MovieNotifierDao;
+import com.atmko.onmywatch.database.daos.SearchListTagsDao;
 import com.atmko.onmywatch.database.daos.SearchMediaTagsDao;
 import com.atmko.onmywatch.database.daos.SeriesDataDao;
 import com.atmko.onmywatch.database.daos.SeriesDataRecordsDao;
@@ -72,9 +73,15 @@ public class FirebaseDatabase extends AppDatabase {
         return new FirebaseSeriesNotifiersDao();
     }
 
-    //search tags dao only available on local db
+    //dao only available on local db
     @Override
     public SearchMediaTagsDao searchMediaTagsDao() {
+        return null;
+    }
+
+    //dao only available on local db
+    @Override
+    public SearchListTagsDao searchListTagsDao() {
         return null;
     }
 

@@ -7,31 +7,52 @@
     android:layout_height="match_parent"
     android:background="@drawable/background_fragment_overlay">
 
-    <EditText
-        android:id="@+id/search_edit_text_view"
+    <LinearLayout
+        android:id="@+id/top_frame_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/background_rounded_search_box"
-        android:hint="@string/search_text_box_hint"
-        android:imeOptions="actionSearch|flagNoExtractUi|flagNoFullscreen"
-        android:inputType="text"
-        android:padding="@dimen/x2_layout_margin"
-        android:textAlignment="viewStart"
-        android:gravity="start"
-        android:textColor="@android:color/white"
-        android:textColorHint="@android:color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.atmko.onmywatch.custom_views.SuperEditText
+            android:id="@+id/search_edit_text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:background="@drawable/background_rounded_search_box_left"
+            android:hint="@string/search_text_box_hint"
+            android:imeOptions="actionSearch|flagNoExtractUi|flagNoFullscreen"
+            android:inputType="text"
+            android:padding="@dimen/x2_layout_margin"
+            android:textAlignment="viewStart"
+            android:textColor="@android:color/white"
+            android:textColorHint="@android:color/white"/>
+
+        <ImageButton
+            android:id="@+id/create_list_button"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:paddingStart="@dimen/x1_layout_margin"
+            android:paddingEnd="@dimen/x3_layout_margin"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_fab_add_to_list_white"
+            android:background="@drawable/background_rounded_search_box_right"/>
+
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/lists_recycler_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="@dimen/x1_layout_margin"
+        android:layout_marginStart="1dp"
+        android:layout_marginEnd="1dp"
         app:layout_constraintBottom_toTopOf="@+id/watch_status_radio_group"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/search_edit_text_view" />
+        app:layout_constraintTop_toBottomOf="@id/top_frame_layout" />
 
     <FrameLayout
         android:id="@+id/status_dividing_line"

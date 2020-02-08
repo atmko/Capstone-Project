@@ -13,7 +13,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.RadioGroup;
 
 import androidx.annotation.NonNull;
@@ -29,10 +29,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.espresso.IdlingResource;
 
 import com.androidnetworking.common.ANRequest;
+import com.androidnetworking.core.MainThreadExecutor;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.atmko.onmywatch.adapters.AddToListAdapter;
+import com.atmko.onmywatch.adapters.TagAdapter;
+import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.atmko.onmywatch.database.AppDatabase;
+import com.atmko.onmywatch.models.ListModel;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.MovieDataRecord;
@@ -63,6 +67,9 @@ import java.util.List;
 
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
+import static com.atmko.onmywatch.MasterActivity.SEARCH_TEXT_KEY;
+import static com.atmko.onmywatch.MasterActivity.hideSoftKeyboard;
+import static com.atmko.onmywatch.MasterActivity.showSoftKeyboard;
 import static com.atmko.onmywatch.utils.GeneralUtils.MILLISECOND_CONVERSION;
 import static com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker.NEW_MEDIA_DATA_KEY;
 
@@ -84,6 +91,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
     private Bundle mSavedInstanceState;
     private AppDatabase mDatabase;
     private AddToListAdapter mAdapter;
+    private TagAdapter tagAdapter;
     private Integer mOldWatchStatus;
     private int mSelectedWatchStatus;
     private Integer mNewWatchStatus;// value is either null (after media is deleted) or (new media data's watch status i.e mSelectedWatchStatus)
@@ -91,7 +99,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
     private ArrayList<UserListModel> mNewContainingLists;
 
     private RecyclerView mRecyclerView;
-    private EditText mSearchEditTextView;
+    private SuperEditText mSearchTextView;
     private RadioGroup mWatchStatusRadioGroup;
     private Button mSaveButton;
 
@@ -146,8 +154,8 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
         mAdapter = new AddToListAdapter(this);
 
         //configure search box
-        mSearchEditTextView = findViewById(R.id.search_edit_text_view);
-        mSearchEditTextView.addTextChangedListener(new TextWatcher() {
+        mSearchTextView = findViewById(R.id.search_edit_text_view);
+        mSearchTextView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -155,28 +163,35 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                //TODO: implement search for cloud backup
-                if (!MasterActivity.sAllowCloudBackup) {
-                    String listName = s.toString();
-                    listName = "%" + listName + "%";
-
-                    //observe lists with searched name then remove observer
-                    final LiveData<List<UserListModel>> listLiveData = mDatabase.userListsDao().getListsWithNameLike(listName);
-                    listLiveData.observe(AddToListActivity.this, new Observer<List<UserListModel>>() {
-                        @Override
-                        public void onChanged(List<UserListModel> userListModels) {
-                            listLiveData.removeObserver(this);
-
-                            mAdapter.getAdapterData().clear();
-                            mAdapter.addAdapterData(userListModels);
-                        }
-                    });
-                }
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        onSearchTextChanged();
+                    }
+                });
             }
 
             @Override
             public void afterTextChanged(Editable s) {
 
+            }
+        });
+
+        tagAdapter = new TagAdapter(
+                this,
+                R.layout.fragment_list_results_parent,
+                R.id.search_edit_text_view,
+                new ArrayList<String>()
+        );
+
+        mSearchTextView.setAdapter(tagAdapter);
+        mSearchTextView.setThreshold(1);
+
+        ImageButton createListButton = findViewById(R.id.create_list_button);
+        createListButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MasterActivity.launchCreateListActivity(AddToListActivity.this);
             }
         });
 
@@ -275,9 +290,10 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
                             // after app is killed
                             mRecyclerView.setAdapter(mAdapter);
 
-                            //update list so onCheckDatabaseRecords function can run
-                            mAdapter.getAdapterData().clear();
-                            mAdapter.addAdapterData(allUserLists);
+                            populateAndNotifyAdapter(allUserLists);
+
+                            //restore search if it exists
+                            restoreSearchIfAvailable();
 
                             allowSave();
                         }
@@ -288,6 +304,86 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
                     Snackbar.make(findViewById(R.id.top_layout),
                             getString(R.string.no_created_lists_message), Snackbar.LENGTH_LONG).show();
                 }
+            }
+        });
+    }
+
+    private void populateAndNotifyAdapter(List listModels) {
+        if (listModels.size() == 0) {
+            mAdapter.setInPlaceholderMode(true);
+
+        } else {
+            mAdapter.setInPlaceholderMode(false);
+            mAdapter.getAdapterData().clear();
+            mAdapter.addAdapterData(listModels);
+        }
+    }
+
+    private void restoreSearchIfAvailable() {
+        if (mSavedInstanceState == null) return;
+        String savedSearch = mSavedInstanceState.getString(SEARCH_TEXT_KEY);
+        if (savedSearch == null || savedSearch.equals("")) return;
+
+        //show keyboard if restore value is true
+        //else hide it
+        if (MasterActivity.sIsKeyboardVisible) {
+            showSoftKeyboard(mSearchTextView);
+
+        } else {
+            hideSoftKeyboard(mSearchTextView);
+        }
+
+        String savedSearchText = mSavedInstanceState.getString(SEARCH_TEXT_KEY);
+
+        mSearchTextView.setText(savedSearchText);
+    }
+
+    private static final int TAG_COUNT_LIMIT = 7;
+    private void onSearchTextChanged() {
+        String activeText = mSearchTextView.getActiveText();
+        final List<String> searchTags = AppDatabase.getLocalDatabase(this).searchListTagsDao()
+                .getTagsLikeAlt(activeText);
+
+        new MainThreadExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                tagAdapter.clear();
+                tagAdapter.addAll(searchTags);
+                tagAdapter.notifyDataSetChanged();
+
+                performFullSearchWithTags();
+            }
+        });
+    }
+
+    private void performFullSearchWithTags() {
+        String searchBoxStrings = mSearchTextView.getText().toString();
+        String[] terms = searchBoxStrings.split(" ");
+        final List<String> formattedTags = new ArrayList<>();
+
+        for (int i = 0; i < TAG_COUNT_LIMIT; i++) {
+            if (!(i > terms.length - 1)) {
+                formattedTags.add(terms[i]);
+
+            } else {
+                formattedTags.add("");
+            }
+        }
+
+        searchInUserList(formattedTags);
+    }
+
+    private void searchInUserList(List<String> formattedTags) {
+        final LiveData<List<UserListModel>> listsLiveData = mDatabase.userListsDao()
+                .getListsWithNameLike(formattedTags.get(0), formattedTags.get(1),
+                        formattedTags.get(2), formattedTags.get(3), formattedTags.get(4),
+                        formattedTags.get(5), formattedTags.get(6));
+
+        listsLiveData.observe(this, new Observer<List<UserListModel>>() {
+            @Override
+            public void onChanged(List<UserListModel> userListModels) {
+                listsLiveData.removeObserver(this);
+                populateAndNotifyAdapter(userListModels);
             }
         });
     }
@@ -712,15 +808,23 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
     //TODO: modifying newContainingList here makes getting newContainingList value when saving redundant
     //avoids inconsistent checks when recycler view recycles views
     @Override
-    public void onItemClick(final UserListModel userListModel, AppCompatCheckBox checkBox) {
+    public void onItemClick(final ListModel listModel, AppCompatCheckBox checkBox) {
+        if (mAdapter.inPlaceholderMode()) {
+            MasterActivity.launchCreateListActivity(this);
+
+            return;
+        }
+
         //if list model doesn't exist in mNewContainingLists
-        if (!mNewContainingLists.contains(userListModel)) {
+        //noinspection SuspiciousMethodCalls
+        if (!mNewContainingLists.contains(listModel)) {
             //add list
-            mNewContainingLists.add(userListModel);
+            mNewContainingLists.add(((UserListModel) listModel));
 
         } else {//if name exists in mNewContainingLists
             //remove from list
-            mNewContainingLists.remove(userListModel);
+            //noinspection RedundantCast
+            mNewContainingLists.remove(((UserListModel) listModel));
         }
 
         //toggle checkbox;

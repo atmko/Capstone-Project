@@ -9,6 +9,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.atmko.onmywatch.R;
@@ -25,7 +26,7 @@ public abstract class ListsAdapter extends RecyclerView.Adapter<ListsAdapter.Lis
     //layout ids
     final int EMPTY_ADAPTER_ID = -1;
 
-    List mAdapterData;
+    List<ListModel> mAdapterData;
     OnListItemClickListener mOnListItemClickListener;
     private boolean mInPlaceholderMode;
 
@@ -35,7 +36,7 @@ public abstract class ListsAdapter extends RecyclerView.Adapter<ListsAdapter.Lis
     }
 
     public interface OnListItemClickListener {
-        void onItemClick(int position);
+        void onItemClick(ListModel listModel, AppCompatCheckBox checkBox);
     }
 
     public class ListsAdapterViewHolder extends RecyclerView.ViewHolder
@@ -44,6 +45,7 @@ public abstract class ListsAdapter extends RecyclerView.Adapter<ListsAdapter.Lis
         final TextView listNameTextView;
         final TextView itemCountTextView;
         final Spinner optionsSpinner;
+        final AppCompatCheckBox checkBox;
 
         ListsAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -51,6 +53,10 @@ public abstract class ListsAdapter extends RecyclerView.Adapter<ListsAdapter.Lis
             listNameTextView = itemView.findViewById(R.id.list_name_text_view);
             itemCountTextView = itemView.findViewById(R.id.item_count_text_view);
             optionsSpinner = itemView.findViewById(R.id.options_spinner);
+            checkBox = itemView.findViewById(R.id.checkbox_view);
+            if (checkBox != null) {
+                checkBox.setClickable(false);
+            }
 
             itemView.setOnClickListener(this);
         }
@@ -58,7 +64,7 @@ public abstract class ListsAdapter extends RecyclerView.Adapter<ListsAdapter.Lis
         @Override
         public void onClick(View v) {
             int position = getAdapterPosition();
-            mOnListItemClickListener.onItemClick(position);
+            mOnListItemClickListener.onItemClick(mAdapterData.get(position), checkBox);
         }
     }
 
@@ -68,7 +74,7 @@ public abstract class ListsAdapter extends RecyclerView.Adapter<ListsAdapter.Lis
         if (adapterViewHolder.getItemViewType() == EMPTY_ADAPTER_ID) return;
 
         //get current listData
-        ListModel currentListModel = ((ListModel) mAdapterData.get(position));
+        ListModel currentListModel = mAdapterData.get(position);
 
         adapterViewHolder.listNameTextView.setText(currentListModel.getName());
         adapterViewHolder.itemCountTextView.

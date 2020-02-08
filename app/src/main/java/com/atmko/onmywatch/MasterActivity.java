@@ -16,6 +16,7 @@ import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -33,11 +34,13 @@ import com.atmko.onmywatch.Fragments.HomeFragment;
 import com.atmko.onmywatch.Fragments.ListResultsParentFragment;
 import com.atmko.onmywatch.Fragments.PeopleDetailsFragment;
 import com.atmko.onmywatch.custom_views.SuperEditText;
+import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.PersonData;
 import com.atmko.onmywatch.models.SimpleIdlingResource;
+import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.utils.network_utils.FreeModeMigrationService;
 import com.atmko.onmywatch.utils.network_utils.ProModeMigrationService;
 import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
@@ -47,6 +50,7 @@ import com.atmko.onmywatch.view_models.MasterActivityViewModel;
 import com.firebase.ui.auth.AuthUI;
 
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -65,6 +69,7 @@ import static com.atmko.onmywatch.database.daos.FirebaseUserDataDao.MIGRATION_TO
 import static com.atmko.onmywatch.database.daos.FirebaseUserDataDao.MIGRATION_TO_LOCAL;
 
 public class MasterActivity extends AppCompatActivity {
+    private static final int FREE_MODE_LIST_COUNT_LIMIT = 3;
 
     public static final int MEDIA_TYPE_SERIES = 0;
     public static final int MEDIA_TYPE_MOVIE = 1;
@@ -565,6 +570,28 @@ public class MasterActivity extends AppCompatActivity {
         intent.putExtra(AddToListActivity.MEDIA_DATA_KEY, Parcels.wrap(mediaData));
 
         startActivity(intent);
+    }
+
+    public static void launchCreateListActivity(final Activity activity) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                int userListCount = AppDatabase.getInstance(activity).
+                        userListsDao().getAllListsAlt().size();
+
+                if (userListCount >= FREE_MODE_LIST_COUNT_LIMIT && !sIsProMode) {
+                    Snackbar.make(activity.findViewById(R.id.top_layout),
+                            activity.getString(R.string.pro_mode_list_limit_message),
+                            Snackbar.LENGTH_LONG).show();
+                    return;
+                }
+
+                Intent intent = new Intent(activity, CreateListActivity.class);
+                intent.putExtra(CreateListActivity.MODE_KEY, CreateListActivity.MODE_CREATE);
+
+                activity.startActivity(intent);
+            }
+        });
     }
 
     public void hideBackgroundFragment(Fragment fragment) {

@@ -8,61 +8,49 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatCheckBox;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.models.UserListModel;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /*
  * data adapter for list objects in AddToListActivity
  */
 
-public class AddToListAdapter extends RecyclerView.Adapter<AddToListAdapter.AddToListViewHolder> {
-    private final List<UserListModel> mAdapterData;
-    private final OnListItemClickListener mOnListItemClickListener;
+public class AddToListAdapter extends ListsAdapter {
     private final OnListCheckListener mOnListCheckListener;
 
     public AddToListAdapter(OnListItemClickListener clickListener) {
-        mOnListItemClickListener = clickListener;
+        super(clickListener);
         mOnListCheckListener = ((OnListCheckListener) clickListener);
-        mAdapterData = new ArrayList<>();
-    }
-
-    public interface OnListItemClickListener {
-        void onItemClick(UserListModel userListModel, AppCompatCheckBox checkBox);
     }
 
     public interface OnListCheckListener {
         void onCheckDatabaseRecords(AppCompatCheckBox checkBox, UserListModel listName);
     }
 
-    public class AddToListViewHolder extends RecyclerView.ViewHolder
-            implements View.OnClickListener{
+    public class AddToListViewHolder extends ListsAdapterViewHolder {
 
-        final TextView listNameTextView;
-        final AppCompatCheckBox checkBox;
-
-        private AddToListViewHolder(@NonNull View itemView) {
+        private AddToListViewHolder(@NonNull View itemView, int viewType) {
             super(itemView);
 
-            listNameTextView = itemView.findViewById(R.id.list_name_text_view);
-            checkBox = itemView.findViewById(R.id.checkbox_view);
-            checkBox.setClickable(false);
+            if (viewType == EMPTY_ADAPTER_ID) return;
 
-            itemView.setOnClickListener(this);
+            optionsSpinner.setVisibility(View.GONE);
         }
+    }
 
-        @Override
-        public void onClick(View v) {
-            mOnListItemClickListener.onItemClick(mAdapterData.get(getAdapterPosition()), checkBox);
-        }
+    @Override
+    public void onBindViewHolder(@NonNull ListsAdapterViewHolder adapterViewHolder, int position) {
+        super.onBindViewHolder(adapterViewHolder, position);
+
+        if (adapterViewHolder.getItemViewType() == EMPTY_ADAPTER_ID) return;
+
+        mOnListCheckListener
+                .onCheckDatabaseRecords(adapterViewHolder.checkBox,
+                        ((UserListModel) mAdapterData.get(position)));
     }
 
     @NonNull
@@ -71,41 +59,17 @@ public class AddToListAdapter extends RecyclerView.Adapter<AddToListAdapter.AddT
         Context context = viewGroup.getContext();
         LayoutInflater layoutInflater = LayoutInflater.from(context);
 
-        int resourceId = R.layout.object_add_to_list_model;
+        int resourceId;
+
+        if (viewType == EMPTY_ADAPTER_ID) {
+            resourceId = R.layout.item_list_placeholder;
+
+        } else {
+            resourceId = R.layout.object_list_model;
+        }
 
         View view = layoutInflater.inflate(resourceId, viewGroup, false);
 
-        return new AddToListViewHolder(view);
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull final AddToListViewHolder adapterViewHolder, int position) {
-        //get current user list
-        UserListModel currentUserListModel = mAdapterData.get(position);
-
-        adapterViewHolder.listNameTextView.setText(currentUserListModel.getName());
-
-        mOnListCheckListener
-                .onCheckDatabaseRecords(adapterViewHolder.checkBox,
-                        mAdapterData.get(position));
-    }
-
-    @Override
-    public int getItemCount() {
-        return mAdapterData.size();
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return super.getItemViewType(position);
-    }
-
-    public List<UserListModel> getAdapterData() {
-        return mAdapterData;
-    }
-
-    public void addAdapterData(List<UserListModel> dataList) {
-        mAdapterData.addAll(dataList);
-        notifyDataSetChanged();
+        return new AddToListViewHolder(view, viewType);
     }
 }
