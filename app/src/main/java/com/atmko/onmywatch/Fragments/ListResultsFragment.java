@@ -10,7 +10,6 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -52,7 +51,6 @@ public class ListResultsFragment extends Fragment
 
     // TODO: Rename and change types of parameters
     //check for restoring state
-    private boolean mFirstInit = true;
     private int mListType;
     private int mMediaType;
     private String mListName;
@@ -183,25 +181,15 @@ public class ListResultsFragment extends Fragment
         if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
             //if media data is movie
             if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
-                movieDataWatchListLiveData.observe(getParentFragment(),
-                        new Observer<List<MovieData>>() {
-                            @Override
-                            public void onChanged(List<MovieData> mediaDataList) {
-                                populateAndNotifyAdapter(mediaDataList);
+                movieDataWatchListLiveData.observe(getParentFragment(), new Observer<List<MovieData>>() {
+                    @Override
+                    public void onChanged(List<MovieData> mediaDataList) {
+                        populateAndNotifyAdapter(mediaDataList);
 
-                                //TODO: implement search for cloud backup
-                                if (!MasterActivity.sAllowCloudBackup) {
-                                    //restore search if it exists
-                                    final ImageButton searchImageButton = getParentFragment().
-                                            getView().findViewById(R.id.search_image_button);
-                                    MasterActivity masterActivity = ((MasterActivity) getActivity());
-                                    masterActivity.restoreSavedSearch(ListResultsFragment.this,
-                                            mFirstInit, savedInstanceState, searchImageButton, mSearchTextView);
-
-                                    mFirstInit = false;
-                                }
-                            }
-                        });
+                        //restore search if it exists
+                        MasterActivity.restoreSearchIfAvailable(ListResultsFragment.this, savedInstanceState);
+                    }
+                });
 
                 //if media data is series
             } else if (mMediaType == MasterActivity.MEDIA_TYPE_SERIES) {
@@ -210,17 +198,8 @@ public class ListResultsFragment extends Fragment
                     public void onChanged(List<SeriesData> mediaDataList) {
                         populateAndNotifyAdapter(mediaDataList);
 
-                        //TODO: implement search for cloud backup
-                        if (!MasterActivity.sAllowCloudBackup) {
-                            //restore search if it exists
-                            final ImageButton searchImageButton = getParentFragment().
-                                    getView().findViewById(R.id.search_image_button);
-                            MasterActivity masterActivity = ((MasterActivity) getActivity());
-                            masterActivity.restoreSavedSearch(ListResultsFragment.this,
-                                    mFirstInit, savedInstanceState, searchImageButton, mSearchTextView);
-
-                            mFirstInit = false;
-                        }
+                        //restore search if it exists
+                        MasterActivity.restoreSearchIfAvailable(ListResultsFragment.this, savedInstanceState);
                     }
                 });
             }
@@ -235,17 +214,8 @@ public class ListResultsFragment extends Fragment
                     public void onChanged(List<MovieData> mediaDataList) {
                         populateAndNotifyAdapter(mediaDataList);
 
-                        //TODO: implement search for cloud backup
-                        if (!MasterActivity.sAllowCloudBackup) {
-                            //restore search if it exists
-                            final ImageButton searchImageButton = getParentFragment().
-                                    getView().findViewById(R.id.search_image_button);
-                            MasterActivity masterActivity = ((MasterActivity) getActivity());
-                            masterActivity.restoreSavedSearch(ListResultsFragment.this,
-                                    mFirstInit, savedInstanceState, searchImageButton, mSearchTextView);
-
-                            mFirstInit = false;
-                        }
+                        //restore search if it exists
+                        MasterActivity.restoreSearchIfAvailable(ListResultsFragment.this, savedInstanceState);
                     }
                 });
 
@@ -256,17 +226,8 @@ public class ListResultsFragment extends Fragment
                     public void onChanged(List<SeriesData> mediaDataList) {
                         populateAndNotifyAdapter(mediaDataList);
 
-                        //TODO: implement search for cloud backup
-                        if (!MasterActivity.sAllowCloudBackup) {
-                            //restore search if it exists
-                            final ImageButton searchImageButton = getParentFragment().
-                                    getView().findViewById(R.id.search_image_button);
-                            MasterActivity masterActivity = ((MasterActivity) getActivity());
-                            masterActivity.restoreSavedSearch(ListResultsFragment.this,
-                                    mFirstInit, savedInstanceState, searchImageButton, mSearchTextView);
-
-                            mFirstInit = false;
-                        }
+                        //restore search if it exists
+                        MasterActivity.restoreSearchIfAvailable(ListResultsFragment.this, savedInstanceState);
                     }
                 });
             }

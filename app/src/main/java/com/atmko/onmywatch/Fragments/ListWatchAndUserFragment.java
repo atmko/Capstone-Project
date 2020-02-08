@@ -11,7 +11,6 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,24 +23,23 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.atmko.onmywatch.CreateListActivity;
 import com.atmko.onmywatch.MasterActivity;
+import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.ListsAdapter;
+import com.atmko.onmywatch.adapters.UserListsAdapter;
+import com.atmko.onmywatch.adapters.WatchListsAdapter;
 import com.atmko.onmywatch.custom_views.SuperEditText;
+import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.ListModel;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.SearchMediaTag;
-import com.atmko.onmywatch.models.SearchTag;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SimpleIdlingResource;
-import com.atmko.onmywatch.utils.network_utils.AppExecutors;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.atmko.onmywatch.R;
-import com.atmko.onmywatch.adapters.UserListsAdapter;
-import com.atmko.onmywatch.adapters.WatchListsAdapter;
-import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.models.WatchListModel;
+import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.view_models.ListsWatchAndUserViewModel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.parceler.Parcels;
 
@@ -57,7 +55,6 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
     private int mListType;
 
     //check for restoring state
-    private boolean mFirstInit = true;
     private Bundle mSavedInstanceState;
     private AppDatabase mDatabase;
     private ListsAdapter mAdapter;
@@ -102,7 +99,7 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
 
         defineViews();
 
-        observeData();
+        observeData(savedInstanceState);
     }
 
     @Override
@@ -177,7 +174,7 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
         return layoutManager;
     }
 
-    private void observeData() {
+    private void observeData(final Bundle savedInstanceState) {
         ListsWatchAndUserViewModel viewModel = ViewModelProviders.of(getParentFragment()).get(ListsWatchAndUserViewModel.class);
         LiveData<List<WatchListModel>> watchListsLiveData = viewModel.getWatchLists();
         LiveData<List<UserListModel>> userListsLiveData = viewModel.getUserLists();
@@ -189,17 +186,8 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
                     mAdapter.getAdapterData().clear();
                     mAdapter.addAdapterData(watchListModels);
 
-                    //TODO: implement search for pro mode
-                    if (!MasterActivity.sAllowCloudBackup) {
-                        //restore search if it exists
-                        final ImageButton searchImageButton = getParentFragment().
-                                getView().findViewById(R.id.search_image_button);
-                        MasterActivity masterActivity = ((MasterActivity) getActivity());
-                        masterActivity.restoreSavedSearch(ListWatchAndUserFragment.this,
-                                mFirstInit, mSavedInstanceState, searchImageButton, mSearchTextView);
-
-                        mFirstInit = false;
-                    }
+                    //restore search if it exists
+                    MasterActivity.restoreSearchIfAvailable(ListWatchAndUserFragment.this, savedInstanceState);
                 }
             });
 
@@ -209,17 +197,8 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
                 public void onChanged(List<UserListModel> userListModels) {
                     populateAndNotifyAdapter(userListModels);
 
-                    //TODO: implement search for pro mode
-                    if (!MasterActivity.sAllowCloudBackup) {
-                        //restore search if it exists
-                        final ImageButton searchImageButton = getParentFragment().
-                                getView().findViewById(R.id.search_image_button);
-                        MasterActivity masterActivity = ((MasterActivity) getActivity());
-                        masterActivity.restoreSavedSearch(ListWatchAndUserFragment.this,
-                                mFirstInit, mSavedInstanceState, searchImageButton, mSearchTextView);
-
-                        mFirstInit = false;
-                    }
+                    //restore search if it exists
+                    MasterActivity.restoreSearchIfAvailable(ListWatchAndUserFragment.this, savedInstanceState);
                 }
             });
         }

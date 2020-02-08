@@ -85,7 +85,7 @@ public class MasterActivity extends AppCompatActivity {
     private final int SIGN_IN_REQUEST_CODE = 10;
 
     //for restoring keyboard visibility upon configuration change
-    private boolean mIsKeyboardVisible;
+    public static boolean sIsKeyboardVisible;
     private boolean mIsTabletLandscape;
     private FirebaseAnalytics mFirebaseAnalytics;
 
@@ -272,7 +272,7 @@ public class MasterActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
 
         //save keyboard visibility value
-        outState.putBoolean(KEYBOARD_VISIBILITY_KEY, mIsKeyboardVisible);
+        outState.putBoolean(KEYBOARD_VISIBILITY_KEY, sIsKeyboardVisible);
     }
 
     private void initializeAdMob() {
@@ -297,7 +297,7 @@ public class MasterActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             //restore keyboard visibility value
-            mIsKeyboardVisible =
+            sIsKeyboardVisible =
                     savedInstanceState.getBoolean(KEYBOARD_VISIBILITY_KEY);
         }
     }
@@ -621,33 +621,31 @@ public class MasterActivity extends AppCompatActivity {
         }
     }
 
-    //search restore convenience method
-    public void restoreSavedSearch(Fragment fragment, boolean firstInit, Bundle savedInstanceState,
-                                   ImageButton searchButton, SuperEditText searchTextView) {
+    public static void restoreSearchIfAvailable(Fragment fragment, Bundle savedInstanceState) {
+        if (savedInstanceState == null) return;
+        String savedSearch = savedInstanceState.getString(SEARCH_TEXT_KEY);
+        if (savedSearch == null || savedSearch.equals("")) return;
+
+        SuperEditText searchTextView =
+                fragment.getParentFragment().getView().findViewById(R.id.search_edit_text_view);
 
         //show keyboard if restore value is true
         //else hide it
-        if (mIsKeyboardVisible) {
+        if (sIsKeyboardVisible) {
             showSoftKeyboard(searchTextView);
 
         } else {
             hideSoftKeyboard(searchTextView);
         }
 
-        String savedSearchText;
-        int savedBarVisibility;
-
-        if (savedInstanceState != null && firstInit) {
-            savedSearchText = savedInstanceState.getString(SEARCH_TEXT_KEY);
-            savedBarVisibility = savedInstanceState.getInt(SEARCH_BAR_VISIBILITY_KEY);
-
-        } else {
-            savedSearchText = searchTextView.getText().toString();
-            savedBarVisibility = searchTextView.getVisibility();
-        }
+        String savedSearchText = savedInstanceState.getString(SEARCH_TEXT_KEY);
+        int savedBarVisibility = savedInstanceState.getInt(SEARCH_BAR_VISIBILITY_KEY);
 
         searchTextView.setText(savedSearchText);
         searchTextView.setVisibility(savedBarVisibility);
+
+        final ImageButton searchButton =
+                fragment.getParentFragment().getView().findViewById(R.id.search_image_button);
 
         if (savedBarVisibility == View.VISIBLE) {
             searchButton.setImageResource(R.drawable.ic_cancel_manual_search);
@@ -657,29 +655,28 @@ public class MasterActivity extends AppCompatActivity {
 
         } else {
             searchButton.setImageResource(R.drawable.ic_manual_search);
-
         }
     }
 
     //hide soft keyboard and update keyboard visibility property
-    public void hideSoftKeyboard(View view) {
+    public static void hideSoftKeyboard(View view) {
         if (view.requestFocus()) {
             InputMethodManager imm = (InputMethodManager)
-                    getSystemService(Context.INPUT_METHOD_SERVICE);
+                    view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
-            mIsKeyboardVisible = false;
+            sIsKeyboardVisible = false;
         }
     }
 
     //show soft keyboard and update keyboard visibility property
-    private void showSoftKeyboard(View view) {
+    static void showSoftKeyboard(View view) {
         if (view.requestFocus()) {
             InputMethodManager imm = (InputMethodManager)
-                    getSystemService(Context.INPUT_METHOD_SERVICE);
+                    view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
 
-            mIsKeyboardVisible = true;
+            sIsKeyboardVisible = true;
         }
     }
 
