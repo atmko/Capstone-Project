@@ -37,7 +37,7 @@ import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.MovieDataRecord;
 import com.atmko.onmywatch.models.MovieNotifier;
-import com.atmko.onmywatch.models.SearchTag;
+import com.atmko.onmywatch.models.SearchMediaTag;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesDataRecord;
 import com.atmko.onmywatch.models.SeriesNotifier;
@@ -512,11 +512,11 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
         mMediaData.createTags();
 
         AppDatabase localDb = AppDatabase.getLocalDatabase(this);
-        for (SearchTag tag: mMediaData.searchTags) {
-            SearchTag savedTag = localDb.searchTagsDao().getTagAlt(tag.mTag);
+        for (SearchMediaTag tag: mMediaData.searchTags) {
+            SearchMediaTag savedTag = localDb.searchMediaTagsDao().getTagAlt(tag.mTag);
 
             if (savedTag == null) {
-                localDb.searchTagsDao().addTag(tag);
+                localDb.searchMediaTagsDao().addTag(tag);
             }
         }
     }
@@ -524,7 +524,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
     private void deleteTags() {
         if (mMediaData.searchTags == null) return;
 
-        for (SearchTag tag: mMediaData.searchTags) {
+        for (SearchMediaTag tag: mMediaData.searchTags) {
             int tagUsage;
 
             AppDatabase localDb = AppDatabase.getLocalDatabase(this);
@@ -538,7 +538,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
             }
 
             if (tagUsage == 0) {
-                localDb.searchTagsDao().deleteTag(tag);
+                localDb.searchMediaTagsDao().deleteTag(tag);
             }
         }
     }
