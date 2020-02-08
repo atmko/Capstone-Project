@@ -72,4 +72,40 @@ public class SuperEditText extends AutoCompleteTextView {
 
         return activeText;
     }
+
+    @Override
+    protected void performFiltering(CharSequence text, int keyCode) {
+        super.performFiltering(getActiveText(), keyCode);
+    }
+
+    @Override
+    protected void replaceText(CharSequence text) {
+        //replace active text entry
+        String oldText = getText().toString();
+        String[] oldTextSplit = oldText.split(" ");
+
+        //insert new text
+        oldTextSplit[activeTextIndex] = text.toString();
+
+        int indexTotal = 0;
+
+        //combine old text split back to string
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < oldTextSplit.length; i++) {
+            String word = oldTextSplit[i];
+            builder.append(word);
+            builder.append(" ");
+
+            //count index to later set cursor position (+= 1 represents the space after each word)
+            if (i <= activeTextIndex) {
+                indexTotal += word.length();
+                indexTotal += 1;
+            }
+        }
+
+        super.replaceText(builder.toString());
+
+        //set cursor to end of text being replaced
+        setSelection(indexTotal);
+    }
 }
