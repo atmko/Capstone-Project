@@ -1,12 +1,16 @@
 apply plugin: 'com.android.application'
 
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
     signingConfigs {
-        capstone_sign_config {
-            keyAlias 'capstone_key'
-            keyPassword 'kwdrFHHi4HHnFz#vxJ2B7fVA!p*06iLK9p8YdJZv'
+        omw {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
             storeFile file("$rootDir/keystore.jks")
-            storePassword '1rkbvFuh%D173IvU%mG$DJSap!msp4WHLT5F*E%g'
+            storePassword keystoreProperties['storePassword']
         }
     }
     compileSdkVersion 28
@@ -28,7 +32,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.capstone_sign_config
+            signingConfig signingConfigs.omw
         }
     }
 }
