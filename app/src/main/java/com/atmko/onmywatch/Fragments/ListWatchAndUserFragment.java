@@ -286,13 +286,6 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
         });
     }
 
-    private void launchCreateListActivity() {
-        Intent intent = new Intent(getActivity().getApplicationContext(), CreateListActivity.class);
-        intent.putExtra(CreateListActivity.MODE_KEY, CreateListActivity.MODE_CREATE);
-
-        startActivity(intent);
-    }
-
     private void launchCreateListActivity(UserListModel userListModel) {
         Intent intent = new Intent(getActivity().getApplicationContext(), CreateListActivity.class);
         intent.putExtra(CreateListActivity.MODE_KEY, CreateListActivity.MODE_EDIT);
