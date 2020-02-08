@@ -40,9 +40,27 @@
         android:layout_marginRight="@dimen/x4_layout_margin"
         android:layout_marginEnd="@dimen/x3_layout_margin"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/options_spinner"
+        app:layout_constraintEnd_toStartOf="@id/checkbox_view"
         tools:text="count"
         android:textColor="@android:color/white" />
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/checkbox_view"
+        android:theme="@style/AppTheme.ActionBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/x1_layout_margin"
+        android:layout_marginLeft="@dimen/x1_layout_margin"
+        android:layout_marginTop="@dimen/x1_layout_margin"
+        android:layout_marginEnd="@dimen/x1_layout_margin"
+        android:layout_marginRight="@dimen/x1_layout_margin"
+        android:layout_marginBottom="@dimen/x1_layout_margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/title_text_view"
+        app:layout_constraintEnd_toStartOf="@id/options_spinner"
+        app:layout_constraintTop_toTopOf="@id/item_count_text_view"
+        app:layout_constraintBottom_toBottomOf="@id/item_count_text_view"/>
 
     <Spinner
         android:id="@+id/options_spinner"
