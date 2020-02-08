@@ -32,12 +32,15 @@ import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
+import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.view_models.ListResultsViewModelFactory;
 import com.atmko.onmywatch.view_models.ListsResultsViewModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static com.atmko.onmywatch.MasterActivity.SEARCH_TEXT_KEY;
 
 public class ListResultsFragment extends Fragment
         implements MediaDataAdapter.OnListItemClickListener{
@@ -108,7 +111,7 @@ public class ListResultsFragment extends Fragment
         super.onSaveInstanceState(outState);
 
         //save search bar text
-        outState.putString(MasterActivity.SEARCH_TEXT_KEY, mSearchTextView.getText().toString());
+        outState.putString(SEARCH_TEXT_KEY, mSearchTextView.getText().toString());
 
         //save search bar visibility
         outState.putInt(MasterActivity.SEARCH_BAR_VISIBILITY_KEY, mSearchTextView.getVisibility());
@@ -136,11 +139,13 @@ public class ListResultsFragment extends Fragment
             }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                //TODO: implement search for cloud backup
-                if (!MasterActivity.sAllowCloudBackup) {
-                    onSearchTextChanged();
-                }
+            public void onTextChanged(final CharSequence s, int start, int before, int count) {
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        onSearchTextChanged();
+                    }
+                });
             }
 
             @Override
