@@ -198,7 +198,7 @@ public class ListResultsFragment extends Fragment
 
                 //if media data is series
             } else if (mMediaType == MasterActivity.MEDIA_TYPE_SERIES) {
-                seriesDataWatchListLiveData.observe(this, new Observer<List<SeriesData>>() {
+                seriesDataWatchListLiveData.observe(getParentFragment(), new Observer<List<SeriesData>>() {
                     @Override
                     public void onChanged(List<SeriesData> mediaDataList) {
                         populateAndNotifyAdapter(mediaDataList);
@@ -214,7 +214,7 @@ public class ListResultsFragment extends Fragment
         if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_USER) {
             //if media data is movie
             if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
-                movieDataUserListLiveData.observe(this, new Observer<List<MovieData>>() {
+                movieDataUserListLiveData.observe(getParentFragment(), new Observer<List<MovieData>>() {
                     @Override
                     public void onChanged(List<MovieData> mediaDataList) {
                         populateAndNotifyAdapter(mediaDataList);
@@ -226,10 +226,11 @@ public class ListResultsFragment extends Fragment
 
                 //if media data is series
             } else if (mMediaType == MasterActivity.MEDIA_TYPE_SERIES) {
-                seriesDataUserListLiveData.observe(this, new Observer<List<SeriesData>>() {
-                    @Override
-                    public void onChanged(List<SeriesData> mediaDataList) {
-                        populateAndNotifyAdapter(mediaDataList);
+                seriesDataUserListLiveData.observe(getParentFragment(),
+                        new Observer<List<SeriesData>>() {
+                            @Override
+                            public void onChanged(List<SeriesData> mediaDataList) {
+                                populateAndNotifyAdapter(mediaDataList);
 
                         //restore search if it exists
                         MasterActivity.restoreSearchIfAvailable(ListResultsFragment.this, savedInstanceState);
