@@ -470,8 +470,7 @@ public class MasterActivity extends AppCompatActivity {
         return fragment != null;
     }
 
-    public void launchDetailsFragment(MediaData selectedData,
-                                      String quickAction) {
+    public void launchDetailsFragment(MediaData selectedData, String quickAction) {
         //catch error from restoring fragments after configuration change
         try {
             getSupportFragmentManager().executePendingTransactions();
@@ -504,17 +503,6 @@ public class MasterActivity extends AppCompatActivity {
 
         }
 
-        Fragment detailContainerFragment = getSupportFragmentManager()
-                .findFragmentById(R.id.detail_fragments_container);
-
-        ///remove existing fragment
-        if (detailContainerFragment != null) {
-            getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
-                    .remove(detailContainerFragment).commit();
-
-        }
-
         getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
                 .add(R.id.detail_fragments_container, detailsFragment, DetailsFragment.FRAGMENT_KEY)
@@ -533,16 +521,6 @@ public class MasterActivity extends AppCompatActivity {
         SearchPreferences searchPreferences =  new SearchPreferences();
         PeopleDetailsFragment detailsFragment =
                 PeopleDetailsFragment.newInstance(selectedData, searchPreferences);
-
-        Fragment detailContainerFragment = getSupportFragmentManager()
-                .findFragmentById(R.id.detail_fragments_container);
-
-        ///remove existing fragment
-        if (detailContainerFragment != null) {
-            getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
-                    .remove(detailContainerFragment).commit();
-        }
 
         getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
