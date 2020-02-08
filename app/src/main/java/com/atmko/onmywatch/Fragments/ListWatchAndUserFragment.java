@@ -138,8 +138,9 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
             mFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    launchCreateListActivity(
-                    );
+                    if (getParentFragment() != null) {
+                        MasterActivity.launchCreateListActivity(getParentFragment().getActivity());
+                    }
                 }
             });
         }
