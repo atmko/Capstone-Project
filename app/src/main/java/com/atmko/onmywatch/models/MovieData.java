@@ -135,7 +135,7 @@ public class MovieData extends MediaData{
         Map<String, Object> firebaseMediaDataMap = getFirebaseMediaDataMap(this);
 
         List<String> tagStrings = new ArrayList<>();
-        for (SearchTag searchTag: searchTags) {
+        for (SearchMediaTag searchTag: searchTags) {
             tagStrings.add(searchTag.mTag);
         }
 
