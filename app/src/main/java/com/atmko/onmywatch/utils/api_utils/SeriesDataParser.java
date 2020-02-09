@@ -167,6 +167,7 @@ public class SeriesDataParser {
         detailsSeriesData.setUserRating(seriesData.getUserRating());
         detailsSeriesData.setTraktId(seriesData.getTraktId());
         detailsSeriesData.setUniqueExternalId(seriesData.getUniqueExternalId());
+        detailsSeriesData.searchTags = seriesData.searchTags;
 
         return detailsSeriesData;
     }
@@ -200,7 +201,7 @@ public class SeriesDataParser {
 
         return traktId;
     }
-    
+
     public static SeriesData parseTraktNextEpisodeDetails(String returnedJSONString, SeriesData seriesData) {
         if (UpdateNotifierService.sActionMode.equals(UpdateNotifierService.ACTION_TESTING)) return seriesData;
 

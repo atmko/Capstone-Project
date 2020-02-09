@@ -13,7 +13,6 @@ import androidx.room.Delete;
 import androidx.room.Update;
 
 import com.atmko.onmywatch.models.UserListModel;
-import com.atmko.onmywatch.models.WatchListModel;
 
 import java.util.List;
 
@@ -33,8 +32,14 @@ public interface UserListsDao {
     @Query("SELECT * FROM user_lists")
     List<UserListModel> getAllListsAlt();
 
-    @Query("SELECT * FROM user_lists WHERE id LIKE :name")
-    LiveData<List<UserListModel>> getListsWithNameLike(String name);
+    @Query("SELECT * FROM user_lists "
+            + "WHERE id LIKE '%'||:tag1||'%' "
+            + "AND id LIKE '%'||:tag2||'%' " + "AND id LIKE '%'||:tag3||'%' "
+            + "AND id LIKE '%'||:tag4||'%' " + "AND id LIKE '%'||:tag5||'%' "
+            + "AND id LIKE '%'||:tag6||'%' " + "AND id LIKE '%'||:tag7||'%'")
+    LiveData<List<UserListModel>> getListsWithNameLike(String tag1, String tag2,
+                                                       String tag3, String tag4, String tag5,
+                                                       String tag6, String tag7);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateListConfiguration(UserListModel userListModel);

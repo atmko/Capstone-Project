@@ -28,6 +28,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -38,6 +39,7 @@ import static com.atmko.onmywatch.database.daos.FirebaseMovieDataDao.parseDataMa
 import static com.atmko.onmywatch.database.daos.FirebaseUserListDao.USER_LISTS_PATH;
 import static com.atmko.onmywatch.database.daos.FirebaseUserListDao.parseUserListModel;
 import static com.atmko.onmywatch.models.ListModel.LIST_NAME_KEY;
+import static com.atmko.onmywatch.models.MediaData.TAGS_KEY;
 import static com.atmko.onmywatch.utils.api_utils.ApiConstants.ID_KEY;
 
 /*
@@ -258,8 +260,91 @@ public class FirebaseMovieDataRecordsDao implements MovieDataRecordsDao {
     }
 
     @Override
-    public LiveData<List<MovieData>> getMoviesWithNameLike(String listId, String mediaTitle) {
-        return null;
+    public LiveData<List<MovieData>> getMediaInListLike(String listId, final String tag1,
+                                                        final String tag2, final String tag3,
+                                                        final String tag4, final String tag5,
+                                                        final String tag6, final String tag7) {
+        //remove empty tags
+        final ArrayList<String> tagList = new ArrayList<>();
+        for (String tag: Arrays.asList(tag1, tag2, tag3, tag4, tag5, tag6, tag7)) {
+            if (!tag.equals("")) {
+                tagList.add(tag);
+            }
+        }
+
+        final MutableLiveData<List<MovieData>> liveData = new MutableLiveData<>();
+
+        Query query = MasterActivity.getUserDbHomeReference()
+                .collection(MOVIE_DATA_RECORDS_COLLECTION_PATH)
+                .whereEqualTo(LIST_NAME_KEY, listId);
+
+        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
+                final List<MediaRecord> records = new ArrayList<>();
+
+                if (snapshots != null) {
+                    List<DocumentSnapshot> documents = snapshots.getDocuments();
+
+                    for (DocumentSnapshot document: documents) {
+                        if (document.getData() == null) continue;
+
+                        MovieDataRecord record = parseMediaRecord(document);
+
+                        records.add(record);
+                    }
+                }
+
+                Query query = MasterActivity.getUserDbHomeReference()
+                        .collection(MOVIES_COLLECTION_PATH);
+
+                //query if there are tags requested
+                if (tagList.size() != 0) query = query.whereArrayContainsAny(TAGS_KEY,  tagList);
+
+                query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
+                        final List<MovieData> mediaList = new ArrayList<>();
+
+                        if (snapshots != null) {
+                            List<DocumentSnapshot> documents = snapshots.getDocuments();
+
+                            for (DocumentSnapshot document: documents) {
+                                if (document.getData() == null) continue;
+
+                                //TODO: document.get(TAGS_KEY) always produces a string list
+                                @SuppressWarnings("unchecked")
+                                ArrayList<String> mediaTags = ((ArrayList<String>) document.get(TAGS_KEY));
+
+                                if (mediaTags == null) continue;
+
+                                mediaTags.retainAll(tagList);
+
+                                if (mediaTags.size() == tagList.size()) {
+                                    MovieData mediaData = parseDataMapToMediaData(document);
+                                    mediaList.add(mediaData);
+                                }
+                            }
+                        }
+
+                        List<MovieData> finalMediaList = new ArrayList<>();
+
+                        List<String> mediaNames = MediaRecord.extractMediaNames(records);
+
+                        for (MovieData mediaData: mediaList) {
+                            if (mediaNames.contains(mediaData.getId())) {
+                                finalMediaList.add(mediaData);
+                            }
+                        }
+
+                        //set lists
+                        liveData.setValue(finalMediaList);
+                    }
+                });
+            }
+        });
+
+        return liveData;
     }
 
     @Override

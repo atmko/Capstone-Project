@@ -324,7 +324,7 @@ public class PeopleDetailsFragment extends Fragment {
                 try {
                     //parse and populate retrieved data
                     mPersonData =
-                                PersonDataParser.parseDetails(returnedJSONString, mPersonData);
+                            PersonDataParser.parseDetails(returnedJSONString, mPersonData);
 
                     setDetailViewValues();
 

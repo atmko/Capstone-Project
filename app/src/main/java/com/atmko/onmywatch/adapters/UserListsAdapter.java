@@ -69,7 +69,7 @@ public class UserListsAdapter extends ListsAdapter {
 
                 }
             });
-
+            checkBox.setVisibility(View.GONE);
         }
     }
 

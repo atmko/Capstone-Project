@@ -135,6 +135,8 @@
     <string name="list_delete_error_message">Error deleting list</string>
     <string name="list_delete_record_error_message">Error: media has NOT been removed from list</string>
     <string name="rating_disallowed_message">Rating only allowed if item has \"Watching\", \"Watched\" or \"Dropped\" watch status.</string>
+
+    <string name="pro_mode_list_limit_message">More lists available in pro mode.</string>
     <!--SNACK BAR MESSAGES-->
 
     <!--PLACEHOLDER TEXT-->

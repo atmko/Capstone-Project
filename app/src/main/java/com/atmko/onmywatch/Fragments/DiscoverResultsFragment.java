@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -71,7 +70,6 @@ public class DiscoverResultsFragment extends Fragment implements
     private static final String PAGING_BLOCK_MAP_KEY = "paging_block_map";
 
     //check for restoring state
-    private boolean mIsFirstInit = true;
     private RecyclerView.Adapter mDataAdapter;
     private Stack mStack;
     private SearchPreferences mSearchPreferences;
@@ -126,14 +124,7 @@ public class DiscoverResultsFragment extends Fragment implements
             loadSearch();
 
         } else {
-            //restore search if it exists
-            final ImageButton searchImageButton = getParentFragment().
-                    getView().findViewById(R.id.search_image_button);
-            MasterActivity masterActivity = ((MasterActivity) getActivity());
-            masterActivity.restoreSavedSearch(DiscoverResultsFragment.this,
-                    mIsFirstInit, savedInstanceState, searchImageButton, mSearchTextView);
-
-            mIsFirstInit = false;
+            MasterActivity.restoreSearchIfAvailable(DiscoverResultsFragment.this, savedInstanceState);
 
             List mediaDataList;
 

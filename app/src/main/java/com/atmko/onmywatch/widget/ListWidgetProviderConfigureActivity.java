@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -217,12 +218,11 @@ public class ListWidgetProviderConfigureActivity extends AppCompatActivity
     }
 
     @Override
-    public void onItemClick(int position) {
+    public void onItemClick(ListModel listModel, AppCompatCheckBox checkBox) {
         final Context context = ListWidgetProviderConfigureActivity.this;
 
         // When the button is clicked, store the string locally
-        String listName = ((ListModel) mAdapter.getAdapterData().get(position)).getName();
-        saveTitlePref(context, mAppWidgetId, listName);
+        saveTitlePref(context, mAppWidgetId, listModel.getName());
         saveMediaTypePref(context, mAppWidgetId, mMediaType);
 
         // It is the responsibility of the configuration activity to update the app widget

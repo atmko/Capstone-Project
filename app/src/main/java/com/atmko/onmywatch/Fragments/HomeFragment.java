@@ -25,12 +25,15 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.SettingsActivity;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
+import com.atmko.onmywatch.view_models.MasterActivityViewModel;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -69,6 +72,7 @@ public class HomeFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         defineViews();
+        observeViewModel();
 
         //TODO replace MEDIA_TYPE_SERIES with default media shared preference
         if (savedInstanceState == null) {
@@ -97,8 +101,6 @@ public class HomeFragment extends Fragment {
         Toolbar toolbar = getView().findViewById(R.id.toolbar);
 
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-
-        loadAds();
 
         //configure home list display container layout params
         configureListContainerParams(R.id.upcoming_media_container);
@@ -150,12 +152,35 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void loadAds() {
+    private void observeViewModel() {
+        if (getActivity() == null) return;
+
+        MasterActivityViewModel masterActivityViewModel =
+                ViewModelProviders.of(this).get(MasterActivityViewModel.class);
+
+        masterActivityViewModel.getIsProModeLiveData().observe(getActivity(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean isProMode) {
+                configureAds();
+            }
+        });
+    }
+
+    private void configureAds() {
+        @SuppressWarnings("ConstantConditions")
         AdView mAdView = getView().findViewById(R.id.banner_ad);
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .build();
-        mAdView.loadAd(adRequest);
+
+        if (MasterActivity.sIsProMode) {
+            mAdView.setVisibility(View.GONE);
+            mAdView.destroy();
+
+        } else {
+            mAdView.setVisibility(View.VISIBLE);
+            AdRequest adRequest = new AdRequest.Builder()
+                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                    .build();
+            mAdView.loadAd(adRequest);
+        }
     }
 
     private void loadMediaLabel() {

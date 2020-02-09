@@ -16,6 +16,7 @@ import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -33,11 +34,13 @@ import com.atmko.onmywatch.Fragments.HomeFragment;
 import com.atmko.onmywatch.Fragments.ListResultsParentFragment;
 import com.atmko.onmywatch.Fragments.PeopleDetailsFragment;
 import com.atmko.onmywatch.custom_views.SuperEditText;
+import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.PersonData;
 import com.atmko.onmywatch.models.SimpleIdlingResource;
+import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.utils.network_utils.FreeModeMigrationService;
 import com.atmko.onmywatch.utils.network_utils.ProModeMigrationService;
 import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
@@ -47,6 +50,7 @@ import com.atmko.onmywatch.view_models.MasterActivityViewModel;
 import com.firebase.ui.auth.AuthUI;
 
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -65,6 +69,7 @@ import static com.atmko.onmywatch.database.daos.FirebaseUserDataDao.MIGRATION_TO
 import static com.atmko.onmywatch.database.daos.FirebaseUserDataDao.MIGRATION_TO_LOCAL;
 
 public class MasterActivity extends AppCompatActivity {
+    private static final int FREE_MODE_LIST_COUNT_LIMIT = 3;
 
     public static final int MEDIA_TYPE_SERIES = 0;
     public static final int MEDIA_TYPE_MOVIE = 1;
@@ -83,7 +88,7 @@ public class MasterActivity extends AppCompatActivity {
     private final int SIGN_IN_REQUEST_CODE = 10;
 
     //for restoring keyboard visibility upon configuration change
-    private boolean mIsKeyboardVisible;
+    public static boolean sIsKeyboardVisible;
     private boolean mIsTabletLandscape;
     private FirebaseAnalytics mFirebaseAnalytics;
 
@@ -100,8 +105,6 @@ public class MasterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_master);
-
-        initializeAdMob();
 
         createNotificationChannels();
 
@@ -120,11 +123,6 @@ public class MasterActivity extends AppCompatActivity {
         } else {
             //observe user data via view model
             observeData();
-
-            //if saved instance is null
-            if (savedInstanceState != null) {
-
-            }
         }
     }
 
@@ -150,8 +148,12 @@ public class MasterActivity extends AppCompatActivity {
         masterActivityViewModel.getIsProModeLiveData().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean isProMode) {
-                if (isProMode != null) {
-                    MasterActivity.sIsProMode = isProMode;
+                if (isProMode == null) return;
+
+                sIsProMode = isProMode;
+
+                if (!sIsProMode) {
+                    initializeAdMob();
                 }
             }
         });
@@ -212,8 +214,6 @@ public class MasterActivity extends AppCompatActivity {
 
         //start ui
         startHomeFragment();
-        //start background work managers
-        startWorkers();
 
         if (getIntent() != null) {
             Intent intent = getIntent();
@@ -275,7 +275,7 @@ public class MasterActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
 
         //save keyboard visibility value
-        outState.putBoolean(KEYBOARD_VISIBILITY_KEY, mIsKeyboardVisible);
+        outState.putBoolean(KEYBOARD_VISIBILITY_KEY, sIsKeyboardVisible);
     }
 
     private void initializeAdMob() {
@@ -300,7 +300,7 @@ public class MasterActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             //restore keyboard visibility value
-            mIsKeyboardVisible =
+            sIsKeyboardVisible =
                     savedInstanceState.getBoolean(KEYBOARD_VISIBILITY_KEY);
         }
     }
@@ -548,6 +548,28 @@ public class MasterActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public static void launchCreateListActivity(final Activity activity) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                int userListCount = AppDatabase.getInstance(activity).
+                        userListsDao().getAllListsAlt().size();
+
+                if (userListCount >= FREE_MODE_LIST_COUNT_LIMIT && !sIsProMode) {
+                    Snackbar.make(activity.findViewById(R.id.top_layout),
+                            activity.getString(R.string.pro_mode_list_limit_message),
+                            Snackbar.LENGTH_LONG).show();
+                    return;
+                }
+
+                Intent intent = new Intent(activity, CreateListActivity.class);
+                intent.putExtra(CreateListActivity.MODE_KEY, CreateListActivity.MODE_CREATE);
+
+                activity.startActivity(intent);
+            }
+        });
+    }
+
     public void hideBackgroundFragment(Fragment fragment) {
         if (fragment.getView() != null) {
             List<Fragment> fragments = getSupportFragmentManager().getFragments();
@@ -602,33 +624,31 @@ public class MasterActivity extends AppCompatActivity {
         }
     }
 
-    //search restore convenience method
-    public void restoreSavedSearch(Fragment fragment, boolean firstInit, Bundle savedInstanceState,
-                                   ImageButton searchButton, SuperEditText searchTextView) {
+    public static void restoreSearchIfAvailable(Fragment fragment, Bundle savedInstanceState) {
+        if (savedInstanceState == null) return;
+        String savedSearch = savedInstanceState.getString(SEARCH_TEXT_KEY);
+        if (savedSearch == null || savedSearch.equals("")) return;
+
+        SuperEditText searchTextView =
+                fragment.getParentFragment().getView().findViewById(R.id.search_edit_text_view);
 
         //show keyboard if restore value is true
         //else hide it
-        if (mIsKeyboardVisible) {
+        if (sIsKeyboardVisible) {
             showSoftKeyboard(searchTextView);
 
         } else {
             hideSoftKeyboard(searchTextView);
         }
 
-        String savedSearchText;
-        int savedBarVisibility;
-
-        if (savedInstanceState != null && firstInit) {
-            savedSearchText = savedInstanceState.getString(SEARCH_TEXT_KEY);
-            savedBarVisibility = savedInstanceState.getInt(SEARCH_BAR_VISIBILITY_KEY);
-
-        } else {
-            savedSearchText = searchTextView.getText().toString();
-            savedBarVisibility = searchTextView.getVisibility();
-        }
+        String savedSearchText = savedInstanceState.getString(SEARCH_TEXT_KEY);
+        int savedBarVisibility = savedInstanceState.getInt(SEARCH_BAR_VISIBILITY_KEY);
 
         searchTextView.setText(savedSearchText);
         searchTextView.setVisibility(savedBarVisibility);
+
+        final ImageButton searchButton =
+                fragment.getParentFragment().getView().findViewById(R.id.search_image_button);
 
         if (savedBarVisibility == View.VISIBLE) {
             searchButton.setImageResource(R.drawable.ic_cancel_manual_search);
@@ -638,29 +658,28 @@ public class MasterActivity extends AppCompatActivity {
 
         } else {
             searchButton.setImageResource(R.drawable.ic_manual_search);
-
         }
     }
 
     //hide soft keyboard and update keyboard visibility property
-    public void hideSoftKeyboard(View view) {
+    public static void hideSoftKeyboard(View view) {
         if (view.requestFocus()) {
             InputMethodManager imm = (InputMethodManager)
-                    getSystemService(Context.INPUT_METHOD_SERVICE);
+                    view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
-            mIsKeyboardVisible = false;
+            sIsKeyboardVisible = false;
         }
     }
 
     //show soft keyboard and update keyboard visibility property
-    private void showSoftKeyboard(View view) {
+    static void showSoftKeyboard(View view) {
         if (view.requestFocus()) {
             InputMethodManager imm = (InputMethodManager)
-                    getSystemService(Context.INPUT_METHOD_SERVICE);
+                    view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
 
-            mIsKeyboardVisible = true;
+            sIsKeyboardVisible = true;
         }
     }
 

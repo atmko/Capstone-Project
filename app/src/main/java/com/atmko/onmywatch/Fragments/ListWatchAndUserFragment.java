@@ -11,10 +11,10 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
@@ -22,13 +22,17 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.androidnetworking.core.MainThreadExecutor;
 import com.atmko.onmywatch.CreateListActivity;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.adapters.ListsAdapter;
+import com.atmko.onmywatch.adapters.TagAdapter;
 import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.atmko.onmywatch.models.ListModel;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
+import com.atmko.onmywatch.models.SearchListTag;
+import com.atmko.onmywatch.models.SearchMediaTag;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SimpleIdlingResource;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
@@ -43,6 +47,7 @@ import com.atmko.onmywatch.view_models.ListsWatchAndUserViewModel;
 
 import org.parceler.Parcels;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.OnListItemClickListener,
@@ -55,15 +60,13 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
     private int mListType;
 
     //check for restoring state
-    private boolean mFirstInit = true;
-    private Bundle mSavedInstanceState;
     private AppDatabase mDatabase;
     private ListsAdapter mAdapter;
     private RecyclerView mRecyclerView;
 
     private FloatingActionButton mFab;
     private SuperEditText mSearchTextView;
-
+    private TagAdapter tagAdapter;
 
     public ListWatchAndUserFragment() {
         // Required empty public constructor
@@ -96,11 +99,9 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mSavedInstanceState = savedInstanceState;
-
         defineViews();
 
-        observeData();
+        observeData(savedInstanceState);
     }
 
     @Override
@@ -137,8 +138,9 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
             mFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    launchCreateListActivity(
-                    );
+                    if (getParentFragment() != null) {
+                        MasterActivity.launchCreateListActivity(getParentFragment().getActivity());
+                    }
                 }
             });
         }
@@ -155,10 +157,14 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                //TODO: implement search for pro mode
-                if (!MasterActivity.sAllowCloudBackup) {
-                    onSearchTextChanged(s);
-                }
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_USER) {
+                            onSearchTextChanged();
+                        }
+                    }
+                });
             }
 
             @Override
@@ -166,6 +172,16 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
 
             }
         });
+
+        tagAdapter = new TagAdapter(
+                getParentFragment().getContext(),
+                R.layout.fragment_list_results_parent,
+                R.id.search_edit_text_view,
+                new ArrayList<String>()
+        );
+
+        mSearchTextView.setAdapter(tagAdapter);
+        mSearchTextView.setThreshold(1);
     }
 
     private GridLayoutManager configureLayoutManager() {
@@ -175,7 +191,7 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
         return layoutManager;
     }
 
-    private void observeData() {
+    private void observeData(final Bundle savedInstanceState) {
         ListsWatchAndUserViewModel viewModel = ViewModelProviders.of(getParentFragment()).get(ListsWatchAndUserViewModel.class);
         LiveData<List<WatchListModel>> watchListsLiveData = viewModel.getWatchLists();
         LiveData<List<UserListModel>> userListsLiveData = viewModel.getUserLists();
@@ -187,17 +203,8 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
                     mAdapter.getAdapterData().clear();
                     mAdapter.addAdapterData(watchListModels);
 
-                    //TODO: implement search for pro mode
-                    if (!MasterActivity.sAllowCloudBackup) {
-                        //restore search if it exists
-                        final ImageButton searchImageButton = getParentFragment().
-                                getView().findViewById(R.id.search_image_button);
-                        MasterActivity masterActivity = ((MasterActivity) getActivity());
-                        masterActivity.restoreSavedSearch(ListWatchAndUserFragment.this,
-                                mFirstInit, mSavedInstanceState, searchImageButton, mSearchTextView);
-
-                        mFirstInit = false;
-                    }
+                    //restore search if it exists
+                    MasterActivity.restoreSearchIfAvailable(ListWatchAndUserFragment.this, savedInstanceState);
                 }
             });
 
@@ -207,17 +214,8 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
                 public void onChanged(List<UserListModel> userListModels) {
                     populateAndNotifyAdapter(userListModels);
 
-                    //TODO: implement search for pro mode
-                    if (!MasterActivity.sAllowCloudBackup) {
-                        //restore search if it exists
-                        final ImageButton searchImageButton = getParentFragment().
-                                getView().findViewById(R.id.search_image_button);
-                        MasterActivity masterActivity = ((MasterActivity) getActivity());
-                        masterActivity.restoreSavedSearch(ListWatchAndUserFragment.this,
-                                mFirstInit, mSavedInstanceState, searchImageButton, mSearchTextView);
-
-                        mFirstInit = false;
-                    }
+                    //restore search if it exists
+                    MasterActivity.restoreSearchIfAvailable(ListWatchAndUserFragment.this, savedInstanceState);
                 }
             });
         }
@@ -234,42 +232,58 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
         }
     }
 
-    private void onSearchTextChanged(CharSequence searchText) {
-        String listName = searchText.toString();
-        listName = "%" + listName + "%";
+    private static final int TAG_COUNT_LIMIT = 7;
+    private void onSearchTextChanged() {
+        if (getContext() == null) return;
 
-        if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
-            //observe lists with searched name then remove observer
-            final LiveData<List<WatchListModel>> listLiveData =
-                    mDatabase.watchListsDao().getListsWithNameLike(listName);
-            listLiveData.observe(getParentFragment(), new Observer<List<WatchListModel>>() {
-                @Override
-                public void onChanged(List<WatchListModel> watchListModels) {
-                    listLiveData.removeObserver(this);
-                    populateAndNotifyAdapter(watchListModels);
-                }
-            });
-        }
+        String activeText = mSearchTextView.getActiveText();
+        final List<String> searchTags = AppDatabase.getLocalDatabase(getContext()).searchListTagsDao()
+                .getTagsLikeAlt(activeText);
 
-        if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_USER) {
-            //observe lists with searched name then remove observer
-            final LiveData<List<UserListModel>> listLiveData =
-                    mDatabase.userListsDao().getListsWithNameLike(listName);
-            listLiveData.observe(getParentFragment(), new Observer<List<UserListModel>>() {
-                @Override
-                public void onChanged(List<UserListModel> userListModels) {
-                    listLiveData.removeObserver(this);
-                    populateAndNotifyAdapter(userListModels);
-                }
-            });
-        }
+        new MainThreadExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                tagAdapter.clear();
+                tagAdapter.addAll(searchTags);
+                tagAdapter.notifyDataSetChanged();
+
+                performFullSearchWithTags();
+            }
+        });
     }
 
-    private void launchCreateListActivity() {
-        Intent intent = new Intent(getActivity().getApplicationContext(), CreateListActivity.class);
-        intent.putExtra(CreateListActivity.MODE_KEY, CreateListActivity.MODE_CREATE);
+    private void performFullSearchWithTags() {
+        String searchBoxStrings = mSearchTextView.getText().toString();
+        String[] terms = searchBoxStrings.split(" ");
+        final List<String> formattedTags = new ArrayList<>();
 
-        startActivity(intent);
+        for (int i = 0; i < TAG_COUNT_LIMIT; i++) {
+            if (!(i > terms.length - 1)) {
+                formattedTags.add(terms[i]);
+
+            } else {
+                formattedTags.add("");
+            }
+        }
+
+        searchInUserList(formattedTags);
+    }
+
+    private void searchInUserList(List<String> formattedTags) {
+        if (getParentFragment() == null) return;
+
+        final LiveData<List<UserListModel>> listsLiveData = mDatabase.userListsDao()
+                .getListsWithNameLike(formattedTags.get(0), formattedTags.get(1),
+                        formattedTags.get(2), formattedTags.get(3), formattedTags.get(4),
+                        formattedTags.get(5), formattedTags.get(6));
+
+        listsLiveData.observe(getParentFragment(), new Observer<List<UserListModel>>() {
+            @Override
+            public void onChanged(List<UserListModel> userListModels) {
+                listsLiveData.removeObserver(this);
+                populateAndNotifyAdapter(userListModels);
+            }
+        });
     }
 
     private void launchCreateListActivity(UserListModel userListModel) {
@@ -281,16 +295,16 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
     }
 
     @Override
-    public void onItemClick(int position) {
+    public void onItemClick(ListModel listModel, AppCompatCheckBox checkBox) {
         if (mAdapter.inPlaceholderMode()) {
-            launchCreateListActivity();
+            if (getParentFragment() != null) {
+                MasterActivity.launchCreateListActivity(getParentFragment().getActivity());
 
-            return;
+                return;
+            }
         }
 
-        String listName = ((ListModel) mAdapter.getAdapterData().get(position)).getName();
-
-        Fragment fragment = ListResultsParentFragment.newInstance(mListType, listName);
+        Fragment fragment = ListResultsParentFragment.newInstance(mListType, listModel.getName());
 
         getParentFragment().getActivity().getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
@@ -324,6 +338,8 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
 
                 maintainSeriesWatchListCountIntegrity(seriesInList);
 
+                deleteListTag(userListModel.getName());
+
                 if (getIdlingResource() != null) {
                     getIdlingResource().setIdleState(true);
                 }
@@ -337,6 +353,30 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
         return ((MasterActivity) getActivity()).mIdlingResource;
     }
 
+    //checks if media tags are in use and deletes them if not
+    private void deleteMediaTags(MediaData mediaData) {
+        //delete media tags
+        if (mediaData.searchTags == null) return;
+
+        for (SearchMediaTag tag: mediaData.searchTags) {
+            int tagUsage = mDatabase.movieDataDao().getAllMediaWithTagAlt(tag.mTag).size()
+                    + mDatabase.movieDataDao().getAllMediaWithTagAlt(tag.mTag).size();
+
+            if (tagUsage == 0) {
+                mDatabase.searchMediaTagsDao().deleteTag(tag);
+            }
+        }
+    }
+
+    //checks if list tag exists and deletes it if so
+    private void deleteListTag(String listName) {
+        //delete list tag
+        SearchListTag tagToDelete = mDatabase.searchListTagsDao().getTagAlt(listName);
+        if (tagToDelete !=  null) {
+            mDatabase.searchListTagsDao().deleteTag(tagToDelete);
+        }
+    }
+
     private void maintainMoviesWatchListCountIntegrity(List<MovieData> moviesInList) {
         for (MovieData movieData: moviesInList) {
             //delete if containing lists size = 0 and if watch status is none(0)
@@ -346,8 +386,10 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
 
             int watchStatus = movieData.getWatchStatus();
 
+            //TODO delete notifiers when item is unused
             if (containingLists.size() == 0 && movieData.getWatchStatus() == 0) {
                 mDatabase.movieDataDao().deleteMovieData(movieData);
+                deleteMediaTags(movieData);
 
                 if (getContext() == null) continue;
 
@@ -374,8 +416,10 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
 
             int watchStatus = seriesData.getWatchStatus();
 
+            //TODO delete notifiers when item is unused
             if (containingLists.size() == 0 && seriesData.getWatchStatus() == 0) {
                 mDatabase.seriesDataDao().deleteSeriesData(seriesData);
+                deleteMediaTags(seriesData);
 
                 if (getContext() == null) continue;
 

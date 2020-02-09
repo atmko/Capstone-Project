@@ -17,6 +17,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MovieDataRecord;
+import com.atmko.onmywatch.models.SearchListTag;
+import com.atmko.onmywatch.models.SearchTag;
 import com.atmko.onmywatch.models.SeriesDataRecord;
 import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
@@ -102,6 +104,9 @@ public class CreateListActivity extends AppCompatActivity {
                                 //can't update list directly because name is changing and table id == list name
                                 //create new updated list
                                 appDatabase.userListsDao().addList(newUserListModel);
+                                //create tag
+                                AppDatabase.getLocalDatabase(CreateListActivity.this)
+                                        .searchListTagsDao().addTag(new SearchListTag(newUserListModel.getName()));
 
                                 //can't update records directly because name is changing and table id == list name
                                 List<MovieDataRecord> movieRecords =
@@ -132,6 +137,11 @@ public class CreateListActivity extends AppCompatActivity {
                                 //old record cascades on delete when list is deleted
                                 appDatabase.userListsDao().deleteList(mEditListModel);
 
+                                //delete list tag
+                                AppDatabase localDb = AppDatabase.getLocalDatabase(CreateListActivity.this);
+                                SearchListTag tag = localDb.searchListTagsDao().getTagAlt(mEditListModel.getName());
+                                localDb.searchListTagsDao().deleteTag(tag);
+
                                 snackBarMessage = getString(R.string.list_updated_message);
 
                             } else {
@@ -139,6 +149,9 @@ public class CreateListActivity extends AppCompatActivity {
                                         new UserListModel(nameEditTextView.getText().toString(), 0);
                                 //create new list
                                 appDatabase.userListsDao().addList(userListModel);
+                                //create tag
+                                AppDatabase.getLocalDatabase(CreateListActivity.this)
+                                        .searchListTagsDao().addTag(new SearchListTag(userListModel.getName()));
                                 snackBarMessage = getString(R.string.new_list_created_message);
                             }
 

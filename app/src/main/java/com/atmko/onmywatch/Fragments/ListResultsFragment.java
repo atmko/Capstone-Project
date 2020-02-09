@@ -10,7 +10,6 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,23 +20,27 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.androidnetworking.core.MainThreadExecutor;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.CustomParams;
 import com.atmko.onmywatch.adapters.MediaDataAdapter;
+import com.atmko.onmywatch.adapters.TagAdapter;
 import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
+import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.view_models.ListResultsViewModelFactory;
 import com.atmko.onmywatch.view_models.ListsResultsViewModel;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
+import static com.atmko.onmywatch.MasterActivity.SEARCH_TEXT_KEY;
 
 public class ListResultsFragment extends Fragment
         implements MediaDataAdapter.OnListItemClickListener{
@@ -51,14 +54,15 @@ public class ListResultsFragment extends Fragment
 
     // TODO: Rename and change types of parameters
     //check for restoring state
-    private boolean mFirstInit = true;
     private int mListType;
     private int mMediaType;
     private String mListName;
 
+    private AppDatabase database;
     private MediaDataAdapter mDataAdapter;
     private SearchPreferences mSearchPreferences;
     private SuperEditText mSearchTextView;
+    private TagAdapter tagAdapter;
 
     public ListResultsFragment() {
         // Required empty public constructor
@@ -107,7 +111,7 @@ public class ListResultsFragment extends Fragment
         super.onSaveInstanceState(outState);
 
         //save search bar text
-        outState.putString(MasterActivity.SEARCH_TEXT_KEY, mSearchTextView.getText().toString());
+        outState.putString(SEARCH_TEXT_KEY, mSearchTextView.getText().toString());
 
         //save search bar visibility
         outState.putInt(MasterActivity.SEARCH_BAR_VISIBILITY_KEY, mSearchTextView.getVisibility());
@@ -135,11 +139,13 @@ public class ListResultsFragment extends Fragment
             }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                //TODO: implement search for cloud backup
-                if (!MasterActivity.sAllowCloudBackup) {
-                    onSearchTextChanged(s);
-                }
+            public void onTextChanged(final CharSequence s, int start, int before, int count) {
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        onSearchTextChanged();
+                    }
+                });
             }
 
             @Override
@@ -147,10 +153,20 @@ public class ListResultsFragment extends Fragment
 
             }
         });
+
+        tagAdapter = new TagAdapter(
+                getParentFragment().getContext(),
+                R.layout.fragment_list_results_parent,
+                R.id.search_edit_text_view,
+                new ArrayList<String>()
+        );
+
+        mSearchTextView.setAdapter(tagAdapter);
+        mSearchTextView.setThreshold(1);
     }
 
     private void observeData(final Bundle savedInstanceState) {
-        AppDatabase database = AppDatabase.getInstance(getContext());
+        database = AppDatabase.getInstance(getContext());
 
         final String[] watchStatusMoviesTitles = getContext().getResources()
                 .getStringArray(R.array.watch_status_movie_titles);
@@ -170,44 +186,25 @@ public class ListResultsFragment extends Fragment
         if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
             //if media data is movie
             if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
-                movieDataWatchListLiveData.observe(getParentFragment(),
-                        new Observer<List<MovieData>>() {
-                            @Override
-                            public void onChanged(List<MovieData> mediaDataList) {
-                                populateAndNotifyAdapter(mediaDataList);
+                movieDataWatchListLiveData.observe(getParentFragment(), new Observer<List<MovieData>>() {
+                    @Override
+                    public void onChanged(List<MovieData> mediaDataList) {
+                        populateAndNotifyAdapter(mediaDataList);
 
-                                //TODO: implement search for cloud backup
-                                if (!MasterActivity.sAllowCloudBackup) {
-                                    //restore search if it exists
-                                    final ImageButton searchImageButton = getParentFragment().
-                                            getView().findViewById(R.id.search_image_button);
-                                    MasterActivity masterActivity = ((MasterActivity) getActivity());
-                                    masterActivity.restoreSavedSearch(ListResultsFragment.this,
-                                            mFirstInit, savedInstanceState, searchImageButton, mSearchTextView);
-
-                                    mFirstInit = false;
-                                }
-                            }
-                        });
+                        //restore search if it exists
+                        MasterActivity.restoreSearchIfAvailable(ListResultsFragment.this, savedInstanceState);
+                    }
+                });
 
                 //if media data is series
             } else if (mMediaType == MasterActivity.MEDIA_TYPE_SERIES) {
-                seriesDataWatchListLiveData.observe(this, new Observer<List<SeriesData>>() {
+                seriesDataWatchListLiveData.observe(getParentFragment(), new Observer<List<SeriesData>>() {
                     @Override
                     public void onChanged(List<SeriesData> mediaDataList) {
                         populateAndNotifyAdapter(mediaDataList);
 
-                        //TODO: implement search for cloud backup
-                        if (!MasterActivity.sAllowCloudBackup) {
-                            //restore search if it exists
-                            final ImageButton searchImageButton = getParentFragment().
-                                    getView().findViewById(R.id.search_image_button);
-                            MasterActivity masterActivity = ((MasterActivity) getActivity());
-                            masterActivity.restoreSavedSearch(ListResultsFragment.this,
-                                    mFirstInit, savedInstanceState, searchImageButton, mSearchTextView);
-
-                            mFirstInit = false;
-                        }
+                        //restore search if it exists
+                        MasterActivity.restoreSearchIfAvailable(ListResultsFragment.this, savedInstanceState);
                     }
                 });
             }
@@ -217,115 +214,150 @@ public class ListResultsFragment extends Fragment
         if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_USER) {
             //if media data is movie
             if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
-                movieDataUserListLiveData.observe(this, new Observer<List<MovieData>>() {
+                movieDataUserListLiveData.observe(getParentFragment(), new Observer<List<MovieData>>() {
                     @Override
                     public void onChanged(List<MovieData> mediaDataList) {
                         populateAndNotifyAdapter(mediaDataList);
 
-                        //TODO: implement search for cloud backup
-                        if (!MasterActivity.sAllowCloudBackup) {
-                            //restore search if it exists
-                            final ImageButton searchImageButton = getParentFragment().
-                                    getView().findViewById(R.id.search_image_button);
-                            MasterActivity masterActivity = ((MasterActivity) getActivity());
-                            masterActivity.restoreSavedSearch(ListResultsFragment.this,
-                                    mFirstInit, savedInstanceState, searchImageButton, mSearchTextView);
-
-                            mFirstInit = false;
-                        }
+                        //restore search if it exists
+                        MasterActivity.restoreSearchIfAvailable(ListResultsFragment.this, savedInstanceState);
                     }
                 });
 
                 //if media data is series
             } else if (mMediaType == MasterActivity.MEDIA_TYPE_SERIES) {
-                seriesDataUserListLiveData.observe(this, new Observer<List<SeriesData>>() {
-                    @Override
-                    public void onChanged(List<SeriesData> mediaDataList) {
-                        populateAndNotifyAdapter(mediaDataList);
+                seriesDataUserListLiveData.observe(getParentFragment(),
+                        new Observer<List<SeriesData>>() {
+                            @Override
+                            public void onChanged(List<SeriesData> mediaDataList) {
+                                populateAndNotifyAdapter(mediaDataList);
 
-                        //TODO: implement search for cloud backup
-                        if (!MasterActivity.sAllowCloudBackup) {
-                            //restore search if it exists
-                            final ImageButton searchImageButton = getParentFragment().
-                                    getView().findViewById(R.id.search_image_button);
-                            MasterActivity masterActivity = ((MasterActivity) getActivity());
-                            masterActivity.restoreSavedSearch(ListResultsFragment.this,
-                                    mFirstInit, savedInstanceState, searchImageButton, mSearchTextView);
-
-                            mFirstInit = false;
-                        }
+                        //restore search if it exists
+                        MasterActivity.restoreSearchIfAvailable(ListResultsFragment.this, savedInstanceState);
                     }
                 });
             }
         }
     }
 
-    private void onSearchTextChanged(CharSequence searchText) {
-        final String[] watchStatusMoviesTitles = getContext().getResources()
-                .getStringArray(R.array.watch_status_movie_titles);
-        List<String> titleList = Arrays.asList(watchStatusMoviesTitles);
+    private static final int TAG_COUNT_LIMIT = 7;
+    private void onSearchTextChanged() {
+        if (getContext() == null) return;
 
-        final AppDatabase database = AppDatabase.getInstance(getContext());
-
-        String mediaTitle = searchText.toString();
-        mediaTitle = "%" + mediaTitle + "%";
+        //define list id
+        final Object listId;
 
         if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
-            //if media data is movie
-            if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
-                final LiveData<List<MovieData>> listLiveData = database.movieDataDao()
-                        .getMoviesByWatchStatusLike(titleList.indexOf(mListName), mediaTitle);
+            final String[] watchStatusMoviesTitles = getContext().getResources()
+                    .getStringArray(R.array.watch_status_movie_titles);
+            listId = Arrays.asList(watchStatusMoviesTitles).indexOf(mListName);
 
-                listLiveData.observe(getParentFragment(), new Observer<List<MovieData>>() {
-                    @Override
-                    public void onChanged(List<MovieData> movieDataList) {
-                        listLiveData.removeObserver(this);
-                        populateAndNotifyAdapter(movieDataList);
-                    }
-                });
+        } else {
+            listId = mListName;
+        }
 
-                //if media data is series
-            } else if (mMediaType == MasterActivity.MEDIA_TYPE_SERIES) {
-                final LiveData<List<SeriesData>> listLiveData = database.seriesDataDao()
-                        .getSeriesByWatchStatusLike(titleList.indexOf(mListName), mediaTitle);
+        //get tag from db like text currently touching cursor
+        String activeText = mSearchTextView.getActiveText();
+        final List<String> searchTags = AppDatabase.getLocalDatabase(getContext()).searchMediaTagsDao()
+                .getTagsLikeAlt(activeText);
 
-                listLiveData.observe(getParentFragment(), new Observer<List<SeriesData>>() {
-                    @Override
-                    public void onChanged(List<SeriesData> seriesDataList) {
-                        listLiveData.removeObserver(this);
-                        populateAndNotifyAdapter(seriesDataList);
-                    }
-                });
+        new MainThreadExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                tagAdapter.clear();
+                tagAdapter.addAll(searchTags);
+                tagAdapter.notifyDataSetChanged();
+
+                performFullSearchWithTags(listId);
+            }
+        });
+    }
+
+    private void performFullSearchWithTags(Object listId) {
+        String searchBoxStrings = mSearchTextView.getText().toString();
+        String[] terms = searchBoxStrings.split(" ");
+        final List<String> formattedTags = new ArrayList<>();
+
+        for (int i = 0; i < TAG_COUNT_LIMIT; i++) {
+            if (!(i > terms.length - 1)) {
+                formattedTags.add(terms[i]);
+
+            } else {
+                formattedTags.add("");
             }
         }
 
-        if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_USER) {
-            if (mMediaType == MEDIA_TYPE_MOVIE) {
-                //observe lists with searched name then remove observer
-                final LiveData<List<MovieData>> listLiveData = database.movieDataRecordsDao()
-                        .getMoviesWithNameLike(mListName, mediaTitle);
-                listLiveData.observe(getParentFragment(),
-                        new Observer<List<MovieData>>() {
-                            @Override
-                            public void onChanged(List<MovieData> movieDataList) {
-                                listLiveData.removeObserver(this);
-                                populateAndNotifyAdapter(movieDataList);
-                            }
-                        });
+        if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
+            searchInWatchList(formattedTags, ((int) listId));
 
-            } else {
-                //observe lists with searched name then remove observer
-                final LiveData<List<SeriesData>> listLiveData = database.seriesDataRecordsDao()
-                        .getSeriesWithNameLike(mListName, mediaTitle);
-                listLiveData.observe(getParentFragment(),
-                        new Observer<List<SeriesData>>() {
-                            @Override
-                            public void onChanged(List<SeriesData> seriesDataList) {
-                                listLiveData.removeObserver(this);
-                                populateAndNotifyAdapter(seriesDataList);
-                            }
-                        });
-            }
+        } else {
+            searchInUserList(formattedTags, ((String) listId));
+        }
+    }
+
+    private void searchInWatchList(List<String> formattedTags, int listId) {
+        if (getParentFragment() == null) return;
+
+        //if media data is movie
+        if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
+            final LiveData<List<MovieData>> listLiveData = database.movieDataDao()
+                    .getAllMediaWithWatchStatusAndTags(listId, formattedTags.get(0),
+                            formattedTags.get(1), formattedTags.get(2), formattedTags.get(3),
+                            formattedTags.get(4), formattedTags.get(5), formattedTags.get(6));
+
+            listLiveData.observe(getParentFragment(), new Observer<List<MovieData>>() {
+                @Override
+                public void onChanged(List<MovieData> seriesDataList) {
+                    listLiveData.removeObserver(this);
+                    populateAndNotifyAdapter(seriesDataList);
+                }
+            });
+        } else {
+            final LiveData<List<SeriesData>> listLiveData = database.seriesDataDao()
+                    .getAllMediaWithWatchStatusAndTags(listId, formattedTags.get(0),
+                            formattedTags.get(1), formattedTags.get(2), formattedTags.get(3),
+                            formattedTags.get(4), formattedTags.get(5), formattedTags.get(6));
+
+            listLiveData.observe(getParentFragment(), new Observer<List<SeriesData>>() {
+                @Override
+                public void onChanged(List<SeriesData> seriesDataList) {
+                    listLiveData.removeObserver(this);
+                    populateAndNotifyAdapter(seriesDataList);
+                }
+            });
+        }
+    }
+
+    private void searchInUserList(List<String> formattedTags, String listId) {
+        if (getParentFragment() == null) return;
+
+        //if media data is movie
+        if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
+            final LiveData<List<MovieData>> listLiveData = database.movieDataRecordsDao()
+                    .getMediaInListLike(listId, formattedTags.get(0),
+                            formattedTags.get(1), formattedTags.get(2), formattedTags.get(3),
+                            formattedTags.get(4), formattedTags.get(5), formattedTags.get(6));
+
+            listLiveData.observe(getParentFragment(), new Observer<List<MovieData>>() {
+                @Override
+                public void onChanged(List<MovieData> seriesDataList) {
+                    listLiveData.removeObserver(this);
+                    populateAndNotifyAdapter(seriesDataList);
+                }
+            });
+        } else {
+            final LiveData<List<SeriesData>> listLiveData = database.seriesDataRecordsDao()
+                    .getMediaInListLike(listId, formattedTags.get(0),
+                            formattedTags.get(1), formattedTags.get(2), formattedTags.get(3),
+                            formattedTags.get(4), formattedTags.get(5), formattedTags.get(6));
+
+            listLiveData.observe(getParentFragment(), new Observer<List<SeriesData>>() {
+                @Override
+                public void onChanged(List<SeriesData> seriesDataList) {
+                    listLiveData.removeObserver(this);
+                    populateAndNotifyAdapter(seriesDataList);
+                }
+            });
         }
     }
 
