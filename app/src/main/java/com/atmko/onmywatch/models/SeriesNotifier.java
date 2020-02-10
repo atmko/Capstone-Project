@@ -30,9 +30,10 @@ import java.util.Map;
 public class SeriesNotifier extends MediaNotifier {
     public static final int CONDITION_NEW_EPISODE = 1;
 
-    public SeriesNotifier(@NonNull String id, @NonNull int condition) {
+    public SeriesNotifier(@NonNull String id, @NonNull int condition, boolean isActive) {
         this.mId = id;
         this.mCondition = condition;
+        this.mIsActive = isActive;
     }
 
     public Notification createNewEpisodeNotification(Context context,  MediaData mediaData) {
@@ -65,9 +66,11 @@ public class SeriesNotifier extends MediaNotifier {
     }
 
     public Map<String, Object> parseNotifierToDataMap() {
+        //todo: refactor to series data map instead of movie
         Map<String, Object> movieDataRecordMap = new HashMap<>();
         movieDataRecordMap.put(NOTIFIER_ID_KEY, getMediaId());
         movieDataRecordMap.put(CONDITION_KEY, getCondition());
+        movieDataRecordMap.put(IS_ACTIVE_KEY, getIsActive());
 
         return movieDataRecordMap;
     }

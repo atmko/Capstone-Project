@@ -31,6 +31,7 @@ import java.util.concurrent.ExecutionException;
 
 import static com.atmko.onmywatch.database.FirebaseDatabase.getFirstDocument;
 import static com.atmko.onmywatch.models.MediaNotifier.CONDITION_KEY;
+import static com.atmko.onmywatch.models.MediaNotifier.IS_ACTIVE_KEY;
 import static com.atmko.onmywatch.models.MediaNotifier.NOTIFIER_ID_KEY;
 
 /*
@@ -93,6 +94,31 @@ public class FirebaseMovieNotifiersDao implements MovieNotifierDao {
 
         Task<QuerySnapshot> task = MasterActivity.getUserDbHomeReference()
                 .collection(MOVIE_NOTIFIERS_COLLECTION_PATH)
+                .get();
+
+        try {
+            QuerySnapshot snapshots = Tasks.await(task);
+            for (DocumentSnapshot documentSnapshot: snapshots.getDocuments()) {
+                MovieNotifier notifier = parseMediaNotifier(documentSnapshot);
+                notifiers.add(notifier);
+            }
+
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return notifiers;
+    }
+
+    @Override
+    public List<MovieNotifier> getActiveNotifiersAlt() {
+        List<MovieNotifier> notifiers = new ArrayList<>();
+
+        Task<QuerySnapshot> task = MasterActivity.getUserDbHomeReference()
+                .collection(MOVIE_NOTIFIERS_COLLECTION_PATH)
+                .whereEqualTo(IS_ACTIVE_KEY, true)
                 .get();
 
         try {
@@ -224,7 +250,8 @@ public class FirebaseMovieNotifiersDao implements MovieNotifierDao {
     private static MovieNotifier parseMediaNotifier(DocumentSnapshot document) {
         MovieNotifier mediaNotifier = new MovieNotifier(
                 (String) document.get(NOTIFIER_ID_KEY),
-                ((Long) document.get(CONDITION_KEY)).intValue()
+                ((Long) document.get(CONDITION_KEY)).intValue(),
+                ((boolean) document.get(IS_ACTIVE_KEY))
         );
 
         mediaNotifier.setUniqueExternalId(document.getId());

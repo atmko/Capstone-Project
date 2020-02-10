@@ -15,15 +15,17 @@ import java.util.Map;
 )
 
 public class MovieNotifier extends MediaNotifier {
-    public MovieNotifier(@NonNull String id, @NonNull int condition) {
+    public MovieNotifier(@NonNull String id, @NonNull int condition, boolean isActive) {
         this.mId = id;
         this.mCondition = condition;
+        this.mIsActive = isActive;
     }
 
     public Map<String, Object> parseNotifierToDataMap() {
         Map<String, Object> movieDataRecordMap = new HashMap<>();
         movieDataRecordMap.put(NOTIFIER_ID_KEY, getMediaId());
         movieDataRecordMap.put(CONDITION_KEY, getCondition());
+        movieDataRecordMap.put(IS_ACTIVE_KEY, getIsActive());
 
         return movieDataRecordMap;
     }

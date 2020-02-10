@@ -30,6 +30,8 @@ public abstract class MediaNotifier {
 
     public static final String CONDITION_KEY = "condition";
 
+    public static final String IS_ACTIVE_KEY = "is_active";
+
     public static final int CONDITION_ON_RELEASE = 0;
 
     public final static String NOTIFIER_ID_KEY = "notifier_id";
@@ -39,6 +41,10 @@ public abstract class MediaNotifier {
     //condition under which notifications should be triggered
     @NonNull
     @ColumnInfo(name = "condition") int mCondition;
+    //tells whether there is an active alarm accompanying
+    //useful when no release data available and notification alarm cant be yet set
+    @NonNull
+    @ColumnInfo(name = "is_active") boolean mIsActive;
 
     @Ignore private String mUniqueExternalId;
 
@@ -49,6 +55,10 @@ public abstract class MediaNotifier {
 
     public String getMediaId() {
         return mId;
+    }
+
+    boolean getIsActive() {
+        return mIsActive;
     }
 
     public int getNotificationCode() {

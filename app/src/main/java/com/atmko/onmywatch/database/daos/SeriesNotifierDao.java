@@ -21,6 +21,10 @@ public interface SeriesNotifierDao {
     List<SeriesNotifier> getAllNotifiersAlt();
 
     //alternate method without live data
+    @Query("SELECT * FROM series_notifiers WHERE is_active == 1")
+    List<SeriesNotifier> getActiveNotifiersAlt();
+
+    //alternate method without live data
     @Query("SELECT media_id FROM series_notifiers")
     List<String> getAllMediaIdsAlt();
 

@@ -145,7 +145,7 @@ public class NotificationHandler {
     }
 
     private static void setMovieNotifiers(Context context, AppDatabase database) {
-        List<MovieNotifier> notifiers = database.movieNotifierDao().getAllNotifiersAlt();
+        List<MovieNotifier> notifiers = database.movieNotifierDao().getActiveNotifiersAlt();
 
         for (MovieNotifier notifier: notifiers) {
             MediaData mediaData = database.movieDataDao().getMovieByIdAlt(notifier.getMediaId());
@@ -160,7 +160,7 @@ public class NotificationHandler {
     }
 
     private static void setSeriesNotifiers(Context context, AppDatabase database) {
-        List<SeriesNotifier> notifiers = database.seriesNotifierDao().getAllNotifiersAlt();
+        List<SeriesNotifier> notifiers = database.seriesNotifierDao().getActiveNotifiersAlt();
 
         for (SeriesNotifier notifier: notifiers) {
             SeriesData seriesData = database.seriesDataDao().getSeriesByIdAlt(notifier.getMediaId());

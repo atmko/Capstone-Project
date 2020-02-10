@@ -21,6 +21,10 @@ public interface MovieNotifierDao {
     List<MovieNotifier> getAllNotifiersAlt();
 
     //alternate method without live data
+    @Query("SELECT * FROM movie_notifiers WHERE is_active == 1")
+    List<MovieNotifier> getActiveNotifiersAlt();
+
+    //alternate method without live data
     @Query("SELECT media_id FROM movie_notifiers")
     List<String> getAllMediaIdsAlt();
 

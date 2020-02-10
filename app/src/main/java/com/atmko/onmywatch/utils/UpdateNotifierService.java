@@ -137,7 +137,7 @@ public class UpdateNotifierService extends JobIntentService {
 
         //create notifier and set alarm with release notification
         MediaNotifier releaseNotifier =
-                createReleaseNotifier(newMediaData);
+                createReleaseNotifier(newMediaData, true);
 
         NotificationHandler.scheduleReleaseNotification(this, newMediaData, releaseNotifier);
     }
@@ -156,7 +156,7 @@ public class UpdateNotifierService extends JobIntentService {
                 && !releaseStatus.equals(SeriesApiConstants.RELEASE_STATUS_ENDED)
                 && !releaseStatus.equals(ApiConstants.RELEASE_STATUS_CANCELED)) {
 
-            createReleaseNotifier(newMediaData);
+            createReleaseNotifier(newMediaData, false);
 
             //set idle state to true
             if (NotificationIdlingResource.getNotificationIdlingResource() != null) {
@@ -166,7 +166,7 @@ public class UpdateNotifierService extends JobIntentService {
     }
 
     //if notifier doesn't exist, create new Media release notifier in database and return notifier
-    private MediaNotifier createReleaseNotifier(MediaData newMediaData) {
+    private MediaNotifier createReleaseNotifier(MediaData newMediaData, boolean iActive) {
         MediaNotifier savedNotifier = getNotifier(CONDITION_ON_RELEASE);
         if (savedNotifier != null) return savedNotifier;
 
@@ -175,12 +175,12 @@ public class UpdateNotifierService extends JobIntentService {
 
         if (newMediaData instanceof MovieData) {
             releaseNotifier =
-                    new MovieNotifier(newMediaData.getId(), MediaNotifier.CONDITION_ON_RELEASE);
+                    new MovieNotifier(newMediaData.getId(), MediaNotifier.CONDITION_ON_RELEASE, iActive);
             mDatabase.movieNotifierDao().addMediaNotifier(((MovieNotifier) releaseNotifier));
 
         } else {
             releaseNotifier =
-                    new SeriesNotifier(newMediaData.getId(), MediaNotifier.CONDITION_ON_RELEASE);
+                    new SeriesNotifier(newMediaData.getId(), MediaNotifier.CONDITION_ON_RELEASE, iActive);
             mDatabase.seriesNotifierDao().addMediaNotifier(((SeriesNotifier) releaseNotifier));
         }
 
@@ -333,7 +333,7 @@ public class UpdateNotifierService extends JobIntentService {
             }
         }
 
-        SeriesNotifier newEpisodeNotifier = createNewEpisodeNotifier();
+        SeriesNotifier newEpisodeNotifier = createNewEpisodeNotifier(true);
 
         NotificationHandler
                 .scheduleNewEpisodeNotification(this, ((SeriesData) newMediaData), newEpisodeNotifier);
@@ -368,7 +368,7 @@ public class UpdateNotifierService extends JobIntentService {
 
         //create notifier if new episodes still pending, otherwise if series isn't yet released, set release notifier
         if (releaseStatus.equals(ApiConstants.TextReplacement.REPLACEMENT_RETURNING_SERIES)) {
-            createNewEpisodeNotifier();
+            createNewEpisodeNotifier(false);
 
         } else if (releaseStatus.equals(ApiConstants.RELEASE_STATUS_PLANNED)
                 || releaseStatus.equals(ApiConstants.TextReplacement.REPLACEMENT_IN_PRODUCTION)) {
@@ -382,12 +382,12 @@ public class UpdateNotifierService extends JobIntentService {
         }
     }
 
-    private SeriesNotifier createNewEpisodeNotifier() {
+    private SeriesNotifier createNewEpisodeNotifier(boolean isActive) {
         MediaNotifier savedNotifier = getNotifier(CONDITION_NEW_EPISODE);
         if (savedNotifier != null) return ((SeriesNotifier) savedNotifier);
 
         SeriesNotifier newEpisodeNotifier =
-                new SeriesNotifier(newMediaData.getId(), CONDITION_NEW_EPISODE);
+                new SeriesNotifier(newMediaData.getId(), CONDITION_NEW_EPISODE, isActive);
         mDatabase.seriesNotifierDao().addMediaNotifier(newEpisodeNotifier);
 
         return newEpisodeNotifier;
