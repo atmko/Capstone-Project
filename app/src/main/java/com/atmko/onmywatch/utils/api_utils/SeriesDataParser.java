@@ -113,8 +113,11 @@ public class SeriesDataParser {
         SeriesData detailsSeriesData = parseTvMap(returnedMap);
 
         //get rating(maturity rating)
+        ArrayList<String> countriesOfOrigin = detailsSeriesData.getCountryOfOrigin();
+        String fallbackLocale = countriesOfOrigin.size() >= 1? countriesOfOrigin.get(0) :
+                ApiConstants.FALLBACK_LOCALE;
         String contentRating = getContentRating(returnedMap, ApiConstants.USER_LOCALE,
-                detailsSeriesData.getCountryOfOrigin().get(0));
+                fallbackLocale);
 
         //set local date as release date if exists
         if (contentRating != null) {
