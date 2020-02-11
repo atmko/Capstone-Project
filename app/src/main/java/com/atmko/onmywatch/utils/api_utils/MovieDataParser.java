@@ -111,15 +111,35 @@ public class MovieDataParser {
         //create new movie data
         MovieData detailsMovieData = parseMovieMap(returnedMap);
 
+        //set release date and certification
+        String[] releaseDateAndCertification;
+
         //get theatrical release date and certification(maturity rating)
-        String[] theatricalReleaseDate = getDateOfReleaseTypeAndCertification(returnedMap,
+        releaseDateAndCertification = getDateOfReleaseTypeAndCertification(returnedMap,
                 MovieApiConstants.RELEASE_TYPE_THEATRICAL, ApiConstants.USER_LOCALE,
                 ApiConstants.FALLBACK_LOCALE);
 
-        //set local date as release date if exists
-        if (theatricalReleaseDate != null) {
-            if (theatricalReleaseDate[0] != null) detailsMovieData.setReleaseDate(theatricalReleaseDate[0]);
-            if (theatricalReleaseDate[1] != null) detailsMovieData.setMaturityRating(theatricalReleaseDate[1]);
+        if (releaseDateAndCertification == null) {
+            //get digital release date and certification(maturity rating)
+            releaseDateAndCertification = getDateOfReleaseTypeAndCertification(returnedMap,
+                    MovieApiConstants.RELEASE_TYPE_DIGITAL, ApiConstants.USER_LOCALE,
+                    ApiConstants.FALLBACK_LOCALE);
+
+            //get limited theatrical release date and certification(maturity rating)
+            if (releaseDateAndCertification == null) {
+                releaseDateAndCertification = getDateOfReleaseTypeAndCertification(returnedMap,
+                        MovieApiConstants.RELEASE_TYPE_LIMITED_THEATRICAL, ApiConstants.USER_LOCALE,
+                        ApiConstants.FALLBACK_LOCALE);
+
+                //set releaseDateAndCertification if exists otherwise do nothing
+                if (releaseDateAndCertification != null) {
+                    if (releaseDateAndCertification[0] != null) detailsMovieData
+                            .setReleaseDate(releaseDateAndCertification[0]);
+
+                    if (releaseDateAndCertification[1] != null) detailsMovieData
+                            .setMaturityRating(releaseDateAndCertification[1]);
+                }
+            }
         }
 
         //parse cast
@@ -162,7 +182,7 @@ public class MovieDataParser {
     @SuppressWarnings("unchecked")
     private static String[] getDateOfReleaseTypeAndCertification(Map<String, Object> detailsMap, int requestedReleaseType,
                                                                  String userLocale, String fallbackLocale) {
-        String[] releaseTypeDateAndCertification = new String[2];
+        String[] releaseTypeDateAndCertification = null;
 
         Map<String, ArrayList> releaseDatesMap = (Map<String, ArrayList>) detailsMap.get(MovieApiConstants.RELEASE_DATES_KEY);
         if (releaseDatesMap == null) return null;
@@ -192,6 +212,7 @@ public class MovieDataParser {
                 //continue if wrong release type
                 if (currentReleaseType != requestedReleaseType) continue;
 
+                releaseTypeDateAndCertification = new String[2];
                 releaseTypeDateAndCertification[0] = (String) releaseTypeMap.get(MovieApiConstants.RELEASE_DATE_KEY);
                 releaseTypeDateAndCertification[1] = (String) releaseTypeMap.get(MovieApiConstants.CERTIFICATION_KEY);
 
