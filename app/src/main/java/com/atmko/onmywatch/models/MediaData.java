@@ -171,7 +171,7 @@ abstract public class MediaData {
     }
 
     public String getMaturityRating() {
-        if (mMaturityRating != null) {
+        if (mMaturityRating != null && !mMaturityRating.equals("")) {
             return mMaturityRating;
 
         } else {
