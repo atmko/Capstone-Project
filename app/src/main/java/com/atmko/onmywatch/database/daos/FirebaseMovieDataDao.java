@@ -387,15 +387,14 @@ public class FirebaseMovieDataDao implements MovieDataDao {
     }
 
     @Override
-    public LiveData<List<MovieData>> getUndatedMovies() {
+    public LiveData<List<MovieData>> getReleasedMovies() {
         final MutableLiveData<List<MovieData>> liveData = new MutableLiveData<>();
 
         Query query = MasterActivity.getUserDbHomeReference()
                 .collection(MOVIES_COLLECTION_PATH)
                 .whereGreaterThan(WATCH_STATUS_KEY, 0)
                 .whereLessThan(WATCH_STATUS_KEY, 3)
-                .whereEqualTo(SCHEDULED_MEDIA_KEY, 0)
-                .whereIn(RELEASE_STATUS_KEY, Arrays.asList("Rumored", "Planned", "In Production", "Post Production"))
+                .whereEqualTo(RELEASE_STATUS_KEY, "Released")
                 .limit(10);
 
         query.addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -426,14 +425,15 @@ public class FirebaseMovieDataDao implements MovieDataDao {
     }
 
     @Override
-    public LiveData<List<MovieData>> getReleasedMovies() {
+    public LiveData<List<MovieData>> getUndatedMovies() {
         final MutableLiveData<List<MovieData>> liveData = new MutableLiveData<>();
 
         Query query = MasterActivity.getUserDbHomeReference()
                 .collection(MOVIES_COLLECTION_PATH)
                 .whereGreaterThan(WATCH_STATUS_KEY, 0)
                 .whereLessThan(WATCH_STATUS_KEY, 3)
-                .whereEqualTo(RELEASE_STATUS_KEY, "Released")
+                .whereEqualTo(SCHEDULED_MEDIA_KEY, 0)
+                .whereIn(RELEASE_STATUS_KEY, Arrays.asList("Rumored", "Planned", "In Production", "Post Production"))
                 .limit(10);
 
         query.addSnapshotListener(new EventListener<QuerySnapshot>() {

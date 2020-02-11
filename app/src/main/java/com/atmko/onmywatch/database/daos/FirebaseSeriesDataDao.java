@@ -388,15 +388,15 @@ public class FirebaseSeriesDataDao implements SeriesDataDao {
     }
 
     @Override
-    public LiveData<List<SeriesData>> getUndatedSeries() {
+    public LiveData<List<SeriesData>> getEndedSeries() {
         final MutableLiveData<List<SeriesData>> liveData = new MutableLiveData<>();
 
         Query query = MasterActivity.getUserDbHomeReference()
                 .collection(SERIES_COLLECTION_PATH)
                 .whereGreaterThan(WATCH_STATUS_KEY, 0)
                 .whereLessThan(WATCH_STATUS_KEY, 3)
-                .whereEqualTo(NEXT_EPISODE_KEY, 0)
-                .whereIn(RELEASE_STATUS_KEY, Arrays.asList("Planned", "In Production", "Pilot"))
+                .whereIn(RELEASE_STATUS_KEY, Arrays.asList("Canceled", "Ended"))
+                .orderBy(WATCH_STATUS_KEY, Query.Direction.DESCENDING)
                 .limit(10);
 
         query.addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -427,15 +427,15 @@ public class FirebaseSeriesDataDao implements SeriesDataDao {
     }
 
     @Override
-    public LiveData<List<SeriesData>> getEndedSeries() {
+    public LiveData<List<SeriesData>> getUndatedSeries() {
         final MutableLiveData<List<SeriesData>> liveData = new MutableLiveData<>();
 
         Query query = MasterActivity.getUserDbHomeReference()
                 .collection(SERIES_COLLECTION_PATH)
                 .whereGreaterThan(WATCH_STATUS_KEY, 0)
                 .whereLessThan(WATCH_STATUS_KEY, 3)
-                .whereIn(RELEASE_STATUS_KEY, Arrays.asList("Canceled", "Ended"))
-                .orderBy(WATCH_STATUS_KEY, Query.Direction.DESCENDING)
+                .whereEqualTo(NEXT_EPISODE_KEY, 0)
+                .whereIn(RELEASE_STATUS_KEY, Arrays.asList("Planned", "In Production", "Pilot"))
                 .limit(10);
 
         query.addSnapshotListener(new EventListener<QuerySnapshot>() {
