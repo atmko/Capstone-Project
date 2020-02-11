@@ -267,19 +267,11 @@ public class UpdateNotifierService extends JobIntentService {
                                 newMediaData =
                                         SeriesDataParser.parseTraktNextEpisodeDetails(returnedJSONString, ((SeriesData) newMediaData));
 
-                                //if ASSUME_TRAKT_NEXT_EPISODE_NULL is false, use production code
-                                if (!ASSUME_TRAKT_NEXT_EPISODE_NULL) {
-                                    //if there is a next episode and date, create notifier using date, otherwise try using tmdb details
-                                    Episode nextEpisode = ((SeriesData) newMediaData).getNextEpisodeToAir();
-                                    if (nextEpisode != null && nextEpisode.getBestAvailableDateString() != null) {
-                                        setNewEpisodeNotifierThroughDateComparison();
-
-                                    } else {
-                                        getTmdbNextEpisodeDetails();
-                                    }
+                                if (((SeriesData) newMediaData).getNextEpisodeToAir() != null) {
+                                    handleTraktNextEpisodeDetails();
 
                                 } else {
-                                    getTmdbNextEpisodeDetails();
+                                    getTraktSeriesDetails();
                                 }
                             }
 
@@ -308,6 +300,60 @@ public class UpdateNotifierService extends JobIntentService {
                 });
             }
         });
+    }
+
+    //get series details from trakt api to get series schedule if available
+    private void getTraktSeriesDetails() {
+        String[] traktFetchUrls = getResources().getStringArray(R.array.trakt_detail_urls);
+
+        String traktFetchUrl = traktFetchUrls[mMediaType];
+        ANRequest request = NetworkFunctions.traktAgnosticRequestById(
+                traktFetchUrl, newMediaData.getTraktId());
+
+        request.getAsString(new StringRequestListener() {
+            @Override
+            public void onResponse(final String returnedJSONString) {
+                try {
+                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            newMediaData =
+                                    SeriesDataParser.parseTraktDetails(returnedJSONString,
+                                            ((SeriesData) newMediaData));
+
+                            handleTraktNextEpisodeDetails();
+                        }
+                    });
+
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(ANError anError) {
+                if (anError.getErrorCode() == TraktApiConstants.TOO_MANY_REQUESTS) {
+                    retryAfterCoolDOwn(anError, COOL_DOWN_REQUEST_TRAKT_ID);
+                }
+            }
+        });
+    }
+
+    private void handleTraktNextEpisodeDetails() {
+        //if ASSUME_TRAKT_NEXT_EPISODE_NULL is false, use production code
+        if (!ASSUME_TRAKT_NEXT_EPISODE_NULL) {
+            //if there is a next episode and date, create notifier using date, otherwise try using tmdb details
+            Episode nextEpisode = ((SeriesData) newMediaData).getNextEpisodeToAir();
+            if (nextEpisode != null && nextEpisode.getBestAvailableDateString() != null) {
+                setNewEpisodeNotifierThroughDateComparison();
+
+            } else {
+                getTmdbNextEpisodeDetails();
+            }
+
+        } else {
+            getTmdbNextEpisodeDetails();
+        }
     }
 
     //creates new episode notifier and notification alarm if release date exists and is in the future

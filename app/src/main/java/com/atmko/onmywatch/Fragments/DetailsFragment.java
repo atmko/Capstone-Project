@@ -583,8 +583,6 @@ public class DetailsFragment extends Fragment {
     //gets called twice: once to get matching trakt id, again to get trakt next episode details
     //if trakt id already exists, its called only once
     private void getTraktNextEpisodeDetails(final String inputTraktId) {
-        //if inputTraktId id is null make url to get trakt id
-        //otherwise make url to get next episode details
         String[] traktFetchUrls;
         ANRequest request;
 
@@ -617,11 +615,56 @@ public class DetailsFragment extends Fragment {
 
                     } else {
                         //parse trakt info
-                        mMediaData =
-                                SeriesDataParser.parseTraktNextEpisodeDetails(returnedJSONString, ((SeriesData) mMediaData));
+                        mMediaData = SeriesDataParser.parseTraktNextEpisodeDetails(returnedJSONString,
+                                ((SeriesData) mMediaData));
 
-                        setSeriesCountDown();
+                        if (((SeriesData) mMediaData).getNextEpisodeToAir() != null) {
+                            setSeriesCountDown();
+
+                        } else {
+                            getTraktSeriesDetails();
+                        }
                     }
+
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(ANError anError) {
+                if (anError.getErrorCode() == TraktApiConstants.TOO_MANY_REQUESTS) {
+                    retryAfterCoolDOwn(anError, COOL_DOWN_REQUEST_TRAKT_ID);
+                    return;
+                }
+
+                //notify user of error
+                Snackbar.make(getActivity().findViewById(R.id.top_layout),
+                        getString(R.string.details_error_message), Snackbar.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    //get series details from trakt api
+    private void getTraktSeriesDetails() {
+        //if inputTraktId id is null make url to get trakt id
+        //otherwise make url to get trakt details
+        if (getActivity() == null) return;
+
+        String[] traktFetchUrls = getActivity().getResources().getStringArray(R.array.trakt_detail_urls);
+
+        String traktFetchUrl = traktFetchUrls[mMediaType];
+        ANRequest request = NetworkFunctions.traktAgnosticRequestById(
+                traktFetchUrl, mMediaData.getTraktId());
+
+        request.getAsString(new StringRequestListener() {
+            @Override
+            public void onResponse(String returnedJSONString) {
+                try {
+                    mMediaData =
+                            SeriesDataParser.parseTraktDetails(returnedJSONString, ((SeriesData) mMediaData));
+
+                    setSeriesCountDown();
 
                 } catch (NullPointerException e) {
                     e.printStackTrace();

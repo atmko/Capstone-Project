@@ -6,6 +6,7 @@ package com.atmko.onmywatch.utils.api_utils;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.ANRequest;
+import com.atmko.onmywatch.models.AirSchedule;
 import com.atmko.onmywatch.models.CastData;
 import com.atmko.onmywatch.models.Episode;
 import com.atmko.onmywatch.models.ScheduledMedia;
@@ -259,6 +260,50 @@ public class SeriesDataParser {
         if (returnedMap != null) {
             Episode nextEpisode = new Episode();
             String nextEpisodeAirDate = ((String) returnedMap.get(TraktApiConstants.FIRST_AIRED_KEY));
+
+            if (nextEpisodeAirDate != null) {
+                try {
+                    nextEpisode.setAirDate(nextEpisodeAirDate);
+                } catch (ScheduledMedia.DateFormatException e) {
+                    e.printStackTrace();
+                }
+
+            } else {
+                try {
+                    nextEpisode.setAirDate(seriesData.getNextEpisodeToAir().getBestAvailableDateString());
+                } catch (ScheduledMedia.DateFormatException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            seriesData.setNextEpisodeToAir(nextEpisode);
+        }
+
+        return seriesData;
+    }
+
+    public static SeriesData parseTraktDetails(String returnedJSONString, SeriesData seriesData) {
+        //skips code below if returnedJSONString null or empty
+        if (returnedJSONString == null || returnedJSONString.equals("")){
+            //return same series data
+            return seriesData;
+        }
+
+        Gson gson = new Gson();
+        Map returnedMap = gson.fromJson(returnedJSONString, Map.class);
+
+        //TODO: use trakt first aired attribute instead of tmdb(has intricate detail as to the time the series will first air)
+        Map airs = ((Map) returnedMap.get(TraktApiConstants.AIRS_KEY));
+
+        if (airs != null) {
+            String airDay = (String) airs.get(TraktApiConstants.DAY_KEY);
+            String airTime = (String) airs.get(TraktApiConstants.TIME_KEY);
+            String airTimezone = (String) airs.get(TraktApiConstants.TIMEZONE_KEY);
+
+            AirSchedule airSchedule = new AirSchedule(airDay, airTime, airTimezone);
+
+            Episode nextEpisode = new Episode();
+            String nextEpisodeAirDate = (airSchedule.getAirDateIso());
 
             if (nextEpisodeAirDate != null) {
                 try {
