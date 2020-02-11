@@ -130,6 +130,14 @@ public class MovieDataParser {
             castList.add(castData);
         }
 
+        String theatricalReleaseDate = getDateOfReleaseType(returnedMap,
+                        MovieApiConstants.RELEASE_TYPE_THEATRICAL, ApiConstants.FALLBACK_LOCALE);
+
+        //set local date as release date if exists
+        if (theatricalReleaseDate != null) {
+            detailsMovieData.setReleaseDate(theatricalReleaseDate);
+        }
+
         detailsMovieData.setCast(castList);
         detailsMovieData.setVideos(parseVideos(((Map) returnedMap.get(ApiConstants.VIDEOS_KEY))));
         detailsMovieData.setReviews(parseReviews(((Map) returnedMap.get(ApiConstants.REVIEWS_KEY))));
@@ -145,6 +153,52 @@ public class MovieDataParser {
         detailsMovieData.searchTags = movieData.searchTags;
 
         return detailsMovieData;
+    }
+
+    //TODO: release dates map contains varying object types
+    @SuppressWarnings("unchecked")
+    private static String getDateOfReleaseType(Map<String, Object> detailsMap, int requestedReleaseType,
+                                               String userLocale) {
+        String releaseTypeDate = null;
+
+        Map<String, ArrayList> releaseDatesMap = (Map<String, ArrayList>) detailsMap.get(MovieApiConstants.RELEASE_DATES_KEY);
+        if (releaseDatesMap == null) return null;
+
+        ArrayList<Map> releaseDatesResults = (ArrayList<Map>) releaseDatesMap.get(ApiConstants.RESULTS_KEY);
+        if (releaseDatesResults == null) return null;
+
+        //iterate through locales
+        for (Map localeMap: releaseDatesResults) {
+            String countryIso = (String) localeMap.get(ApiConstants.COUNTRY_ISO_KEY);
+            if (countryIso == null) continue;
+
+            //continue if wrong locale
+            if (!countryIso.equals(userLocale) && !countryIso.equals(ApiConstants.FALLBACK_LOCALE)) continue;
+
+            //iterate through release types
+            //locale counter tracks if we are in fallback (value of 2)
+            int localeCounter = 0;
+            ArrayList<Map> releaseTypeMaps = (ArrayList<Map>) localeMap.get(MovieApiConstants.RELEASE_DATES_KEY);
+            if (releaseTypeMaps == null) continue;
+
+            for (Map releaseTypeMap : releaseTypeMaps) {
+                Double currentReleaseDouble = ((Double) releaseTypeMap.get(MovieApiConstants.RELEASE_TYPE_KEY));
+                if (currentReleaseDouble == null) continue;
+
+                int currentReleaseType = currentReleaseDouble.intValue();
+                //continue if wrong release type
+                if (currentReleaseType != requestedReleaseType) continue;
+
+                releaseTypeDate = (String) releaseTypeMap.get(MovieApiConstants.RELEASE_DATE_KEY);
+
+                localeCounter += 1;
+
+                //if this is user locale break, otherwise if this is fallback locale break
+                if (countryIso.equals(userLocale) || localeCounter >= 2) return releaseTypeDate;
+            }
+        }
+
+        return releaseTypeDate;
     }
 
     private static ArrayList<String> convertToGenres(ArrayList<Map> rawGenreArray) {

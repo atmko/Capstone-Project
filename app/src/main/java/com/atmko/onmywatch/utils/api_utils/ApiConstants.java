@@ -63,6 +63,9 @@ public class ApiConstants {
     public static final String BACKDROP_PATH_KEY = "backdrop_path";
     public static final String OVERVIEW_KEY = "overview";
 
+    static final String COUNTRY_ISO_KEY = "iso_3166_1";
+    static final String FALLBACK_LOCALE = "US";
+
     //DETAILS KEYS
     public static final String RELEASE_STATUS_KEY = "status";
     public static final String GENRES_KEY = "genres";

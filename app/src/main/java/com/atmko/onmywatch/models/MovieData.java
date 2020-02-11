@@ -76,15 +76,7 @@ public class MovieData extends MediaData{
                 backdropPath;
         this.mAdult = adult;
         this.mOverview = overview;
-        this.mReleaseDate = releaseDate;
-
-        try {
-            ScheduledMedia scheduledMedia = new ScheduledMedia();
-            scheduledMedia.setAirDate(releaseDate);
-            this.mScheduledMedia = scheduledMedia;
-        } catch (ScheduledMedia.DateFormatException e) {
-            e.printStackTrace();
-        }
+        setReleaseDate(releaseDate);
     }
 
     public MovieData(@NonNull String id, String traktId, String voteAverage, String title,
@@ -108,6 +100,18 @@ public class MovieData extends MediaData{
         this.mReleaseStatus = releaseStatus;
         this.mScheduledMedia = scheduledMedia;
         this.searchTags = searchTags;
+    }
+
+    public void setReleaseDate(String releaseDate) {
+        this.mReleaseDate = releaseDate;
+
+        try {
+            ScheduledMedia scheduledMedia = new ScheduledMedia();
+            scheduledMedia.setAirDate(releaseDate);
+            this.mScheduledMedia = scheduledMedia;
+        } catch (ScheduledMedia.DateFormatException e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean isVideo() {
