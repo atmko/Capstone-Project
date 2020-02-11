@@ -57,7 +57,7 @@ public abstract class MediaNotifier {
         return mId;
     }
 
-    boolean getIsActive() {
+    public boolean getIsActive() {
         return mIsActive;
     }
 
