@@ -795,10 +795,6 @@ public class DetailsFragment extends Fragment {
                     getString(R.string.release_date_placeholder));
         }
 
-        //TODO implement maturity rating
-        ((TextView) getView().findViewById(R.id.maturity_rating_text_view))
-                .setText(getString(R.string.maturity_rating_placeholder));
-
         ((TextView) getView().findViewById(R.id.rating_text_view)).setText(mMediaData.getVoteAverage());
 
         try {
@@ -871,6 +867,9 @@ public class DetailsFragment extends Fragment {
             getView().findViewById(R.id.trailer_button).setVisibility(View.GONE);
 
         }
+
+        ((TextView) getView().findViewById(R.id.maturity_rating_text_view))
+                .setText(mMediaData.getMaturityRating());
 
         //set Genres
         ArrayList<String> genres = mMediaData.getGenres();

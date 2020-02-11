@@ -13,10 +13,15 @@ public class SeriesApiConstants {
     public static final String ORIGIN_COUNTRY_KEY = "origin_country";
     public static final String FIRST_AIR_DATE_KEY = "first_air_date";
 
-    //RELEASE STATUS VALUES
+    //DETAILS KEYS
+    //release status values
     static final String RELEASE_STATUS_RETURNING_SERIES = "Returning Series";
     public static final String RELEASE_STATUS_ENDED = "Ended";
     public static final String RELEASE_STATUS_PILOT = "Pilot";
+
+    //maturity rating
+    public static final String CONTENT_RATINGS_KEY = "content_ratings";
+    public static final String RATING_KEY = "rating";
 
     //for seasons
     public static final String SEASONS_KEY = "seasons";

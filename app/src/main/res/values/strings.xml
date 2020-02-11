@@ -140,7 +140,6 @@
     <!--SNACK BAR MESSAGES-->
 
     <!--PLACEHOLDER TEXT-->
-    <string name="maturity_rating_placeholder">PG-13</string>
     <string name="release_date_placeholder">TBD</string>
     <string name="date_of_birth_placeholder">unavailable</string>
     <string name="professions_placeholder">unavailable</string>

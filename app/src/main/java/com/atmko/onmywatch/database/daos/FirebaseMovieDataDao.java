@@ -550,9 +550,10 @@ public class FirebaseMovieDataDao implements MovieDataDao {
                 (String) document.get(ApiConstants.BACKDROP_PATH_KEY),
                 (String) document.get(ApiConstants.OVERVIEW_KEY),
                 (String) document.get(MovieApiConstants.RELEASE_DATE_KEY),
+                (String) document.get(MovieApiConstants.CERTIFICATION_KEY),
                 (String) document.get(ApiConstants.RELEASE_STATUS_KEY),
-                searchTags,
-                scheduledMedia
+                scheduledMedia,
+                searchTags
         );
 
         movieData.setWatchStatus(

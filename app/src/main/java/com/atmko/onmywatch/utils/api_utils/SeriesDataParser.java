@@ -112,6 +112,15 @@ public class SeriesDataParser {
         //create new series data
         SeriesData detailsSeriesData = parseTvMap(returnedMap);
 
+        //get rating(maturity rating)
+        String contentRating = getContentRating(returnedMap, ApiConstants.USER_LOCALE,
+                detailsSeriesData.getCountryOfOrigin().get(0));
+
+        //set local date as release date if exists
+        if (contentRating != null) {
+            detailsSeriesData.setMaturityRating(contentRating);
+        }
+
         //parse cast
         Map creditsMap = (Map) returnedMap.get(PeopleApiConstants.CREDITS_KEY);
 
@@ -170,6 +179,39 @@ public class SeriesDataParser {
         detailsSeriesData.searchTags = seriesData.searchTags;
 
         return detailsSeriesData;
+    }
+
+    //TODO: release dates map contains varying object types
+    @SuppressWarnings("unchecked")
+    private static String getContentRating(Map<String, Object> detailsMap, String userLocale,
+                                           String countryOfOrigin) {
+        String contentRating = null;
+
+        Map<String, ArrayList> contentRatingsMap = (Map<String, ArrayList>) detailsMap.get(SeriesApiConstants.CONTENT_RATINGS_KEY);
+        if (contentRatingsMap == null) return null;
+
+        ArrayList<Map> ratingResults = (ArrayList<Map>) contentRatingsMap.get(ApiConstants.RESULTS_KEY);
+        if (ratingResults == null) return null;
+
+        //iterate through locales
+        //locale counter tracks if we are in fallback (value of 2)
+        int localeCounter = 0;
+        for (Map localeMap: ratingResults) {
+            String countryIso = (String) localeMap.get(ApiConstants.COUNTRY_ISO_KEY);
+            if (countryIso == null) continue;
+
+            //continue if wrong locale
+            if (!countryIso.equals(userLocale) && !countryIso.equals(countryOfOrigin)) continue;
+
+            contentRating = (String) localeMap.get(SeriesApiConstants.RATING_KEY);
+
+            localeCounter += 1;
+
+            //if this is user locale return, otherwise if this is fallback locale return
+            if (countryIso.equals(userLocale) || localeCounter >= 2) return contentRating;
+        }
+
+        return contentRating;
     }
 
     public static String parseAndGetTraktId(String returnedJSONString) {

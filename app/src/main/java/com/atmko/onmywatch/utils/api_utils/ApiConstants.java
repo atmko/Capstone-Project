@@ -64,6 +64,7 @@ public class ApiConstants {
     public static final String OVERVIEW_KEY = "overview";
 
     static final String COUNTRY_ISO_KEY = "iso_3166_1";
+    static final String USER_LOCALE = "US";
     static final String FALLBACK_LOCALE = "US";
 
     //DETAILS KEYS

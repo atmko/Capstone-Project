@@ -552,9 +552,10 @@ public class FirebaseSeriesDataDao implements SeriesDataDao {
                 (String) document.get(ApiConstants.BACKDROP_PATH_KEY),
                 (String) document.get(ApiConstants.OVERVIEW_KEY),
                 (String) document.get(SeriesApiConstants.FIRST_AIR_DATE_KEY),
+                (String) document.get(SeriesApiConstants.RATING_KEY),
                 (String) document.get(ApiConstants.RELEASE_STATUS_KEY),
-                searchTags,
-                episode
+                episode,
+                searchTags
         );
 
         seriesData.setWatchStatus(

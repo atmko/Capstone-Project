@@ -37,6 +37,8 @@ abstract public class MediaData {
 
     public static final String TAGS_KEY = "tags";
 
+    private static final String MATURITY_RATING_PLACEHOLDER = "____";
+
     //primary attributes
     @PrimaryKey
     @NonNull
@@ -59,6 +61,7 @@ abstract public class MediaData {
     @Ignore ArrayList<CastData> mCast;
     @Ignore ArrayList<Map<String, String>> mVideos;
     @Ignore ArrayList<Map<String, String>> mReviews;
+    public @ColumnInfo(name = "maturityRating") String mMaturityRating;
     @ColumnInfo(name = "release_status") String mReleaseStatus;
 
     //trakt attributes
@@ -165,6 +168,19 @@ abstract public class MediaData {
                 }
             }
         }
+    }
+
+    public String getMaturityRating() {
+        if (mMaturityRating != null) {
+            return mMaturityRating;
+
+        } else {
+            return MATURITY_RATING_PLACEHOLDER;
+        }
+    }
+
+    public void setMaturityRating(String maturityRating) {
+        this.mMaturityRating = maturityRating;
     }
 
     public String getReleaseStatus() {

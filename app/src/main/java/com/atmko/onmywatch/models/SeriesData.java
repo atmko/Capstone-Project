@@ -77,8 +77,8 @@ public class SeriesData extends MediaData{
     public SeriesData(@NonNull String id, String traktId, String voteAverage, String title,
                       String posterPath, String originalLanguage, String originalTitle,
                       ArrayList<String> countryOfOrigin, ArrayList<String> genres, String backdropPath,
-                      String overview, String releaseDate, String releaseStatus,
-                      List<SearchMediaTag> searchTags, Episode nextEpisodeToAir) {
+                      String overview, String releaseDate, String maturityRating, String releaseStatus,
+                      Episode nextEpisodeToAir, List<SearchMediaTag> searchTags) {
 
         this.mId = id;
         this.mTraktId = traktId;
@@ -92,6 +92,7 @@ public class SeriesData extends MediaData{
         this.mBackdropPath = backdropPath;
         this.mOverview = overview;
         this.mReleaseDate = releaseDate;
+        this.mMaturityRating = maturityRating;
         this.mReleaseStatus = releaseStatus;
         this.mNextEpisodeToAir = nextEpisodeToAir;
         this.searchTags = searchTags;
@@ -138,6 +139,7 @@ public class SeriesData extends MediaData{
         firebaseMediaDataMap.put(SeriesApiConstants.NAME_KEY, getTitle());
         firebaseMediaDataMap.put(SeriesApiConstants.ORIG_NAME_KEY, getOriginalTitle());
         firebaseMediaDataMap.put(SeriesApiConstants.FIRST_AIR_DATE_KEY, getReleaseDate());
+        firebaseMediaDataMap.put(SeriesApiConstants.RATING_KEY, getMaturityRating());
         firebaseMediaDataMap.put(TAGS_KEY, tagStrings);
         firebaseMediaDataMap.put(NEXT_EPISODE_KEY,
                 Converters.scheduledMediaToLong(getNextEpisodeToAir()));
