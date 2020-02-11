@@ -147,22 +147,22 @@
 
             <TextView
                 style="@style/home_list_display_heading_style"
-                android:id="@+id/undated_container_heading"
-                tools:text="undated" />
-
-            <FrameLayout
-                style="@style/style_home_list_display_container"
-                android:id="@+id/undated_media_container"
-                tools:background="@color/color_subtext"/>
-
-            <TextView
-                style="@style/home_list_display_heading_style"
                 android:id="@+id/ended_container_heading"
                 tools:text="ended" />
 
             <FrameLayout
                 style="@style/style_home_list_display_container"
                 android:id="@+id/ended_media_container"
+                tools:background="@color/color_subtext"/>
+
+            <TextView
+                style="@style/home_list_display_heading_style"
+                android:id="@+id/undated_container_heading"
+                tools:text="undated" />
+
+            <FrameLayout
+                style="@style/style_home_list_display_container"
+                android:id="@+id/undated_media_container"
                 tools:background="@color/color_subtext"/>
 
         </LinearLayout>

@@ -33,12 +33,12 @@ public class HomeListDisplayFragment extends Fragment
     public static final String FRAGMENT_KEY = "home_list_display_fragment";
 
     public static final String UPCOMING_MOVIES = "upcoming_movies";
-    public static final String UNDATED_MOVIES = "undated_movies";
     public static final String ALREADY_RELEASED_MOVIES = "released_movies";
+    public static final String UNDATED_MOVIES = "undated_movies";
 
     public static final String UPCOMING_EPISODES = "upcoming_episodes";
-    public static final String UNDATED_SERIES = "undated_series";
     public static final String ENDED_SERIES = "ended_series";
+    public static final String UNDATED_SERIES = "undated_series";
 
     private static final String LIST_NAME_KEY = "list_name";
 

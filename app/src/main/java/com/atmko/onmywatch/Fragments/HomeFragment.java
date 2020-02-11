@@ -215,11 +215,11 @@ public class HomeFragment extends Fragment {
             HomeListDisplayFragment upcomingMoviesHomeList = HomeListDisplayFragment
                     .newInstance(HomeListDisplayFragment.UPCOMING_MOVIES);
 
-            HomeListDisplayFragment undatedMoviesHomeList = HomeListDisplayFragment
-                    .newInstance(HomeListDisplayFragment.UNDATED_MOVIES);
-
             HomeListDisplayFragment releasedMoviesHomeList = HomeListDisplayFragment
                     .newInstance(HomeListDisplayFragment.ALREADY_RELEASED_MOVIES);
+
+            HomeListDisplayFragment undatedMoviesHomeList = HomeListDisplayFragment
+                    .newInstance(HomeListDisplayFragment.UNDATED_MOVIES);
 
             getChildFragmentManager()
                     .beginTransaction()
@@ -227,9 +227,9 @@ public class HomeFragment extends Fragment {
                             HomeSpotlightFragment.FRAGMENT_KEY)
                     .replace(R.id.upcoming_media_container, upcomingMoviesHomeList,
                             HomeListDisplayFragment.FRAGMENT_KEY)
-                    .replace(R.id.undated_media_container, undatedMoviesHomeList,
-                            HomeListDisplayFragment.FRAGMENT_KEY)
                     .replace(R.id.ended_media_container, releasedMoviesHomeList,
+                            HomeListDisplayFragment.FRAGMENT_KEY)
+                    .replace(R.id.undated_media_container, undatedMoviesHomeList,
                             HomeListDisplayFragment.FRAGMENT_KEY)
                     .commit();
 
@@ -243,11 +243,11 @@ public class HomeFragment extends Fragment {
             HomeListDisplayFragment upcomingEpisodesHomeList = HomeListDisplayFragment
                     .newInstance(HomeListDisplayFragment.UPCOMING_EPISODES);
 
-            HomeListDisplayFragment undatedSeriesHomeList = HomeListDisplayFragment
-                    .newInstance(HomeListDisplayFragment.UNDATED_SERIES);
-
             HomeListDisplayFragment endedSeriesHomeList = HomeListDisplayFragment
                     .newInstance(HomeListDisplayFragment.ENDED_SERIES);
+
+            HomeListDisplayFragment undatedSeriesHomeList = HomeListDisplayFragment
+                    .newInstance(HomeListDisplayFragment.UNDATED_SERIES);
 
             getChildFragmentManager()
                     .beginTransaction()
@@ -255,9 +255,9 @@ public class HomeFragment extends Fragment {
                             HomeSpotlightFragment.FRAGMENT_KEY)
                     .replace(R.id.upcoming_media_container, upcomingEpisodesHomeList,
                             HomeListDisplayFragment.FRAGMENT_KEY)
-                    .replace(R.id.undated_media_container, undatedSeriesHomeList,
-                            HomeListDisplayFragment.FRAGMENT_KEY)
                     .replace(R.id.ended_media_container, endedSeriesHomeList,
+                            HomeListDisplayFragment.FRAGMENT_KEY)
+                    .replace(R.id.undated_media_container, undatedSeriesHomeList,
                             HomeListDisplayFragment.FRAGMENT_KEY)
                     .commit();
         }

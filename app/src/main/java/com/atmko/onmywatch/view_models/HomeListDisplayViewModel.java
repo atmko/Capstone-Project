@@ -20,24 +20,24 @@ public class HomeListDisplayViewModel extends ViewModel {
                 listLiveData = database.movieDataDao().getUserUpcomingMovies();
                 break;
 
-            case HomeListDisplayFragment.UNDATED_MOVIES:
-                listLiveData = database.movieDataDao().getUndatedMovies();
-                break;
-
             case HomeListDisplayFragment.ALREADY_RELEASED_MOVIES:
                 listLiveData = database.movieDataDao().getReleasedMovies();
+                break;
+
+                case HomeListDisplayFragment.UNDATED_MOVIES:
+                listLiveData = database.movieDataDao().getUndatedMovies();
                 break;
 
             case HomeListDisplayFragment.UPCOMING_EPISODES:
                 listLiveData = database.seriesDataDao().getUserUpcomingEpisodes();
                 break;
 
-            case HomeListDisplayFragment.UNDATED_SERIES:
-                listLiveData = database.seriesDataDao().getUndatedSeries();
-                break;
-
             case HomeListDisplayFragment.ENDED_SERIES:
                 listLiveData = database.seriesDataDao().getEndedSeries();
+                break;
+
+            case HomeListDisplayFragment.UNDATED_SERIES:
+                listLiveData = database.seriesDataDao().getUndatedSeries();
                 break;
         }
     }
