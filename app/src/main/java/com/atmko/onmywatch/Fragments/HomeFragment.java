@@ -213,13 +213,13 @@ public class HomeFragment extends Fragment {
                     .newInstance(mMediaType, spotlightUrl, searchPreferences);
 
             HomeListDisplayFragment upcomingMoviesHomeList = HomeListDisplayFragment
-                    .newInstance(HomeListDisplayFragment.UPCOMING_MOVIES);
+                    .newInstance(HomeListDisplayFragment.UPCOMING_MOVIES, MEDIA_TYPE_MOVIE);
 
             HomeListDisplayFragment releasedMoviesHomeList = HomeListDisplayFragment
-                    .newInstance(HomeListDisplayFragment.ALREADY_RELEASED_MOVIES);
+                    .newInstance(HomeListDisplayFragment.ALREADY_RELEASED_MOVIES, MEDIA_TYPE_MOVIE);
 
             HomeListDisplayFragment undatedMoviesHomeList = HomeListDisplayFragment
-                    .newInstance(HomeListDisplayFragment.UNDATED_MOVIES);
+                    .newInstance(HomeListDisplayFragment.UNDATED_MOVIES, MEDIA_TYPE_MOVIE);
 
             getChildFragmentManager()
                     .beginTransaction()
@@ -241,13 +241,13 @@ public class HomeFragment extends Fragment {
                     .newInstance(mMediaType, spotlightUrl, searchPreferences);
 
             HomeListDisplayFragment upcomingEpisodesHomeList = HomeListDisplayFragment
-                    .newInstance(HomeListDisplayFragment.UPCOMING_EPISODES);
+                    .newInstance(HomeListDisplayFragment.UPCOMING_EPISODES, MEDIA_TYPE_SERIES);
 
             HomeListDisplayFragment endedSeriesHomeList = HomeListDisplayFragment
-                    .newInstance(HomeListDisplayFragment.ENDED_SERIES);
+                    .newInstance(HomeListDisplayFragment.ENDED_SERIES, MEDIA_TYPE_SERIES);
 
             HomeListDisplayFragment undatedSeriesHomeList = HomeListDisplayFragment
-                    .newInstance(HomeListDisplayFragment.UNDATED_SERIES);
+                    .newInstance(HomeListDisplayFragment.UNDATED_SERIES, MEDIA_TYPE_SERIES);
 
             getChildFragmentManager()
                     .beginTransaction()
