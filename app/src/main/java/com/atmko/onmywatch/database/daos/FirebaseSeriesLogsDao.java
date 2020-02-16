@@ -104,11 +104,6 @@ public class FirebaseSeriesLogsDao implements SeriesLogsDao{
     }
 
     @Override
-    public void updateMediaLog(SeriesLog mediaLog) {
-
-    }
-
-    @Override
     public void deleteMediaLog(SeriesLog mediaLog) {
 
     }

@@ -45,9 +45,6 @@ public interface SeriesLogsDao {
             + "LIMIT 10")
     LiveData<List<SeriesLog>> getUndated();
 
-    @Update(onConflict = OnConflictStrategy.REPLACE)
-    void updateMediaLog(SeriesLog mediaLog);
-
     @Delete
     void deleteMediaLog(SeriesLog mediaLog);
 }
