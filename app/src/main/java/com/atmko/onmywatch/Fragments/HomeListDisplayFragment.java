@@ -21,16 +21,21 @@ import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.CustomParams;
 import com.atmko.onmywatch.adapters.MediaDataAdapter;
+import com.atmko.onmywatch.adapters.MediaLogAdapter;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MediaData;
+import com.atmko.onmywatch.models.MediaLog;
+import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.view_models.HomeListDisplayViewModel;
 import com.atmko.onmywatch.view_models.HomeListDisplayViewModelFactory;
 
 import java.util.List;
 
+import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
+
 public class HomeListDisplayFragment extends Fragment
-        implements MediaDataAdapter.OnListItemClickListener{
+        implements MediaDataAdapter.OnListItemClickListener, MediaLogAdapter.OnListItemClickListener{
     public static final String FRAGMENT_KEY = "home_list_display_fragment";
 
     public static final String UPCOMING_MOVIES = "upcoming_movies";
@@ -42,23 +47,26 @@ public class HomeListDisplayFragment extends Fragment
     public static final String UNDATED_SERIES = "undated_series";
 
     private static final String LIST_NAME_KEY = "list_name";
+    private static final String MEDIA_TYPE_KEY = "media_type";
 
     //fragment instantiation values
     private String mListName;
+    private int mMediaType;
 
     //post instantiation values
     private RecyclerView mRecyclerView;
     private MediaDataAdapter mMediaDataAdapter;
-
+    private MediaLogAdapter mMediaLogAdapter;
 
     public HomeListDisplayFragment() {
         // Required empty public constructor
     }
 
-    public static HomeListDisplayFragment newInstance(String listName) {
+    public static HomeListDisplayFragment newInstance(String listName, int mediaType) {
         HomeListDisplayFragment fragment = new HomeListDisplayFragment();
         Bundle args = new Bundle();
         args.putString(LIST_NAME_KEY, listName);
+        args.putInt(MEDIA_TYPE_KEY, mediaType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -68,6 +76,7 @@ public class HomeListDisplayFragment extends Fragment
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mListName = getArguments().getString(LIST_NAME_KEY);
+            mMediaType = getArguments().getInt(MEDIA_TYPE_KEY);
         }
     }
 
@@ -89,9 +98,19 @@ public class HomeListDisplayFragment extends Fragment
     private void defineViews() {
         mRecyclerView = getView().findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(configureLayoutManager());
-        mMediaDataAdapter = new MediaDataAdapter(this, getActivity().getApplicationContext(),
-                CustomParams.getSearchParams(this));
-        mRecyclerView.setAdapter(mMediaDataAdapter);
+
+        if (mMediaType == MEDIA_TYPE_MOVIE) {
+            mMediaDataAdapter = new MediaDataAdapter(this, getActivity().getApplicationContext(),
+                    CustomParams.getSearchParams(this));
+
+            mRecyclerView.setAdapter(mMediaDataAdapter);
+
+        } else {
+            mMediaLogAdapter = new MediaLogAdapter(this, getActivity().getApplicationContext(),
+                    CustomParams.getSearchParams(this));
+
+            mRecyclerView.setAdapter(mMediaLogAdapter);
+        }
     }
 
     private void observeData() {
@@ -119,32 +138,60 @@ public class HomeListDisplayFragment extends Fragment
     }
 
     private void populateAndNotifyAdapter(List mediaDataList) {
-        if (mediaDataList.size() == 0) {
-            mMediaDataAdapter.setInPlaceholderMode(true);
+        if (mMediaType == MEDIA_TYPE_MOVIE) {
+            if (mediaDataList.size() == 0) {
+                mMediaDataAdapter.setInPlaceholderMode(true);
+
+            } else {
+                mMediaDataAdapter.setInPlaceholderMode(false);
+                mMediaDataAdapter.getAdapterData().clear();
+                mMediaDataAdapter.addAdapterData(mediaDataList);
+            }
 
         } else {
-            mMediaDataAdapter.setInPlaceholderMode(false);
-            mMediaDataAdapter.getAdapterData().clear();
-            mMediaDataAdapter.addAdapterData(mediaDataList);
+            if (mediaDataList.size() == 0) {
+                mMediaLogAdapter.setInPlaceholderMode(true);
+
+            } else {
+                mMediaLogAdapter.setInPlaceholderMode(false);
+                mMediaLogAdapter.getAdapterData().clear();
+                mMediaLogAdapter.addAdapterData(mediaDataList);
+            }
         }
     }
     @Override
-    public void onItemClick(int position) {
-        if (mMediaDataAdapter.inPlaceholderMode()) {
-            DiscoverParentFragment discoverParentFragment = DiscoverParentFragment.newInstance();
+    public void onItemClick(final int position) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                if (getActivity() == null) return;
 
-            getActivity().getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.slide_down_entry, android.R.animator.fade_out)
-                    .add(R.id.master_fragments_container, discoverParentFragment,
-                            DiscoverParentFragment.FRAGMENT_KEY)
-                    .commit();
+                if (mMediaDataAdapter.inPlaceholderMode()) {
+                    DiscoverParentFragment discoverParentFragment = DiscoverParentFragment.newInstance();
 
-            return;
-        }
+                    getActivity().getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(R.anim.slide_down_entry, android.R.animator.fade_out)
+                            .add(R.id.master_fragments_container, discoverParentFragment,
+                                    DiscoverParentFragment.FRAGMENT_KEY)
+                            .commit();
 
-        MediaData selectedData = mMediaDataAdapter.getAdapterData().get(position);
+                    return;
+                }
 
-        ((MasterActivity) getActivity()).launchDetailsFragment(selectedData, null);
+                MediaData selectedData;
+
+                if (mMediaType == MEDIA_TYPE_MOVIE) {
+                    selectedData = mMediaDataAdapter.getAdapterData().get(position);
+
+                } else {
+                    MediaLog mediaLog = mMediaLogAdapter.getAdapterData().get(position);
+                    selectedData = AppDatabase.getInstance(getContext())
+                            .seriesDataDao().getSeriesByIdAlt(mediaLog.parentId);
+                }
+
+                ((MasterActivity) getActivity()).launchDetailsFragment(selectedData, null);
+            }
+        });
     }
 
     @Override
@@ -153,8 +200,18 @@ public class HomeListDisplayFragment extends Fragment
             @Override
             public void run() {
                 if (getActivity() != null) {
-                        ((MasterActivity) getActivity()).launchAddToListActivity(mMediaDataAdapter
-                                .getAdapterData().get(position));
+                    if (mMediaType == MEDIA_TYPE_MOVIE) {
+                        ((MasterActivity) getActivity())
+                                .launchAddToListActivity(mMediaDataAdapter
+                                        .getAdapterData().get(position));
+
+                    } else {
+                        MediaLog mediaLog = mMediaLogAdapter.getAdapterData().get(position);
+                        SeriesData seriesData = AppDatabase.getLocalDatabase(getActivity())
+                                .seriesDataDao().getSeriesByIdAlt(mediaLog.parentId);
+                        ((MasterActivity) getActivity())
+                                .launchAddToListActivity(seriesData);
+                    }
                 }
             }
         });

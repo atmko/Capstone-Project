@@ -9,6 +9,7 @@ import com.androidnetworking.common.ANRequest;
 import com.atmko.onmywatch.models.CastData;
 import com.atmko.onmywatch.models.Episode;
 import com.atmko.onmywatch.models.ScheduledMedia;
+import com.atmko.onmywatch.models.Season;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.utils.UpdateNotifierService;
 import com.atmko.onmywatch.utils.network_utils.TraktApiConstants;
@@ -260,7 +261,7 @@ public class SeriesDataParser {
         Map returnedMap = gson.fromJson(returnedJSONString, Map.class);
 
         if (returnedMap != null) {
-            Episode nextEpisode = new Episode();
+            Episode nextEpisode = EpisodeParser.parseTraktEpisode(seriesData.getId(), returnedMap);
             String nextEpisodeAirDate = ((String) returnedMap.get(TraktApiConstants.FIRST_AIRED_KEY));
 
             if (nextEpisodeAirDate != null) {
@@ -376,6 +377,73 @@ public class SeriesDataParser {
                 .build();
 
         return request.getUrl();
+    }
 
+    public static class SeasonParser {
+        public static List<Season> parseTraktSeasons(String mediaId, String returnedJSONString) {
+            List<Season> seasons = new ArrayList<>();
+
+            //skips code below if returnedJSONString null or empty
+            if (returnedJSONString == null || returnedJSONString.equals("")) {
+                return seasons;
+            }
+
+            Gson gson = new Gson();
+            List returnedList = gson.fromJson(returnedJSONString, List.class);
+
+            for (Object seasonMapObject : returnedList) {
+                seasons.add(parseTraktSeason(mediaId, (Map) seasonMapObject));
+            }
+
+            return seasons;
+        }
+
+        static Season parseTraktSeason(String mediaId, Map seasonMap) {
+            Double episodeNumberDouble = ((Double) seasonMap.get("number"));
+            int seasonNumber = episodeNumberDouble != null ? episodeNumberDouble.intValue() : 0;
+            String firstAired = ((String) seasonMap.get("first_aired"));
+
+            Season season = new Season(mediaId, seasonNumber, firstAired);
+
+            Double airedEpisodesDouble = ((Double) seasonMap.get("aired_episodes"));
+            season.episodesAired = airedEpisodesDouble != null ? airedEpisodesDouble.intValue() : 0;
+
+            return season;
+        }
+    }
+
+    public static class EpisodeParser {
+        public static List<Episode> parseTraktEpisodes(String mediaId, String returnedJSONString) {
+            List<Episode> episodes = new ArrayList<>();
+
+            //skips code below if returnedJSONString null or empty
+            if (returnedJSONString == null || returnedJSONString.equals("")) {
+                return episodes;
+            }
+
+            Gson gson = new Gson();
+            List returnedList = gson.fromJson(returnedJSONString, List.class);
+
+            for (Object episodeMapObject : returnedList) {
+                episodes.add(parseTraktEpisode(mediaId, ((Map) episodeMapObject)));
+            }
+
+            return episodes;
+        }
+
+        static Episode parseTraktEpisode(String mediaId, Map episodeMap) {
+            Double seasonNumberDouble = ((Double) episodeMap.get("season"));
+            Double episodeNumberDouble = ((Double) episodeMap.get("number"));
+            int seasonNumber = seasonNumberDouble != null ? seasonNumberDouble.intValue() : 0;
+            int episodeNumber = episodeNumberDouble != null ? episodeNumberDouble.intValue() : 0;
+            String firstAired = ((String) episodeMap.get("first_aired"));
+
+            return new Episode(
+                    mediaId,
+                    seasonNumber,
+                    episodeNumber,
+                    firstAired
+            );
+        }
     }
 }

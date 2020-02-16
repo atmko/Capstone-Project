@@ -29,15 +29,15 @@ public class HomeListDisplayViewModel extends ViewModel {
                 break;
 
             case HomeListDisplayFragment.UPCOMING_EPISODES:
-                listLiveData = database.seriesDataDao().getUserUpcomingEpisodes();
+                listLiveData = database.mediaLogsDao().getUpcoming();
                 break;
 
             case HomeListDisplayFragment.ENDED_SERIES:
-                listLiveData = database.seriesDataDao().getEndedSeries();
+                listLiveData = database.mediaLogsDao().getAired();
                 break;
 
             case HomeListDisplayFragment.UNDATED_SERIES:
-                listLiveData = database.seriesDataDao().getUndatedSeries();
+                listLiveData = database.mediaLogsDao().getUndated();
                 break;
         }
     }

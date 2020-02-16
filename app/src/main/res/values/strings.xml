@@ -187,6 +187,8 @@
 
     <!--trakt urls-->
     <string name="trakt_next_episode_urls">https://api.trakt.tv/shows/{id}/next_episode?extended=full</string>
+    <string name="trakt_season_url">https://api.trakt.tv/shows/{id}/seasons?extended=full</string>
+    <string name="trakt_season_episodes_url">https://api.trakt.tv/shows/{id}/seasons/{season_num}?extended=full</string>
     <!--trakt urls-->
     <!--URLS-->
 

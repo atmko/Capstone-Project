@@ -18,21 +18,23 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.atmko.onmywatch.R;
-import com.atmko.onmywatch.models.MediaData;
+import com.atmko.onmywatch.models.MediaLog;
 import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.atmko.onmywatch.models.MediaLog.TYPE_SEASON;
+
 /*
  * data adapter for Media data objects
  */
 
-public class MediaDataAdapter
-        extends RecyclerView.Adapter<MediaDataAdapter.MediaDataAdapterViewHolder> {
+public class MediaLogAdapter
+        extends RecyclerView.Adapter<MediaLogAdapter.MediaLogAdapterViewHolder> {
 
     private final Fragment mFragment;
-    private final List<MediaData> mAdapterData;
+    private final List<MediaLog> mAdapterData;
     private final OnListItemClickListener mOnListItemClickListener;
     private boolean mInPlaceholderMode;
     private final Context mContext;
@@ -43,7 +45,11 @@ public class MediaDataAdapter
     private final int NO_POSTER_LAYOUT = 2;
     private final int EMPTY_ADAPTER_ID = -1;
 
-    public MediaDataAdapter(OnListItemClickListener clickListener, Context context, int[] params) {
+    private final String SEASON_SHORTHAND = "S";
+    private final String EPISODE_SHORTHAND = "E";
+
+
+    public MediaLogAdapter(OnListItemClickListener clickListener, Context context, int[] params) {
         mFragment = ((Fragment) clickListener);
         mOnListItemClickListener = clickListener;
         mAdapterData = new ArrayList<>();
@@ -71,15 +77,16 @@ public class MediaDataAdapter
         }
     }
 
-    public class MediaDataAdapterViewHolder extends RecyclerView.ViewHolder
+    public class MediaLogAdapterViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener{
 
         final FrameLayout topFrameLayout;
         ImageView moviePosterImageView;
         TextView posterReplacementTextView;
         ImageButton addButton;
+        TextView typeTextView;
 
-        private MediaDataAdapterViewHolder(@NonNull View itemView, int viewType) {
+        private MediaLogAdapterViewHolder(@NonNull View itemView, int viewType) {
             super(itemView);
 
             topFrameLayout = itemView.findViewById(R.id.top_frame_layout);
@@ -104,12 +111,12 @@ public class MediaDataAdapter
                     mOnListItemClickListener.onAddButtonClick(getAdapterPosition());
                 }
             });
+            typeTextView = itemView.findViewById(R.id.type_text_view);
         }
 
         @Override
         public void onClick(View v) {
-            int position = getAdapterPosition();
-            mOnListItemClickListener.onItemClick(position);
+            mOnListItemClickListener.onItemClick(getAdapterPosition());
         }
     }
 
@@ -135,14 +142,14 @@ public class MediaDataAdapter
 
     @NonNull
     @Override
-    public MediaDataAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup,
+    public MediaLogAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup,
                                                          int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(mContext);
 
         int resourceId;
 
         if (viewType == STANDARD_LAYOUT_ID) {
-            resourceId = R.layout.object_media_data;
+            resourceId = R.layout.object_media_log;
 
         } else if (viewType == NO_POSTER_LAYOUT) {
             resourceId = R.layout.no_poster_layout;
@@ -157,26 +164,40 @@ public class MediaDataAdapter
 
         View view = layoutInflater.inflate(resourceId, viewGroup, false);
 
-        return new MediaDataAdapterViewHolder(view, viewType);
+        return new MediaLogAdapterViewHolder(view, viewType);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MediaDataAdapterViewHolder adapterViewHolder, int position) {
+    public void onBindViewHolder(@NonNull MediaLogAdapterViewHolder adapterViewHolder, int position) {
         if (adapterViewHolder.getItemViewType() == EMPTY_ADAPTER_ID) return;
 
-        //get current MediaData
-        MediaData currentMediaData = mAdapterData.get(position);
+        //get current MediaLog
+        MediaLog currentMediaLog = mAdapterData.get(position);
 
         //if item view type is no poster
         if (adapterViewHolder.getItemViewType() == NO_POSTER_LAYOUT) {
             //set title instead of poster image
-            adapterViewHolder.posterReplacementTextView.setText(currentMediaData.getTitle());
+            adapterViewHolder.posterReplacementTextView.setText(currentMediaLog.title);
 
         } else {
+            String string;
+
+            if (currentMediaLog.type.equals(TYPE_SEASON)) {
+                string = TYPE_SEASON + " " + currentMediaLog.seasonNumber;
+
+            } else {
+                string = SEASON_SHORTHAND +
+                        currentMediaLog.seasonNumber +
+                        EPISODE_SHORTHAND +
+                        currentMediaLog.episodeNumber;
+            }
+
+            adapterViewHolder.typeTextView.setText(string);
+
             //load image with glide
             NetworkFunctions.loadImage(
                     mContext,
-                    currentMediaData.getPosterPath(),
+                    currentMediaLog.posterPath,
                     adapterViewHolder.moviePosterImageView);
         }
     }
@@ -195,7 +216,7 @@ public class MediaDataAdapter
         if (mInPlaceholderMode) return EMPTY_ADAPTER_ID;
 
         //if poster path != null
-        boolean hasPoster = mAdapterData.get(position).getPosterPath() != null;
+        boolean hasPoster = mAdapterData.get(position).posterPath != null;
 
         if (hasPoster) {
             return STANDARD_LAYOUT_ID;
@@ -205,12 +226,12 @@ public class MediaDataAdapter
         }
     }
 
-    public List<MediaData> getAdapterData() {
+    public List<MediaLog> getAdapterData() {
         return mAdapterData;
     }
 
-    public void addAdapterData(List mediaDataList) {
-        mAdapterData.addAll(mediaDataList);
+    public void addAdapterData(List mediaLogList) {
+        mAdapterData.addAll(mediaLogList);
         notifyDataSetChanged();
     }
 }

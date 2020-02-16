@@ -55,15 +55,6 @@ public interface SeriesDataDao {
     @Query("SELECT * FROM series WHERE watch_status = :watchStatus")
     List<SeriesData> getSeriesByWatchStatusAlt(int watchStatus);
 
-    @Query("SELECT * FROM series WHERE watch_status = 2 AND next_episode > 0 ORDER BY next_episode ASC LIMIT 10")
-    LiveData<List<SeriesData>> getUserUpcomingEpisodes();
-
-    @Query("SELECT * FROM series WHERE watch_status IN (1, 2) AND release_status IN ('Canceled', 'Ended') ORDER BY next_episode ASC LIMIT 10")
-    LiveData<List<SeriesData>> getEndedSeries();
-
-    @Query("SELECT * FROM series WHERE watch_status IN (1, 2) AND (next_episode = 0 AND release_status NOT IN ('Canceled', 'Ended', 'Running')) LIMIT 10")
-    LiveData<List<SeriesData>> getUndatedSeries();
-
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateSeriesData(SeriesData seriesData);
 

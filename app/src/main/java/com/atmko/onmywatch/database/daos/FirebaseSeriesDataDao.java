@@ -42,7 +42,6 @@ import static com.atmko.onmywatch.models.MediaData.TAGS_KEY;
 import static com.atmko.onmywatch.models.MediaData.WATCH_STATUS_KEY;
 import static com.atmko.onmywatch.models.SeriesData.NEXT_EPISODE_KEY;
 import static com.atmko.onmywatch.utils.api_utils.ApiConstants.ID_KEY;
-import static com.atmko.onmywatch.utils.api_utils.ApiConstants.RELEASE_STATUS_KEY;
 
 /*
  * SeriesData firebase Dao
@@ -347,122 +346,6 @@ public class FirebaseSeriesDataDao implements SeriesDataDao {
         }
 
         return seriesList;
-    }
-
-    @Override
-    public LiveData<List<SeriesData>> getUserUpcomingEpisodes() {
-        final MutableLiveData<List<SeriesData>> liveData = new MutableLiveData<>();
-
-        Query query = MasterActivity.getUserDbHomeReference()
-                .collection(SERIES_COLLECTION_PATH)
-                .whereGreaterThan(NEXT_EPISODE_KEY, 0)
-                .whereEqualTo(WATCH_STATUS_KEY, 2)
-                .orderBy(NEXT_EPISODE_KEY, Query.Direction.ASCENDING)
-                .limit(10);
-
-        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
-                final List<SeriesData> seriesList = new ArrayList<>();
-
-                if (snapshots != null) {
-                    List<DocumentSnapshot> documents = snapshots.getDocuments();
-
-                    for (DocumentSnapshot document: documents) {
-                        if (document.getData() == null) continue;
-
-                        SeriesData mediaData = parseDataMapToMediaData(document);
-
-                        seriesList.add(mediaData);
-                    }
-
-                    liveData.setValue(seriesList);
-
-                } else {
-                    liveData.setValue(seriesList);
-                }
-            }
-        });
-
-        return liveData;
-    }
-
-    @Override
-    public LiveData<List<SeriesData>> getEndedSeries() {
-        final MutableLiveData<List<SeriesData>> liveData = new MutableLiveData<>();
-
-        Query query = MasterActivity.getUserDbHomeReference()
-                .collection(SERIES_COLLECTION_PATH)
-                .whereGreaterThan(WATCH_STATUS_KEY, 0)
-                .whereLessThan(WATCH_STATUS_KEY, 3)
-                .whereIn(RELEASE_STATUS_KEY, Arrays.asList("Canceled", "Ended"))
-                .orderBy(WATCH_STATUS_KEY, Query.Direction.DESCENDING)
-                .limit(10);
-
-        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
-                final List<SeriesData> seriesList = new ArrayList<>();
-
-                if (snapshots != null) {
-                    List<DocumentSnapshot> documents = snapshots.getDocuments();
-
-                    for (DocumentSnapshot document: documents) {
-                        if (document.getData() == null) continue;
-
-                        SeriesData mediaData = parseDataMapToMediaData(document);
-
-                        seriesList.add(mediaData);
-                    }
-
-                    liveData.setValue(seriesList);
-
-                } else {
-                    liveData.setValue(seriesList);
-                }
-            }
-        });
-
-        return liveData;
-    }
-
-    @Override
-    public LiveData<List<SeriesData>> getUndatedSeries() {
-        final MutableLiveData<List<SeriesData>> liveData = new MutableLiveData<>();
-
-        Query query = MasterActivity.getUserDbHomeReference()
-                .collection(SERIES_COLLECTION_PATH)
-                .whereGreaterThan(WATCH_STATUS_KEY, 0)
-                .whereLessThan(WATCH_STATUS_KEY, 3)
-                .whereEqualTo(NEXT_EPISODE_KEY, 0)
-                .whereIn(RELEASE_STATUS_KEY, Arrays.asList("Planned", "In Production", "Pilot"))
-                .limit(10);
-
-        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
-                final List<SeriesData> seriesList = new ArrayList<>();
-
-                if (snapshots != null) {
-                    List<DocumentSnapshot> documents = snapshots.getDocuments();
-
-                    for (DocumentSnapshot document: documents) {
-                        if (document.getData() == null) continue;
-
-                        SeriesData mediaData = parseDataMapToMediaData(document);
-
-                        seriesList.add(mediaData);
-                    }
-
-                    liveData.setValue(seriesList);
-
-                } else {
-                    liveData.setValue(seriesList);
-                }
-            }
-        });
-
-        return liveData;
     }
 
     @Override

@@ -15,6 +15,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
+import com.atmko.onmywatch.database.daos.MediaLogsDao;
 import com.atmko.onmywatch.database.daos.MovieDataDao;
 import com.atmko.onmywatch.database.daos.MovieNotifierDao;
 import com.atmko.onmywatch.database.daos.SearchListTagsDao;
@@ -25,6 +26,7 @@ import com.atmko.onmywatch.database.daos.UserListsDao;
 import com.atmko.onmywatch.database.daos.MovieDataRecordsDao;
 import com.atmko.onmywatch.database.daos.SeriesDataRecordsDao;
 import com.atmko.onmywatch.database.daos.WatchListsDao;
+import com.atmko.onmywatch.models.MediaLog;
 import com.atmko.onmywatch.models.MovieNotifier;
 import com.atmko.onmywatch.models.SearchListTag;
 import com.atmko.onmywatch.models.SearchMediaTag;
@@ -39,7 +41,7 @@ import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 
 @Database(entities = {WatchListModel.class, UserListModel.class, MovieData.class, SeriesData.class,
         MovieDataRecord.class, SeriesDataRecord.class, MovieNotifier.class, SeriesNotifier.class,
-        SearchMediaTag.class, SearchListTag.class},
+        MediaLog.class, SearchMediaTag.class, SearchListTag.class},
         version = 1, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
@@ -130,6 +132,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract SeriesDataRecordsDao seriesDataRecordsDao();
     public abstract MovieNotifierDao movieNotifierDao();
     public abstract SeriesNotifierDao seriesNotifierDao();
+    public abstract MediaLogsDao mediaLogsDao();
     public abstract SearchMediaTagsDao searchMediaTagsDao();
     public abstract SearchListTagsDao searchListTagsDao();
 }

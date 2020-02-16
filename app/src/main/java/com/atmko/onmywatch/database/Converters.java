@@ -20,6 +20,7 @@ import java.util.List;
 
 public class Converters {
     private static final String ORIGIN_SEPARATOR = ",";
+    private static final String NULL_STRING = "//NULL//";
 
     @TypeConverter
     public static ArrayList<String> stringToOriginList(String formattedOriginString) {
@@ -88,6 +89,42 @@ public class Converters {
         return episode.getBestLocalAirDate() == null ? 0
                 : episode.getBestLocalAirDate().getTime();
     }
+
+//    @TypeConverter
+//    public static Episode stringToEpisode(String string) {
+//        String[] strings = string.split(",");
+//
+//        String parentMediaId = !(strings[0].split(":")[1].equals(NULL_STRING))? strings[0].split(":")[1]: null;
+//        int seasonNumber = Integer.valueOf(strings[1].split(":")[1]);
+//        int episodeNumber = Integer.valueOf(strings[2].split(":")[1]);
+//        String airDate = !(strings[3].split(":")[1]).equals(NULL_STRING)? strings[3].split(":")[1]: null;
+//
+//        return new Episode(parentMediaId, episodeNumber, airDate);
+//    }
+//
+//    @TypeConverter
+//    public static String episodeToString(Episode episode) {
+//        String parentMediaId = episode != null? episode.parentMediaId: NULL_STRING;
+////        int seasonNumber = episode != null? episode.seasonNumber: 0;
+//        int episodeNumber = episode != null? episode.episodeNumber: 0;
+//        String airDate = episode != null? episode.getBestAvailableDateString(): NULL_STRING;
+//
+//        return "parent_media_id" +
+//                ":" +
+//                parentMediaId +
+//                "," +
+////                "season_number" +
+////                ":" +
+////                seasonNumber +
+////                "," +
+//                "episode_number" +
+//                ":" +
+//                episodeNumber +
+//                "," +
+//                "air_date" +
+//                ":" +
+//                airDate;
+//    }
 
     @TypeConverter
     public static String searchTagsToString(List<SearchMediaTag> searchTags) {

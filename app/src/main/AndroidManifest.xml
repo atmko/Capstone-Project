@@ -43,6 +43,9 @@
         <service android:name=".utils.UpdateNotifierService" android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE"/>
 
+        <service android:name=".utils.SeriesTracker" android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
+
         <activity
             android:name=".MasterActivity"
             android:launchMode="singleTop">

@@ -27,11 +27,11 @@ import com.atmko.onmywatch.models.ScheduledMedia;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesNotifier;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
-import com.atmko.onmywatch.utils.api_utils.SeriesDataParser;
-import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.utils.api_utils.MovieApiConstants;
 import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
 import com.atmko.onmywatch.utils.api_utils.SeriesApiConstants;
+import com.atmko.onmywatch.utils.api_utils.SeriesDataParser;
+import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.utils.network_utils.TraktApiConstants;
 import com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker;
 
@@ -193,6 +193,10 @@ public class UpdateNotifierService extends JobIntentService {
     private void updateNewEpisodeNotifier() {
         int newWatchStatus = newMediaData.getWatchStatus();
 
+        if (newWatchStatus != MediaData.WATCH_STATUS_WATCHING) {
+            trackMedia(SeriesTracker.ACTION_DELETE);
+        }
+
         if (newWatchStatus == MediaData.WATCH_STATUS_TO_WATCH) {
             cancelMediaAlarmIfExists(CONDITION_NEW_EPISODE);
             //TODO: series release notifier current does't use trakt api but uses tmdb. Make release notifier uses trakt for better accuracy
@@ -266,6 +270,8 @@ public class UpdateNotifierService extends JobIntentService {
                                 //parse trakt info
                                 newMediaData =
                                         SeriesDataParser.parseTraktNextEpisodeDetails(returnedJSONString, ((SeriesData) newMediaData));
+
+                                trackMedia(SeriesTracker.ACTION_SET);
 
                                 //if ASSUME_TRAKT_NEXT_EPISODE_NULL is false, use production code
                                 if (!ASSUME_TRAKT_NEXT_EPISODE_NULL) {
@@ -443,5 +449,12 @@ public class UpdateNotifierService extends JobIntentService {
             //cancel alarm and delete media notifier
             NotificationHandler.cancelAlarm(this, notifier);
         }
+    }
+
+    private void trackMedia(String actionMode) {
+        SeriesTracker.sActionMode = actionMode;
+        Intent intent = new Intent(getApplicationContext(), SeriesTracker.class);
+        intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(newMediaData));
+        SeriesTracker.enqueueWork(getApplicationContext(), intent);
     }
 }
