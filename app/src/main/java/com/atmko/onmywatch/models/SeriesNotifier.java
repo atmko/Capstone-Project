@@ -66,12 +66,11 @@ public class SeriesNotifier extends MediaNotifier {
     }
 
     public Map<String, Object> parseNotifierToDataMap() {
-        //todo: refactor to series data map instead of movie
-        Map<String, Object> movieDataRecordMap = new HashMap<>();
-        movieDataRecordMap.put(NOTIFIER_ID_KEY, getMediaId());
-        movieDataRecordMap.put(CONDITION_KEY, getCondition());
-        movieDataRecordMap.put(IS_ACTIVE_KEY, getIsActive());
+        Map<String, Object> seriesDataRecordMap = new HashMap<>();
+        seriesDataRecordMap.put(NOTIFIER_ID_KEY, getMediaId());
+        seriesDataRecordMap.put(CONDITION_KEY, getCondition());
+        seriesDataRecordMap.put(IS_ACTIVE_KEY, getIsActive());
 
-        return movieDataRecordMap;
+        return seriesDataRecordMap;
     }
 }
