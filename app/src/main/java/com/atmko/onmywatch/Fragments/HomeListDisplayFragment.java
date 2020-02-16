@@ -23,6 +23,7 @@ import com.atmko.onmywatch.adapters.CustomParams;
 import com.atmko.onmywatch.adapters.MediaDataAdapter;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MediaData;
+import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.view_models.HomeListDisplayViewModel;
 import com.atmko.onmywatch.view_models.HomeListDisplayViewModelFactory;
 
@@ -144,5 +145,18 @@ public class HomeListDisplayFragment extends Fragment
         MediaData selectedData = mMediaDataAdapter.getAdapterData().get(position);
 
         ((MasterActivity) getActivity()).launchDetailsFragment(selectedData, null);
+    }
+
+    @Override
+    public void onAddButtonClick(final int position) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                if (getActivity() != null) {
+                        ((MasterActivity) getActivity()).launchAddToListActivity(mMediaDataAdapter
+                                .getAdapterData().get(position));
+                }
+            }
+        });
     }
 }

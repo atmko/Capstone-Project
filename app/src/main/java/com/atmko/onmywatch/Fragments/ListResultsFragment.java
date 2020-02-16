@@ -430,6 +430,19 @@ public class ListResultsFragment extends Fragment
         startDetailsFragment(selectedData);
     }
 
+    @Override
+    public void onAddButtonClick(final int position) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                if (getActivity() != null) {
+                    ((MasterActivity) getActivity())
+                            .launchAddToListActivity(mDataAdapter.getAdapterData().get(position));
+                }
+            }
+        });
+    }
+
     private void startDetailsFragment(MediaData selectedData) {
         ((MasterActivity) getActivity()).launchDetailsFragment(selectedData, null);
     }

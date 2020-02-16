@@ -32,6 +32,7 @@ import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
 import com.atmko.onmywatch.utils.api_utils.SeriesDataParser;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
+import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.stack.Stack;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -61,7 +62,7 @@ public class RecommendationsFragment extends Fragment
     private static final String ADAPTER_DATA_LIST_KEY = "adapter_data_list";
     private static final String PAGING_BLOCK_MAP_KEY = "paging_block_map";
 
-    private RecyclerView.Adapter mDataAdapter;
+    private MediaDataAdapter mDataAdapter;
     private Stack mStack;
     private SearchPreferences mSearchPreferences;
 
@@ -122,7 +123,7 @@ public class RecommendationsFragment extends Fragment
             List mediaDataList = Parcels.unwrap(
                     savedInstanceState.getParcelable(ADAPTER_DATA_LIST_KEY));
 
-            ((MediaDataAdapter) mDataAdapter).addAdapterData(mediaDataList);
+            mDataAdapter.addAdapterData(mediaDataList);
 
             //get saved paging block map
             int[] pagingBlockRange = savedInstanceState.getIntArray(PAGING_BLOCK_MAP_KEY);
@@ -272,7 +273,7 @@ public class RecommendationsFragment extends Fragment
 
     @Override
     public void onItemClick(int position) {
-        MediaData selectedData = ((MediaDataAdapter) mDataAdapter).getAdapterData().get(position);
+        MediaData selectedData = mDataAdapter.getAdapterData().get(position);
         //do nothing if selecting stack placeholder
         if (selectedData.getId() == null) return;
 
@@ -282,13 +283,26 @@ public class RecommendationsFragment extends Fragment
     }
 
     @Override
+    public void onAddButtonClick(final int position) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                if (getActivity() != null) {
+                    ((MasterActivity) getActivity())
+                            .launchAddToListActivity(mDataAdapter.getAdapterData().get(position));
+                }
+            }
+        });
+    }
+
+    @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
         outState.putParcelable(SEARCH_PREFERENCES_KEY, Parcels.wrap(mSearchPreferences));
 
         outState.putParcelable(ADAPTER_DATA_LIST_KEY,
-                Parcels.wrap(((MediaDataAdapter)mDataAdapter).getAdapterData()));
+                Parcels.wrap(mDataAdapter.getAdapterData()));
 
         outState.putIntArray(PAGING_BLOCK_MAP_KEY, mStack.saveBlockStructure());
     }

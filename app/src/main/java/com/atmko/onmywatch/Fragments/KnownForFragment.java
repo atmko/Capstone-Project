@@ -22,6 +22,7 @@ import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.CustomParams;
 import com.atmko.onmywatch.adapters.MediaDataAdapter;
 import com.atmko.onmywatch.models.MediaData;
+import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 
 import org.parceler.Parcels;
 
@@ -118,6 +119,19 @@ public class KnownForFragment extends Fragment implements MediaDataAdapter.OnLis
         if (getParentFragment() != null && getParentFragment().getActivity() != null) {
             ((MasterActivity) getParentFragment().getActivity()).launchDetailsFragment(selectedData, null);
         }
+    }
+
+    @Override
+    public void onAddButtonClick(final int position) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                if (getActivity() != null) {
+                    ((MasterActivity) getActivity())
+                            .launchAddToListActivity(mAdapter.getAdapterData().get(position));
+                }
+            }
+        });
     }
 
     @Override

@@ -36,6 +36,7 @@ import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
 import com.atmko.onmywatch.utils.api_utils.PersonDataParser;
 import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
 import com.atmko.onmywatch.utils.api_utils.SeriesDataParser;
+import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.stack.Stack;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -411,6 +412,20 @@ public class DiscoverResultsFragment extends Fragment implements
             if (((PersonData) selectedData).getId() == null) return;
             ((MasterActivity) getActivity()).launchPeopleDetailsFragment(((PersonData) selectedData));
         }
+    }
+
+    @Override
+    public void onAddButtonClick(final int position) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                if (getActivity() != null) {
+                    ((MasterActivity) getActivity())
+                            .launchAddToListActivity(((MediaDataAdapter) mDataAdapter)
+                                    .getAdapterData().get(position));
+                }
+            }
+        });
     }
 
     @Override

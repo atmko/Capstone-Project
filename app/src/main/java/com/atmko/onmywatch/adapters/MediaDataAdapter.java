@@ -55,6 +55,7 @@ public class MediaDataAdapter
 
     public interface OnListItemClickListener {
         void onItemClick(int position);
+        void onAddButtonClick(int position);
     }
 
     public boolean inPlaceholderMode() {
@@ -101,9 +102,7 @@ public class MediaDataAdapter
             addButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((MasterActivity) mFragment.getActivity())
-                            .launchAddToListActivity(mAdapterData.get(getAdapterPosition()));
-
+                    mOnListItemClickListener.onAddButtonClick(getAdapterPosition());
                 }
             });
         }
