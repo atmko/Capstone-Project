@@ -111,6 +111,7 @@ public class FirebaseSeriesLogsDao implements SeriesLogsDao{
 
         Task<QuerySnapshot> task = MasterActivity.getUserDbHomeReference()
                 .collection(SERIES_LOGS_COLLECTION_PATH)
+                .whereEqualTo(MediaLog.PARENT_ID_KEY, parentId)
                 .get();
 
         try {
