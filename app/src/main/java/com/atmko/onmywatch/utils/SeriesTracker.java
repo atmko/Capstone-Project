@@ -18,7 +18,7 @@ import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.Episode;
 import com.atmko.onmywatch.models.MediaData;
-import com.atmko.onmywatch.models.MediaLog;
+import com.atmko.onmywatch.models.SeriesLog;
 import com.atmko.onmywatch.models.NotificationIdlingResource;
 import com.atmko.onmywatch.models.Season;
 import com.atmko.onmywatch.models.SeriesData;
@@ -34,11 +34,11 @@ import org.parceler.Parcels;
 
 import java.util.List;
 
-import static com.atmko.onmywatch.models.MediaLog.CONDITION_AIRED;
-import static com.atmko.onmywatch.models.MediaLog.CONDITION_UNDATED;
-import static com.atmko.onmywatch.models.MediaLog.CONDITION_UPCOMING;
-import static com.atmko.onmywatch.models.MediaLog.TYPE_EPISODE;
-import static com.atmko.onmywatch.models.MediaLog.TYPE_SEASON;
+import static com.atmko.onmywatch.models.SeriesLog.CONDITION_AIRED;
+import static com.atmko.onmywatch.models.SeriesLog.CONDITION_UNDATED;
+import static com.atmko.onmywatch.models.SeriesLog.CONDITION_UPCOMING;
+import static com.atmko.onmywatch.models.SeriesLog.TYPE_EPISODE;
+import static com.atmko.onmywatch.models.SeriesLog.TYPE_SEASON;
 import static com.atmko.onmywatch.utils.GeneralUtils.MILLISECOND_CONVERSION;
 import static com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker.NEW_MEDIA_DATA_KEY;
 
@@ -246,19 +246,19 @@ public class SeriesTracker extends JobIntentService {
     }
 
     private void insertSeason(int seasonNumber, int condition, long timestamp, boolean isBundled) {
-        MediaLog mediaLog = new MediaLog(TYPE_SEASON, seasonNumber, condition, timestamp,
+        SeriesLog mediaLog = new SeriesLog(TYPE_SEASON, seasonNumber, condition, timestamp,
                 newMediaData.getTitle(), newMediaData.getPosterPath(), newMediaData.getId(), isBundled);
 
-        mDatabase.mediaLogsDao().addMediaLog(mediaLog);
+        mDatabase.seriesLogsDao().addMediaLog(mediaLog);
     }
 
     private void insertEpisode(int seasonNumber, int episodeNumber, int condition, long timestamp,
                                boolean isBundled) {
-        MediaLog mediaLog = new MediaLog(TYPE_EPISODE, seasonNumber, episodeNumber, condition,
+        SeriesLog mediaLog = new SeriesLog(TYPE_EPISODE, seasonNumber, episodeNumber, condition,
                 timestamp, newMediaData.getTitle(), newMediaData.getPosterPath(),
                 newMediaData.getId(), isBundled);
 
-        mDatabase.mediaLogsDao().addMediaLog(mediaLog);
+        mDatabase.seriesLogsDao().addMediaLog(mediaLog);
     }
 
     //retry method if api returns too may requests error
@@ -301,11 +301,11 @@ public class SeriesTracker extends JobIntentService {
 
 
     private void deleteTrackedMedia() {
-        List<MediaLog> mediaLogs =
-                mDatabase.mediaLogsDao().getAllLogsWithMediaIdAlt(newMediaData.getId());
+        List<SeriesLog> mediaLogs =
+                mDatabase.seriesLogsDao().getAllLogsWithMediaIdAlt(newMediaData.getId());
 
-        for (MediaLog mediaLog : mediaLogs) {
-            mDatabase.mediaLogsDao().deleteMediaLog(mediaLog);
+        for (SeriesLog mediaLog : mediaLogs) {
+            mDatabase.seriesLogsDao().deleteMediaLog(mediaLog);
         }
     }
 }

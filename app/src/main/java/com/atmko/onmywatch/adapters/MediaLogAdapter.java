@@ -18,13 +18,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.atmko.onmywatch.R;
-import com.atmko.onmywatch.models.MediaLog;
+import com.atmko.onmywatch.models.SeriesLog;
 import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.atmko.onmywatch.models.MediaLog.TYPE_SEASON;
+import static com.atmko.onmywatch.models.SeriesLog.TYPE_SEASON;
 
 /*
  * data adapter for Media data objects
@@ -34,7 +34,7 @@ public class MediaLogAdapter
         extends RecyclerView.Adapter<MediaLogAdapter.MediaLogAdapterViewHolder> {
 
     private final Fragment mFragment;
-    private final List<MediaLog> mAdapterData;
+    private final List<SeriesLog> mAdapterData;
     private final OnListItemClickListener mOnListItemClickListener;
     private boolean mInPlaceholderMode;
     private final Context mContext;
@@ -171,8 +171,8 @@ public class MediaLogAdapter
     public void onBindViewHolder(@NonNull MediaLogAdapterViewHolder adapterViewHolder, int position) {
         if (adapterViewHolder.getItemViewType() == EMPTY_ADAPTER_ID) return;
 
-        //get current MediaLog
-        MediaLog currentMediaLog = mAdapterData.get(position);
+        //get current SeriesLog
+        SeriesLog currentMediaLog = mAdapterData.get(position);
 
         //if item view type is no poster
         if (adapterViewHolder.getItemViewType() == NO_POSTER_LAYOUT) {
@@ -226,7 +226,7 @@ public class MediaLogAdapter
         }
     }
 
-    public List<MediaLog> getAdapterData() {
+    public List<SeriesLog> getAdapterData() {
         return mAdapterData;
     }
 

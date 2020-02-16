@@ -12,39 +12,39 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.atmko.onmywatch.models.MediaLog;
+import com.atmko.onmywatch.models.SeriesLog;
 
 import java.util.List;
 
 @Dao
-public interface MediaLogsDao {
+public interface SeriesLogsDao {
     @Insert()
-    void addMediaLog(MediaLog mediaLog);
+    void addMediaLog(SeriesLog mediaLog);
 
-    @Query("SELECT * FROM media_logs "
+    @Query("SELECT * FROM series_logs "
             + "WHERE parent_id = :parentId")
-    List<MediaLog> getAllLogsWithMediaIdAlt(String parentId);
+    List<SeriesLog> getAllLogsWithMediaIdAlt(String parentId);
 
-    @Query("SELECT * FROM media_logs "
+    @Query("SELECT * FROM series_logs "
             + "WHERE condition = 1 "
             + "ORDER BY timestamp ASC "
             + "LIMIT 10")
-    LiveData<List<MediaLog>> getUpcoming();
+    LiveData<List<SeriesLog>> getUpcoming();
 
-    @Query("SELECT * FROM media_logs "
+    @Query("SELECT * FROM series_logs "
             + "WHERE condition = 2 "
             + "ORDER BY timestamp DESC "
             + "LIMIT 10")
-    LiveData<List<MediaLog>> getAired();
+    LiveData<List<SeriesLog>> getAired();
 
-    @Query("SELECT * FROM media_logs "
+    @Query("SELECT * FROM series_logs "
             + "WHERE condition = 3 "
             + "LIMIT 10")
-    LiveData<List<MediaLog>> getUndated();
+    LiveData<List<SeriesLog>> getUndated();
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    void updateMediaLog(MediaLog mediaLog);
+    void updateMediaLog(SeriesLog mediaLog);
 
     @Delete
-    void deleteMediaLog(MediaLog mediaLog);
+    void deleteMediaLog(SeriesLog mediaLog);
 }

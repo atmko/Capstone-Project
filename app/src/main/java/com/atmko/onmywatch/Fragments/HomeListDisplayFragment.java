@@ -24,7 +24,7 @@ import com.atmko.onmywatch.adapters.MediaDataAdapter;
 import com.atmko.onmywatch.adapters.MediaLogAdapter;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MediaData;
-import com.atmko.onmywatch.models.MediaLog;
+import com.atmko.onmywatch.models.SeriesLog;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.view_models.HomeListDisplayViewModel;
@@ -184,7 +184,7 @@ public class HomeListDisplayFragment extends Fragment
                     selectedData = mMediaDataAdapter.getAdapterData().get(position);
 
                 } else {
-                    MediaLog mediaLog = mMediaLogAdapter.getAdapterData().get(position);
+                    SeriesLog mediaLog = mMediaLogAdapter.getAdapterData().get(position);
                     selectedData = AppDatabase.getInstance(getContext())
                             .seriesDataDao().getSeriesByIdAlt(mediaLog.parentId);
                 }
@@ -206,7 +206,7 @@ public class HomeListDisplayFragment extends Fragment
                                         .getAdapterData().get(position));
 
                     } else {
-                        MediaLog mediaLog = mMediaLogAdapter.getAdapterData().get(position);
+                        SeriesLog mediaLog = mMediaLogAdapter.getAdapterData().get(position);
                         SeriesData seriesData = AppDatabase.getLocalDatabase(getActivity())
                                 .seriesDataDao().getSeriesByIdAlt(mediaLog.parentId);
                         ((MasterActivity) getActivity())
