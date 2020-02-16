@@ -21,6 +21,9 @@ public interface SeriesLogsDao {
     @Insert()
     void addMediaLog(SeriesLog mediaLog);
 
+    @Query("SELECT * FROM series_logs")
+    List<SeriesLog> getAllLogsAlt();
+
     @Query("SELECT * FROM series_logs "
             + "WHERE parent_id = :parentId")
     List<SeriesLog> getAllLogsWithMediaIdAlt(String parentId);

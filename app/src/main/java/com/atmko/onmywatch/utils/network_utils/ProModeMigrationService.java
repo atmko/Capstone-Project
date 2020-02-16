@@ -25,10 +25,12 @@ import com.atmko.onmywatch.database.daos.FirebaseMovieDataRecordsDao;
 import com.atmko.onmywatch.database.daos.FirebaseMovieNotifiersDao;
 import com.atmko.onmywatch.database.daos.FirebaseSeriesDataDao;
 import com.atmko.onmywatch.database.daos.FirebaseSeriesDataRecordsDao;
+import com.atmko.onmywatch.database.daos.FirebaseSeriesLogsDao;
 import com.atmko.onmywatch.database.daos.FirebaseSeriesNotifiersDao;
 import com.atmko.onmywatch.database.daos.FirebaseUserDataDao;
 import com.atmko.onmywatch.database.daos.FirebaseUserListDao;
 import com.atmko.onmywatch.database.daos.FirebaseWatchListDao;
+import com.atmko.onmywatch.models.SeriesLog;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.MovieDataRecord;
 import com.atmko.onmywatch.models.MovieNotifier;
@@ -64,6 +66,7 @@ public class ProModeMigrationService extends JobIntentService {
     private List<SeriesDataRecord> localSeriesDataRecords;
     private List<MovieNotifier> localMovieNotifiers;
     private List<SeriesNotifier> localSeriesNotifiers;
+    private List<SeriesLog> localSeriesLogs;
 
     public ProModeMigrationService() {
     }
@@ -204,6 +207,15 @@ public class ProModeMigrationService extends JobIntentService {
     }
 
     public void onPushSeriesNotifiersComplete() {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                pushSeriesLogs();
+            }
+        });
+    }
+
+    public void onPushMediaLogsComplete() {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -603,6 +615,38 @@ public class ProModeMigrationService extends JobIntentService {
         FirebaseSeriesNotifiersDao.addSeriesNotifierBatch(batchCreateList);
 
         onPushSeriesNotifiersComplete();
+    }
+
+    //pushes locally saved mediaLogs to remote database
+    private void pushSeriesLogs() {
+        //get locally saved media logs
+        //get remotely saved media logs
+        //create list of remote media logs to compare with local media logs
+        //compare local and remote logs
+        //if locally saved log is not in remote database: add to batchCreateList
+        //batch create
+
+        //get locally saved media logs
+        localSeriesLogs = mLocalDatabase.seriesLogsDao().getAllLogsAlt();
+        //get remotely saved media logs
+        List<SeriesLog> remoteLogs = mRemoteDatabase.seriesLogsDao().getAllLogsAlt();
+
+        //create lists for batch writes
+        List<Map<String, Object>> batchCreateList = new ArrayList<>();
+
+        //compare local and remote logs
+        for (SeriesLog localMediaLog : localSeriesLogs) {
+            //if locally saved log is not in remote database: add to batchCreateList
+            if (!remoteLogs.contains(localMediaLog)) {
+                //add to batchCreateList for batch creates
+                batchCreateList.add(localMediaLog.parseLogToDataMap());
+            }
+        }
+
+        //batch create
+        FirebaseSeriesLogsDao.addLogBatch(batchCreateList);
+
+        onPushMediaLogsComplete();
     }
 
     private void deleteLocallySavedData() {
