@@ -166,17 +166,31 @@ public class HomeListDisplayFragment extends Fragment
             public void run() {
                 if (getActivity() == null) return;
 
-                if (mMediaDataAdapter.inPlaceholderMode()) {
-                    DiscoverParentFragment discoverParentFragment = DiscoverParentFragment.newInstance();
+               if (mMediaType == MEDIA_TYPE_MOVIE) {
+                   if (mMediaDataAdapter.inPlaceholderMode()) {
+                       DiscoverParentFragment discoverParentFragment = DiscoverParentFragment.newInstance();
 
-                    getActivity().getSupportFragmentManager().beginTransaction()
-                            .setCustomAnimations(R.anim.slide_down_entry, android.R.animator.fade_out)
-                            .add(R.id.master_fragments_container, discoverParentFragment,
-                                    DiscoverParentFragment.FRAGMENT_KEY)
-                            .commit();
+                       getActivity().getSupportFragmentManager().beginTransaction()
+                               .setCustomAnimations(R.anim.slide_down_entry, android.R.animator.fade_out)
+                               .add(R.id.master_fragments_container, discoverParentFragment,
+                                       DiscoverParentFragment.FRAGMENT_KEY)
+                               .commit();
 
-                    return;
-                }
+                       return;
+                   }
+               } else {
+                   if (mMediaLogAdapter.inPlaceholderMode()) {
+                       DiscoverParentFragment discoverParentFragment = DiscoverParentFragment.newInstance();
+
+                       getActivity().getSupportFragmentManager().beginTransaction()
+                               .setCustomAnimations(R.anim.slide_down_entry, android.R.animator.fade_out)
+                               .add(R.id.master_fragments_container, discoverParentFragment,
+                                       DiscoverParentFragment.FRAGMENT_KEY)
+                               .commit();
+
+                       return;
+                   }
+               }
 
                 MediaData selectedData;
 
