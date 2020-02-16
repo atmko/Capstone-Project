@@ -171,8 +171,8 @@ public class UpdateMediaWorker extends Worker {
         }
 
         //if watch status supports notifiers launch update notifier service
-        if (newMediaData.getWatchStatus() == MovieData.WATCH_STATUS_TO_WATCH
-                || newMediaData.getWatchStatus() == MovieData.WATCH_STATUS_WATCHING) {
+        if (newMediaData.getWatchStatus() == MediaData.WATCH_STATUS_TO_WATCH
+                || newMediaData.getWatchStatus() == MediaData.WATCH_STATUS_WATCHING) {
             Intent intent = new Intent(getApplicationContext(), UpdateNotifierService.class);
             intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(newMediaData));
             UpdateNotifierService.enqueueWork(mContext, intent);
