@@ -66,65 +66,40 @@ public class Converters {
     }
 
     @TypeConverter
-    public static Episode longToEpisode(long airDateTimestamp) {
-        Episode episode = new Episode();
-        Date date = new Date(airDateTimestamp);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
+    public static Episode stringToEpisode(String string) {
+        String[] strings = string.split(",");
 
-        String airDateString = GeneralUtils.parseIsoDateFromCalender(calendar);
+        String parentMediaId = !(strings[0].split(":")[1].equals(NULL_STRING))? strings[0].split(":")[1]: null;
+        int seasonNumber = Integer.valueOf(strings[1].split(":")[1]);
+        int episodeNumber = Integer.valueOf(strings[2].split(":")[1]);
+        String airDate = !(strings[3].split(":")[1]).equals(NULL_STRING)? strings[3].split(":")[1]: null;
 
-        try {
-            episode.setAirDate(airDateString);
-        } catch (ScheduledMedia.DateFormatException e) {
-            e.printStackTrace();
-        }
-
-        return episode;
+        return new Episode(parentMediaId, seasonNumber, episodeNumber, airDate);
     }
 
     @TypeConverter
-    public static long episodeToLong(Episode episode) {
-        if (episode == null) return 0;
-        return episode.getBestLocalAirDate() == null ? 0
-                : episode.getBestLocalAirDate().getTime();
-    }
+    public static String episodeToString(Episode episode) {
+        String parentMediaId = episode != null? episode.parentMediaId: NULL_STRING;
+        int seasonNumber = episode != null? episode.seasonNumber: 0;
+        int episodeNumber = episode != null? episode.episodeNumber: 0;
+        String airDate = episode != null? episode.getBestAvailableDateString(): NULL_STRING;
 
-//    @TypeConverter
-//    public static Episode stringToEpisode(String string) {
-//        String[] strings = string.split(",");
-//
-//        String parentMediaId = !(strings[0].split(":")[1].equals(NULL_STRING))? strings[0].split(":")[1]: null;
-//        int seasonNumber = Integer.valueOf(strings[1].split(":")[1]);
-//        int episodeNumber = Integer.valueOf(strings[2].split(":")[1]);
-//        String airDate = !(strings[3].split(":")[1]).equals(NULL_STRING)? strings[3].split(":")[1]: null;
-//
-//        return new Episode(parentMediaId, episodeNumber, airDate);
-//    }
-//
-//    @TypeConverter
-//    public static String episodeToString(Episode episode) {
-//        String parentMediaId = episode != null? episode.parentMediaId: NULL_STRING;
-////        int seasonNumber = episode != null? episode.seasonNumber: 0;
-//        int episodeNumber = episode != null? episode.episodeNumber: 0;
-//        String airDate = episode != null? episode.getBestAvailableDateString(): NULL_STRING;
-//
-//        return "parent_media_id" +
-//                ":" +
-//                parentMediaId +
-//                "," +
-////                "season_number" +
-////                ":" +
-////                seasonNumber +
-////                "," +
-//                "episode_number" +
-//                ":" +
-//                episodeNumber +
-//                "," +
-//                "air_date" +
-//                ":" +
-//                airDate;
-//    }
+        return "parent_media_id" +
+                ":" +
+                parentMediaId +
+                "," +
+                "season_number" +
+                ":" +
+                seasonNumber +
+                "," +
+                "episode_number" +
+                ":" +
+                episodeNumber +
+                "," +
+                "air_date" +
+                ":" +
+                airDate;
+    }
 
     @TypeConverter
     public static String searchTagsToString(List<SearchMediaTag> searchTags) {

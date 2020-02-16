@@ -414,7 +414,7 @@ public class FirebaseSeriesDataDao implements SeriesDataDao {
     @SuppressWarnings({"ConstantConditions", "unchecked"})
     static SeriesData parseDataMapToMediaData(DocumentSnapshot document) {
         Episode episode = document.get(NEXT_EPISODE_KEY) == null ? null
-                : Converters.longToEpisode((long) document.get(NEXT_EPISODE_KEY));
+                : Converters.stringToEpisode((String) document.get(NEXT_EPISODE_KEY));
 
         List<String> tagStrings = (ArrayList<String>) document.get(TAGS_KEY);
         List<SearchMediaTag> searchTags = new ArrayList<>();

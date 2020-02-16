@@ -142,7 +142,7 @@ public class SeriesData extends MediaData{
         firebaseMediaDataMap.put(SeriesApiConstants.RATING_KEY, getMaturityRating());
         firebaseMediaDataMap.put(TAGS_KEY, tagStrings);
         firebaseMediaDataMap.put(NEXT_EPISODE_KEY,
-                Converters.scheduledMediaToLong(getNextEpisodeToAir()));
+                Converters.episodeToString(getNextEpisodeToAir()));
 
         return firebaseMediaDataMap;
     }
