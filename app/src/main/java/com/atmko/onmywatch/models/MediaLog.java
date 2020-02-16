@@ -3,6 +3,7 @@ package com.atmko.onmywatch.models;
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 
 @Entity(tableName = "media_logs", primaryKeys = {"parent_id", "type", "condition"})
 public abstract class MediaLog {
@@ -23,4 +24,15 @@ public abstract class MediaLog {
     public String title;
     public String posterPath;
     @NonNull @ColumnInfo(name = "parent_id") public String parentId;
+
+    @Ignore
+    private String mUniqueExternalId;
+
+    public String getUniqueExternalId() {
+        return mUniqueExternalId;
+    }
+
+    public void setUniqueExternalId(String mDocumentId) {
+        this.mUniqueExternalId = mDocumentId;
+    }
 }

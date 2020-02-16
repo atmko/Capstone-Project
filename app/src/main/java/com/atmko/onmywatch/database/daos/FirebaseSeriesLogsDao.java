@@ -5,7 +5,9 @@
 package com.atmko.onmywatch.database.daos;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.models.MediaLog;
@@ -16,7 +18,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
@@ -32,7 +37,24 @@ public class FirebaseSeriesLogsDao implements SeriesLogsDao{
 
     @Override
     public void addMediaLog(SeriesLog mediaLog) {
+        DocumentReference documentReference = MasterActivity.getUserDbHomeReference()
+                .collection(SERIES_LOGS_COLLECTION_PATH)
+                .document();
 
+        mediaLog.setUniqueExternalId(documentReference.getId());
+
+        documentReference.set(mediaLog.parseLogToDataMap())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+        });
     }
 
     //TODO: remove update code from pro migrations since set method can handle create and updates
@@ -85,31 +107,158 @@ public class FirebaseSeriesLogsDao implements SeriesLogsDao{
 
     @Override
     public List<SeriesLog> getAllLogsWithMediaIdAlt(String parentId) {
-        return null;
-    }
+        List<SeriesLog> seriesLogs = new ArrayList<>();
+
+        Task<QuerySnapshot> task = MasterActivity.getUserDbHomeReference()
+                .collection(SERIES_LOGS_COLLECTION_PATH)
+                .get();
+
+        try {
+            QuerySnapshot snapshots = Tasks.await(task);
+            for (DocumentSnapshot documentSnapshot: snapshots.getDocuments()) {
+                SeriesLog mediaData = parseDataMapToMediaLog(documentSnapshot);
+                seriesLogs.add(mediaData);
+            }
+
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return seriesLogs;    }
 
     @Override
     public LiveData<List<SeriesLog>> getUpcoming() {
-        return null;
+        final MutableLiveData<List<SeriesLog>> liveData = new MutableLiveData<>();
+
+        Query query = MasterActivity.getUserDbHomeReference()
+                .collection(SERIES_LOGS_COLLECTION_PATH)
+                .whereEqualTo(MediaLog.CONDITION_KEY, MediaLog.CONDITION_UPCOMING)
+                .orderBy(MediaLog.TIMESTAMP_KEY, Query.Direction.DESCENDING)
+                .limit(10);
+
+        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
+                final List<SeriesLog> seriesLogs = new ArrayList<>();
+
+                if (snapshots != null) {
+                    List<DocumentSnapshot> documents = snapshots.getDocuments();
+
+                    for (DocumentSnapshot document: documents) {
+                        if (document.getData() == null) continue;
+
+                        SeriesLog seriesLog = parseDataMapToMediaLog(document);
+
+                        seriesLogs.add(seriesLog);
+                    }
+
+                    liveData.setValue(seriesLogs);
+
+                } else {
+                    liveData.setValue(seriesLogs);
+                }
+            }
+        });
+
+        return liveData;
     }
 
     @Override
     public LiveData<List<SeriesLog>> getAired() {
-        return null;
+        final MutableLiveData<List<SeriesLog>> liveData = new MutableLiveData<>();
+
+        Query query = MasterActivity.getUserDbHomeReference()
+                .collection(SERIES_LOGS_COLLECTION_PATH)
+                .whereEqualTo(MediaLog.CONDITION_KEY, MediaLog.CONDITION_AIRED)
+                .orderBy(MediaLog.TIMESTAMP_KEY, Query.Direction.DESCENDING)
+                .limit(10);
+
+        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
+                final List<SeriesLog> seriesLogs = new ArrayList<>();
+
+                if (snapshots != null) {
+                    List<DocumentSnapshot> documents = snapshots.getDocuments();
+
+                    for (DocumentSnapshot document: documents) {
+                        if (document.getData() == null) continue;
+
+                        SeriesLog seriesLog = parseDataMapToMediaLog(document);
+
+                        seriesLogs.add(seriesLog);
+                    }
+
+                    liveData.setValue(seriesLogs);
+
+                } else {
+                    liveData.setValue(seriesLogs);
+                }
+            }
+        });
+
+        return liveData;
     }
 
     @Override
     public LiveData<List<SeriesLog>> getUndated() {
-        return null;
+        final MutableLiveData<List<SeriesLog>> liveData = new MutableLiveData<>();
+
+        Query query = MasterActivity.getUserDbHomeReference()
+                .collection(SERIES_LOGS_COLLECTION_PATH)
+                .whereEqualTo(MediaLog.CONDITION_KEY, MediaLog.CONDITION_UNDATED)
+                .limit(10);
+
+        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
+                final List<SeriesLog> seriesLogs = new ArrayList<>();
+
+                if (snapshots != null) {
+                    List<DocumentSnapshot> documents = snapshots.getDocuments();
+
+                    for (DocumentSnapshot document: documents) {
+                        if (document.getData() == null) continue;
+
+                        SeriesLog seriesLog = parseDataMapToMediaLog(document);
+
+                        seriesLogs.add(seriesLog);
+                    }
+
+                    liveData.setValue(seriesLogs);
+
+                } else {
+                    liveData.setValue(seriesLogs);
+                }
+            }
+        });
+
+        return liveData;
     }
 
     @Override
     public void deleteMediaLog(SeriesLog mediaLog) {
+        MasterActivity.getUserDbHomeReference()
+                .collection(SERIES_LOGS_COLLECTION_PATH)
+                .document(mediaLog.getUniqueExternalId())
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
 
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
     }
 
     private static SeriesLog parseDataMapToMediaLog(DocumentSnapshot document) {
-        return new SeriesLog(
+        SeriesLog seriesLog = new SeriesLog(
                 (String) document.get(MediaLog.TYPE_KEY),
                 ((int) document.get(SeriesLog.SEASON_NUMBER_KEY)),
                 (int) document.get(SeriesLog.EPISODE_NUMBER_KEY),
@@ -120,5 +269,9 @@ public class FirebaseSeriesLogsDao implements SeriesLogsDao{
                 (String) document.get(MediaLog.PARENT_ID_KEY),
                 (boolean) document.get(SeriesLog.IS_BUNDLED_KEY)
         );
+
+        seriesLog.setUniqueExternalId(document.getId());
+
+        return seriesLog;
     }
 }
