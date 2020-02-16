@@ -201,6 +201,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 mSelectedWatchStatus = mWatchStatusRadioGroup.indexOfChild(findViewById(checkedId));
+                mMediaData.setWatchStatus(mSelectedWatchStatus);
 
             }
         });
@@ -527,14 +528,14 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
                     updateUserListRecords();
                     deleteSavedMedia();
                     deleteTags();
-                    deleteNotifiers();
 
                 } else {
                     saveTags();
                     updateMediaData();
                     updateUserListRecords();
-                    setNotifiers();
                 }
+
+                setNotifiers();
 
                 mNewWatchStatus = isMediaUnused? null : mSelectedWatchStatus;
 
@@ -773,25 +774,6 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
 
         } else if (mMediaType == MEDIA_TYPE_SERIES) {
             mDatabase.seriesDataDao().deleteSeriesData(((SeriesData) mSavedMedia));
-        }
-    }
-
-    private void deleteNotifiers() {
-        if (mMediaType == MEDIA_TYPE_MOVIE) {
-            List<MovieNotifier> movieNotifiers =
-                    mDatabase.movieNotifierDao().getNotifiersWithMediaIdAlt(mMediaData.getId());
-
-            for (MovieNotifier movieNotifier : movieNotifiers) {
-                mDatabase.movieNotifierDao().deleteNotifier(movieNotifier);
-            }
-
-        } else if (mMediaType == MEDIA_TYPE_SERIES) {
-            List<SeriesNotifier> seriesNotifiers =
-                    mDatabase.seriesNotifierDao().getNotifiersWithMediaIdAlt(mMediaData.getId());
-
-            for (SeriesNotifier seriesNotifier : seriesNotifiers) {
-                mDatabase.seriesNotifierDao().deleteNotifier(seriesNotifier);
-            }
         }
     }
 
