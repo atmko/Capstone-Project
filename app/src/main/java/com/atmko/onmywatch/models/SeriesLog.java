@@ -11,14 +11,8 @@ public class SeriesLog extends MediaLog {
     public static final String TYPE_SEASON = "Season";
     public static final String TYPE_EPISODE = "Episode";
 
-    public static final String TYPE_KEY = "type";
     public static final String SEASON_NUMBER_KEY = "season_number";
     public static final String EPISODE_NUMBER_KEY = "season";
-    public static final String CONDITION_KEY = "condition";
-    public static final String TIMESTAMP_KEY = "timestamp";
-    public static final String TITLE_KEY = "title";
-    public static final String POSTER_PATH_KEY = "poster_path";
-    public static final String PARENT_ID_KEY = "parent_id";
     public static final String IS_BUNDLED_KEY = "is_bundled";
 
     public int seasonNumber;

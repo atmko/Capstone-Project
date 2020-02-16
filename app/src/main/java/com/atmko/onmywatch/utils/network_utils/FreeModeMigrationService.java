@@ -23,6 +23,7 @@ import com.atmko.onmywatch.models.MovieDataRecord;
 import com.atmko.onmywatch.models.MovieNotifier;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesDataRecord;
+import com.atmko.onmywatch.models.SeriesLog;
 import com.atmko.onmywatch.models.SeriesNotifier;
 import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.models.WatchListModel;
@@ -172,6 +173,15 @@ public class FreeModeMigrationService extends JobIntentService {
     }
 
     public void onPullSeriesNotifiersComplete() {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                pullSeriesLogs();
+            }
+        });
+    }
+
+    public void onPullSeriesLogsComplete() {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -372,6 +382,30 @@ public class FreeModeMigrationService extends JobIntentService {
         }
 
         onPullSeriesNotifiersComplete();
+    }
+
+    //pull remotely saved series logs to local database
+    private void pullSeriesLogs() {
+        //get locally saved series logs
+        //get remotely saved series logs
+        //iterate through remote seriesLogSnapshots
+        //if local series data records do not contain remote series logs: add series log to local database
+
+        //get locally saved series logs
+        final List<SeriesLog> localSeriesLogs = mLocalDatabase.seriesLogsDao().getAllLogsAlt();
+        //get remotely saved series logs
+        List<SeriesLog> remoteLogs = mRemoteDatabase.seriesLogsDao().getAllLogsAlt();
+
+        //iterate through remote seriesLogSnapshots
+        //if local series logs do not contain remote series logs: add series log to local database
+        for (SeriesLog seriesLog: remoteLogs) {
+            //if local user lists do not contain remote user lists: add user list to local database
+            if (!localSeriesLogs.contains(seriesLog)) {
+                mLocalDatabase.seriesLogsDao().addMediaLog(seriesLog);
+            }
+        }
+
+        onPullSeriesLogsComplete();
     }
 
     private void deleteRemotelySavedData() {
