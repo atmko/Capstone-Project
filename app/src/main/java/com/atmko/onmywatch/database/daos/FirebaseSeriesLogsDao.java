@@ -258,12 +258,21 @@ public class FirebaseSeriesLogsDao implements SeriesLogsDao{
     }
 
     private static SeriesLog parseDataMapToMediaLog(DocumentSnapshot document) {
+        Long seasonNumberLong = (Long) document.get(SeriesLog.SEASON_NUMBER_KEY);
+        Long episodeNumberLong = (Long) document.get(SeriesLog.EPISODE_NUMBER_KEY);
+        Long conditionLong = (Long) document.get(SeriesLog.CONDITION_KEY);
+        Long timestampLong = (Long) document.get(SeriesLog.TIMESTAMP_KEY);
+        int seasonNumber = seasonNumberLong != null? seasonNumberLong.intValue(): 0;
+        int episodeNumber = episodeNumberLong != null? episodeNumberLong.intValue(): 0;
+        int condition = conditionLong != null? conditionLong.intValue(): 0;
+        int timestamp = timestampLong != null? timestampLong.intValue(): 0;
+
         SeriesLog seriesLog = new SeriesLog(
                 (String) document.get(MediaLog.TYPE_KEY),
-                ((int) document.get(SeriesLog.SEASON_NUMBER_KEY)),
-                (int) document.get(SeriesLog.EPISODE_NUMBER_KEY),
-                (int) document.get(MediaLog.CONDITION_KEY),
-                (long) document.get(MediaLog.TIMESTAMP_KEY),
+                seasonNumber,
+                episodeNumber,
+                condition,
+                timestamp,
                 (String) document.get(MediaLog.TITLE_KEY),
                 (String) document.get(MediaLog.POSTER_PATH_KEY),
                 (String) document.get(MediaLog.PARENT_ID_KEY),
