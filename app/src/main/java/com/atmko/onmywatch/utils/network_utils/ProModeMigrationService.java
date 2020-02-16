@@ -681,5 +681,9 @@ public class ProModeMigrationService extends JobIntentService {
         for (SeriesNotifier seriesNotifier: localSeriesNotifiers) {
             mLocalDatabase.seriesNotifierDao().deleteNotifier(seriesNotifier);
         }
+
+        for (SeriesLog seriesLog: localSeriesLogs) {
+            mLocalDatabase.seriesLogsDao().deleteMediaLog(seriesLog);
+        }
     }
 }
