@@ -136,7 +136,7 @@ public class FirebaseSeriesLogsDao implements SeriesLogsDao{
         Query query = MasterActivity.getUserDbHomeReference()
                 .collection(SERIES_LOGS_COLLECTION_PATH)
                 .whereEqualTo(MediaLog.CONDITION_KEY, MediaLog.CONDITION_UPCOMING)
-                .orderBy(MediaLog.TIMESTAMP_KEY, Query.Direction.DESCENDING)
+                .orderBy(MediaLog.TIMESTAMP_KEY, Query.Direction.ASCENDING)
                 .limit(10);
 
         query.addSnapshotListener(new EventListener<QuerySnapshot>() {
