@@ -4,6 +4,8 @@
 
 package com.atmko.onmywatch.database;
 
+import android.util.Log;
+
 import androidx.room.TypeConverter;
 
 import com.atmko.onmywatch.models.Episode;
@@ -69,10 +71,14 @@ public class Converters {
     public static Episode stringToEpisode(String string) {
         String[] strings = string.split(",");
 
-        String parentMediaId = !(strings[0].split(":")[1].equals(NULL_STRING))? strings[0].split(":")[1]: null;
+        String parentMediaId = strings[0].split(":")[1];
+        parentMediaId = !parentMediaId.equals(NULL_STRING)? parentMediaId: null;
+
         int seasonNumber = Integer.valueOf(strings[1].split(":")[1]);
         int episodeNumber = Integer.valueOf(strings[2].split(":")[1]);
-        String airDate = !(strings[3].split(":")[1]).equals(NULL_STRING)? strings[3].split(":")[1]: null;
+
+        String airDate = strings[3].split(":", 2)[1];
+        airDate = !airDate.equals(NULL_STRING)? airDate: null;
 
         return new Episode(parentMediaId, seasonNumber, episodeNumber, airDate);
     }
