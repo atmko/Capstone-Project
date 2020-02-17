@@ -221,7 +221,7 @@ public class HomeListDisplayFragment extends Fragment
 
                     } else {
                         SeriesLog mediaLog = mMediaLogAdapter.getAdapterData().get(position);
-                        SeriesData seriesData = AppDatabase.getLocalDatabase(getActivity())
+                        SeriesData seriesData = AppDatabase.getInstance(getActivity())
                                 .seriesDataDao().getSeriesByIdAlt(mediaLog.parentId);
                         ((MasterActivity) getActivity())
                                 .launchAddToListActivity(seriesData);
