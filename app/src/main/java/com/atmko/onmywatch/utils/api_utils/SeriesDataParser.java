@@ -154,25 +154,19 @@ public class SeriesDataParser {
         Map nextEpisodeToAirMap = ((Map) returnedMap.get(SeriesApiConstants.NEXT_EPISODE_TO_AIR_KEY));
 
         if (nextEpisodeToAirMap != null) {
-            Episode nextEpisode = new Episode();
-            String nextEpisodeAirDate = (String) nextEpisodeToAirMap.get(SeriesApiConstants.AIR_DATE_KEY);
+            String nextEpisodeAirDate = ((String) nextEpisodeToAirMap.get(TraktApiConstants.FIRST_AIRED_KEY));
 
             if (nextEpisodeAirDate != null) {
+                Episode nextEpisode = EpisodeParser.parseTraktEpisode(seriesData.getId(), returnedMap);
                 try {
                     nextEpisode.setAirDate(nextEpisodeAirDate);
-                } catch (ScheduledMedia.DateFormatException e) {
-                    e.printStackTrace();
-                }
-
-            } else {
-                try {
-                    nextEpisode.setAirDate(seriesData.getNextEpisodeToAir().getBestAvailableDateString());
+                    detailsSeriesData.setNextEpisodeToAir(nextEpisode);
                 } catch (ScheduledMedia.DateFormatException e) {
                     e.printStackTrace();
                 }
             }
-
-            detailsSeriesData.setNextEpisodeToAir(nextEpisode);
+        } else {
+            detailsSeriesData.setNextEpisodeToAir(seriesData.getNextEpisodeToAir());
         }
 
         //preserve the overwritten watch status, user rating, trakt id and unique external id
@@ -261,25 +255,17 @@ public class SeriesDataParser {
         Map returnedMap = gson.fromJson(returnedJSONString, Map.class);
 
         if (returnedMap != null) {
-            Episode nextEpisode = EpisodeParser.parseTraktEpisode(seriesData.getId(), returnedMap);
             String nextEpisodeAirDate = ((String) returnedMap.get(TraktApiConstants.FIRST_AIRED_KEY));
 
             if (nextEpisodeAirDate != null) {
+                Episode nextEpisode = EpisodeParser.parseTraktEpisode(seriesData.getId(), returnedMap);
                 try {
                     nextEpisode.setAirDate(nextEpisodeAirDate);
-                } catch (ScheduledMedia.DateFormatException e) {
-                    e.printStackTrace();
-                }
-
-            } else {
-                try {
-                    nextEpisode.setAirDate(seriesData.getNextEpisodeToAir().getBestAvailableDateString());
+                    seriesData.setNextEpisodeToAir(nextEpisode);
                 } catch (ScheduledMedia.DateFormatException e) {
                     e.printStackTrace();
                 }
             }
-
-            seriesData.setNextEpisodeToAir(nextEpisode);
         }
 
         return seriesData;
