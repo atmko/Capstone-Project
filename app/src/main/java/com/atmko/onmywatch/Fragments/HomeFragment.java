@@ -31,6 +31,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.SettingsActivity;
+import com.atmko.onmywatch.BillingActivity;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
 import com.atmko.onmywatch.view_models.MasterActivityViewModel;
@@ -331,6 +332,8 @@ public class HomeFragment extends Fragment {
 
         //get menu item
         MenuItem settingsItem = menu.findItem(R.id.settings);
+        MenuItem purchasesItem = menu.findItem(R.id.purchases);
+
         //set click listener
         settingsItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
@@ -338,6 +341,18 @@ public class HomeFragment extends Fragment {
                 //launch settings activity
                 Intent settingsIntent = new Intent(getContext(), SettingsActivity.class);
                 startActivity(settingsIntent);
+
+                return true;
+            }
+        });
+
+        //set click listener
+        purchasesItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                //launch settings activity
+                Intent billingIntent = new Intent(getActivity(), BillingActivity.class);
+                startActivity(billingIntent);
 
                 return true;
             }

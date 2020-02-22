@@ -6,6 +6,7 @@
 
     <!--options menu titles-->
     <string name="options_settings_title">Settings</string>
+    <string name="purchases_title">Purchases</string>
     <string name="go_premium_title">Go Premium</string>
     <!--options menu titles-->
 
@@ -49,6 +50,7 @@
     <string name="content_description_widget_settings_button">widget settings button</string>
     <string name="content_description_add_to_list_button">add to list</string>
     <string name="content_description_person_profile_image">person profile image</string>
+    <string name="content_description_purchase_item">purchase item</string>
     <!--CONTENT DESCRIPTIONS-->
 
     <!--VIEW TEXT-->
@@ -191,5 +193,36 @@
     <string name="trakt_season_episodes_url">https://api.trakt.tv/shows/{id}/seasons/{season_num}?extended=full</string>
     <!--trakt urls-->
     <!--URLS-->
+
+    <!--text purchases-->
+    <string name="test_successful_purchase_string">
+        {\"productId\": \"android.test.purchased\",
+        \"type\": \"inapp\",
+        \"price\": 24,
+        \"price_amount_micros\": 24000000,
+        \"price_currency_code\": \"usd\",
+        \"title\": \"test.purchased\",
+        \"description\": \"test successful purchase\"}
+    </string>
+
+    <string name="test_canceled_purchase_string">
+        {\"productId\": \"android.test.canceled\",
+        \"type\": \"inapp\",
+        \"price\": 24,
+        \"price_amount_micros\": 24000000,
+        \"price_currency_code\": \"usd\",
+        \"title\": \"test.canceled\",
+        \"description\": \"test canceled purchase\"}
+    </string>
+
+    <string name="test_item_unavailable_purchase_string">
+        {\"productId\": \"android.test.item_unavailable\",
+        \"type\": \"inapp\",
+        \"price\": 24,
+        \"price_amount_micros\": 24000000,
+        \"price_currency_code\": \"usd\",
+        \"title\": \"test.item_unavailable\",
+        \"description\": \"test item_unavailable purchase\"}
+    </string>
 
 </resources>

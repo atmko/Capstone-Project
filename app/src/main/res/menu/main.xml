@@ -9,4 +9,9 @@
         android:title="@string/options_settings_title"
         app:showAsAction="never"/>
 
+    <item
+        android:id="@+id/purchases"
+        android:orderInCategory="1"
+        android:title="@string/purchases_title"
+        app:showAsAction="never"/>
 </menu>

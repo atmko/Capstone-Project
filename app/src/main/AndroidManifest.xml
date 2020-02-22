@@ -87,6 +87,8 @@
             android:theme="@style/preferences_theme"
             android:launchMode="singleTop"/>
 
+        <activity android:name=".BillingActivity"/>
+
         <service android:name=".utils.network_utils.ProModeMigrationService"
             android:exported="false"
             android:description="@string/pro_migration_service_description"

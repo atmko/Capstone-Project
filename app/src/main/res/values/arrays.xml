@@ -221,4 +221,14 @@
         <item>New Trailer</item>
     </array>
 
+    <array name="skus">
+        <item>pro_mode</item>
+        <item>cloud_backup</item>
+    </array>
+
+    <array name="test_purchases">
+        <item>@string/test_successful_purchase_string</item>
+        <item>@string/test_canceled_purchase_string</item>
+        <item>@string/test_item_unavailable_purchase_string</item>
+    </array>
 </resources>
