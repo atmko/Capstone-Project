@@ -4,8 +4,6 @@
 
 package com.atmko.onmywatch.database;
 
-import android.util.Log;
-
 import androidx.room.TypeConverter;
 
 import com.atmko.onmywatch.models.Episode;
@@ -110,9 +108,11 @@ public class Converters {
     @TypeConverter
     public static String searchTagsToString(List<SearchMediaTag> searchTags) {
         StringBuilder stringOfTags = new StringBuilder();
-        for (SearchTag searchTag : searchTags) {
-            stringOfTags.append(searchTag.mTag);
-            stringOfTags.append(" ");
+        if (searchTags != null) {
+            for (SearchTag searchTag : searchTags) {
+                stringOfTags.append(searchTag.mTag);
+                stringOfTags.append(" ");
+            }
         }
 
         return stringOfTags.toString();
