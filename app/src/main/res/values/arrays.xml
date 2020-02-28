@@ -221,14 +221,17 @@
         <item>New Trailer</item>
     </array>
 
-    <array name="skus">
+    <array name="inapp_skus">
         <item>pro_mode</item>
+    </array>
+
+    <array name="subs_skus">
         <item>cloud_backup</item>
     </array>
 
-    <array name="test_purchases">
-        <item>@string/test_successful_purchase_string</item>
-        <item>@string/test_canceled_purchase_string</item>
-        <item>@string/test_item_unavailable_purchase_string</item>
+    <array name="test_purchase_skus">
+        <item>android.test.purchased</item>
+        <item>android.test.canceled</item>
+        <item>android.test.item_unavailable</item>
     </array>
 </resources>

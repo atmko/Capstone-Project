@@ -200,7 +200,7 @@
         \"type\": \"inapp\",
         \"price\": 24,
         \"price_amount_micros\": 24000000,
-        \"price_currency_code\": \"usd\",
+        \"price_currency_code\": \"USD\",
         \"title\": \"test.purchased\",
         \"description\": \"test successful purchase\"}
     </string>
@@ -210,7 +210,7 @@
         \"type\": \"inapp\",
         \"price\": 24,
         \"price_amount_micros\": 24000000,
-        \"price_currency_code\": \"usd\",
+        \"price_currency_code\": \"USD\",
         \"title\": \"test.canceled\",
         \"description\": \"test canceled purchase\"}
     </string>
@@ -220,7 +220,7 @@
         \"type\": \"inapp\",
         \"price\": 24,
         \"price_amount_micros\": 24000000,
-        \"price_currency_code\": \"usd\",
+        \"price_currency_code\": \"USD\",
         \"title\": \"test.item_unavailable\",
         \"description\": \"test item_unavailable purchase\"}
     </string>

@@ -82,6 +82,9 @@ public class SkuDetailsAdapter
         if (viewType == ONE_TIME_LAYOUT_ID) {
             resourceId = R.layout.object_one_time_layout;
         }
+        else if (viewType == SUBSCRIPTION_LAYOUT_ID) {
+            resourceId = R.layout.object_one_time_layout;
+        }
 
         View view = layoutInflater.inflate(resourceId, viewGroup, false);
 
