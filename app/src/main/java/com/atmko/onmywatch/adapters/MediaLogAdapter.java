@@ -37,13 +37,15 @@ public class MediaLogAdapter
     private final List<SeriesLog> mAdapterData;
     private final OnListItemClickListener mOnListItemClickListener;
     private boolean mInPlaceholderMode;
+    private int mPlaceHolderCapacity;
+    private int mPlaceHolderCount;
     private final Context mContext;
     private final int[] mParams;
 
     //layout ids
     private final int STANDARD_LAYOUT_ID = 1;
     private final int NO_POSTER_LAYOUT = 2;
-    private final int EMPTY_ADAPTER_ID = -1;
+    private final int PLACEHOLDER_ID = -1;
 
     private final String SEASON_SHORTHAND = "S";
     private final String EPISODE_SHORTHAND = "E";
@@ -54,6 +56,7 @@ public class MediaLogAdapter
         mOnListItemClickListener = clickListener;
         mAdapterData = new ArrayList<>();
         mInPlaceholderMode = false;
+        mPlaceHolderCapacity = 1;
         mContext = context;
         mParams = params;
     }
@@ -67,14 +70,29 @@ public class MediaLogAdapter
         return mInPlaceholderMode;
     }
 
+    public int getPlaceHolderCapacity() {
+        return mPlaceHolderCapacity;
+    }
+
+    public void setPlaceHolderCapacity(int placeholderCount) {
+        this.mPlaceHolderCapacity = placeholderCount;
+    }
+
     public void setInPlaceholderMode(boolean inPlaceholderMode) {
         mInPlaceholderMode = inPlaceholderMode;
 
         if (mInPlaceholderMode) {
-            mAdapterData.clear();
-            mAdapterData.add(null);
+            mPlaceHolderCount = mPlaceHolderCapacity - mAdapterData.size();
+            for (int i = 0; i < mPlaceHolderCount; i++) {
+                mAdapterData.add(null);
+            }
+
             notifyDataSetChanged();
         }
+    }
+
+    private int getPlaceholdersStartingIndex() {
+        return mAdapterData.size() - mPlaceHolderCount;
     }
 
     public class MediaLogAdapterViewHolder extends RecyclerView.ViewHolder
@@ -95,7 +113,7 @@ public class MediaLogAdapter
 
             itemView.setOnClickListener(this);
 
-            if (viewType == EMPTY_ADAPTER_ID) return;
+            if (viewType == PLACEHOLDER_ID) return;
 
             if (viewType == NO_POSTER_LAYOUT) {
                 posterReplacementTextView = itemView.findViewById(R.id.poster_replacement_text_view);
@@ -154,7 +172,7 @@ public class MediaLogAdapter
         } else if (viewType == NO_POSTER_LAYOUT) {
             resourceId = R.layout.no_poster_layout;
 
-        } else if (viewType == EMPTY_ADAPTER_ID) {
+        } else if (viewType == PLACEHOLDER_ID) {
             resourceId = R.layout.item_empty_list;
 
         } else {
@@ -169,7 +187,7 @@ public class MediaLogAdapter
 
     @Override
     public void onBindViewHolder(@NonNull MediaLogAdapterViewHolder adapterViewHolder, int position) {
-        if (adapterViewHolder.getItemViewType() == EMPTY_ADAPTER_ID) return;
+        if (adapterViewHolder.getItemViewType() == PLACEHOLDER_ID) return;
 
         //get current SeriesLog
         SeriesLog currentMediaLog = mAdapterData.get(position);
@@ -213,7 +231,7 @@ public class MediaLogAdapter
 
     @Override
     public int getItemViewType(int position) {
-        if (mInPlaceholderMode) return EMPTY_ADAPTER_ID;
+        if (mInPlaceholderMode && (position >= getPlaceholdersStartingIndex())) return PLACEHOLDER_ID;
 
         //if poster path != null
         boolean hasPoster = mAdapterData.get(position).posterPath != null;

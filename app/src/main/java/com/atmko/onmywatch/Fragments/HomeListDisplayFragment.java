@@ -102,12 +102,16 @@ public class HomeListDisplayFragment extends Fragment
         if (mMediaType == MEDIA_TYPE_MOVIE) {
             mMediaDataAdapter = new MediaDataAdapter(this, getActivity().getApplicationContext(),
                     CustomParams.getSearchParams(this));
+            mMediaDataAdapter
+                    .setPlaceHolderCapacity(getResources().getInteger(R.integer.search_column_span));
 
             mRecyclerView.setAdapter(mMediaDataAdapter);
 
         } else {
             mMediaLogAdapter = new MediaLogAdapter(this, getActivity().getApplicationContext(),
                     CustomParams.getSearchParams(this));
+            mMediaLogAdapter
+                    .setPlaceHolderCapacity(getResources().getInteger(R.integer.search_column_span));
 
             mRecyclerView.setAdapter(mMediaLogAdapter);
         }
@@ -139,23 +143,25 @@ public class HomeListDisplayFragment extends Fragment
 
     private void populateAndNotifyAdapter(List mediaDataList) {
         if (mMediaType == MEDIA_TYPE_MOVIE) {
-            if (mediaDataList.size() == 0) {
+            mMediaDataAdapter.getAdapterData().clear();
+            mMediaDataAdapter.addAdapterData(mediaDataList);
+
+            if (mediaDataList.size() < mMediaDataAdapter.getPlaceHolderCapacity()) {
                 mMediaDataAdapter.setInPlaceholderMode(true);
 
             } else {
                 mMediaDataAdapter.setInPlaceholderMode(false);
-                mMediaDataAdapter.getAdapterData().clear();
-                mMediaDataAdapter.addAdapterData(mediaDataList);
             }
 
         } else {
-            if (mediaDataList.size() == 0) {
+            mMediaLogAdapter.getAdapterData().clear();
+            mMediaLogAdapter.addAdapterData(mediaDataList);
+
+            if (mediaDataList.size() < mMediaLogAdapter.getPlaceHolderCapacity()) {
                 mMediaLogAdapter.setInPlaceholderMode(true);
 
             } else {
                 mMediaLogAdapter.setInPlaceholderMode(false);
-                mMediaLogAdapter.getAdapterData().clear();
-                mMediaLogAdapter.addAdapterData(mediaDataList);
             }
         }
     }
