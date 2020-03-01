@@ -41,8 +41,6 @@ import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.PersonData;
 import com.atmko.onmywatch.models.SimpleIdlingResource;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
-import com.atmko.onmywatch.utils.network_utils.FreeModeMigrationService;
-import com.atmko.onmywatch.utils.network_utils.ProModeMigrationService;
 import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
 import com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker;
 
@@ -62,11 +60,6 @@ import org.parceler.Parcels;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import static com.atmko.onmywatch.database.daos.FirebaseUserDataDao.MIGRATION_CLOUD;
-import static com.atmko.onmywatch.database.daos.FirebaseUserDataDao.MIGRATION_LOCAL;
-import static com.atmko.onmywatch.database.daos.FirebaseUserDataDao.MIGRATION_TO_CLOUD;
-import static com.atmko.onmywatch.database.daos.FirebaseUserDataDao.MIGRATION_TO_LOCAL;
 
 public class MasterActivity extends AppCompatActivity {
     private static final int FREE_MODE_LIST_COUNT_LIMIT = 3;
@@ -152,51 +145,10 @@ public class MasterActivity extends AppCompatActivity {
 
                 sIsProMode = isProMode;
 
+                loadUi();
+
                 if (!sIsProMode) {
                     initializeAdMob();
-                }
-            }
-        });
-
-        masterActivityViewModel.getAllowCloudBackupLiveData().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean allowCloudBackup) {
-                if (allowCloudBackup != null) {
-                    MasterActivity.sAllowCloudBackup = allowCloudBackup;
-                }
-            }
-        });
-
-        masterActivityViewModel.getMigrationLiveData().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(String migration) {
-                if (migration.equals(MIGRATION_CLOUD) || migration.equals(MIGRATION_LOCAL)) {
-                    if (mSavedInstanceState == null) {
-                        loadUi();
-                    }
-
-                    //start background work managers
-                    startWorkers();
-
-                } else {
-                    //TODO: set busy screen while migration process active
-                    Intent userTierMigrationIntent;
-
-                    //start migration foreground service for appropriate user tier
-                    if (migration.equals(MIGRATION_TO_CLOUD)) {
-                        userTierMigrationIntent = new Intent(MasterActivity.this, ProModeMigrationService.class);
-                        userTierMigrationIntent.setAction(migration);
-
-                        startForegroundService(userTierMigrationIntent);
-                        ProModeMigrationService.enqueueWork(MasterActivity.this, userTierMigrationIntent);
-
-                    } else if (migration.equals(MIGRATION_TO_LOCAL)) {
-                        userTierMigrationIntent = new Intent(MasterActivity.this, FreeModeMigrationService.class);
-                        userTierMigrationIntent.setAction(migration);
-
-                        startForegroundService(userTierMigrationIntent);
-                        FreeModeMigrationService.enqueueWork(MasterActivity.this, userTierMigrationIntent);
-                    }
                 }
             }
         });
@@ -347,7 +299,6 @@ public class MasterActivity extends AppCompatActivity {
 
     private void createNotificationChannels() {
         MediaNotifier.createReleaseNotificationChannel(this);
-        ProModeMigrationService.createMigrationNotificationChannel(getApplicationContext());
     }
 
     private void startWorkers() {

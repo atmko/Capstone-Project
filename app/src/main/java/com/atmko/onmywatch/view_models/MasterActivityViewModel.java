@@ -110,14 +110,6 @@ public class MasterActivityViewModel extends AndroidViewModel {
         return isProModeLiveData;
     }
 
-    public LiveData<Boolean> getAllowCloudBackupLiveData() {
-        return allowCloudBackupLiveData;
-    }
-
-    public LiveData<String> getMigrationLiveData() {
-        return migrationLiveData;
-    }
-
     private static class DataBaseIntegrityException extends Exception {
         final static Integer FEATURE_PERMISSIONS_NONEXISTENT = 0;
         final static Integer PRO_MODE_KEY_NONEXISTENT = 1;

@@ -18,7 +18,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MovieDataRecord;
 import com.atmko.onmywatch.models.SearchListTag;
-import com.atmko.onmywatch.models.SearchTag;
 import com.atmko.onmywatch.models.SeriesDataRecord;
 import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;

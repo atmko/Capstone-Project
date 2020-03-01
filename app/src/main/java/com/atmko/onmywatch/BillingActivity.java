@@ -45,7 +45,6 @@ public class BillingActivity extends AppCompatActivity implements
     BillingClient mBillingClient;
     SkuDetailsAdapter mAdapter;
     Button inAppButton;
-    Button subsButton;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,7 +68,6 @@ public class BillingActivity extends AppCompatActivity implements
         mAdapter = new SkuDetailsAdapter(this, this);
         recyclerView.setAdapter(mAdapter);
         inAppButton = findViewById(R.id.inappButton);
-        subsButton = findViewById(R.id.subsButton);
     }
 
     private LinearLayoutManager configureLayoutManager() {
@@ -142,44 +140,10 @@ public class BillingActivity extends AppCompatActivity implements
             }
         });
 
-        subsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //get in app purchases to check for unverified, unacknowledged and pending transactions
-                Purchase.PurchasesResult subsResult = mBillingClient.queryPurchases(BillingClient.SkuType.SUBS);
-                List<Purchase> subsPurchases = subsResult.getPurchasesList();
-
-                if (subsResult.getResponseCode() == BillingClient.BillingResponseCode.OK
-                        && subsPurchases != null) {
-                    if (subsPurchases.size() == 0) showSnackBarMessage("no purchases");
-
-                    for (Purchase purchase : subsPurchases) {
-                        testCancelSubscription(purchase);
-                    }
-
-                } else {
-                    showSnackBarMessage(subsResult.getBillingResult().getDebugMessage());
-                }
-            }
-        });
-
         //if connection successful
         if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
             // The BillingClient is ready. You can query purchases here.
             mBillingClient.querySkuDetailsAsync(getInappSkuDetailsParams(), new SkuDetailsResponseListener() {
-                @Override
-                public void onSkuDetailsResponse(BillingResult billingResult, List<SkuDetails> skuDetails) {
-                    if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK
-                            && skuDetails != null) {
-                        mAdapter.addAdapterData(skuDetails);
-
-                    } else {
-                        showSnackBarMessage(billingResult.getDebugMessage());
-                    }
-                }
-            });
-
-            mBillingClient.querySkuDetailsAsync(getSubsSkuDetailsParams(), new SkuDetailsResponseListener() {
                 @Override
                 public void onSkuDetailsResponse(BillingResult billingResult, List<SkuDetails> skuDetails) {
                     if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK
@@ -244,11 +208,6 @@ public class BillingActivity extends AppCompatActivity implements
                     Log.d(TAG, "handling pro_mode");
                     handlePurchase(purchase);
 
-                } else if (purchase.getSku().equals("all_in_one")
-                        && (!MasterActivity.sIsProMode || !MasterActivity.sAllowCloudBackup)) {
-                    Log.d(TAG, "handling all_in_one");
-                    handlePurchase(purchase);
-
                 } else if (purchase.getSku().equals("android.test.purchased")
                         && (!MasterActivity.sIsProMode || !MasterActivity.sAllowCloudBackup)) {
                     Log.d(TAG, "handling android.test.purchased");
@@ -258,22 +217,6 @@ public class BillingActivity extends AppCompatActivity implements
         } else {
             showSnackBarMessage(inAppResult.getBillingResult().getDebugMessage());
         }
-
-        //get subs purchases to check for unverified, unacknowledged and pending transactions
-        Purchase.PurchasesResult subsResult = mBillingClient.queryPurchases(BillingClient.SkuType.SUBS);
-        List<Purchase> subsPurchases = subsResult.getPurchasesList();
-
-        if (subsResult.getResponseCode() == BillingClient.BillingResponseCode.OK
-                && subsPurchases != null) {
-            for (Purchase purchase : subsPurchases) {
-                if (purchase.getSku().equals("cloud_backup") && !MasterActivity.sAllowCloudBackup) {
-                    Log.d(TAG, "handling cloud_backup");
-                    handlePurchase(purchase);
-                }
-            }
-        } else {
-            showSnackBarMessage(subsResult.getBillingResult().getDebugMessage());
-        }
     }
 
     public SkuDetailsParams getInappSkuDetailsParams() {
@@ -281,14 +224,6 @@ public class BillingActivity extends AppCompatActivity implements
         SkuDetailsParams.Builder skuDetailsParamsBuilder = SkuDetailsParams.newBuilder();
         skuDetailsParamsBuilder.setSkusList(skuList);
         skuDetailsParamsBuilder.setType(BillingClient.SkuType.INAPP);
-        return skuDetailsParamsBuilder.build();
-    }
-
-    public SkuDetailsParams getSubsSkuDetailsParams() {
-        List<String> skuList = Arrays.asList(getResources().getStringArray(R.array.subs_skus));
-        SkuDetailsParams.Builder skuDetailsParamsBuilder = SkuDetailsParams.newBuilder();
-        skuDetailsParamsBuilder.setSkusList(skuList);
-        skuDetailsParamsBuilder.setType(BillingClient.SkuType.SUBS);
         return skuDetailsParamsBuilder.build();
     }
 
@@ -349,29 +284,6 @@ public class BillingActivity extends AppCompatActivity implements
                 Log.d(TAG, e.getMessage());
                 Log.d(TAG, "Purchase Verification Failed");
                 showSnackBarMessage("sever down, purchase will complete when server available");
-            }
-        });
-    }
-
-    private void testCancelSubscription(Purchase purchase) {
-        List<String> credentials = new ArrayList<>();
-        credentials.add(purchase.getSku());
-        credentials.add(purchase.getPurchaseToken());
-        FirebaseFunctions.getInstance().getHttpsCallable("testCancelSubscription").call(credentials)
-                .addOnSuccessListener(new OnSuccessListener<HttpsCallableResult>() {
-                    @Override
-                    public void onSuccess(HttpsCallableResult httpsCallableResult) {
-                        if (httpsCallableResult.getData() == null) {
-                            showSnackBarMessage("sub cleared");
-
-                        } else {
-                            showSnackBarMessage("sub canceled");
-                        }
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d(TAG, "Cancel Subscription Failed");
             }
         });
     }

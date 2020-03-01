@@ -13,7 +13,6 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.database.daos.SeriesLogsDao;
 import com.atmko.onmywatch.database.daos.MovieDataDao;
@@ -53,44 +52,26 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public static AppDatabase getInstance(Context context) {
         if (sInstance != null) {
-            if (MasterActivity.sAllowCloudBackup && sInstance instanceof FirebaseDatabase) {
-                return sInstance;
-
-            } else if (!MasterActivity.sAllowCloudBackup && !(sInstance instanceof FirebaseDatabase)) {
-                return sInstance;
-            }
+            return sInstance;
         }
 
         synchronized (LOCK) {
-            if (MasterActivity.sAllowCloudBackup) {
-                sInstance = new FirebaseDatabase();
-
-            } else {
-                RoomDatabase.Callback callback = databaseInitializer(context);
-                sInstance = Room.databaseBuilder(context, AppDatabase.class, DATABASE_NAME)
-                        //TODO remove allowance of main thread queries
-                        .addCallback(callback)
-                        .build();
-            }
+            RoomDatabase.Callback callback = databaseInitializer(context);
+            sInstance = Room.databaseBuilder(context, AppDatabase.class, DATABASE_NAME)
+                    //TODO remove allowance of main thread queries
+                    .addCallback(callback)
+                    .build();
 
             return sInstance;
         }
     }
 
     public static AppDatabase getLocalDatabase(Context context) {
-        if (sInstance != null &&  !(sInstance instanceof FirebaseDatabase)) {
+        if (sInstance != null) {
             return sInstance;
         }
 
         return Room.databaseBuilder(context, AppDatabase.class, DATABASE_NAME).build();
-    }
-
-    public static FirebaseDatabase getRemoteDatabase() {
-        if ((sInstance instanceof FirebaseDatabase)) {
-            return ((FirebaseDatabase) sInstance);
-        }
-
-        return new FirebaseDatabase();
     }
 
     public static void setDatabase(AppDatabase database) {

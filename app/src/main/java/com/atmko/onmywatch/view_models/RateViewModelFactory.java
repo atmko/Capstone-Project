@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.database.AppDatabase;
 
 public class RateViewModelFactory extends ViewModelProvider.NewInstanceFactory {

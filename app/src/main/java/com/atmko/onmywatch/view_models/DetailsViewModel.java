@@ -13,8 +13,6 @@ import androidx.lifecycle.ViewModel;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MediaNotifier;
-import com.atmko.onmywatch.models.MovieNotifier;
-import com.atmko.onmywatch.models.SeriesNotifier;
 
 import java.util.List;
 
