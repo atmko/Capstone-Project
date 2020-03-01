@@ -146,6 +146,8 @@ public class MasterActivity extends AppCompatActivity {
                 sIsProMode = isProMode;
 
                 loadUi();
+                //start background work managers
+                startWorkers();
 
                 if (!sIsProMode) {
                     initializeAdMob();
