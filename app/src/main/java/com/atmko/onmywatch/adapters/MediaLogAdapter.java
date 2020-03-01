@@ -5,6 +5,7 @@
 package com.atmko.onmywatch.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -113,7 +114,10 @@ public class MediaLogAdapter
 
             itemView.setOnClickListener(this);
 
-            if (viewType == PLACEHOLDER_ID) return;
+            if (viewType == PLACEHOLDER_ID) {
+                moviePosterImageView = itemView.findViewById(R.id.posterImageView);
+                return;
+            }
 
             if (viewType == NO_POSTER_LAYOUT) {
                 posterReplacementTextView = itemView.findViewById(R.id.poster_replacement_text_view);
@@ -177,7 +181,6 @@ public class MediaLogAdapter
 
         } else {
             resourceId = R.layout.object_media_data;
-
         }
 
         View view = layoutInflater.inflate(resourceId, viewGroup, false);
@@ -187,7 +190,22 @@ public class MediaLogAdapter
 
     @Override
     public void onBindViewHolder(@NonNull MediaLogAdapterViewHolder adapterViewHolder, int position) {
-        if (adapterViewHolder.getItemViewType() == PLACEHOLDER_ID) return;
+        if (adapterViewHolder.getItemViewType() == PLACEHOLDER_ID
+                && position >= getPlaceholdersStartingIndex()) {
+
+            int normalizer = position % mPlaceHolderCapacity;
+            if (normalizer == 0) {
+                adapterViewHolder.moviePosterImageView.setBackground(mContext.getResources().getDrawable(R.drawable.placeholder_img_1));
+
+            } else  if (normalizer == 1) {
+                adapterViewHolder.moviePosterImageView.setBackground(mContext.getResources().getDrawable(R.drawable.placeholder_img_2));
+
+            } else if (normalizer == 2) {
+                adapterViewHolder.moviePosterImageView.setBackground(mContext.getResources().getDrawable(R.drawable.placeholder_img_3));
+            }
+
+            return;
+        }
 
         //get current SeriesLog
         SeriesLog currentMediaLog = mAdapterData.get(position);

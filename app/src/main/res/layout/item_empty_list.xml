@@ -8,7 +8,7 @@
     <ImageView
         android:id="@+id/posterImageView"
         android:src="@drawable/ic_discover_white"
-        android:background="@drawable/poster_image_placeholder"
+        android:background="@drawable/placeholder_img_1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@string/poster_description"
