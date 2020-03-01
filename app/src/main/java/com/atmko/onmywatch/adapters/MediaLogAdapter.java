@@ -5,7 +5,6 @@
 package com.atmko.onmywatch.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +36,6 @@ public class MediaLogAdapter
     private final Fragment mFragment;
     private final List<SeriesLog> mAdapterData;
     private final OnListItemClickListener mOnListItemClickListener;
-    private boolean mInPlaceholderMode;
     private int mPlaceHolderCapacity;
     private int mPlaceHolderCount;
     private final Context mContext;
@@ -56,7 +54,6 @@ public class MediaLogAdapter
         mFragment = ((Fragment) clickListener);
         mOnListItemClickListener = clickListener;
         mAdapterData = new ArrayList<>();
-        mInPlaceholderMode = false;
         mPlaceHolderCapacity = 1;
         mContext = context;
         mParams = params;
@@ -67,8 +64,8 @@ public class MediaLogAdapter
         void onAddButtonClick(int position);
     }
 
-    public boolean inPlaceholderMode() {
-        return mInPlaceholderMode;
+    public boolean inPlaceholderMode(int position) {
+        return position >= getPlaceholdersStartingIndex();
     }
 
     public int getPlaceHolderCapacity() {
@@ -79,17 +76,13 @@ public class MediaLogAdapter
         this.mPlaceHolderCapacity = placeholderCount;
     }
 
-    public void setInPlaceholderMode(boolean inPlaceholderMode) {
-        mInPlaceholderMode = inPlaceholderMode;
-
-        if (mInPlaceholderMode) {
-            mPlaceHolderCount = mPlaceHolderCapacity - mAdapterData.size();
-            for (int i = 0; i < mPlaceHolderCount; i++) {
-                mAdapterData.add(null);
-            }
-
-            notifyDataSetChanged();
+    public void setPlaceholders() {
+        mPlaceHolderCount = mPlaceHolderCapacity - mAdapterData.size();
+        for (int i = 0; i < mPlaceHolderCount; i++) {
+            mAdapterData.add(null);
         }
+
+        notifyDataSetChanged();
     }
 
     private int getPlaceholdersStartingIndex() {
@@ -249,7 +242,7 @@ public class MediaLogAdapter
 
     @Override
     public int getItemViewType(int position) {
-        if (mInPlaceholderMode && (position >= getPlaceholdersStartingIndex())) return PLACEHOLDER_ID;
+        if (inPlaceholderMode(position)) return PLACEHOLDER_ID;
 
         //if poster path != null
         boolean hasPoster = mAdapterData.get(position).posterPath != null;

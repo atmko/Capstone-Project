@@ -146,23 +146,13 @@ public class HomeListDisplayFragment extends Fragment
             mMediaDataAdapter.getAdapterData().clear();
             mMediaDataAdapter.addAdapterData(mediaDataList);
 
-            if (mediaDataList.size() < mMediaDataAdapter.getPlaceHolderCapacity()) {
-                mMediaDataAdapter.setInPlaceholderMode(true);
-
-            } else {
-                mMediaDataAdapter.setInPlaceholderMode(false);
-            }
+            mMediaDataAdapter.setPlaceholders();
 
         } else {
             mMediaLogAdapter.getAdapterData().clear();
             mMediaLogAdapter.addAdapterData(mediaDataList);
 
-            if (mediaDataList.size() < mMediaLogAdapter.getPlaceHolderCapacity()) {
-                mMediaLogAdapter.setInPlaceholderMode(true);
-
-            } else {
-                mMediaLogAdapter.setInPlaceholderMode(false);
-            }
+            mMediaLogAdapter.setPlaceholders();
         }
     }
     @Override
@@ -173,7 +163,7 @@ public class HomeListDisplayFragment extends Fragment
                 if (getActivity() == null) return;
 
                if (mMediaType == MEDIA_TYPE_MOVIE) {
-                   if (mMediaDataAdapter.inPlaceholderMode()) {
+                   if (mMediaDataAdapter.inPlaceholderMode(position)) {
                        DiscoverParentFragment discoverParentFragment = DiscoverParentFragment.newInstance();
 
                        getActivity().getSupportFragmentManager().beginTransaction()
@@ -185,7 +175,7 @@ public class HomeListDisplayFragment extends Fragment
                        return;
                    }
                } else {
-                   if (mMediaLogAdapter.inPlaceholderMode()) {
+                   if (mMediaLogAdapter.inPlaceholderMode(position)) {
                        DiscoverParentFragment discoverParentFragment = DiscoverParentFragment.newInstance();
 
                        getActivity().getSupportFragmentManager().beginTransaction()

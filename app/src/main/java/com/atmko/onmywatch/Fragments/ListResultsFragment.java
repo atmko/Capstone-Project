@@ -371,12 +371,12 @@ public class ListResultsFragment extends Fragment
 
     private void populateAndNotifyAdapter(List mediaDataList) {
         if (mediaDataList.size() == 0) {
-            mDataAdapter.setInPlaceholderMode(true);
+            mDataAdapter.setPlaceholders();
 
         } else {
-            mDataAdapter.setInPlaceholderMode(false);
             mDataAdapter.getAdapterData().clear();
             mDataAdapter.addAdapterData(mediaDataList);
+            mDataAdapter.setPlaceholders();
 
             if (mDataAdapter.getAdapterData().size() > 0 ) loadDetailFragment();
         }
@@ -414,7 +414,7 @@ public class ListResultsFragment extends Fragment
 
     @Override
     public void onItemClick(int position) {
-        if (mDataAdapter.inPlaceholderMode()) {
+        if (mDataAdapter.inPlaceholderMode(position)) {
             DiscoverParentFragment discoverParentFragment = DiscoverParentFragment.newInstance();
 
             getActivity().getSupportFragmentManager().beginTransaction()
