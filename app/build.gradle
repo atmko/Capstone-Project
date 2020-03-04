@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
@@ -85,8 +86,11 @@ dependencies {
     //firebase authentication UI
     implementation 'com.firebaseui:firebase-ui-auth:4.3.1'
 
+    //firebase storage
+    implementation 'com.google.firebase:firebase-storage:19.1.1'
+
     //firebase authentication
-    implementation 'com.google.firebase:firebase-auth:19.1.0'
+    implementation 'com.google.firebase:firebase-auth:19.2.0'
 
     // (WorkManager)
     implementation "androidx.work:work-runtime:2.2.0"

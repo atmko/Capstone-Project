@@ -42,6 +42,8 @@ import com.atmko.onmywatch.models.PersonData;
 import com.atmko.onmywatch.models.SimpleIdlingResource;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
+import com.atmko.onmywatch.utils.network_utils.work_manager_workers.BackupWorker;
+import com.atmko.onmywatch.utils.network_utils.RestoreService;
 import com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker;
 
 import com.atmko.onmywatch.view_models.MasterActivityViewModel;
@@ -74,6 +76,7 @@ public class MasterActivity extends AppCompatActivity {
     public static final String SEARCH_BAR_VISIBILITY_KEY = "visible_search_bar";
 
     private static final String UPDATE_MEDIA_WORKER_KEY = "update_media_worker";
+    private static final String BACKUP_WORKER_KEY = "backup worker";
     private static final int REPEAT_INTERVAL = 2;
     private static final int INITIAL_DELAY = 15;
 
@@ -206,6 +209,10 @@ public class MasterActivity extends AppCompatActivity {
 
         //if returning from firebase sign in activity, load the UI
         if (requestCode == SIGN_IN_REQUEST_CODE) {
+            //restore backup;
+            Intent intent = new Intent(getApplicationContext(), RestoreService.class);
+            RestoreService.enqueueWork(getApplicationContext(), intent);
+
             //observe user data via view model
             observeData();
         }
@@ -298,6 +305,7 @@ public class MasterActivity extends AppCompatActivity {
     }
 
     private void createNotificationChannels() {
+        BackupWorker.createBackupNotificationChannel(this);
         MediaNotifier.createReleaseNotificationChannel(this);
     }
 
@@ -315,6 +323,15 @@ public class MasterActivity extends AppCompatActivity {
 
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
                 UPDATE_MEDIA_WORKER_KEY, ExistingPeriodicWorkPolicy.KEEP, updateMediaDataRequest);
+
+        PeriodicWorkRequest backupRequest = new PeriodicWorkRequest.Builder(
+                BackupWorker.class, REPEAT_INTERVAL, TimeUnit.HOURS)
+                .setConstraints(constraints)
+                .setInitialDelay(INITIAL_DELAY, TimeUnit.MINUTES)
+                .build();
+
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+                BACKUP_WORKER_KEY, ExistingPeriodicWorkPolicy.KEEP, backupRequest);
     }
 
     @Override

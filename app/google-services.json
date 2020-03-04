@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "815334132299-rp9r8flbbdk1vpqpopckucid33v4ubtn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.atmko.onmywatch",
+            "certificate_hash": "99e75f5d340c0741129dc51df8150b1512038d87"
+          }
+        },
+        {
           "client_id": "815334132299-bodu8ql19g6bisimbktecvma32q05vt0.apps.googleusercontent.com",
           "client_type": 3
         }
