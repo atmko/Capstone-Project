@@ -55,6 +55,7 @@ import com.atmko.onmywatch.utils.api_utils.MovieDataParser;
 import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
 import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
 import com.atmko.onmywatch.utils.api_utils.SeriesDataParser;
+import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.utils.network_utils.TraktApiConstants;
 import com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker;
 import com.atmko.onmywatch.view_models.DetailsViewModel;
@@ -566,7 +567,10 @@ public class DetailsFragment extends Fragment {
 
             @Override
             public void onError(ANError anError) {
-                if (anError.getErrorCode() == ApiConstants.TOO_MANY_REQUESTS) {
+                if (anError.getErrorCode() == 0) {
+                    loadOfflineMode();
+
+                } else if (anError.getErrorCode() == ApiConstants.TOO_MANY_REQUESTS) {
                     retryAfterCoolDOwn(anError, COOL_DOWN_REQUEST_TMDB_ID);
 
                     return;
@@ -677,6 +681,38 @@ public class DetailsFragment extends Fragment {
             mCountDownTextView.setText(countDown);
             mCountDownTextView.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void loadOfflineMode() {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                AppDatabase database = AppDatabase.getInstance(getContext());
+                if (mMediaData instanceof MovieData) {
+                    mMediaData = database.movieDataDao().getMovieByIdAlt(mMediaData.getId());
+
+                } else {
+                    mMediaData = database.seriesDataDao().getSeriesByIdAlt(mMediaData.getId());
+                }
+
+                if (mMediaData != null) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mMediaData instanceof MovieData) {
+                                setMovieCountDown();
+
+                            } else {
+                                setSeriesCountDown();
+                            }
+
+                            setDetailViewValues();
+                            populateDetailExtrasAdapter();
+                        }
+                    });
+                }
+            }
+        });
     }
 
     private void retryAfterCoolDOwn(ANError anError, final int coolDownRequestId) {

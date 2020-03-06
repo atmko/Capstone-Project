@@ -157,7 +157,6 @@ public class HomeSpotlightFragment extends Fragment implements
                     dataList =
                             SeriesDataParser.parseData(returnedJSONString,
                                     null, mSearchPreferences);
-
                 }
 
                 //refresh adapter data

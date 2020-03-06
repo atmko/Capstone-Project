@@ -208,7 +208,12 @@ abstract public class MediaData {
     }
 
     public ArrayList<Map<String, String>> getVideos() {
-        return mVideos;
+        if (mVideos == null) {
+            return new ArrayList<>();
+
+        } else {
+            return mVideos;
+        }
     }
 
     public void setVideos(ArrayList<Map<String, String>> videoList) {

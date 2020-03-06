@@ -7,6 +7,7 @@ package com.atmko.onmywatch.Fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +52,7 @@ public class ReviewsFragment extends Fragment implements ReviewDataAdapter.OnLis
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mReviewList = Parcels.unwrap(getArguments().getParcelable(REVIEWS_PARCELABLE_KEY));
+            if (mReviewList == null) mReviewList = new ArrayList<>();
         }
     }
 
@@ -74,7 +76,7 @@ public class ReviewsFragment extends Fragment implements ReviewDataAdapter.OnLis
 
         mAdapter = new ReviewDataAdapter(this);
         recyclerView.setAdapter(mAdapter);
-
+        Log.d("hiuhin", mReviewList+"khui");
         mAdapter.addAdapterData(mReviewList);
     }
 
