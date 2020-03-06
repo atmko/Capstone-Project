@@ -4,6 +4,7 @@
 
 package com.atmko.onmywatch.Fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -23,6 +24,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.androidnetworking.core.MainThreadExecutor;
+import com.atmko.onmywatch.ConfirmationActivity;
 import com.atmko.onmywatch.CreateListActivity;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.adapters.ListsAdapter;
@@ -44,6 +46,7 @@ import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.models.WatchListModel;
 import com.atmko.onmywatch.view_models.ListsWatchAndUserViewModel;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.parceler.Parcels;
 
@@ -54,6 +57,8 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
         UserListsAdapter.OnSpinnerItemClickListener {
 
     public static String FRAGMENT_KEY = "list_watch_and_user_fragment";
+
+    private static final int REQUEST_DELETE = 1;
 
     //fragment initialization parameters
     private static final String LIST_TYPE_KEY = "list_type";
@@ -323,28 +328,56 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
             getIdlingResource().setIdleState(false);
         }
 
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                List<MovieData> moviesInList = mDatabase.movieDataRecordsDao()
-                        .getAllMoviesInListAlt(userListModel.getName());
+        if (getParentFragment() != null) {
+            Intent confirmationActivityIntent =
+                    new Intent(getParentFragment().getContext(), ConfirmationActivity.class);
+            confirmationActivityIntent.setAction(ConfirmationActivity.ACTION_DELETE);
+            confirmationActivityIntent.putExtra(ConfirmationActivity.SELECTED_DATA_KEY,
+                    Parcels.wrap(userListModel));
+            getParentFragment().startActivityForResult(confirmationActivityIntent, REQUEST_DELETE);
+        }
+    }
 
-                List<SeriesData> seriesInList = mDatabase.seriesDataRecordsDao()
-                        .getAllSeriesInListAlt(userListModel.getName());
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-                mDatabase.userListsDao().deleteList(((UserListModel) userListModel));
+        if (requestCode == REQUEST_DELETE && resultCode == Activity.RESULT_OK) {
+            AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    if (data == null) {
+                        if (getActivity() == null) return;
+                        //notify user of error
+                        Snackbar.make(getActivity().findViewById(R.id.top_layout),
+                                getString(R.string.confirmation_error_message), Snackbar.LENGTH_LONG).show();
+                        return;
+                    }
 
-                maintainMoviesWatchListCountIntegrity(moviesInList);
+                    UserListModel userListModel = Parcels.unwrap(
+                            data.getParcelableExtra(ConfirmationActivity.SELECTED_DATA_KEY));
 
-                maintainSeriesWatchListCountIntegrity(seriesInList);
+                    mDatabase = AppDatabase.getInstance(getContext());
+                    List<MovieData> moviesInList = mDatabase.movieDataRecordsDao()
+                            .getAllMoviesInListAlt(userListModel.getName());
 
-                deleteListTag(userListModel.getName());
+                    List<SeriesData> seriesInList = mDatabase.seriesDataRecordsDao()
+                            .getAllSeriesInListAlt(userListModel.getName());
 
-                if (getIdlingResource() != null) {
-                    getIdlingResource().setIdleState(true);
+                    mDatabase.userListsDao().deleteList(userListModel);
+
+                    maintainMoviesWatchListCountIntegrity(moviesInList);
+
+                    maintainSeriesWatchListCountIntegrity(seriesInList);
+
+                    deleteListTag(userListModel.getName());
+
+                    if (getIdlingResource() != null) {
+                        getIdlingResource().setIdleState(true);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     private SimpleIdlingResource getIdlingResource() {

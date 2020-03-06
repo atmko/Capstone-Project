@@ -6,6 +6,7 @@ package com.atmko.onmywatch.Fragments;
 
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -203,5 +204,20 @@ public class ListsWatchAndUserParentFragment extends Fragment
         //set focus to top layout when keyboard dismissed
         getView().findViewById(R.id.top_layout).requestFocus();
 
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (getView() != null) {
+            final ViewPager mListsViewPager = getView().findViewById(R.id.lists_view_pager);
+            ListWatchAndUserAdapter listWatchAndUserAdapter =
+                    ((ListWatchAndUserAdapter) mListsViewPager.getAdapter());
+            if (listWatchAndUserAdapter != null) {
+                Fragment fragment = listWatchAndUserAdapter.getItem(mListsViewPager.getCurrentItem());
+                fragment.onActivityResult(requestCode, resultCode, data);
+            }
+        }
     }
 }

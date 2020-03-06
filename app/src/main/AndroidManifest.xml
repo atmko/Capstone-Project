@@ -3,7 +3,7 @@
     package="com.atmko.onmywatch">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <receiver android:name="com.atmko.onmywatch.widget.ListWidgetProvider">
+        <receiver android:name=".widget.ListWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -24,27 +24,28 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/list_widget_provider_info" />
         </receiver>
-
-        <receiver android:name=".utils.NotificationHandler$BootReceiver"
+        <receiver
+            android:name=".utils.NotificationHandler$BootReceiver"
             android:enabled="false">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
-        <receiver android:name=".utils.NotificationHandler$AlarmReceiver"/>
-
+        <receiver android:name=".utils.NotificationHandler$AlarmReceiver" />
         <receiver android:name=".utils.NotificationHandler$TimeChangedReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.TIME_SET"/>
+                <action android:name="android.intent.action.TIME_SET" />
             </intent-filter>
         </receiver>
 
-        <service android:name=".utils.UpdateNotifierService" android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
-
-        <service android:name=".utils.SeriesTracker" android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
+        <service
+            android:name=".utils.UpdateNotifierService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <service
+            android:name=".utils.SeriesTracker"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <activity
             android:name=".MasterActivity"
@@ -55,61 +56,62 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name="com.atmko.onmywatch.widget.ListWidgetProviderConfigureActivity"
+        <activity
+            android:name=".widget.ListWidgetProviderConfigureActivity"
+            android:autoRemoveFromRecents="true"
             android:launchMode="singleInstance"
-            android:taskAffinity=".widget_setup"
-            android:autoRemoveFromRecents="true">
+            android:taskAffinity=".widget_setup">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".ReviewActivity"
-            android:launchMode="singleTop"/>
-
-        <activity android:name=".CreateListActivity"
+        <activity
+            android:name=".ReviewActivity"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".CreateListActivity"
             android:excludeFromRecents="true"
-            android:theme="@style/Theme.PopupDialog"
-            android:launchMode="singleTop"/>
-
-        <activity android:name=".RateActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.PopupDialog" />
+        <activity
+            android:name=".RateActivity"
             android:excludeFromRecents="true"
-            android:theme="@style/Theme.PopupDialog"
-            android:launchMode="singleTop"/>
-
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.PopupDialog" />
         <activity
             android:name=".AddToListActivity"
             android:excludeFromRecents="true"
-            android:theme="@style/Theme.PopupDialog"
-            android:launchMode="singleTop"/>
-
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.PopupDialog" />
+        <activity android:name=".ConfirmationActivity"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.PopupDialog"  />
         <activity
             android:name=".SettingsActivity"
             android:label="@string/options_settings_title"
-            android:theme="@style/preferences_theme"
-            android:launchMode="singleTop"/>
-
-        <activity android:name=".BillingActivity"/>
+            android:launchMode="singleTop"
+            android:theme="@style/preferences_theme" />
+        <activity android:name=".BillingActivity" />
 
         <service
             android:name=".widget.ListRemoteViewFactoryService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
-
-        <service android:name=".widget.ListWidgetService" android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
-
-        <service android:name=".utils.network_utils.work_manager_workers.BackupWorker" android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
-
-        <service android:name=".utils.network_utils.RestoreService" android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
-
-        <!--ad mob application id key: currently in test mode-->
+        <service
+            android:name=".widget.ListWidgetService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <service
+            android:name=".utils.network_utils.work_manager_workers.BackupWorker"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <service
+            android:name=".utils.network_utils.RestoreService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" /> <!-- ad mob application id key: currently in test mode -->
         <meta-data
             android:name="@string/ad_mob_application_id_key"
-            android:value="ca-app-pub-3940256099942544~3347511713"/>
-
+            android:value="ca-app-pub-3940256099942544~3347511713" />
     </application>
 
 </manifest>

@@ -60,6 +60,8 @@
         <string name="save_button_text">Save</string>
         <string name="cancel_button_text">Cancel</string>
         <string name="delete_button_text">Delete</string>
+        <string name="yes_button_text">Yes</string>
+        <string name="no_button_text">No</string>
         <!--general text-->
 
         <!--media type text-->
@@ -137,9 +139,14 @@
     <string name="list_delete_error_message">Error deleting list</string>
     <string name="list_delete_record_error_message">Error: media has NOT been removed from list</string>
     <string name="rating_disallowed_message">Rating only allowed if item has \"Watching\", \"Watched\" or \"Dropped\" watch status.</string>
+    <string name="confirmation_error_message">An error occurred in confirmation</string>
 
     <string name="pro_mode_list_limit_message">More lists available in pro mode.</string>
     <!--SNACK BAR MESSAGES-->
+
+    <!--CONFIRMATION MESSAGES-->
+    <string name="delete_confirmation_message">Are you sure you want to delete?</string>
+    <!--CONFIRMATION MESSAGES-->
 
     <!--PLACEHOLDER TEXT-->
     <string name="release_date_placeholder">TBD</string>

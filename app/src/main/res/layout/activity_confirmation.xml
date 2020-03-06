@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/top_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:background="@drawable/background_fragment_overlay"
+    tools:context=".ConfirmationActivity">
+
+    <TextView
+        android:id="@+id/confirmation_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/x2_layout_margin"
+        android:layout_weight="2"
+        android:layout_gravity="center"
+        tools:text="confirm"
+        android:textSize="@dimen/body_text_size"
+        android:textColor="@android:color/white" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/x3_layout_margin"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/cancel_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/x4_layout_margin"
+            android:layout_marginStart="@dimen/x4_layout_margin"
+            android:layout_marginBottom="@dimen/x2_layout_margin"
+            android:background="@null"
+            android:gravity="start"
+            android:layout_weight="1"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:text="@string/no_button_text"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/confirmation_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/x4_layout_margin"
+            android:layout_marginEnd="@dimen/x4_layout_margin"
+            android:layout_marginBottom="@dimen/x2_layout_margin"
+            android:background="@null"
+            android:gravity="end"
+            android:layout_weight="1"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:text="@string/yes_button_text"
+            android:textColor="@android:color/white" />
+
+    </LinearLayout>
+
+</LinearLayout>
