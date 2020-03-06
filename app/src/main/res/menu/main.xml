@@ -14,4 +14,10 @@
         android:orderInCategory="1"
         android:title="@string/purchases_title"
         app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/log_out"
+        android:orderInCategory="1"
+        android:title="@string/log_out_title"
+        app:showAsAction="never"/>
 </menu>

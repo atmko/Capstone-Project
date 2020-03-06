@@ -7,6 +7,7 @@
     <!--options menu titles-->
     <string name="options_settings_title">Settings</string>
     <string name="purchases_title">Purchases</string>
+    <string name="log_out_title">Log Out</string>
     <!--options menu titles-->
 
     <!--settings titles-->

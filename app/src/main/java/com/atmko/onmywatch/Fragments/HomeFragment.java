@@ -28,15 +28,18 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.atmko.onmywatch.BillingActivity;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.SettingsActivity;
-import com.atmko.onmywatch.BillingActivity;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
 import com.atmko.onmywatch.view_models.MasterActivityViewModel;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.firebase.auth.FirebaseAuth;
 
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
@@ -326,13 +329,14 @@ public class HomeFragment extends Fragment {
 
 
     @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull final Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.main, menu);
         super.onCreateOptionsMenu(menu, inflater);
 
         //get menu item
         MenuItem settingsItem = menu.findItem(R.id.settings);
         MenuItem purchasesItem = menu.findItem(R.id.purchases);
+        MenuItem logOutItem = menu.findItem(R.id.log_out);
 
         //set click listener
         settingsItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
@@ -353,6 +357,29 @@ public class HomeFragment extends Fragment {
                 //launch settings activity
                 Intent billingIntent = new Intent(getActivity(), BillingActivity.class);
                 startActivity(billingIntent);
+
+                return true;
+            }
+        });
+
+        //set click listener
+        logOutItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                //launch settings activity
+                if (getActivity() != null) {
+                    GoogleSignInOptions gso =
+                            new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                                    .requestEmail()
+                                    .build();
+
+                    FirebaseAuth.getInstance().signOut();
+                    GoogleSignIn.getClient(getActivity(), gso).signOut();
+
+                    Intent intent = getActivity().getIntent();
+                    getActivity().finish();
+                    startActivity(intent);
+                }
 
                 return true;
             }
