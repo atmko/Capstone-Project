@@ -65,6 +65,9 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".ReviewActivity"
+            android:launchMode="singleTop"/>
+
         <activity android:name=".CreateListActivity"
             android:excludeFromRecents="true"
             android:theme="@style/Theme.PopupDialog"

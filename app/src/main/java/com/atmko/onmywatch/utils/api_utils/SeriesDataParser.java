@@ -8,6 +8,7 @@ import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.ANRequest;
 import com.atmko.onmywatch.models.CastData;
 import com.atmko.onmywatch.models.Episode;
+import com.atmko.onmywatch.models.Review;
 import com.atmko.onmywatch.models.ScheduledMedia;
 import com.atmko.onmywatch.models.Season;
 import com.atmko.onmywatch.models.SeriesData;
@@ -288,9 +289,9 @@ public class SeriesDataParser {
     }
 
     @SuppressWarnings("ConstantConditions")
-    private static ArrayList<Map<String, String>> parseReviews(Map reviewMap) {
+    private static ArrayList<Review> parseReviews(Map reviewMap) {
         //review data will be stored as Map<String, ArrayList<String>>
-        ArrayList<Map<String, String>> reviews = new ArrayList<>();
+        ArrayList<Review> reviews = new ArrayList<>();
         //skips code below if returnedJSONString null or empty
         if (reviewMap == null){
             return reviews;
@@ -303,16 +304,12 @@ public class SeriesDataParser {
         for (int index = 0; index < results.size() ; index++) {
             Map currentResult = (Map) results.get(index);//get current review
 
-            Map<String, String> newReview = new HashMap<>();
-
-            newReview.put(ApiConstants.REVIEW_AUTHOR_KEY,
-                    ((String) currentResult.get(ApiConstants.REVIEW_AUTHOR_KEY)));
-
-            newReview.put(ApiConstants.REVIEW_CONTENT_KEY,
-                    (String) currentResult.get(ApiConstants.REVIEW_CONTENT_KEY));
+            Review newReview = new Review(
+                    ((String) currentResult.get(ApiConstants.REVIEW_AUTHOR_KEY)),
+                    (String) currentResult.get(ApiConstants.REVIEW_CONTENT_KEY)
+            );
 
             reviews.add(newReview);
-
         }
 
         return reviews;

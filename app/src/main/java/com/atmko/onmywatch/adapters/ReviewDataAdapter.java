@@ -10,16 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.atmko.onmywatch.Fragments.DetailsFragment;
 import com.atmko.onmywatch.R;
-import com.atmko.onmywatch.utils.api_utils.ApiConstants;
+import com.atmko.onmywatch.models.Review;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 /*
  * data adapter for review objects ReviewsFragment
@@ -28,7 +26,7 @@ import java.util.Map;
 public final class ReviewDataAdapter
         extends RecyclerView.Adapter<ReviewDataAdapter.ReviewDataAdapterViewHolder> {
 
-    private final ArrayList<Map<String, String>> mAdapterData;
+    private final ArrayList<Review> mAdapterData;
     private final OnListItemClickListener mOnListItemClickListener;
 
     public ReviewDataAdapter(OnListItemClickListener clickListener) {
@@ -79,13 +77,12 @@ public final class ReviewDataAdapter
     public void onBindViewHolder(@NonNull ReviewDataAdapterViewHolder adapterViewHolder,
                                  int position) {
         //get current reviewData
-        Map<String, String> currentReviewData = mAdapterData.get(position);
-        String author = currentReviewData.get(ApiConstants.REVIEW_AUTHOR_KEY);
-        String content = currentReviewData.get(ApiConstants.REVIEW_CONTENT_KEY);
+        Review currentReviewData = mAdapterData.get(position);
+        String author = currentReviewData.getAuthor();
+        String content = currentReviewData.getContent();
 
         adapterViewHolder.authorTextVIew.setText(author);
         adapterViewHolder.contentTextView.setTag(content);
-        //noinspection ConstantConditions
         adapterViewHolder.contentTextView
                 .setText(limitText(content, DetailsFragment.REVIEW_CUT_OFF_INDEX));
 
@@ -100,12 +97,12 @@ public final class ReviewDataAdapter
         return getItemCount() == 0;
     }
 
-    public void addAdapterData(ArrayList<Map<String, String>> reviews) {
+    public void addAdapterData(ArrayList<Review> reviews) {
         mAdapterData.addAll(reviews);
         notifyDataSetChanged();
     }
 
-    public Map<String, String> getReviewData(int index) {
+    public Review getReviewData(int index) {
         return mAdapterData.get(index);
     }
 

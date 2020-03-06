@@ -4,6 +4,7 @@
 
 package com.atmko.onmywatch.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
@@ -17,20 +18,21 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.atmko.onmywatch.R;
+import com.atmko.onmywatch.ReviewActivity;
 import com.atmko.onmywatch.adapters.ReviewDataAdapter;
+import com.atmko.onmywatch.models.Review;
 
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public class ReviewsFragment extends Fragment implements ReviewDataAdapter.OnListItemClickListener {
     public static String FRAGMENT_KEY = "reviews_fragment";
 
     private static final String REVIEWS_PARCELABLE_KEY = "reviews_parcelable";
 
-    private ArrayList<Map<String, String>> mReviewList;
-    private RecyclerView.Adapter mAdapter;
+    private ArrayList<Review> mReviewList;
+    private ReviewDataAdapter mAdapter;
 
     public ReviewsFragment() {
         // Required empty public constructor
@@ -73,7 +75,7 @@ public class ReviewsFragment extends Fragment implements ReviewDataAdapter.OnLis
         mAdapter = new ReviewDataAdapter(this);
         recyclerView.setAdapter(mAdapter);
 
-        ((ReviewDataAdapter) mAdapter).addAdapterData(mReviewList);
+        mAdapter.addAdapterData(mReviewList);
     }
 
     private LinearLayoutManager configureLayoutManager() {
@@ -86,6 +88,12 @@ public class ReviewsFragment extends Fragment implements ReviewDataAdapter.OnLis
     //TODO implement reviews details page launcher
     @Override
     public void onItemClick(int position) {
-
+        Review selectedReview = mAdapter.getReviewData(position);
+        if (getActivity() != null) {
+            Intent reviewActivityIntent =
+                    new Intent(getActivity().getApplicationContext(), ReviewActivity.class);
+            reviewActivityIntent.putExtra(ReviewActivity.REVIEW_KEY, Parcels.wrap(selectedReview));
+            getActivity().startActivity(reviewActivityIntent);
+        }
     }
 }
