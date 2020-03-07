@@ -62,15 +62,7 @@
         android:id="@+id/save_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/x2_layout_margin"
-        android:layout_marginEnd="@dimen/x2_layout_margin"
-        android:layout_marginBottom="@dimen/x2_layout_margin"
-        android:background="@null"
-        android:gravity="end"
-        android:layout_gravity="end"
-        android:minWidth="0dp"
-        android:minHeight="0dp"
         android:text="@string/save_button_text"
-        android:textColor="@android:color/white" />
+        style="@style/Confirmation_ButtonStyle_End"/>
 
 </LinearLayout>

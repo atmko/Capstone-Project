@@ -31,31 +31,17 @@
             android:id="@+id/cancel_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/x4_layout_margin"
-            android:layout_marginStart="@dimen/x4_layout_margin"
-            android:layout_marginBottom="@dimen/x2_layout_margin"
-            android:background="@null"
-            android:gravity="start"
             android:layout_weight="1"
-            android:minWidth="0dp"
-            android:minHeight="0dp"
             android:text="@string/no_button_text"
-            android:textColor="@android:color/white" />
+            style="@style/Confirmation_ButtonStyle_Start" />
 
         <Button
             android:id="@+id/confirmation_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/x4_layout_margin"
-            android:layout_marginEnd="@dimen/x4_layout_margin"
-            android:layout_marginBottom="@dimen/x2_layout_margin"
-            android:background="@null"
-            android:gravity="end"
             android:layout_weight="1"
-            android:minWidth="0dp"
-            android:minHeight="0dp"
             android:text="@string/yes_button_text"
-            android:textColor="@android:color/white" />
+            style="@style/Confirmation_ButtonStyle_End" />
 
     </LinearLayout>
 
