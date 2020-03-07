@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/top_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -19,19 +19,22 @@
         android:layout_gravity="center"
         tools:text="confirm"
         android:textSize="@dimen/body_text_size"
-        android:textColor="@android:color/white" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/x3_layout_margin"
-        android:orientation="horizontal">
+        android:textColor="@android:color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
         <Button
             android:id="@+id/cancel_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/x3_layout_margin"
+            android:layout_marginEnd="@dimen/x4_layout_margin"
             android:layout_weight="1"
+            app:layout_constraintTop_toBottomOf="@id/confirmation_text_view"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/confirmation_button"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:text="@string/no_button_text"
             style="@style/Confirmation_ButtonStyle_Start" />
 
@@ -39,10 +42,14 @@
             android:id="@+id/confirmation_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/x3_layout_margin"
+            android:layout_marginStart="@dimen/x4_layout_margin"
             android:layout_weight="1"
+            app:layout_constraintTop_toBottomOf="@id/confirmation_text_view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/cancel_button"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:text="@string/yes_button_text"
             style="@style/Confirmation_ButtonStyle_End" />
 
-    </LinearLayout>
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
