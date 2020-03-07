@@ -53,7 +53,7 @@ public final class SearchPreferences {
     public SearchPreferences() {
         mLanguageParamVal = ENG_US;
         //TODO implement region support
-        mRegion = "";
+        mRegion = ApiConstants.USER_LOCALE;
         mQuery = "";
     }
 
