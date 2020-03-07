@@ -136,6 +136,7 @@
         <item name="android:textAllCaps">true</item>
         <item name="android:textSize">@dimen/body_text_size</item>
         <item name="android:textColor">@android:color/white</item>
+        <item name="android:foreground">@drawable/ripple_pressed</item>
     </style>
 
     <style name="Confirmation_ButtonStyle_End" parent="Confirmation_ButtonStyle">
