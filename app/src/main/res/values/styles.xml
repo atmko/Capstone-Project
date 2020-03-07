@@ -9,6 +9,10 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="splashScreenTheme" parent="@android:style/Theme.DeviceDefault.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/omw</item>
+    </style>
+
     <style name="AppTheme.ActionBar">
         <!-- Customize your theme here. -->
         <item name="android:textColorSecondary">@android:color/white</item>
