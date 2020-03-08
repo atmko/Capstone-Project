@@ -104,22 +104,6 @@ public class BackupWorker extends Worker {
         }
     }
 
-    public Notification buildNotification(Context context, String notificationTitle, String notificationContent) {
-        //create intent to launch activity on click
-        Intent intent = new Intent(context, MasterActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-
-        return new NotificationCompat.Builder(context, BACKUP_CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notify_black)
-                .setContentTitle(notificationTitle)
-                .setContentText(notificationContent)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true)
-                .build();
-    }
-
     private void backupToRemoteDatabase() {
         //other methods run one after the other starting with pushMovieData
         pushMovieData();
