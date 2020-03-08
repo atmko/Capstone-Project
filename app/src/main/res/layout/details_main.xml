@@ -3,14 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/background">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/background">
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toBottomOf="@id/backdrop_image_view">
 
-        <!--TODO fix height programmatically-->
         <ImageView
             android:id="@+id/backdrop_image_view"
             android:layout_width="match_parent"
@@ -22,6 +22,26 @@
             app:layout_constraintTop_toTopOf="parent"
             android:scaleType="centerCrop"
             android:contentDescription="@string/content_description_backdrop_image"/>
+
+        <TextView
+            android:id="@+id/rating_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/x3_layout_margin"
+            android:layout_marginRight="@dimen/x3_layout_margin"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="sans-serif-black"
+            android:paddingTop="2dp"
+            android:paddingStart="@dimen/x1_layout_margin"
+            android:paddingEnd="@dimen/x1_layout_margin"
+            android:paddingBottom="2dp"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/headline_45_text_size"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/backdrop_image_view"
+            app:layout_constraintBottom_toBottomOf="@id/backdrop_image_view"
+            tools:text="7.5"
+            android:background="@drawable/background_box_white"/>
 
         <Button
             android:id="@+id/trailer_button"
@@ -44,246 +64,219 @@
             app:layout_constraintBottom_toBottomOf="@+id/backdrop_image_view"
             app:layout_constraintStart_toStartOf="@+id/backdrop_image_view" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintTop_toBottomOf="@id/backdrop_image_view">
-
-            <TextView
-                android:id="@+id/title_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/x2_layout_margin"
-                android:layout_marginLeft="@dimen/x2_layout_margin"
-                android:layout_marginTop="@dimen/x1_layout_margin"
-                android:layout_marginEnd="@dimen/x2_layout_margin"
-                android:layout_marginRight="@dimen/x2_layout_margin"
-                tools:text="Alita Battle Angel"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/headline_24_text_size"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/date_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/x2_layout_margin"
-                android:layout_marginLeft="@dimen/x2_layout_margin"
-                android:layout_marginTop="@dimen/x1_layout_margin"
-                android:textSize="@dimen/caption_12_text_size"
-                android:textColor="@color/color_subtext"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/title_text_view"
-                tools:text="2019" />
-
-            <TextView
-                android:id="@+id/maturity_rating_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/x2_layout_margin"
-                android:layout_marginLeft="@dimen/x2_layout_margin"
-                android:layout_marginTop="@dimen/x1_layout_margin"
-                android:textSize="@dimen/caption_12_text_size"
-                android:textColor="@color/color_subtext"
-                app:layout_constraintStart_toEndOf="@+id/date_text_view"
-                app:layout_constraintTop_toBottomOf="@+id/title_text_view"
-                tools:text="PG-13" />
-
-            <TextView
-                android:id="@+id/genre_0_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/x2_layout_margin"
-                android:layout_marginLeft="@dimen/x2_layout_margin"
-                android:layout_marginTop="@dimen/x1_layout_margin"
-                android:textSize="@dimen/caption_12_text_size"
-                android:textColor="@color/color_subtext"
-                app:layout_constraintStart_toEndOf="@+id/maturity_rating_text_view"
-                app:layout_constraintTop_toBottomOf="@+id/title_text_view"
-                tools:text="action" />
-
-            <TextView
-                android:id="@+id/genre_1_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/x3_layout_margin"
-                android:layout_marginLeft="@dimen/x3_layout_margin"
-                android:layout_marginTop="@dimen/x1_layout_margin"
-                android:textSize="@dimen/caption_12_text_size"
-                android:textColor="@color/color_subtext"
-                app:layout_constraintStart_toEndOf="@+id/genre_0_text_view"
-                app:layout_constraintTop_toBottomOf="@+id/title_text_view"
-                tools:text="drama" />
-
-            <LinearLayout
-                android:id="@+id/watch_status_frame_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/x1_layout_margin"
-                android:paddingStart="@dimen/x1_layout_margin"
-                android:paddingTop="@dimen/half_layout_margin"
-                android:paddingEnd="@dimen/x1_layout_margin"
-                android:background="@drawable/background_info_box"
-                android:paddingBottom="@dimen/half_layout_margin"
-                android:layout_marginStart="@dimen/x2_layout_margin"
-                app:layout_constraintTop_toBottomOf="@id/date_text_view"
-                app:layout_constraintStart_toStartOf="parent">
-
-                <ImageButton
-                    android:id="@+id/notify_image_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/x1_layout_margin"
-                    android:layout_marginRight="@dimen/x1_layout_margin"
-                    android:layout_gravity="center"
-                    android:foreground="@drawable/ripple_pressed"
-                    android:background="@null"
-                    android:src="@drawable/ic_notify_white"
-                    android:contentDescription="@string/content_description_notify_button"/>
-
-                <TextView
-                    android:id="@+id/watch_status_shorthand_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Tw"
-                    android:textSize="@dimen/caption_12_text_size"
-                    android:textColor="@android:color/white"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/date_text_view" />
-
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/list_counts_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/x1_layout_margin"
-                android:layout_marginStart="@dimen/x2_layout_margin"
-                android:layout_marginLeft="@dimen/x4_layout_margin"
-                android:background="@drawable/background_info_box"
-                android:paddingStart="@dimen/x1_layout_margin"
-                android:paddingTop="@dimen/half_layout_margin"
-                android:paddingEnd="@dimen/x1_layout_margin"
-                android:paddingBottom="@dimen/half_layout_margin"
-                android:text="5"
-                android:textSize="@dimen/caption_12_text_size"
-                android:textColor="@android:color/white"
-                app:layout_constraintStart_toEndOf="@+id/watch_status_frame_layout"
-                app:layout_constraintTop_toBottomOf="@id/date_text_view" />
-
-            <TextView
-                android:id="@+id/release_status_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/x1_layout_margin"
-                android:layout_marginStart="@dimen/x2_layout_margin"
-                android:layout_marginLeft="@dimen/x4_layout_margin"
-                android:background="@drawable/background_info_box"
-                android:paddingStart="@dimen/x1_layout_margin"
-                android:paddingTop="@dimen/half_layout_margin"
-                android:paddingEnd="@dimen/x1_layout_margin"
-                android:paddingBottom="@dimen/half_layout_margin"
-                tools:text="Unreleased"
-                android:textSize="@dimen/caption_12_text_size"
-                android:textColor="@android:color/white"
-                app:layout_constraintStart_toEndOf="@+id/list_counts_text"
-                app:layout_constraintTop_toBottomOf="@id/date_text_view"
-                tools:visibility="visible"
-                android:visibility="gone"/>
-
-            <TextView
-                android:id="@+id/count_down_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/x1_layout_margin"
-                android:layout_marginStart="@dimen/x2_layout_margin"
-                android:layout_marginLeft="@dimen/x4_layout_margin"
-                android:background="@drawable/background_info_box"
-                android:paddingStart="@dimen/x1_layout_margin"
-                android:paddingTop="@dimen/half_layout_margin"
-                android:paddingEnd="@dimen/x1_layout_margin"
-                android:paddingBottom="@dimen/half_layout_margin"
-                tools:text="30 days"
-                android:textSize="@dimen/caption_12_text_size"
-                android:textColor="@android:color/white"
-                app:layout_constraintStart_toEndOf="@+id/release_status_text"
-                app:layout_constraintTop_toBottomOf="@id/date_text_view"
-                tools:visibility="visible"
-                android:visibility="gone"/>
-
-            <TextView
-                android:id="@+id/user_rating_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/x1_layout_margin"
-                android:layout_marginStart="@dimen/x2_layout_margin"
-                android:layout_marginLeft="@dimen/x4_layout_margin"
-                android:background="@drawable/background_info_box"
-                android:paddingStart="@dimen/x1_layout_margin"
-                android:paddingTop="@dimen/half_layout_margin"
-                android:paddingEnd="@dimen/x1_layout_margin"
-                android:paddingBottom="@dimen/half_layout_margin"
-                tools:text="7.5"
-                android:textSize="@dimen/caption_12_text_size"
-                android:textColor="@android:color/white"
-                app:layout_constraintStart_toEndOf="@+id/count_down_text"
-                app:layout_constraintTop_toBottomOf="@id/date_text_view" />
-
-            <TextView
-                android:id="@+id/overView_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/x2_layout_margin"
-                android:layout_marginLeft="@dimen/x2_layout_margin"
-                android:layout_marginTop="@dimen/x2_layout_margin"
-                android:layout_marginEnd="@dimen/x2_layout_margin"
-                android:layout_marginRight="@dimen/x2_layout_margin"
-                android:justificationMode="inter_word"
-                tools:text="Light years from Earth, 26 years after being abducted, Peter Quill finds himself the prime target of a manhunt after discovering an orb wanted by Ronan the Accuser."
-                android:textSize="@dimen/body_text_size"
-                android:textColor="@android:color/white"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/watch_status_frame_layout" />
-
-            <ImageButton
-                android:id="@+id/show_more_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/x2_layout_margin"
-                android:foreground="@drawable/ripple_pressed"
-                android:background="@null"
-                android:tag="@string/detail_overview_tag_show_less"
-                android:src="@drawable/ic_show_more"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/overView_text_view"
-                android:contentDescription="@string/content_description_show_more_button"/>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/title_text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/x2_layout_margin"
+            android:layout_marginLeft="@dimen/x2_layout_margin"
+            android:layout_marginTop="@dimen/x1_layout_margin"
+            android:layout_marginEnd="@dimen/x2_layout_margin"
+            android:layout_marginRight="@dimen/x2_layout_margin"
+            tools:text="Alita Battle Angel"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/headline_24_text_size"
+            app:layout_constraintEnd_toStartOf="@id/rating_text_view"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/backdrop_image_view" />
 
         <TextView
-            android:id="@+id/rating_text_view"
+            android:id="@+id/date_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/x3_layout_margin"
-            android:layout_marginRight="@dimen/x3_layout_margin"
-            android:layout_marginBottom="8dp"
-            android:fontFamily="sans-serif-black"
-            android:paddingTop="2dp"
+            android:layout_marginStart="@dimen/x2_layout_margin"
+            android:layout_marginLeft="@dimen/x2_layout_margin"
+            android:layout_marginTop="@dimen/x1_layout_margin"
+            android:textSize="@dimen/caption_12_text_size"
+            android:textColor="@color/color_subtext"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title_text_view"
+            tools:text="2019" />
+
+        <TextView
+            android:id="@+id/maturity_rating_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/x2_layout_margin"
+            android:layout_marginLeft="@dimen/x2_layout_margin"
+            android:layout_marginTop="@dimen/x1_layout_margin"
+            android:textSize="@dimen/caption_12_text_size"
+            android:textColor="@color/color_subtext"
+            app:layout_constraintStart_toEndOf="@+id/date_text_view"
+            app:layout_constraintTop_toBottomOf="@+id/title_text_view"
+            tools:text="PG-13" />
+
+        <TextView
+            android:id="@+id/genre_0_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/x2_layout_margin"
+            android:layout_marginLeft="@dimen/x2_layout_margin"
+            android:layout_marginTop="@dimen/x1_layout_margin"
+            android:textSize="@dimen/caption_12_text_size"
+            android:textColor="@color/color_subtext"
+            app:layout_constraintStart_toEndOf="@+id/maturity_rating_text_view"
+            app:layout_constraintTop_toBottomOf="@+id/title_text_view"
+            tools:text="action" />
+
+        <TextView
+            android:id="@+id/genre_1_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/x3_layout_margin"
+            android:layout_marginLeft="@dimen/x3_layout_margin"
+            android:layout_marginTop="@dimen/x1_layout_margin"
+            android:textSize="@dimen/caption_12_text_size"
+            android:textColor="@color/color_subtext"
+            app:layout_constraintStart_toEndOf="@+id/genre_0_text_view"
+            app:layout_constraintTop_toBottomOf="@+id/title_text_view"
+            tools:text="drama" />
+
+        <LinearLayout
+            android:id="@+id/watch_status_frame_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/x1_layout_margin"
             android:paddingStart="@dimen/x1_layout_margin"
+            android:paddingTop="@dimen/half_layout_margin"
             android:paddingEnd="@dimen/x1_layout_margin"
-            android:paddingBottom="2dp"
+            android:background="@drawable/background_info_box"
+            android:paddingBottom="@dimen/half_layout_margin"
+            android:layout_marginStart="@dimen/x2_layout_margin"
+            app:layout_constraintTop_toBottomOf="@id/date_text_view"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <ImageButton
+                android:id="@+id/notify_image_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/x1_layout_margin"
+                android:layout_marginRight="@dimen/x1_layout_margin"
+                android:layout_gravity="center"
+                android:foreground="@drawable/ripple_pressed"
+                android:background="@null"
+                android:src="@drawable/ic_notify_white"
+                android:contentDescription="@string/content_description_notify_button"/>
+
+            <TextView
+                android:id="@+id/watch_status_shorthand_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tw"
+                android:textSize="@dimen/caption_12_text_size"
+                android:textColor="@android:color/white"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/date_text_view" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/list_counts_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/x1_layout_margin"
+            android:layout_marginStart="@dimen/x2_layout_margin"
+            android:layout_marginLeft="@dimen/x4_layout_margin"
+            android:background="@drawable/background_info_box"
+            android:paddingStart="@dimen/x1_layout_margin"
+            android:paddingTop="@dimen/half_layout_margin"
+            android:paddingEnd="@dimen/x1_layout_margin"
+            android:paddingBottom="@dimen/half_layout_margin"
+            android:text="5"
+            android:textSize="@dimen/caption_12_text_size"
             android:textColor="@android:color/white"
-            android:textSize="@dimen/headline_45_text_size"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/backdrop_image_view"
-            app:layout_constraintBottom_toBottomOf="@id/backdrop_image_view"
+            app:layout_constraintStart_toEndOf="@+id/watch_status_frame_layout"
+            app:layout_constraintTop_toBottomOf="@id/date_text_view" />
+
+        <TextView
+            android:id="@+id/release_status_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/x1_layout_margin"
+            android:layout_marginStart="@dimen/x2_layout_margin"
+            android:layout_marginLeft="@dimen/x4_layout_margin"
+            android:background="@drawable/background_info_box"
+            android:paddingStart="@dimen/x1_layout_margin"
+            android:paddingTop="@dimen/half_layout_margin"
+            android:paddingEnd="@dimen/x1_layout_margin"
+            android:paddingBottom="@dimen/half_layout_margin"
+            tools:text="Unreleased"
+            android:textSize="@dimen/caption_12_text_size"
+            android:textColor="@android:color/white"
+            app:layout_constraintStart_toEndOf="@+id/list_counts_text"
+            app:layout_constraintTop_toBottomOf="@id/date_text_view"
+            tools:visibility="visible"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/count_down_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/x1_layout_margin"
+            android:layout_marginStart="@dimen/x2_layout_margin"
+            android:layout_marginLeft="@dimen/x4_layout_margin"
+            android:background="@drawable/background_info_box"
+            android:paddingStart="@dimen/x1_layout_margin"
+            android:paddingTop="@dimen/half_layout_margin"
+            android:paddingEnd="@dimen/x1_layout_margin"
+            android:paddingBottom="@dimen/half_layout_margin"
+            tools:text="30 days"
+            android:textSize="@dimen/caption_12_text_size"
+            android:textColor="@android:color/white"
+            app:layout_constraintStart_toEndOf="@+id/release_status_text"
+            app:layout_constraintTop_toBottomOf="@id/date_text_view"
+            tools:visibility="visible"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/user_rating_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/x1_layout_margin"
+            android:layout_marginStart="@dimen/x2_layout_margin"
+            android:layout_marginLeft="@dimen/x4_layout_margin"
+            android:background="@drawable/background_info_box"
+            android:paddingStart="@dimen/x1_layout_margin"
+            android:paddingTop="@dimen/half_layout_margin"
+            android:paddingEnd="@dimen/x1_layout_margin"
+            android:paddingBottom="@dimen/half_layout_margin"
             tools:text="7.5"
-            android:background="@drawable/background_box_white"/>
+            android:textSize="@dimen/caption_12_text_size"
+            android:textColor="@android:color/white"
+            app:layout_constraintStart_toEndOf="@+id/count_down_text"
+            app:layout_constraintTop_toBottomOf="@id/date_text_view" />
+
+        <TextView
+            android:id="@+id/overView_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/x2_layout_margin"
+            android:layout_marginLeft="@dimen/x2_layout_margin"
+            android:layout_marginTop="@dimen/x2_layout_margin"
+            android:layout_marginEnd="@dimen/x2_layout_margin"
+            android:layout_marginRight="@dimen/x2_layout_margin"
+            android:justificationMode="inter_word"
+            tools:text="Light years from Earth, 26 years after being abducted, Peter Quill finds himself the prime target of a manhunt after discovering an orb wanted by Ronan the Accuser."
+            android:textSize="@dimen/body_text_size"
+            android:textColor="@android:color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/watch_status_frame_layout" />
+
+        <ImageButton
+            android:id="@+id/show_more_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/x2_layout_margin"
+            android:foreground="@drawable/ripple_pressed"
+            android:background="@null"
+            android:tag="@string/detail_overview_tag_show_less"
+            android:src="@drawable/ic_show_more"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/overView_text_view"
+            android:contentDescription="@string/content_description_show_more_button"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
