@@ -103,10 +103,12 @@ public class MasterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_master);
 
+        mSavedInstanceState = savedInstanceState;
+
         createNotificationChannels();
 
         //set / restore values
-        setValues(savedInstanceState);
+        setValues();
 
         mIsTabletLandscape = getResources().getBoolean(R.bool.isTabletLandscape);
 
@@ -148,14 +150,13 @@ public class MasterActivity extends AppCompatActivity {
                 if (isProMode == null) return;
 
                 sIsProMode = isProMode;
-
-                loadUi();
-                //start background work managers
-                startWorkers();
-
                 if (!sIsProMode) {
                     initializeAdMob();
                 }
+
+                if (mSavedInstanceState == null) loadUi();
+                //start background work managers
+                startWorkers();
             }
         });
     }
@@ -255,13 +256,11 @@ public class MasterActivity extends AppCompatActivity {
         }
     }
 
-    private void setValues(Bundle savedInstanceState) {
-        mSavedInstanceState = savedInstanceState;
-
-        if (savedInstanceState != null) {
+    private void setValues() {
+        if (mSavedInstanceState != null) {
             //restore keyboard visibility value
             sIsKeyboardVisible =
-                    savedInstanceState.getBoolean(KEYBOARD_VISIBILITY_KEY);
+                    mSavedInstanceState.getBoolean(KEYBOARD_VISIBILITY_KEY);
         }
     }
 
