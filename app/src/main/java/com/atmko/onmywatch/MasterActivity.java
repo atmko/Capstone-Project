@@ -4,18 +4,6 @@
 
 package com.atmko.onmywatch;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.work.Constraints;
-import androidx.work.ExistingPeriodicWorkPolicy;
-import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkManager;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -29,6 +17,18 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.work.Constraints;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+
 import com.atmko.onmywatch.Fragments.DetailsFragment;
 import com.atmko.onmywatch.Fragments.HomeFragment;
 import com.atmko.onmywatch.Fragments.ListResultsParentFragment;
@@ -40,15 +40,13 @@ import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.PersonData;
 import com.atmko.onmywatch.models.SimpleIdlingResource;
-import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
-import com.atmko.onmywatch.utils.network_utils.work_manager_workers.BackupWorker;
+import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.utils.network_utils.RestoreService;
+import com.atmko.onmywatch.utils.network_utils.work_manager_workers.BackupWorker;
 import com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker;
-
 import com.atmko.onmywatch.view_models.MasterActivityViewModel;
 import com.firebase.ui.auth.AuthUI;
-
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -224,15 +222,18 @@ public class MasterActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         //if returning from firebase sign in activity, load the UI
         if (requestCode == SIGN_IN_REQUEST_CODE) {
-            //restore backup;
-            Intent intent = new Intent(getApplicationContext(), RestoreService.class);
-            RestoreService.enqueueWork(getApplicationContext(), intent);
+            if (resultCode == RESULT_OK) {
+                //restore backup;
+                Intent intent = new Intent(getApplicationContext(), RestoreService.class);
+                RestoreService.enqueueWork(getApplicationContext(), intent);
 
-            //observe user data via view model
-            observeData();
+                //observe user data via view model
+                observeData();
+            } else {
+                finish();
+            }
         }
     }
 
