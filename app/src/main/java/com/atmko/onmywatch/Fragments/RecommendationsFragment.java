@@ -103,7 +103,7 @@ public class RecommendationsFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.fragment_discover_results, container, false);
+        return inflater.inflate(R.layout.fragment_recommendations, container, false);
     }
 
     @Override
@@ -131,6 +131,8 @@ public class RecommendationsFragment extends Fragment
 
             //set total pages
             mStack.setTotalPages(mSearchPreferences.getTotalPages());
+
+            checkIfEmptyAdapter();
         }
     }
 
@@ -168,7 +170,7 @@ public class RecommendationsFragment extends Fragment
                     }
                 }, ApiConstants.RESULTS_PER_PAGE, getResources().getInteger(R.integer.stack_pages_per_block));
 
-        RecyclerView recyclerView = getView().findViewById(R.id.discover_results_recycler_view);
+        RecyclerView recyclerView = getView().findViewById(R.id.recommendations_recycler_view);
         recyclerView.setLayoutManager(configureLayoutManager());
 
         mDataAdapter = new MediaDataAdapter(this, getActivity().getApplicationContext(),
@@ -229,6 +231,8 @@ public class RecommendationsFragment extends Fragment
                 }
 
                 mStack.stackPage(blockNumber, targetPage, dataList, stackOperation);
+
+                checkIfEmptyAdapter();
             }
 
             @Override
@@ -305,5 +309,16 @@ public class RecommendationsFragment extends Fragment
                 Parcels.wrap(mDataAdapter.getAdapterData()));
 
         outState.putIntArray(PAGING_BLOCK_MAP_KEY, mStack.saveBlockStructure());
+    }
+
+    private void checkIfEmptyAdapter() {
+        if (getView() != null) {
+            if (mDataAdapter.getAdapterData().size() == 0) {
+                getView().findViewById(R.id.no_data_text_view).setVisibility(View.VISIBLE);
+
+            } else {
+                getView().findViewById(R.id.no_data_text_view).setVisibility(View.GONE);
+            }
+        }
     }
 }

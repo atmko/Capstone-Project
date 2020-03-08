@@ -7,7 +7,6 @@ package com.atmko.onmywatch.Fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,8 +75,8 @@ public class ReviewsFragment extends Fragment implements ReviewDataAdapter.OnLis
 
         mAdapter = new ReviewDataAdapter(this);
         recyclerView.setAdapter(mAdapter);
-        Log.d("hiuhin", mReviewList+"khui");
-        mAdapter.addAdapterData(mReviewList);
+
+        populateAndNotifyAdapter(mReviewList);
     }
 
     private LinearLayoutManager configureLayoutManager() {
@@ -96,6 +95,23 @@ public class ReviewsFragment extends Fragment implements ReviewDataAdapter.OnLis
                     new Intent(getActivity().getApplicationContext(), ReviewActivity.class);
             reviewActivityIntent.putExtra(ReviewActivity.REVIEW_KEY, Parcels.wrap(selectedReview));
             getActivity().startActivity(reviewActivityIntent);
+        }
+    }
+
+    private void populateAndNotifyAdapter(ArrayList<Review> reviews) {
+        if (getView() != null) {
+            if (reviews.size() == 0) {
+                mAdapter.setInPlaceholderMode(true);
+                if (getView() != null) {
+                    getView().findViewById(R.id.no_data_text_view).setVisibility(View.VISIBLE);
+                }
+
+            } else {
+                getView().findViewById(R.id.no_data_text_view).setVisibility(View.GONE);
+                mAdapter.setInPlaceholderMode(false);
+                mAdapter.getAdapterData().clear();
+                mAdapter.addAdapterData(reviews);
+            }
         }
     }
 }

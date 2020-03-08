@@ -32,11 +32,13 @@ public class CastDataAdapter extends RecyclerView.Adapter<CastDataAdapter.CastDa
     private final Fragment mFragment;
     private final List<CastData> mAdapterData;
     private final OnListItemClickListener mOnListItemClickListener;
+    private boolean mInPlaceholderMode;
     private final Context mContext;
     private final int[] mParams;
 
     //layout ids
     @SuppressWarnings("FieldCanBeLocal")
+    private final int EMPTY_ADAPTER_ID = -1;
     private final int STANDARD_LAYOUT_ID = 1;
     private final int NO_POSTER_LAYOUT = 2;
 
@@ -130,6 +132,8 @@ public class CastDataAdapter extends RecyclerView.Adapter<CastDataAdapter.CastDa
 
     @Override
     public void onBindViewHolder(@NonNull CastDataAdapterViewHolder adapterViewHolder, int position) {
+        if (adapterViewHolder.getItemViewType() == EMPTY_ADAPTER_ID) return;
+
         //get current MediaData
         CastData currentMediaData = mAdapterData.get(position);
 
@@ -153,6 +157,8 @@ public class CastDataAdapter extends RecyclerView.Adapter<CastDataAdapter.CastDa
 
     @Override
     public int getItemViewType(int position) {
+        if (mInPlaceholderMode) return EMPTY_ADAPTER_ID;
+
         //if poster path != null
         boolean hasPoster = mAdapterData.get(position).getProfilePath() != null;
 
@@ -171,5 +177,14 @@ public class CastDataAdapter extends RecyclerView.Adapter<CastDataAdapter.CastDa
     public void addAdapterData(List<CastData> mediaDataList) {
         mAdapterData.addAll(mediaDataList);
         notifyDataSetChanged();
+    }
+
+    public void setInPlaceholderMode(boolean inPlaceholderMode) {
+        mInPlaceholderMode = inPlaceholderMode;
+
+        if (mInPlaceholderMode) {
+            mAdapterData.clear();
+            notifyDataSetChanged();
+        }
     }
 }

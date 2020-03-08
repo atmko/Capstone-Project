@@ -28,6 +28,12 @@ public final class ReviewDataAdapter
 
     private final ArrayList<Review> mAdapterData;
     private final OnListItemClickListener mOnListItemClickListener;
+    private boolean mInPlaceholderMode;
+
+    //layout ids
+    private final int EMPTY_ADAPTER_ID = -1;
+    @SuppressWarnings("FieldCanBeLocal")
+    private final int STANDARD_LAYOUT_ID = 1;
 
     public ReviewDataAdapter(OnListItemClickListener clickListener) {
         mOnListItemClickListener = clickListener;
@@ -76,6 +82,8 @@ public final class ReviewDataAdapter
     @Override
     public void onBindViewHolder(@NonNull ReviewDataAdapterViewHolder adapterViewHolder,
                                  int position) {
+        if (adapterViewHolder.getItemViewType() == EMPTY_ADAPTER_ID) return;
+
         //get current reviewData
         Review currentReviewData = mAdapterData.get(position);
         String author = currentReviewData.getAuthor();
@@ -93,8 +101,19 @@ public final class ReviewDataAdapter
         return mAdapterData.size();
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        if (mInPlaceholderMode) return EMPTY_ADAPTER_ID;
+
+        return STANDARD_LAYOUT_ID;
+    }
+
     public boolean isEmpty() {
         return getItemCount() == 0;
+    }
+
+    public ArrayList<Review> getAdapterData() {
+        return mAdapterData;
     }
 
     public void addAdapterData(ArrayList<Review> reviews) {
@@ -119,6 +138,15 @@ public final class ReviewDataAdapter
 
         } else {
             return fullText;
+        }
+    }
+
+    public void setInPlaceholderMode(boolean inPlaceholderMode) {
+        mInPlaceholderMode = inPlaceholderMode;
+
+        if (mInPlaceholderMode) {
+            mAdapterData.clear();
+            notifyDataSetChanged();
         }
     }
 }

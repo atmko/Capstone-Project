@@ -84,7 +84,7 @@ public class CastFragment extends Fragment implements CastDataAdapter.OnListItem
                 CustomParams.getDetailExtrasParams(this));
         recyclerView.setAdapter(mAdapter);
 
-        ((CastDataAdapter) mAdapter).addAdapterData(mCastList);
+        populateAndNotifyAdapter(mCastList);
     }
 
     private GridLayoutManager configureLayoutManager() {
@@ -104,6 +104,23 @@ public class CastFragment extends Fragment implements CastDataAdapter.OnListItem
 
         if (getParentFragment() != null && getParentFragment().getActivity() != null) {
             ((MasterActivity) getParentFragment().getActivity()).launchPeopleDetailsFragment(selectedData);
+        }
+    }
+
+    private void populateAndNotifyAdapter(ArrayList<CastData> castList) {
+        if (getView() != null) {
+            if (castList.size() == 0) {
+                mAdapter.setInPlaceholderMode(true);
+                if (getView() != null) {
+                    getView().findViewById(R.id.no_data_text_view).setVisibility(View.VISIBLE);
+                }
+
+            } else {
+                getView().findViewById(R.id.no_data_text_view).setVisibility(View.GONE);
+                mAdapter.setInPlaceholderMode(false);
+                mAdapter.getAdapterData().clear();
+                mAdapter.addAdapterData(castList);
+            }
         }
     }
 }

@@ -154,6 +154,9 @@
     <string name="date_of_birth_placeholder">unavailable</string>
     <string name="professions_placeholder">unavailable</string>
     <string name="create_new_list_placeholder">Create New List</string>
+    <string name="no_cast_data_placeholder">No Cast Data</string>
+    <string name="no_recommendations_placeholder">No Recommendations</string>
+    <string name="no_reviews_placeholder">No Reviews</string>
     <!--PLACEHOLDER TEXT-->
 
     <!--NOTIFICATION TEXT-->
