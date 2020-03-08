@@ -11,7 +11,7 @@
         android:layout_marginTop="@dimen/x2_layout_margin"
         android:layout_gravity="center_horizontal"
         android:text="@string/no_reviews_placeholder"
-        android:textSize="@dimen/headline_24_text_size"
+        android:textSize="@dimen/headline_20_text_size"
         android:textColor="@android:color/white"
         android:visibility="gone"
         tools:visibility="visible"/>
