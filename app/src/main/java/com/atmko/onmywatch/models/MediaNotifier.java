@@ -104,7 +104,7 @@ public abstract class MediaNotifier {
                 detailsIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, RELEASE_CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_rate)
+                .setSmallIcon(R.drawable.ic_notify_black)
                 .setContentTitle(contentTitle)
                 .setContentText(contentText)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)

@@ -152,6 +152,12 @@
         <item>null</item>
     </array>
 
+    <array name="detail_options">
+        <item>Rate</item>
+        <item>Share</item>
+        <item>null</item>
+    </array>
+
     <array name="spotlight_url">
         <item>https://api.themoviedb.org/3/tv/popular?api_key={api_key}&amp;language={language}&amp;page={page}</item>
         <item>https://api.themoviedb.org/3/movie/popular?api_key={api_key}&amp;language={language}&amp;page={page}&amp;region={region}</item>
@@ -234,4 +240,5 @@
         <item>android.test.canceled</item>
         <item>android.test.item_unavailable</item>
     </array>
+
 </resources>

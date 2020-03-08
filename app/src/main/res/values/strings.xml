@@ -47,6 +47,7 @@
     <string name="content_description_search_button">search button</string>
     <string name="content_description_discover_button">discover button</string>
     <string name="content_description_back_button">back button</string>
+    <string name="content_description_options_button">options button</string>
     <string name="content_description_widget_settings_button">widget settings button</string>
     <string name="content_description_add_to_list_button">add to list</string>
     <string name="content_description_person_profile_image">person profile image</string>

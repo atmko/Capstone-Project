@@ -17,9 +17,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -42,6 +44,7 @@ import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.RateActivity;
 import com.atmko.onmywatch.adapters.DetailMovieExtrasAdapter;
 import com.atmko.onmywatch.adapters.DetailSeriesExtrasAdapter;
+import com.atmko.onmywatch.adapters.SpinnerDetailsOptionsAdapter;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MediaNotifier;
@@ -107,8 +110,6 @@ public class DetailsFragment extends Fragment {
     private int mWatchStatus;
 
     private FloatingActionButton mFab;
-    private ImageButton mShareButton;
-    private ImageButton mRateButton;
 
     //details views
     private TabLayout mDetailExtrasTabLayout;
@@ -317,31 +318,37 @@ public class DetailsFragment extends Fragment {
             }
         });
 
-        //configure share button
-        mShareButton = getView().findViewById(R.id.share_button);
-        mShareButton.setOnClickListener(new View.OnClickListener() {
+        final Spinner detailSpinner = getView().findViewById(R.id.options_button);
+        final String [] detailOptions = getResources().getStringArray(R.array.detail_options);
+        SpinnerDetailsOptionsAdapter mDetailSpinnerAdapter = new SpinnerDetailsOptionsAdapter(detailOptions, this);
+        detailSpinner.setAdapter(mDetailSpinnerAdapter);
+        detailSpinner.setSelection(detailOptions.length - 1);
+        detailSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(View v) {
-                try {
-                    launchShareWindow();
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String option = detailOptions[i];
+                if (option.equals(detailOptions[0])) {
+                    try {
+                        launchRateActivity();
 
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                    }
+
+                } else if (option.equals(detailOptions[1])) {
+                    try {
+                        launchShareWindow();
+
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                    }
                 }
+                detailSpinner.setSelection(detailOptions.length - 1, false);
             }
-        });
 
-        //configure rate button
-        mRateButton = getView().findViewById(R.id.rate_button);
-        mRateButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                try {
-                    launchRateActivity();
+            public void onNothingSelected(AdapterView<?> adapterView) {
 
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                }
             }
         });
 
@@ -500,13 +507,11 @@ public class DetailsFragment extends Fragment {
             public void onChanged(List<MediaNotifier> movieNotifiers) {
                 if (movieNotifiers.size() != 0) {
                     //set image
-                    ((ImageButton) getView().findViewById(R.id.notify_button))
-                            .setImageResource(R.drawable.ic_notify_accent);
+                    getView().findViewById(R.id.notify_image_view).setVisibility(View.VISIBLE);
 
                 } else {
                     //set image
-                    ((ImageButton) getView().findViewById(R.id.notify_button))
-                            .setImageResource(R.drawable.ic_notify_white);
+                    getView().findViewById(R.id.notify_image_view).setVisibility(View.GONE);
                 }
             }
         });
