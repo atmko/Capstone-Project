@@ -50,6 +50,8 @@ import com.atmko.onmywatch.view_models.MasterActivityViewModel;
 import com.firebase.ui.auth.AuthUI;
 
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
@@ -203,6 +205,20 @@ public class MasterActivity extends AppCompatActivity {
                         .setAvailableProviders(providers)
                         .build(),
                 SIGN_IN_REQUEST_CODE);
+    }
+
+    public static void logOut(Activity activity) {
+        GoogleSignInOptions gso =
+                new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestEmail()
+                        .build();
+
+        FirebaseAuth.getInstance().signOut();
+        GoogleSignIn.getClient(activity, gso).signOut();
+
+        Intent intent = activity.getIntent();
+        activity.finish();
+        activity.startActivity(intent);
     }
 
     @Override

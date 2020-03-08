@@ -96,7 +96,6 @@ public class HomeFragment extends Fragment {
         super.onResume();
 
         ((MasterActivity) getActivity()).onResumeMasterContainerFragment(this);
-
     }
 
     private void defineViews() {
@@ -368,17 +367,7 @@ public class HomeFragment extends Fragment {
             public boolean onMenuItemClick(MenuItem item) {
                 //launch settings activity
                 if (getActivity() != null) {
-                    GoogleSignInOptions gso =
-                            new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                                    .requestEmail()
-                                    .build();
-
-                    FirebaseAuth.getInstance().signOut();
-                    GoogleSignIn.getClient(getActivity(), gso).signOut();
-
-                    Intent intent = getActivity().getIntent();
-                    getActivity().finish();
-                    startActivity(intent);
+                    MasterActivity.logOut(getActivity());
                 }
 
                 return true;
