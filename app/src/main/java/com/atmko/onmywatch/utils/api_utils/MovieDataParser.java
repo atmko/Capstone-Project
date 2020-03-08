@@ -6,20 +6,20 @@ package com.atmko.onmywatch.utils.api_utils;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.ANRequest;
-import com.atmko.onmywatch.models.Review;
-import com.atmko.onmywatch.utils.UpdateNotifierService;
-import com.google.gson.Gson;
-import com.atmko.stack.Stack;
 import com.atmko.onmywatch.models.CastData;
 import com.atmko.onmywatch.models.MovieData;
+import com.atmko.onmywatch.models.Review;
+import com.atmko.onmywatch.utils.UpdateNotifierService;
+import com.atmko.stack.Stack;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.atmko.onmywatch.utils.GeneralUtils.checkAndConvertNumber;
 import static com.atmko.onmywatch.utils.GeneralUtils.checkAndConvertInteger;
+import static com.atmko.onmywatch.utils.GeneralUtils.checkAndConvertNumber;
 import static com.atmko.onmywatch.utils.GeneralUtils.convertTo2Sf;
 
 public class MovieDataParser {
@@ -131,16 +131,16 @@ public class MovieDataParser {
                 releaseDateAndCertification = getDateOfReleaseTypeAndCertification(returnedMap,
                         MovieApiConstants.RELEASE_TYPE_LIMITED_THEATRICAL, ApiConstants.USER_LOCALE,
                         ApiConstants.FALLBACK_LOCALE);
-
-                //set releaseDateAndCertification if exists otherwise do nothing
-                if (releaseDateAndCertification != null) {
-                    if (releaseDateAndCertification[0] != null) detailsMovieData
-                            .setReleaseDate(releaseDateAndCertification[0]);
-
-                    if (releaseDateAndCertification[1] != null) detailsMovieData
-                            .setMaturityRating(releaseDateAndCertification[1]);
-                }
             }
+        }
+
+        //set releaseDateAndCertification if exists otherwise do nothing
+        if (releaseDateAndCertification != null) {
+            if (releaseDateAndCertification[0] != null) detailsMovieData
+                    .setReleaseDate(releaseDateAndCertification[0]);
+
+            if (releaseDateAndCertification[1] != null) detailsMovieData
+                    .setMaturityRating(releaseDateAndCertification[1]);
         }
 
         //parse cast
@@ -181,7 +181,8 @@ public class MovieDataParser {
 
     //TODO: release dates map contains varying object types
     @SuppressWarnings("unchecked")
-    private static String[] getDateOfReleaseTypeAndCertification(Map<String, Object> detailsMap, int requestedReleaseType,
+    private static String[] getDateOfReleaseTypeAndCertification(Map<String, Object> detailsMap,
+                                                                 int requestedReleaseType,
                                                                  String userLocale, String fallbackLocale) {
         String[] releaseTypeDateAndCertification = null;
 
