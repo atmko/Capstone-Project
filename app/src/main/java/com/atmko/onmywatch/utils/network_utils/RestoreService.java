@@ -87,7 +87,7 @@ public class RestoreService extends JobIntentService {
     public RestoreService() {
     }
 
-    public interface  OnRestoreCompleteListener {
+    public interface OnRestoreCompleteListener {
         void onRestoreComplete();
     }
 
@@ -140,7 +140,7 @@ public class RestoreService extends JobIntentService {
                 try {
                     mJsonString = readFullyAsString(inputStream, "UTF-8");
                     if (mJsonString.equals("")) return;
-                    deleteLocallySavedData();
+                    AppDatabase.deleteLocallySavedData(getApplicationContext());
 
                     pullMovieData();
 
@@ -269,7 +269,7 @@ public class RestoreService extends JobIntentService {
 
         List<String> tagStrings = (ArrayList<String>) map.get(TAGS_KEY);
         List<SearchMediaTag> searchTags = new ArrayList<>();
-        for (String tagString: tagStrings) {
+        for (String tagString : tagStrings) {
             searchTags.add(new SearchMediaTag(tagString));
         }
 
@@ -307,7 +307,7 @@ public class RestoreService extends JobIntentService {
 
         List<String> tagStrings = (ArrayList<String>) map.get(TAGS_KEY);
         List<SearchMediaTag> searchTags = new ArrayList<>();
-        for (String tagString: tagStrings) {
+        for (String tagString : tagStrings) {
             searchTags.add(new SearchMediaTag(tagString));
         }
 
@@ -393,10 +393,10 @@ public class RestoreService extends JobIntentService {
         Double episodeNumberDouble = (Double) map.get(SeriesLog.EPISODE_NUMBER_KEY);
         Double conditionDouble = (Double) map.get(SeriesLog.CONDITION_KEY);
         Double timestampDouble = (Double) map.get(SeriesLog.TIMESTAMP_KEY);
-        int seasonNumber = seasonNumberDouble != null? seasonNumberDouble.intValue(): 0;
-        int episodeNumber = episodeNumberDouble != null? episodeNumberDouble.intValue(): 0;
-        int condition = conditionDouble != null? conditionDouble.intValue(): 0;
-        int timestamp = timestampDouble != null? timestampDouble.intValue(): 0;
+        int seasonNumber = seasonNumberDouble != null ? seasonNumberDouble.intValue() : 0;
+        int episodeNumber = episodeNumberDouble != null ? episodeNumberDouble.intValue() : 0;
+        int condition = conditionDouble != null ? conditionDouble.intValue() : 0;
+        int timestamp = timestampDouble != null ? timestampDouble.intValue() : 0;
 
         return new SeriesLog(
                 (String) map.get(MediaLog.TYPE_KEY),
@@ -419,7 +419,7 @@ public class RestoreService extends JobIntentService {
         List<Map> movieMaps = (List<Map>) returnedMap.get(MOVIES_KEY);
         if (movieMaps == null) return;
 
-        for (Map map: movieMaps) {
+        for (Map map : movieMaps) {
             MovieData movieData = parseDataMapToMovieData(map);
             mLocalDatabase.movieDataDao().addMovieData(movieData);
         }
@@ -435,7 +435,7 @@ public class RestoreService extends JobIntentService {
         List<Map> seriesMaps = (List<Map>) returnedMap.get(SERIES_KEY);
         if (seriesMaps == null) return;
 
-        for (Map map: seriesMaps) {
+        for (Map map : seriesMaps) {
             SeriesData seriesData = parseDataMapToSeriesData(map);
             mLocalDatabase.seriesDataDao().addSeriesData(seriesData);
         }
@@ -451,7 +451,7 @@ public class RestoreService extends JobIntentService {
         List<Map> listMaps = (List<Map>) returnedMap.get(WATCH_LISTS_KEY);
         if (listMaps == null) return;
 
-        for (Map map: listMaps) {
+        for (Map map : listMaps) {
             WatchListModel watchListModel = parseWatchListModel(map);
             mLocalDatabase.watchListsDao().addList(watchListModel);
         }
@@ -467,7 +467,7 @@ public class RestoreService extends JobIntentService {
         List<Map> listMaps = (List<Map>) returnedMap.get(USER_LISTS_KEY);
         if (listMaps == null) return;
 
-        for (Map map: listMaps) {
+        for (Map map : listMaps) {
             UserListModel userListModel = parseUserListModel(map);
             mLocalDatabase.userListsDao().addList(userListModel);
         }
@@ -483,7 +483,7 @@ public class RestoreService extends JobIntentService {
         List<Map> recordMaps = (List<Map>) returnedMap.get(MOVIE_DATA_RECORDS_KEY);
         if (recordMaps == null) return;
 
-        for (Map map: recordMaps) {
+        for (Map map : recordMaps) {
             MovieDataRecord movieDataRecord = parseMovieRecord(map);
             mLocalDatabase.movieDataRecordsDao().addRecord(movieDataRecord);
         }
@@ -499,7 +499,7 @@ public class RestoreService extends JobIntentService {
         List<Map> recordMaps = (List<Map>) returnedMap.get(SERIES_DATA_RECORDS_KEY);
         if (recordMaps == null) return;
 
-        for (Map map: recordMaps) {
+        for (Map map : recordMaps) {
             SeriesDataRecord seriesDataRecord = parseSeriesRecord(map);
             mLocalDatabase.seriesDataRecordsDao().addRecord(seriesDataRecord);
         }
@@ -515,7 +515,7 @@ public class RestoreService extends JobIntentService {
         List<Map> recordMaps = (List<Map>) returnedMap.get(MOVIES_NOTIFIERS_KEY);
         if (recordMaps == null) return;
 
-        for (Map map: recordMaps) {
+        for (Map map : recordMaps) {
             MovieNotifier movieNotifier = parseMovieNotifier(map);
             mLocalDatabase.movieNotifierDao().addMediaNotifier(movieNotifier);
         }
@@ -531,7 +531,7 @@ public class RestoreService extends JobIntentService {
         List<Map> notifierMaps = (List<Map>) returnedMap.get(SERIES_NOTIFIERS_KEY);
         if (notifierMaps == null) return;
 
-        for (Map map: notifierMaps) {
+        for (Map map : notifierMaps) {
             SeriesNotifier seriesNotifier = parseSeriesNotifier(map);
             mLocalDatabase.seriesNotifierDao().addMediaNotifier(seriesNotifier);
         }
@@ -547,66 +547,11 @@ public class RestoreService extends JobIntentService {
         List<Map> recordMaps = (List<Map>) returnedMap.get(SERIES_LOGS_KEY);
         if (recordMaps == null) return;
 
-        for (Map map: recordMaps) {
+        for (Map map : recordMaps) {
             SeriesLog seriesLog = parseSeriesLog(map);
             mLocalDatabase.seriesLogsDao().addMediaLog(seriesLog);
         }
 
         onPullSeriesLogsComplete();
     }
-
-    private void deleteLocallySavedData() {
-        List<MovieDataRecord> localMovieDataRecords =
-                mLocalDatabase.movieDataRecordsDao().getAllRecordsAlt();
-        for (MovieDataRecord movieDataRecord: localMovieDataRecords) {
-            mLocalDatabase.movieDataRecordsDao().deleteRecord(movieDataRecord);
-        }
-
-        List<SeriesDataRecord> localSeriesDataRecords =
-                mLocalDatabase.seriesDataRecordsDao().getAllRecordsAlt();
-        for (SeriesDataRecord seriesDataRecord: localSeriesDataRecords) {
-            mLocalDatabase.seriesDataRecordsDao().deleteRecord(seriesDataRecord);
-        }
-
-        List<MovieData> localMovieDataList =
-                mLocalDatabase.movieDataDao().getAllMoviesAlt();
-        for (MovieData movieData: localMovieDataList) {
-            mLocalDatabase.movieDataDao().deleteMovieData(movieData);
-        }
-
-        List<SeriesData> localSeriesDataList =
-                mLocalDatabase.seriesDataDao().getAllSeriesAlt();
-        for (SeriesData seriesData: localSeriesDataList) {
-            mLocalDatabase.seriesDataDao().deleteSeriesData(seriesData);
-        }
-
-        List<WatchListModel> localWatchLists =
-                mLocalDatabase.watchListsDao().getAllListsAlt();
-        for (WatchListModel watchListModel: localWatchLists) {
-            mLocalDatabase.watchListsDao().deleteList(watchListModel);
-        }
-
-        List<UserListModel> localUserLists =
-                mLocalDatabase.userListsDao().getAllListsAlt();
-        for (UserListModel userListModel: localUserLists) {
-            mLocalDatabase.userListsDao().deleteList(userListModel);
-        }
-
-        List<MovieNotifier> localMovieNotifiers =
-                mLocalDatabase.movieNotifierDao().getAllNotifiersAlt();
-        for (MovieNotifier movieNotifier: localMovieNotifiers) {
-            mLocalDatabase.movieNotifierDao().deleteNotifier(movieNotifier);
-        }
-
-        List<SeriesNotifier> localSeriesNotifiers =
-                mLocalDatabase.seriesNotifierDao().getAllNotifiersAlt();
-        for (SeriesNotifier seriesNotifier: localSeriesNotifiers) {
-            mLocalDatabase.seriesNotifierDao().deleteNotifier(seriesNotifier);
-        }
-
-        List<SeriesLog> localSeriesLogs =
-                mLocalDatabase.seriesLogsDao().getAllLogsAlt();
-        for (SeriesLog seriesLog: localSeriesLogs) {
-            mLocalDatabase.seriesLogsDao().deleteMediaLog(seriesLog);
-        }
-    }}
+}

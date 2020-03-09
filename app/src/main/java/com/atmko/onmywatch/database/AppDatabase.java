@@ -38,6 +38,8 @@ import com.atmko.onmywatch.models.SeriesDataRecord;
 import com.atmko.onmywatch.models.WatchListModel;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 
+import java.util.List;
+
 @Database(entities = {WatchListModel.class, UserListModel.class, MovieData.class, SeriesData.class,
         MovieDataRecord.class, SeriesDataRecord.class, MovieNotifier.class, SeriesNotifier.class,
         SeriesLog.class, SearchMediaTag.class, SearchListTag.class},
@@ -103,6 +105,63 @@ public abstract class AppDatabase extends RoomDatabase {
                 super.onOpen(db);
             }
         };
+    }
+
+    public static void deleteLocallySavedData(Context context) {
+        AppDatabase localDatabase = AppDatabase.getLocalDatabase(context);
+        List<MovieDataRecord> localMovieDataRecords =
+                localDatabase.movieDataRecordsDao().getAllRecordsAlt();
+        for (MovieDataRecord movieDataRecord: localMovieDataRecords) {
+            localDatabase.movieDataRecordsDao().deleteRecord(movieDataRecord);
+        }
+
+        List<SeriesDataRecord> localSeriesDataRecords =
+                localDatabase.seriesDataRecordsDao().getAllRecordsAlt();
+        for (SeriesDataRecord seriesDataRecord: localSeriesDataRecords) {
+            localDatabase.seriesDataRecordsDao().deleteRecord(seriesDataRecord);
+        }
+
+        List<MovieData> localMovieDataList =
+                localDatabase.movieDataDao().getAllMoviesAlt();
+        for (MovieData movieData: localMovieDataList) {
+            localDatabase.movieDataDao().deleteMovieData(movieData);
+        }
+
+        List<SeriesData> localSeriesDataList =
+                localDatabase.seriesDataDao().getAllSeriesAlt();
+        for (SeriesData seriesData: localSeriesDataList) {
+            localDatabase.seriesDataDao().deleteSeriesData(seriesData);
+        }
+
+        List<WatchListModel> localWatchLists =
+                localDatabase.watchListsDao().getAllListsAlt();
+        for (WatchListModel watchListModel: localWatchLists) {
+            localDatabase.watchListsDao().deleteList(watchListModel);
+        }
+
+        List<UserListModel> localUserLists =
+                localDatabase.userListsDao().getAllListsAlt();
+        for (UserListModel userListModel: localUserLists) {
+            localDatabase.userListsDao().deleteList(userListModel);
+        }
+
+        List<MovieNotifier> localMovieNotifiers =
+                localDatabase.movieNotifierDao().getAllNotifiersAlt();
+        for (MovieNotifier movieNotifier: localMovieNotifiers) {
+            localDatabase.movieNotifierDao().deleteNotifier(movieNotifier);
+        }
+
+        List<SeriesNotifier> localSeriesNotifiers =
+                localDatabase.seriesNotifierDao().getAllNotifiersAlt();
+        for (SeriesNotifier seriesNotifier: localSeriesNotifiers) {
+            localDatabase.seriesNotifierDao().deleteNotifier(seriesNotifier);
+        }
+
+        List<SeriesLog> localSeriesLogs =
+                localDatabase.seriesLogsDao().getAllLogsAlt();
+        for (SeriesLog seriesLog: localSeriesLogs) {
+            localDatabase.seriesLogsDao().deleteMediaLog(seriesLog);
+        }
     }
 
     public abstract WatchListsDao watchListsDao();
