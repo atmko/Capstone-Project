@@ -36,6 +36,7 @@ import com.atmko.onmywatch.models.MovieDataRecord;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesDataRecord;
 import com.atmko.onmywatch.models.WatchListModel;
+import com.atmko.onmywatch.utils.NotificationHandler;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 
 import java.util.List;
@@ -162,6 +163,9 @@ public abstract class AppDatabase extends RoomDatabase {
         for (SeriesLog seriesLog: localSeriesLogs) {
             localDatabase.seriesLogsDao().deleteMediaLog(seriesLog);
         }
+
+        //cancel all alarms
+        NotificationHandler.cancelAllAlarms(context);
     }
 
     public abstract WatchListsDao watchListsDao();

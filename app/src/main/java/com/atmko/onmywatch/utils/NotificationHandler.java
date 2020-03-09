@@ -131,7 +131,7 @@ public class NotificationHandler {
         }
     }
 
-    private static void restoreNotifiers(final Context context) {
+    public static void restoreNotifiers(final Context context) {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -247,6 +247,26 @@ public class NotificationHandler {
         } else {
             database.seriesNotifierDao().deleteNotifier(((SeriesNotifier) notifier));
         }
+    }
+
+    public static void cancelAllAlarms(final Context context) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                AppDatabase database = AppDatabase.getLocalDatabase(context);
+                //cancel all movie alarms
+                List<MovieNotifier> movieNotifiers = database.movieNotifierDao().getAllNotifiersAlt();
+                for (MovieNotifier movieNotifier: movieNotifiers) {
+                    cancelAlarm(context, movieNotifier);
+                }
+
+                //cancel all series alarms
+                List<SeriesNotifier> seriesNotifiers = database.seriesNotifierDao().getAllNotifiersAlt();
+                for (SeriesNotifier seriesNotifier: seriesNotifiers) {
+                    cancelAlarm(context, seriesNotifier);
+                }
+            }
+        });
     }
 
     //enables boot receiver
