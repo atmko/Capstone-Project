@@ -40,7 +40,7 @@ public class SeriesNotifier extends MediaNotifier {
         String contentTitle = context.getString(R.string.notification_new_episode_title);
         String contentText = context.getString(R.string.notification_new_episode_content_prefix)
                 + " " + mediaData.getTitle()
-                + context.getString(R.string.notification_new_episode_content_suffix);
+                + " " + context.getString(R.string.notification_new_episode_content_suffix);
 
         //create intent to launch activity on click
         Intent detailsIntent = new Intent(context, MasterActivity.class);
