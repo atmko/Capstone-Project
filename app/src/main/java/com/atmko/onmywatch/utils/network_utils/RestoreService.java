@@ -248,7 +248,7 @@ public class RestoreService extends JobIntentService {
         });
     }
 
-    public void onRestoreNotifiersComplete() {
+    public void onRestoreNotificationsComplete() {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -568,6 +568,6 @@ public class RestoreService extends JobIntentService {
     //restore all movie and series notifications
     private void restoreNotifications() {
         NotificationHandler.restoreNotifiers(getApplicationContext());
-        onRestoreNotifiersComplete();
+        onRestoreNotificationsComplete();
     }
 }
