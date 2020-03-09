@@ -206,6 +206,8 @@ public class MasterActivity extends AppCompatActivity {
     }
 
     public static void logOut(Activity activity) {
+        AppDatabase.deleteLocallySavedData(activity);
+
         GoogleSignInOptions gso =
                 new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                         .requestEmail()
