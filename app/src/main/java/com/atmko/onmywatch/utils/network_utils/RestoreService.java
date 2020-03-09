@@ -32,6 +32,7 @@ import com.atmko.onmywatch.models.SeriesLog;
 import com.atmko.onmywatch.models.SeriesNotifier;
 import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.models.WatchListModel;
+import com.atmko.onmywatch.utils.NotificationHandler;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 import com.atmko.onmywatch.utils.api_utils.MovieApiConstants;
 import com.atmko.onmywatch.utils.api_utils.SeriesApiConstants;
@@ -239,6 +240,15 @@ public class RestoreService extends JobIntentService {
     }
 
     public void onPullSeriesNotifiersComplete() {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                restoreNotifications();
+            }
+        });
+    }
+
+    public void onRestoreNotifiersComplete() {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -553,5 +563,11 @@ public class RestoreService extends JobIntentService {
         }
 
         onPullSeriesLogsComplete();
+    }
+
+    //restore all movie and series notifications
+    private void restoreNotifications() {
+        NotificationHandler.restoreNotifiers(getApplicationContext());
+        onRestoreNotifiersComplete();
     }
 }
