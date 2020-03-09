@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -42,6 +43,7 @@ import com.atmko.onmywatch.models.PersonData;
 import com.atmko.onmywatch.models.SimpleIdlingResource;
 import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
+import com.atmko.onmywatch.utils.network_utils.LogoutService;
 import com.atmko.onmywatch.utils.network_utils.RestoreService;
 import com.atmko.onmywatch.utils.network_utils.work_manager_workers.BackupWorker;
 import com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker;
@@ -63,7 +65,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class MasterActivity extends AppCompatActivity {
+public class MasterActivity extends AppCompatActivity
+        implements LogoutService.OnLogOutBackupCompleteListener {
     private static final int FREE_MODE_LIST_COUNT_LIMIT = 3;
 
     public static final int MEDIA_TYPE_SERIES = 0;
@@ -206,7 +209,15 @@ public class MasterActivity extends AppCompatActivity {
     }
 
     public static void logOut(Activity activity) {
-        AppDatabase.deleteLocallySavedData(activity);
+        //backup before logging out;
+        Intent intent = new Intent(activity, LogoutService.class);
+        intent.setAction(LogoutService.ACTION_LOG_OUT);
+        LogoutService.enqueueWork(activity, intent);
+    }
+
+    @Override
+    public void onLogOutBackupComplete() {
+        AppDatabase.deleteLocallySavedData(this);
 
         GoogleSignInOptions gso =
                 new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -214,11 +225,16 @@ public class MasterActivity extends AppCompatActivity {
                         .build();
 
         FirebaseAuth.getInstance().signOut();
-        GoogleSignIn.getClient(activity, gso).signOut();
+        GoogleSignIn.getClient(this, gso).signOut();
 
-        Intent intent = activity.getIntent();
-        activity.finish();
-        activity.startActivity(intent);
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
+    }
+
+    @Override
+    public void onLogOutBackupFailure() {
+        Toast.makeText(this, "log out failed", Toast.LENGTH_SHORT).show();
     }
 
     @Override
