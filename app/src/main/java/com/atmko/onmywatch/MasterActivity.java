@@ -179,9 +179,10 @@ public class MasterActivity extends AppCompatActivity
 
         if (getIntent() != null) {
             Intent intent = getIntent();
-            Bundle extras = intent.getExtras();
+            String action = intent.getAction();
 
-            if (intent.getAction().equals(DetailsFragment.ACTION_LAUNCH_DETAILS)) {
+            if (action != null && action.equals(DetailsFragment.ACTION_LAUNCH_DETAILS)) {
+                Bundle extras = intent.getExtras();
                 launchDetailsFromIntent(intent, extras);
             }
         }
@@ -227,7 +228,7 @@ public class MasterActivity extends AppCompatActivity
         FirebaseAuth.getInstance().signOut();
         GoogleSignIn.getClient(this, gso).signOut();
 
-        Intent intent = getIntent();
+        Intent intent = new Intent(getApplicationContext(), MasterActivity.class);
         finish();
         startActivity(intent);
     }
