@@ -5,17 +5,24 @@
 package com.atmko.onmywatch.utils.api_utils;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
+
+import androidx.annotation.Nullable;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.ANRequest;
 import com.atmko.onmywatch.utils.network_utils.TraktApiConstants;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.FutureTarget;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.atmko.onmywatch.R;
+import com.bumptech.glide.request.target.Target;
 
 public class NetworkFunctions {
     //agnostic search request
@@ -94,7 +101,7 @@ public class NetworkFunctions {
     }
 
     //loads images into ImageViews using glide
-    public static void loadImage(Context context, String urlString, ImageView imageView) {
+    public static void loadImage(Context context, String urlString, final ImageView imageView) {
         //configure glide behaviour
         RequestOptions requestOptions = new RequestOptions()
                 .placeholder(R.drawable.poster_image_placeholder)
@@ -104,6 +111,22 @@ public class NetworkFunctions {
                 .load(urlString)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .apply(requestOptions)
+                .listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e,
+                                                Object model, Target<Drawable> target,
+                                                boolean isFirstResource) {
+                        imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model,
+                                                   Target<Drawable> target, DataSource dataSource,
+                                                   boolean isFirstResource) {
+                        return false;
+                    }
+                })
                 .into(imageView);
     }
 
