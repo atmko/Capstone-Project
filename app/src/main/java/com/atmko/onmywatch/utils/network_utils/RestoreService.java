@@ -67,7 +67,9 @@ public class RestoreService extends JobIntentService {
 
     public static final String BACKUP_CHANNEL_ID = "Backup Channel";
     public static final String BACKUP_NAME = "backup";
+    public static final String USERS_PATH = "users";
     public static final String BACKUP_LOCAL_PATH = "backups";
+    public static final String BACKUP_EXTENSION = ".json";
 
     public static final String MOVIES_KEY = "movies";
     public static final String SERIES_KEY = "series";
@@ -98,7 +100,8 @@ public class RestoreService extends JobIntentService {
 
         mLocalDatabase = AppDatabase.getLocalDatabase(getApplicationContext());
         mBackupRef = FirebaseStorage.getInstance().getReference()
-                .child(BACKUP_LOCAL_PATH + "/" + BACKUP_NAME + ".json");
+                .child(USERS_PATH + "/" + MasterActivity.getCurrentUser().getUid()
+                        + "/" + BACKUP_LOCAL_PATH + "/" + BACKUP_NAME + BACKUP_EXTENSION);
 
         startForeground(JOB_ID,
                 buildNotification(getApplicationContext(),

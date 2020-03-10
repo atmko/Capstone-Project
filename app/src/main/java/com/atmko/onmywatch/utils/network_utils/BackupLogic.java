@@ -7,6 +7,7 @@ package com.atmko.onmywatch.utils.network_utils;
 import android.content.Context;
 import android.util.Log;
 
+import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.MovieDataRecord;
@@ -40,7 +41,9 @@ public class BackupLogic {
     private static final String TAG = com.atmko.onmywatch.utils.network_utils.work_manager_workers.BackupWorker.class.getSimpleName();
 
     private static final String BACKUP_NAME = "backup";
+    private static final String USERS_PATH = "users";
     private static final String BACKUP_LOCAL_PATH = "backups";
+    private static final String BACKUP_EXTENSION = ".json";
 
     private static final String MOVIES_KEY = "movies";
     private static final String SERIES_KEY = "series";
@@ -62,7 +65,8 @@ public class BackupLogic {
         mLocalDatabase = AppDatabase.getInstance(mContext);
         mDatabaseMap = new HashMap();
         mBackupRef = FirebaseStorage.getInstance().getReference()
-                .child(BACKUP_LOCAL_PATH + "/" + BACKUP_NAME + ".json");
+                .child(USERS_PATH + "/" + MasterActivity.getCurrentUser().getUid()
+                        + "/" + BACKUP_LOCAL_PATH + "/" + BACKUP_NAME + BACKUP_EXTENSION);
     }
 
     public boolean backupToRemoteDatabase() {
