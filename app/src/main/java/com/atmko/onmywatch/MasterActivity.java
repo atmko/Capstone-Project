@@ -41,6 +41,7 @@ import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.PersonData;
 import com.atmko.onmywatch.models.SimpleIdlingResource;
+import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
 import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.utils.network_utils.LogoutService;
@@ -235,7 +236,13 @@ public class MasterActivity extends AppCompatActivity
 
     @Override
     public void onLogOutBackupFailure() {
-        Toast.makeText(this, "log out failed", Toast.LENGTH_SHORT).show();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(MasterActivity.this, "log out failed",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -251,7 +258,22 @@ public class MasterActivity extends AppCompatActivity
                 //observe user data via view model
                 observeData();
             } else {
-                finish();
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!NetworkFunctions.isOnline()) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(MasterActivity.this,
+                                            "No Connection Established",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                        finish();
+                    }
+                });
             }
         }
     }

@@ -18,6 +18,7 @@ import com.atmko.onmywatch.models.SeriesLog;
 import com.atmko.onmywatch.models.SeriesNotifier;
 import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.models.WatchListModel;
+import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -233,39 +234,39 @@ public class BackupLogic {
         mDatabaseMap.put(SERIES_LOGS_KEY, mapList);
     }
 
-    private void onPushComplete() {
+    private void onPushComplete() throws IOException, ExecutionException, InterruptedException,
+            BackupException {
         writeToFile(mDatabaseMap);
         writeToDatabase();
     }
 
-    private void writeToFile(Map map) {
-        try {
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            OutputStreamWriter outputStreamWriter =
-                    new OutputStreamWriter(mContext
-                            .openFileOutput(BACKUP_NAME, Context.MODE_PRIVATE));
-            outputStreamWriter.write(gson.toJson(map));
-            outputStreamWriter.close();
-        } catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e.toString());
+    private void writeToFile(Map map) throws IOException {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        OutputStreamWriter outputStreamWriter =
+                new OutputStreamWriter(mContext
+                        .openFileOutput(BACKUP_NAME, Context.MODE_PRIVATE));
+        outputStreamWriter.write(gson.toJson(map));
+        outputStreamWriter.close();
+    }
+
+    public static class BackupException extends Exception {
+        static final String ERROR_MESSAGE = "Failed to upload backup to database";
+        BackupException() {
+            super(ERROR_MESSAGE);
         }
     }
 
-    private void writeToDatabase() {
-        try {
-            InputStream inputStream = mContext.openFileInput(BACKUP_NAME);
-            UploadTask uploadTask = mBackupRef.putStream(inputStream);
+    private void writeToDatabase() throws FileNotFoundException,
+            ExecutionException, InterruptedException, BackupException {
+        InputStream inputStream = mContext.openFileInput(BACKUP_NAME);
+        UploadTask uploadTask = mBackupRef.putStream(inputStream);
 
+        if (NetworkFunctions.isOnline()) {
             Tasks.await(uploadTask);
             deleteLocalFile();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } else {
             deleteLocalFile();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            deleteLocalFile();
+            throw new BackupException();
         }
     }
 
