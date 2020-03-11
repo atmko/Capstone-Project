@@ -57,13 +57,10 @@ public class NotificationHandler {
                         //get saved series data
                         SeriesData seriesData = AppDatabase.getInstance(context).seriesDataDao().getSeriesByIdAlt(mediaId);
                         if (seriesData != null) {
-                            //if watch status is watching,
+                            //if watch status is watching, update notifier
                             if (seriesData.getWatchStatus() == MediaData.WATCH_STATUS_WATCHING) {
-                                SeriesData newMediaData =
-                                        AppDatabase.getInstance(context).seriesDataDao().getSeriesByIdAlt(mediaId);
-
                                 Intent intent = new Intent(context, UpdateNotifierService.class);
-                                intent.putExtra(UpdateMediaWorker.NEW_MEDIA_DATA_KEY, Parcels.wrap(newMediaData));
+                                intent.putExtra(UpdateMediaWorker.NEW_MEDIA_DATA_KEY, Parcels.wrap(seriesData));
                                 UpdateNotifierService.enqueueWork(context, intent);
 
                                 // The IdlingResource is null in production.
