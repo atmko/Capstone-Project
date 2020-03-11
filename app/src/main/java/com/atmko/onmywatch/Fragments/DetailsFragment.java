@@ -46,6 +46,7 @@ import com.atmko.onmywatch.adapters.DetailMovieExtrasAdapter;
 import com.atmko.onmywatch.adapters.DetailSeriesExtrasAdapter;
 import com.atmko.onmywatch.adapters.SpinnerDetailsOptionsAdapter;
 import com.atmko.onmywatch.database.AppDatabase;
+import com.atmko.onmywatch.models.Episode;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieData;
@@ -188,7 +189,7 @@ public class DetailsFragment extends Fragment {
             //If so set detail values and configure extras adapter, otherwise get detail values
             if (mMediaData.getReleaseStatus() != null) {
                 try {
-                    setDetailViewValues();
+                    setDetailViewValues(mMediaData);
                     populateDetailExtrasAdapter();
 
                 } catch (NullPointerException e) {
@@ -550,7 +551,7 @@ public class DetailsFragment extends Fragment {
                         mMediaData =
                                 MovieDataParser.parseDetails(returnedJSONString, ((MovieData) mMediaData));
 
-                        setMovieCountDown();
+                        setMovieCountDown(((MovieData) mMediaData));
 
                     } else {
                         mMediaData =
@@ -561,7 +562,7 @@ public class DetailsFragment extends Fragment {
 
                     //todo implement get details for people data
 
-                    setDetailViewValues();
+                    setDetailViewValues(mMediaData);
 
                     populateDetailExtrasAdapter();
 
@@ -629,7 +630,7 @@ public class DetailsFragment extends Fragment {
                         mMediaData =
                                 SeriesDataParser.parseTraktNextEpisodeDetails(returnedJSONString, ((SeriesData) mMediaData));
 
-                        setSeriesCountDown();
+                        setSeriesCountDown(((SeriesData) mMediaData));
                     }
 
                 } catch (NullPointerException e) {
@@ -652,38 +653,22 @@ public class DetailsFragment extends Fragment {
         });
     }
 
-    private void setMovieCountDown() {
-        if (!mMediaData.getReleaseStatus().equals(MovieApiConstants.RELEASE_STATUS_RELEASED)) {
-            //set count down if release date available, otherwise set date to be determined
-            if (!mMediaData.getReleaseDate().equals("") && mMediaData.getReleaseDate() != null) {
-                ScheduledMedia scheduledMedia = new ScheduledMedia();
-
-                try {
-                    scheduledMedia.setAirDate(mMediaData.getReleaseDate());
-                } catch (ScheduledMedia.DateFormatException e) {
-                    e.printStackTrace();
-                    mCountDownTextView.setText(ScheduledMedia.DATE_ERROR);
-                    mCountDownTextView.setVisibility(View.VISIBLE);
-                }
-
-                if (scheduledMedia.getCountdown() != null) {
-                    mCountDownTextView.setText(scheduledMedia.getCountdown());
-                    mCountDownTextView.setVisibility(View.VISIBLE);
-                }
-
-            } else {
-                mCountDownTextView.setText(ScheduledMedia.DATE_TBD);
+    private void setMovieCountDown(MovieData movieData) {
+        if (!movieData.getReleaseStatus().equals(MovieApiConstants.RELEASE_STATUS_RELEASED)) {
+            //set count down if available
+            ScheduledMedia releaseMedia = movieData.getScheduledMedia();
+            if (releaseMedia != null && releaseMedia.getCountdown() != null) {
+                mCountDownTextView.setText(releaseMedia.getCountdown());
                 mCountDownTextView.setVisibility(View.VISIBLE);
             }
         }
     }
 
-    private void setSeriesCountDown() {
+    private void setSeriesCountDown(SeriesData seriesData) {
         //set count down if available
-        String countDown = ((SeriesData) mMediaData).getNextEpisodeToAir().getCountdown();
-
-        if (countDown != null) {
-            mCountDownTextView.setText(countDown);
+        Episode nextEpisode = seriesData.getNextEpisodeToAir();
+        if (nextEpisode != null && nextEpisode.getCountdown() != null) {
+            mCountDownTextView.setText(nextEpisode.getCountdown());
             mCountDownTextView.setVisibility(View.VISIBLE);
         }
     }
@@ -693,25 +678,26 @@ public class DetailsFragment extends Fragment {
             @Override
             public void run() {
                 AppDatabase database = AppDatabase.getInstance(getContext());
+                final MediaData mOfflineMediaData;
                 if (mMediaData instanceof MovieData) {
-                    mMediaData = database.movieDataDao().getMovieByIdAlt(mMediaData.getId());
+                    mOfflineMediaData = database.movieDataDao().getMovieByIdAlt(mMediaData.getId());
 
                 } else {
-                    mMediaData = database.seriesDataDao().getSeriesByIdAlt(mMediaData.getId());
+                    mOfflineMediaData = database.seriesDataDao().getSeriesByIdAlt(mMediaData.getId());
                 }
 
-                if (mMediaData != null) {
+                if (mOfflineMediaData != null) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (mMediaData instanceof MovieData) {
-                                setMovieCountDown();
+                            if (mOfflineMediaData instanceof MovieData) {
+                                setMovieCountDown(((MovieData) mOfflineMediaData));
 
                             } else {
-                                setSeriesCountDown();
+                                setSeriesCountDown(((SeriesData) mOfflineMediaData));
                             }
 
-                            setDetailViewValues();
+                            setDetailViewValues(mOfflineMediaData);
                             populateDetailExtrasAdapter();
                         }
                     });
@@ -894,14 +880,14 @@ public class DetailsFragment extends Fragment {
 
     // TODO: NullPointerException handled in caller
     @SuppressWarnings("ConstantConditions")
-    private void setDetailViewValues() throws NullPointerException {
-        mReleaseStatusTextView.setText(mMediaData.getReleaseStatus());
+    private void setDetailViewValues(MediaData mediaData) throws NullPointerException {
+        mReleaseStatusTextView.setText(mediaData.getReleaseStatus());
         mReleaseStatusTextView.setVisibility(View.VISIBLE);
 
         //set trailer button visibility
         try {
             //checks for trailer
-            mMediaData.getVideos().get(0);
+            mediaData.getVideos().get(0);
             getView().findViewById(R.id.trailer_button).setVisibility(View.VISIBLE);
 
         } catch (IndexOutOfBoundsException e) {
@@ -910,10 +896,10 @@ public class DetailsFragment extends Fragment {
         }
 
         ((TextView) getView().findViewById(R.id.maturity_rating_text_view))
-                .setText(mMediaData.getMaturityRating());
+                .setText(mediaData.getMaturityRating());
 
         //set Genres
-        ArrayList<String> genres = mMediaData.getGenres();
+        ArrayList<String> genres = mediaData.getGenres();
 
         if (genres != null) {
             try {
@@ -1002,7 +988,6 @@ public class DetailsFragment extends Fragment {
                     Snackbar.LENGTH_LONG).show();
 
             return;
-
         }
 
         Intent intent = new Intent(getActivity().getApplicationContext(), RateActivity.class);
