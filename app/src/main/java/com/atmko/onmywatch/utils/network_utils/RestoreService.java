@@ -409,7 +409,7 @@ public class RestoreService extends JobIntentService {
         int seasonNumber = seasonNumberDouble != null ? seasonNumberDouble.intValue() : 0;
         int episodeNumber = episodeNumberDouble != null ? episodeNumberDouble.intValue() : 0;
         int condition = conditionDouble != null ? conditionDouble.intValue() : 0;
-        int timestamp = timestampDouble != null ? timestampDouble.intValue() : 0;
+        long timestamp = timestampDouble != null ? timestampDouble.longValue() : 0;
 
         return new SeriesLog(
                 (String) map.get(MediaLog.TYPE_KEY),
