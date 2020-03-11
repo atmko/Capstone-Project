@@ -166,7 +166,7 @@ public class UpdateNotifierService extends JobIntentService {
     }
 
     //if notifier doesn't exist, create new Media release notifier in database and return notifier
-    private MediaNotifier createReleaseNotifier(MediaData newMediaData, boolean iActive) {
+    private MediaNotifier createReleaseNotifier(MediaData newMediaData, boolean isActive) {
         MediaNotifier savedNotifier = getNotifier(CONDITION_ON_RELEASE);
         if (savedNotifier != null) return savedNotifier;
 
@@ -175,12 +175,12 @@ public class UpdateNotifierService extends JobIntentService {
 
         if (newMediaData instanceof MovieData) {
             releaseNotifier =
-                    new MovieNotifier(newMediaData.getId(), MediaNotifier.CONDITION_ON_RELEASE, iActive);
+                    new MovieNotifier(newMediaData.getId(), MediaNotifier.CONDITION_ON_RELEASE, isActive);
             mDatabase.movieNotifierDao().addMediaNotifier(((MovieNotifier) releaseNotifier));
 
         } else {
             releaseNotifier =
-                    new SeriesNotifier(newMediaData.getId(), MediaNotifier.CONDITION_ON_RELEASE, iActive);
+                    new SeriesNotifier(newMediaData.getId(), MediaNotifier.CONDITION_ON_RELEASE, isActive);
             mDatabase.seriesNotifierDao().addMediaNotifier(((SeriesNotifier) releaseNotifier));
         }
 
