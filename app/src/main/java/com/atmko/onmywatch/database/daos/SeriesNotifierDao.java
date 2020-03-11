@@ -6,6 +6,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.atmko.onmywatch.models.SeriesNotifier;
 
@@ -38,6 +39,9 @@ public interface SeriesNotifierDao {
     //alternate method without live data
     @Query("SELECT * FROM series_notifiers WHERE media_id = :mediaId")
     List<SeriesNotifier> getNotifiersWithMediaIdAlt(String mediaId);
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    void updateNotifier(SeriesNotifier seriesNotifier);
 
     @Delete
     void deleteNotifier(SeriesNotifier seriesNotifier);

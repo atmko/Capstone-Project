@@ -61,6 +61,10 @@ public abstract class MediaNotifier {
         return mIsActive;
     }
 
+    public void setIsActive(boolean isActive) {
+        this.mIsActive = isActive;
+    }
+
     public int getNotificationCode() {
         return Integer.valueOf(getCondition() + mId);
     }

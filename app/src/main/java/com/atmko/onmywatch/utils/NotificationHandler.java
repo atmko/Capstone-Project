@@ -61,6 +61,10 @@ public class NotificationHandler {
 
                         SeriesNotifier seriesNotifier = seriesNotifierDao.getNotifierByIdAlt(mediaId, condition);
                         if (seriesNotifier != null) {
+                            //set series notifier to inactive
+                            seriesNotifier.setIsActive(false);
+                            seriesNotifierDao.updateNotifier(seriesNotifier);
+
                             //get saved series data
                             SeriesData seriesData = AppDatabase.getInstance(context).seriesDataDao().getSeriesByIdAlt(mediaId);
                             if (seriesData != null) {
