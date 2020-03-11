@@ -65,21 +65,13 @@ public class NotificationHandler {
                             seriesNotifier.setIsActive(false);
                             seriesNotifierDao.updateNotifier(seriesNotifier);
 
-                            //get saved series data
-                            SeriesData seriesData = AppDatabase.getInstance(context).seriesDataDao().getSeriesByIdAlt(mediaId);
-                            if (seriesData != null) {
-                                Intent intent = new Intent(context, UpdateNotifierService.class);
-                                intent.putExtra(UpdateMediaWorker.NEW_MEDIA_DATA_KEY, Parcels.wrap(seriesData));
-                                UpdateNotifierService.enqueueWork(context, intent);
-
-                                // The IdlingResource is null in production.
-                                if (NotificationIdlingResource.getNotificationIdlingResource() != null) {
-                                    NotificationIdlingResource.getNotificationIdlingResource().addToIdleCounter();
-                                }
-
-                                //skip notifier deletion if condition is new episodes
-                                return;
+                            // The IdlingResource is null in production.
+                            if (NotificationIdlingResource.getNotificationIdlingResource() != null) {
+                                NotificationIdlingResource.getNotificationIdlingResource().addToIdleCounter();
                             }
+
+                            //skip notifier deletion if condition is new episodes
+                            return;
                         }
                     }
 
