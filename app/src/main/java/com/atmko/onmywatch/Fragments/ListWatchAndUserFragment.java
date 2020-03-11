@@ -27,9 +27,13 @@ import com.androidnetworking.core.MainThreadExecutor;
 import com.atmko.onmywatch.ConfirmationActivity;
 import com.atmko.onmywatch.CreateListActivity;
 import com.atmko.onmywatch.MasterActivity;
+import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.ListsAdapter;
 import com.atmko.onmywatch.adapters.TagAdapter;
+import com.atmko.onmywatch.adapters.UserListsAdapter;
+import com.atmko.onmywatch.adapters.WatchListsAdapter;
 import com.atmko.onmywatch.custom_views.SuperEditText;
+import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.ListModel;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
@@ -37,15 +41,11 @@ import com.atmko.onmywatch.models.SearchListTag;
 import com.atmko.onmywatch.models.SearchMediaTag;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SimpleIdlingResource;
-import com.atmko.onmywatch.utils.network_utils.AppExecutors;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.atmko.onmywatch.R;
-import com.atmko.onmywatch.adapters.UserListsAdapter;
-import com.atmko.onmywatch.adapters.WatchListsAdapter;
-import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.models.WatchListModel;
+import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.view_models.ListsWatchAndUserViewModel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.parceler.Parcels;
@@ -329,12 +329,7 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
         }
 
         if (getParentFragment() != null) {
-            Intent confirmationActivityIntent =
-                    new Intent(getParentFragment().getContext(), ConfirmationActivity.class);
-            confirmationActivityIntent.setAction(ConfirmationActivity.ACTION_DELETE);
-            confirmationActivityIntent.putExtra(ConfirmationActivity.SELECTED_DATA_KEY,
-                    Parcels.wrap(userListModel));
-            getParentFragment().startActivityForResult(confirmationActivityIntent, REQUEST_DELETE);
+            MasterActivity.launchConfirmationActivity(getParentFragment(), userListModel, REQUEST_DELETE);
         }
     }
 
