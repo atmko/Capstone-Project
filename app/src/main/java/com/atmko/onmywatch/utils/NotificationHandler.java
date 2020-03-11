@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.atmko.onmywatch.database.AppDatabase;
+import com.atmko.onmywatch.database.daos.SeriesNotifierDao;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieData;
@@ -54,22 +55,28 @@ public class NotificationHandler {
                     notificationManager.notify(mediaId, condition, notification);
 
                     if (mediaType == MEDIA_TYPE_SERIES) {
-                        //get saved series data
-                        SeriesData seriesData = AppDatabase.getInstance(context).seriesDataDao().getSeriesByIdAlt(mediaId);
-                        if (seriesData != null) {
-                            //if watch status is watching, update notifier
-                            if (seriesData.getWatchStatus() == MediaData.WATCH_STATUS_WATCHING) {
-                                Intent intent = new Intent(context, UpdateNotifierService.class);
-                                intent.putExtra(UpdateMediaWorker.NEW_MEDIA_DATA_KEY, Parcels.wrap(seriesData));
-                                UpdateNotifierService.enqueueWork(context, intent);
+                        SeriesNotifierDao seriesNotifierDao =
+                                AppDatabase.getInstance(context).seriesNotifierDao();
 
-                                // The IdlingResource is null in production.
-                                if (NotificationIdlingResource.getNotificationIdlingResource() != null) {
-                                    NotificationIdlingResource.getNotificationIdlingResource().addToIdleCounter();
+                        SeriesNotifier seriesNotifier = seriesNotifierDao.getNotifierByIdAlt(mediaId, condition);
+                        if (seriesNotifier != null) {
+                            //if notifier condition is new episode, update notifier
+                            if (seriesNotifier.getCondition() == SeriesNotifier.CONDITION_NEW_EPISODE) {
+                                //get saved series data
+                                SeriesData seriesData = AppDatabase.getInstance(context).seriesDataDao().getSeriesByIdAlt(mediaId);
+                                if (seriesData != null) {
+                                    Intent intent = new Intent(context, UpdateNotifierService.class);
+                                    intent.putExtra(UpdateMediaWorker.NEW_MEDIA_DATA_KEY, Parcels.wrap(seriesData));
+                                    UpdateNotifierService.enqueueWork(context, intent);
+
+                                    // The IdlingResource is null in production.
+                                    if (NotificationIdlingResource.getNotificationIdlingResource() != null) {
+                                        NotificationIdlingResource.getNotificationIdlingResource().addToIdleCounter();
+                                    }
+
+                                    //skip notifier deletion if condition is new episodes
+                                    return;
                                 }
-
-                                //skip notifier deletion if condition is new episodes
-                                return;
                             }
                         }
                     }
