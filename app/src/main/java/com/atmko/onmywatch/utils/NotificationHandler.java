@@ -23,7 +23,6 @@ import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesNotifier;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
-import com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker;
 
 import org.parceler.Parcels;
 
@@ -31,6 +30,7 @@ import java.util.List;
 
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
+import static com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker.NEW_MEDIA_DATA_KEY;
 
 public class NotificationHandler {
     public static class AlarmReceiver extends BroadcastReceiver {
@@ -59,11 +59,22 @@ public class NotificationHandler {
                         SeriesNotifierDao seriesNotifierDao =
                                 AppDatabase.getInstance(context).seriesNotifierDao();
 
-                        SeriesNotifier seriesNotifier = seriesNotifierDao.getNotifierByIdAlt(mediaId, condition);
+                        SeriesNotifier seriesNotifier =
+                                seriesNotifierDao.getNotifierByIdAlt(mediaId, condition);
                         if (seriesNotifier != null) {
                             //set series notifier to inactive
                             seriesNotifier.setIsActive(false);
                             seriesNotifierDao.updateNotifier(seriesNotifier);
+
+                            //get saved series data to update series tracker logs
+                            SeriesData seriesData = AppDatabase.getInstance(context).seriesDataDao()
+                                    .getSeriesByIdAlt(mediaId);
+                            if (seriesData != null) {
+                                SeriesTracker.sActionMode = SeriesTracker.ACTION_SET;
+                                Intent intent = new Intent(context, SeriesTracker.class);
+                                intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(seriesData));
+                                SeriesTracker.enqueueWork(context, intent);
+                            }
 
                             // The IdlingResource is null in production.
                             if (NotificationIdlingResource.getNotificationIdlingResource() != null) {
