@@ -138,7 +138,8 @@ public class CreateListActivity extends AppCompatActivity {
 
                                 //delete list tag
                                 AppDatabase localDb = AppDatabase.getLocalDatabase(CreateListActivity.this);
-                                SearchListTag tag = localDb.searchListTagsDao().getTagAlt(mEditListModel.getName());
+                                SearchListTag tag = localDb.searchListTagsDao()
+                                        .getTagAlt(mEditListModel.getName().toLowerCase());
                                 if (tag != null) {
                                     localDb.searchListTagsDao().deleteTag(tag);
                                 }

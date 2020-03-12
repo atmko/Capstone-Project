@@ -400,7 +400,7 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
     //checks if list tag exists and deletes it if so
     private void deleteListTag(String listName) {
         //delete list tag
-        SearchListTag tagToDelete = mDatabase.searchListTagsDao().getTagAlt(listName);
+        SearchListTag tagToDelete = mDatabase.searchListTagsDao().getTagAlt(listName.toLowerCase());
         if (tagToDelete !=  null) {
             mDatabase.searchListTagsDao().deleteTag(tagToDelete);
         }
