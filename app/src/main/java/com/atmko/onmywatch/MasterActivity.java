@@ -25,6 +25,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.room.RoomDatabase;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
@@ -41,6 +43,7 @@ import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.PersonData;
 import com.atmko.onmywatch.models.SimpleIdlingResource;
+import com.atmko.onmywatch.models.WatchListModel;
 import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
 import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
@@ -235,6 +238,8 @@ public class MasterActivity extends AppCompatActivity
     @Override
     public void onLogOutBackupComplete() {
         AppDatabase.deleteLocallySavedData(this);
+        //remove database instance so signing in has proper functionality
+        AppDatabase.closeDatabase();
         logOut();
     }
 
@@ -252,12 +257,11 @@ public class MasterActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        //if returning from firebase sign in activity, load the UI
+        //if returning from firebase sign in activity, configure database and observe data
         if (requestCode == SIGN_IN_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                //restore backup;
-                Intent intent = new Intent(getApplicationContext(), RestoreService.class);
-                RestoreService.enqueueWork(getApplicationContext(), intent);
+                RoomDatabase.Callback callback = databaseInitializer(this);
+                AppDatabase.getInstance(this, callback);
 
                 //observe user data via view model
                 observeData();
@@ -756,6 +760,50 @@ public class MasterActivity extends AppCompatActivity
     //convenience method for showing search bar edit text
     private void showSearchBar(SuperEditText searchEditText) {
         searchEditText.setVisibility(View.VISIBLE);
+    }
+
+    public RoomDatabase.Callback databaseInitializer(final Context context) {
+        final boolean[] isRestored = {false};
+        //reference
+        //https://medium.com/@srinuraop/database-create-and-open-callbacks-in-room-7ca98c3286ab
+        return new RoomDatabase.Callback() {
+            @Override
+            public void onCreate(@NonNull SupportSQLiteDatabase db) {
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        String[] seriesWatchListTitles = context.getResources()
+                                .getStringArray(R.array.watch_status_series_titles);
+                        for (String title: seriesWatchListTitles) {
+                            WatchListModel watchListModel = new WatchListModel(title);
+                            AppDatabase.getInstance(context).watchListsDao()
+                                    .addList(watchListModel);
+                        }
+
+                        //check if database has been restored already
+                        if (!isRestored[0]) {
+                            //restore backup;
+                            Intent intent = new Intent(context, RestoreService.class);
+                            RestoreService.enqueueWork(context, intent);
+                            //prevent restoring again if database opens
+                            isRestored[0] = true;
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onOpen(@NonNull SupportSQLiteDatabase db) {
+                super.onOpen(db);
+                //check if database has been restored already (from onCreate method)
+                if (!isRestored[0]) {
+                    //restore backup;
+                    Intent intent = new Intent(context, RestoreService.class);
+                    RestoreService.enqueueWork(context, intent);
+                    isRestored[0] = true;
+                }
+            }
+        };
     }
 
     /**
