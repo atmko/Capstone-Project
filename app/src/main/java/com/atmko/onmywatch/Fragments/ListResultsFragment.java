@@ -370,16 +370,11 @@ public class ListResultsFragment extends Fragment
     }
 
     private void populateAndNotifyAdapter(List mediaDataList) {
-        if (mediaDataList.size() == 0) {
-            mDataAdapter.setPlaceholders();
+        mDataAdapter.getAdapterData().clear();
+        mDataAdapter.addAdapterData(mediaDataList);
+        mDataAdapter.setPlaceholders();
 
-        } else {
-            mDataAdapter.getAdapterData().clear();
-            mDataAdapter.addAdapterData(mediaDataList);
-            mDataAdapter.setPlaceholders();
-
-            if (mDataAdapter.getAdapterData().size() > 0 ) loadDetailFragment();
-        }
+        if (mDataAdapter.getAdapterData().size() > 0 ) loadDetailFragment();
     }
 
     //loads detail fragment:
