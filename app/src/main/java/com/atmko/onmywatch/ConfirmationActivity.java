@@ -14,6 +14,7 @@ import org.parceler.Parcels;
 
 public class ConfirmationActivity extends AppCompatActivity {
     public static final String ACTION_DELETE = "delete";
+    public static final String ACTION_LOG_OUT = "log_out";
 
     public static final String ACTION_KEY = "action";
     public static final String CONFIRMATION_MESSAGE_KEY = "confirmation_message";
@@ -89,9 +90,12 @@ public class ConfirmationActivity extends AppCompatActivity {
         }
 
         //set confirmation message if action and selected data exists, otherwise return cancel result
-        if (action != null && selectedData != null) {
+        if (action != null) {
             if (action.equals(ACTION_DELETE)) {
                 confirmationMessage = getString(R.string.delete_confirmation_message);
+
+            } else if (action.equals(ACTION_LOG_OUT)) {
+                confirmationMessage = getString(R.string.log_out_confirmation_message);
             }
 
             confirmationTextView.setText(confirmationMessage);

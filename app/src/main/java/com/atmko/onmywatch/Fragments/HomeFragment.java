@@ -37,9 +37,6 @@ import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
 import com.atmko.onmywatch.view_models.MasterActivityViewModel;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.firebase.auth.FirebaseAuth;
 
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
@@ -367,7 +364,7 @@ public class HomeFragment extends Fragment {
             public boolean onMenuItemClick(MenuItem item) {
                 //launch settings activity
                 if (getActivity() != null) {
-                    MasterActivity.logOut(getActivity());
+                    MasterActivity.startLogOutService(getActivity());
                 }
 
                 return true;

@@ -329,7 +329,8 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
         }
 
         if (getParentFragment() != null) {
-            MasterActivity.launchConfirmationActivity(getParentFragment(), userListModel, REQUEST_DELETE);
+            MasterActivity.launchConfirmationActivity(getParentFragment(), userListModel,
+                    REQUEST_DELETE, ConfirmationActivity.ACTION_DELETE);
         }
     }
 

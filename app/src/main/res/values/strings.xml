@@ -147,6 +147,7 @@
 
     <!--CONFIRMATION MESSAGES-->
     <string name="delete_confirmation_message">Are you sure you want to delete?</string>
+    <string name="log_out_confirmation_message">Failed To Backup Data. Are You Sure You Want To Log Out?</string>
     <!--CONFIRMATION MESSAGES-->
 
     <!--PLACEHOLDER TEXT-->

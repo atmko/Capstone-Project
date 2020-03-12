@@ -86,6 +86,7 @@ public class MasterActivity extends AppCompatActivity
 
     private static final String USER_COLLECTION_PATH = "users";
     private final int SIGN_IN_REQUEST_CODE = 10;
+    private static final int REQUEST_LOG_OUT = 20;
 
     //for restoring keyboard visibility upon configuration change
     public static boolean sIsKeyboardVisible;
@@ -210,17 +211,14 @@ public class MasterActivity extends AppCompatActivity
                 SIGN_IN_REQUEST_CODE);
     }
 
-    public static void logOut(Activity activity) {
+    public static void startLogOutService(Activity activity) {
         //backup before logging out;
         Intent intent = new Intent(activity, LogoutService.class);
         intent.setAction(LogoutService.ACTION_LOG_OUT);
         LogoutService.enqueueWork(activity, intent);
     }
 
-    @Override
-    public void onLogOutBackupComplete() {
-        AppDatabase.deleteLocallySavedData(this);
-
+    private void logOut() {
         GoogleSignInOptions gso =
                 new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                         .requestEmail()
@@ -235,12 +233,18 @@ public class MasterActivity extends AppCompatActivity
     }
 
     @Override
+    public void onLogOutBackupComplete() {
+        AppDatabase.deleteLocallySavedData(this);
+        logOut();
+    }
+
+    @Override
     public void onLogOutBackupFailure() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(MasterActivity.this, "log out failed",
-                        Toast.LENGTH_SHORT).show();
+                launchConfirmationActivity(MasterActivity.this,
+                        REQUEST_LOG_OUT, ConfirmationActivity.ACTION_LOG_OUT);
             }
         });
     }
@@ -274,6 +278,10 @@ public class MasterActivity extends AppCompatActivity
                         finish();
                     }
                 });
+            }
+        } else if (requestCode == REQUEST_LOG_OUT) {
+            if (resultCode == RESULT_OK) {
+                logOut();
             }
         }
     }
@@ -596,14 +604,29 @@ public class MasterActivity extends AppCompatActivity
         });
     }
 
-public static void launchConfirmationActivity(final Fragment fragment,
-                                                  final Object selectedData, final int requestId) {
+    public static void launchConfirmationActivity(final Activity activity,
+                                                  final int requestId,
+                                                  final String action) {
+            AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                Intent confirmationActivityIntent =
+                        new Intent(activity, ConfirmationActivity.class);
+                confirmationActivityIntent.setAction(action);
+                activity.startActivityForResult(confirmationActivityIntent, requestId);
+            }
+        });
+    }
+
+    public static void launchConfirmationActivity(final Fragment fragment,
+                                                  final Object selectedData, final int requestId,
+                                                  final String action) {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
                 Intent confirmationActivityIntent =
                         new Intent(fragment.getContext(), ConfirmationActivity.class);
-                confirmationActivityIntent.setAction(ConfirmationActivity.ACTION_DELETE);
+                confirmationActivityIntent.setAction(action);
                 confirmationActivityIntent.putExtra(ConfirmationActivity.SELECTED_DATA_KEY,
                         Parcels.wrap(selectedData));
                 fragment.startActivityForResult(confirmationActivityIntent, requestId);
