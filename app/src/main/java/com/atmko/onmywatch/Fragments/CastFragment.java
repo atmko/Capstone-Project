@@ -51,7 +51,14 @@ public class CastFragment extends Fragment implements CastDataAdapter.OnListItem
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mCastList = Parcels.unwrap(getArguments().getParcelable(CAST_PARCELABLE_KEY));
+            ArrayList<CastData> castDataArrayList = Parcels.unwrap(getArguments().
+                    getParcelable(CAST_PARCELABLE_KEY));
+            if (castDataArrayList != null) {
+                mCastList = castDataArrayList;
+
+            } else {
+                mCastList = new ArrayList<>();
+            }
         }
     }
 
