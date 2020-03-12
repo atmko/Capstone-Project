@@ -139,7 +139,9 @@ public class CreateListActivity extends AppCompatActivity {
                                 //delete list tag
                                 AppDatabase localDb = AppDatabase.getLocalDatabase(CreateListActivity.this);
                                 SearchListTag tag = localDb.searchListTagsDao().getTagAlt(mEditListModel.getName());
-                                localDb.searchListTagsDao().deleteTag(tag);
+                                if (tag != null) {
+                                    localDb.searchListTagsDao().deleteTag(tag);
+                                }
 
                                 snackBarMessage = getString(R.string.list_updated_message);
 
