@@ -166,7 +166,7 @@ public class MasterActivity extends AppCompatActivity
                     initializeAdMob();
                 }
 
-                if (mSavedInstanceState == null) loadUi();
+                if (getSupportFragmentManager().getFragments().size() == 0) loadUi();
                 //start background work managers
                 startWorkers();
             }
