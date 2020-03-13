@@ -102,6 +102,7 @@ public class MasterActivity extends AppCompatActivity
     @Nullable
     public SimpleIdlingResource mIdlingResource;
 
+    public static boolean sIsAuthUiActive;
     public static boolean sIsProMode;
     public static boolean sAllowCloudBackup;
 
@@ -125,7 +126,10 @@ public class MasterActivity extends AppCompatActivity
 
         //if current user is null start login
         if (getCurrentUser() == null) {
-            startSignInActivity();
+            if (!sIsAuthUiActive) {
+                sIsAuthUiActive = true;
+                startSignInActivity();
+            }
 
         } else {
             //observe user data via view model
@@ -259,6 +263,8 @@ public class MasterActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         //if returning from firebase sign in activity, configure database and observe data
         if (requestCode == SIGN_IN_REQUEST_CODE) {
+            sIsAuthUiActive = false;
+
             if (resultCode == RESULT_OK) {
                 RoomDatabase.Callback callback = databaseInitializer(this);
                 AppDatabase.getInstance(this, callback);
@@ -536,7 +542,6 @@ public class MasterActivity extends AppCompatActivity
 
         if (quickAction != null) {
             detailsFragment.setQuickAction(quickAction);
-
         }
 
         getSupportFragmentManager().beginTransaction()
