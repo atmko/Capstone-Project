@@ -41,9 +41,7 @@ import java.util.concurrent.ExecutionException;
 public class BackupLogic {
     private static final String TAG = com.atmko.onmywatch.utils.network_utils.work_manager_workers.BackupWorker.class.getSimpleName();
 
-    private static final String BACKUP_NAME = "backup";
     private static final String USERS_PATH = "users";
-    private static final String BACKUP_LOCAL_PATH = "backups";
     private static final String BACKUP_EXTENSION = ".json";
 
     private static final String MOVIES_KEY = "movies";
@@ -59,15 +57,17 @@ public class BackupLogic {
     private Context mContext;
     private AppDatabase mLocalDatabase;
     private Map mDatabaseMap;
+    private String mFileName;
     private StorageReference mBackupRef;
 
-    public BackupLogic(Context context) {
+    public BackupLogic(Context context, String folder, String fileName) {
         mContext = context;
         mLocalDatabase = AppDatabase.getInstance(mContext);
         mDatabaseMap = new HashMap();
+        mFileName = fileName;
         mBackupRef = FirebaseStorage.getInstance().getReference()
                 .child(USERS_PATH + "/" + MasterActivity.getCurrentUser().getUid()
-                        + "/" + BACKUP_LOCAL_PATH + "/" + BACKUP_NAME + BACKUP_EXTENSION);
+                        + "/" + folder + "/" + fileName + BACKUP_EXTENSION);
     }
 
     public boolean backupToRemoteDatabase() {
@@ -244,7 +244,7 @@ public class BackupLogic {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         OutputStreamWriter outputStreamWriter =
                 new OutputStreamWriter(mContext
-                        .openFileOutput(BACKUP_NAME, Context.MODE_PRIVATE));
+                        .openFileOutput(mFileName, Context.MODE_PRIVATE));
         outputStreamWriter.write(gson.toJson(map));
         outputStreamWriter.close();
     }
@@ -258,7 +258,7 @@ public class BackupLogic {
 
     private void writeToDatabase() throws FileNotFoundException,
             ExecutionException, InterruptedException, BackupException {
-        InputStream inputStream = mContext.openFileInput(BACKUP_NAME);
+        InputStream inputStream = mContext.openFileInput(mFileName);
         UploadTask uploadTask = mBackupRef.putStream(inputStream);
 
         if (NetworkFunctions.isOnline()) {
@@ -272,7 +272,7 @@ public class BackupLogic {
 
     private void deleteLocalFile() {
         File dir = mContext.getFilesDir();
-        File file = new File(dir, BACKUP_NAME);
+        File file = new File(dir, mFileName);
         if (file.exists()) {
             if (file.delete()) {
                 Log.d(TAG, "file Deleted");

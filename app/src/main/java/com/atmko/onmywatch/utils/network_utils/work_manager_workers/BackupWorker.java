@@ -22,6 +22,9 @@ public class BackupWorker extends Worker {
 
     private static final String BACKUP_CHANNEL_ID = "Backup Channel";
 
+    private static final String BACKUP_FOLDER_NAME = "backups";
+    private static final String BACKUP_FILE_NAME = "backup";
+
     public BackupWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
@@ -29,9 +32,9 @@ public class BackupWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        BackupLogic backupLogic = new BackupLogic(getApplicationContext());
+        BackupLogic backupLogic = new BackupLogic(getApplicationContext(), BACKUP_FOLDER_NAME,
+                BACKUP_FILE_NAME);
         boolean backupSuccess = backupLogic.backupToRemoteDatabase();
-
         if (backupSuccess) {
             Log.d(TAG, "backup success");
             return Result.success();

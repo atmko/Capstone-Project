@@ -8,6 +8,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.JobIntentService;
@@ -63,12 +64,21 @@ import static com.atmko.onmywatch.utils.api_utils.ApiConstants.ID_KEY;
 
 @SuppressWarnings("unchecked")
 public class RestoreService extends JobIntentService {
+    private static final String TAG = RestoreService.class.getSimpleName();
+
     public static final int JOB_ID = 11;
 
     public static final String BACKUP_CHANNEL_ID = "Backup Channel";
-    public static final String BACKUP_NAME = "backup";
+
+    public static final String FOLDER_KEY = "folder";
+    public static final String FILENAME_KEY = "filename";
+
+    public static final String BACKUP_FOLDER_NAME = "backups";
+    public static final String BACKUP_FILE_NAME = "backup";
+    public static final String WORKING_DATA_FOLDER_NAME = "working_data";
+    public static final String WORKING_DATA_FILE_NAME = "working_data";
+
     public static final String USERS_PATH = "users";
-    public static final String BACKUP_LOCAL_PATH = "backups";
     public static final String BACKUP_EXTENSION = ".json";
 
     public static final String MOVIES_KEY = "movies";
@@ -97,12 +107,7 @@ public class RestoreService extends JobIntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-
         mLocalDatabase = AppDatabase.getLocalDatabase(getApplicationContext());
-        mBackupRef = FirebaseStorage.getInstance().getReference()
-                .child(USERS_PATH + "/" + MasterActivity.getCurrentUser().getUid()
-                        + "/" + BACKUP_LOCAL_PATH + "/" + BACKUP_NAME + BACKUP_EXTENSION);
-
         startForeground(JOB_ID,
                 buildNotification(getApplicationContext(),
                         getString(R.string.notification_migration_title),
@@ -117,7 +122,20 @@ public class RestoreService extends JobIntentService {
 
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
-        restoreBackup();
+        String folder = intent.getStringExtra(FOLDER_KEY);
+        String mFileName = intent.getStringExtra(FILENAME_KEY);
+
+        boolean isFolderExists = folder != null && !folder.equals("");
+        boolean isFileNameExists = mFileName != null && !mFileName.equals("");
+        if (isFolderExists && isFileNameExists) {
+            mBackupRef = FirebaseStorage.getInstance().getReference()
+                    .child(USERS_PATH + "/" + MasterActivity.getCurrentUser().getUid()
+                            + "/" + folder + "/" + mFileName + BACKUP_EXTENSION);
+            restoreBackup();
+
+        } else {
+            Log.d(TAG, "folder and or file name does't exist");
+        }
     }
 
     public Notification buildNotification(Context context, String notificationTitle, String notificationContent) {

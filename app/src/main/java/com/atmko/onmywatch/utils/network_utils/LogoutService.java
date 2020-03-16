@@ -27,6 +27,9 @@ public class LogoutService extends JobIntentService {
 
     private static final String BACKUP_CHANNEL_ID = "Backup Channel";
 
+    private static final String WORKING_DATA_FOLDER_NAME = "working_data";
+    private static final String WORKING_DATA_FILE_NAME = "working_data";
+
     private String mAction;
     private static OnLogOutBackupCompleteListener mBackupCompleteListener;
 
@@ -56,7 +59,8 @@ public class LogoutService extends JobIntentService {
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
         mAction = intent.getAction();
-        BackupLogic backupLogic = new BackupLogic(getApplicationContext());
+        BackupLogic backupLogic = new BackupLogic(getApplicationContext(), WORKING_DATA_FOLDER_NAME,
+                WORKING_DATA_FILE_NAME);
         boolean backupSuccess = backupLogic.backupToRemoteDatabase();
         if (backupSuccess) {
             Log.d(TAG, "backup success");

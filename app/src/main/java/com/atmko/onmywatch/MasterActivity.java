@@ -789,6 +789,8 @@ public class MasterActivity extends AppCompatActivity
                         if (!isRestored[0]) {
                             //restore backup;
                             Intent intent = new Intent(context, RestoreService.class);
+                            intent.putExtra(RestoreService.FOLDER_KEY, RestoreService.WORKING_DATA_FOLDER_NAME);
+                            intent.putExtra(RestoreService.FILENAME_KEY, RestoreService.WORKING_DATA_FILE_NAME);
                             RestoreService.enqueueWork(context, intent);
                             //prevent restoring again if database opens
                             isRestored[0] = true;
@@ -804,6 +806,8 @@ public class MasterActivity extends AppCompatActivity
                 if (!isRestored[0]) {
                     //restore backup;
                     Intent intent = new Intent(context, RestoreService.class);
+                    intent.putExtra(RestoreService.FOLDER_KEY, RestoreService.WORKING_DATA_FOLDER_NAME);
+                    intent.putExtra(RestoreService.FILENAME_KEY, RestoreService.WORKING_DATA_FILE_NAME);
                     RestoreService.enqueueWork(context, intent);
                     isRestored[0] = true;
                 }
