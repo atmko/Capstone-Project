@@ -643,6 +643,20 @@ public class MasterActivity extends AppCompatActivity
         });
     }
 
+    public static void launchConfirmationActivity(final Fragment fragment,
+                                                  final int requestId,
+                                                  final String action) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                Intent confirmationActivityIntent =
+                        new Intent(fragment.getContext(), ConfirmationActivity.class);
+                confirmationActivityIntent.setAction(action);
+                fragment.startActivityForResult(confirmationActivityIntent, requestId);
+            }
+        });
+    }
+
     public void hideBackgroundFragment(Fragment fragment) {
         if (fragment.getView() != null) {
             List<Fragment> fragments = getSupportFragmentManager().getFragments();

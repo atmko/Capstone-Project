@@ -10,6 +10,10 @@
     <string name="log_out_title">Log Out</string>
     <!--options menu titles-->
 
+    <!--preference keys-->
+    <string name="settings_key_restore">restore</string>
+    <!--preference keys-->
+
     <!--settings titles-->
     <string name="settings_review_title">Review this app</string>
     <string name="settings_contact_developer_title">Contact Developer</string>
@@ -19,6 +23,7 @@
     <string name="settings_auto_sync_title">Automatic sync</string>
     <string name="settings_manual_backup_title">Backup</string>
     <string name="settings_about_app_title">About App</string>
+    <string name="settings_restore_title">Restore Data</string>
     <!--settings titles-->
 
     <!--settings summary-->
@@ -30,6 +35,7 @@
     <string name="settings_auto_sync_summary">Create automatic backups</string>
     <string name="settings_manual_backup_summary">Create a manual backup</string>
     <string name="settings_about_app_summary">On My Watch Version 1.0.0</string>
+    <string name="settings_restore_summary">Attempt to restore corrupted files to a previous state.</string>
     <!--settings summary-->
 
     <!--CONTENT DESCRIPTIONS-->
@@ -141,6 +147,7 @@
     <string name="list_delete_record_error_message">Error: media has NOT been removed from list</string>
     <string name="rating_disallowed_message">Rating only allowed if item has \"Watching\", \"Watched\" or \"Dropped\" watch status.</string>
     <string name="confirmation_error_message">An error occurred in confirmation</string>
+    <string name="restore_confirmation_message">This will overwrite all your current data.\nAre you sure?</string>
 
     <string name="pro_mode_list_limit_message">More lists available in pro mode.</string>
     <!--SNACK BAR MESSAGES-->
