@@ -198,94 +198,44 @@ public class RestoreService extends JobIntentService {
     }
 
     public void onPullMovieDataComplete() {
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                pullSeriesData();
-            }
-        });
+        pullSeriesData();
     }
 
     public void onPullSeriesDataComplete() {
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                pullWatchLists();
-            }
-        });
+        pullWatchLists();
     }
 
     public void onPullWatchListsComplete() {
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                pullUserLists();
-            }
-        });
+        pullUserLists();
     }
 
     public void onPullUserListsComplete() {
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                pullMovieDataRecords();
-            }
-        });
+        pullMovieDataRecords();
     }
 
     public void onPullMovieDataRecordsComplete() {
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                pullSeriesDataRecords();
-            }
-        });
+        pullSeriesDataRecords();
     }
 
     public void onPullSeriesDataRecordsComplete() {
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                pullMovieNotifiers();
-            }
-        });
+        pullMovieNotifiers();
     }
 
     public void onPullMovieNotifiersComplete() {
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                pullSeriesNotifiers();
-            }
-        });
+        pullSeriesNotifiers();
     }
 
     public void onPullSeriesNotifiersComplete() {
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                restoreNotifications();
-            }
-        });
+        restoreNotifications();
     }
 
     public void onRestoreNotificationsComplete() {
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                pullSeriesLogs();
-            }
-        });
+        pullSeriesLogs();
     }
 
     public void onPullSeriesLogsComplete() {
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                FirebaseUserDataDao.setMigrationValue(MIGRATION_LOCAL);
-                finishService();
-            }
-        });
+        FirebaseUserDataDao.setMigrationValue(MIGRATION_LOCAL);
+        finishService();
     }
 
     private void finishService() {
