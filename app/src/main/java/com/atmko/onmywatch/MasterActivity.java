@@ -271,19 +271,25 @@ public class MasterActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onActivityResult(int requestCode, final int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(final int requestCode, final int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        //if returning from firebase sign in activity, configure database and observe data
-        if (requestCode == SIGN_IN_REQUEST_CODE) {
-            sIsAuthUiActive = false;
 
-            if (resultCode == RESULT_OK) {
-                //observe user data via view model
-                observeData();
-            } else {
-                AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                //if returning from firebase sign in activity, configure database and observe data
+                if (requestCode == SIGN_IN_REQUEST_CODE) {
+                    sIsAuthUiActive = false;
+
+                    if (resultCode == RESULT_OK) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                //observe user data via view model
+                                observeData();
+                            }
+                        });
+                    } else {
                         if (!NetworkFunctions.isOnline()) {
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -296,13 +302,13 @@ public class MasterActivity extends AppCompatActivity
                         }
                         finish();
                     }
-                });
+                } else if (requestCode == REQUEST_LOG_OUT) {
+                    if (resultCode == RESULT_OK) {
+                        logOut();
+                    }
+                }
             }
-        } else if (requestCode == REQUEST_LOG_OUT) {
-            if (resultCode == RESULT_OK) {
-                logOut();
-            }
-        }
+        });
     }
 
     @Override
