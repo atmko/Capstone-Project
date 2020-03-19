@@ -11,7 +11,7 @@
 
     <Preference
         android:title="@string/settings_restore_title"
-        android:summary="@string/settings_restore_summary"
+        android:summary="@string/settings_backups_summary"
         android:key="@string/settings_key_restore"
         app:iconSpaceReserved="false"
         app:allowDividerAbove="true"
