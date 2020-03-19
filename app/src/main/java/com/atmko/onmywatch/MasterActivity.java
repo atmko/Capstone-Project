@@ -38,6 +38,7 @@ import com.atmko.onmywatch.Fragments.ListResultsParentFragment;
 import com.atmko.onmywatch.Fragments.PeopleDetailsFragment;
 import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.atmko.onmywatch.database.AppDatabase;
+import com.atmko.onmywatch.models.Backup;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieData;
@@ -47,7 +48,7 @@ import com.atmko.onmywatch.models.WatchListModel;
 import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
 import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
-import com.atmko.onmywatch.utils.network_utils.LogoutService;
+import com.atmko.onmywatch.utils.network_utils.BackupService;
 import com.atmko.onmywatch.utils.network_utils.RestoreService;
 import com.atmko.onmywatch.utils.network_utils.work_manager_workers.BackupWorker;
 import com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker;
@@ -70,7 +71,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class MasterActivity extends AppCompatActivity
-        implements LogoutService.OnLogOutBackupCompleteListener {
+        implements BackupService.OnBackupCompleteListener {
     private static final int FREE_MODE_LIST_COUNT_LIMIT = 3;
 
     public static final int MEDIA_TYPE_SERIES = 0;
@@ -153,6 +154,9 @@ public class MasterActivity extends AppCompatActivity
             mIdlingResource.setIdleState(false);
         }
 
+        RoomDatabase.Callback callback = databaseInitializer(this);
+        AppDatabase.getInstance(this, callback);
+
         MasterActivityViewModel masterActivityViewModel =
                 ViewModelProviders.of(this).get(MasterActivityViewModel.class);
 
@@ -218,14 +222,19 @@ public class MasterActivity extends AppCompatActivity
                 SIGN_IN_REQUEST_CODE);
     }
 
-    public static void startLogOutService(Activity activity) {
+    public static void startLogOutBackupService(Activity activity) {
         //backup before logging out;
-        Intent intent = new Intent(activity, LogoutService.class);
-        intent.setAction(LogoutService.ACTION_LOG_OUT);
-        LogoutService.enqueueWork(activity, intent);
+        Intent intent = new Intent(activity, BackupService.class);
+        intent.setAction(BackupService.ACTION_WORKING_DATA);
+        BackupService.enqueueWork(activity, intent);
     }
 
     private void logOut() {
+        AppDatabase.deleteLocallySavedData(this);
+        //remove database instance so signing in has proper functionality
+        AppDatabase.closeDatabase();
+
+        //log out
         GoogleSignInOptions gso =
                 new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                         .requestEmail()
@@ -234,6 +243,7 @@ public class MasterActivity extends AppCompatActivity
         FirebaseAuth.getInstance().signOut();
         GoogleSignIn.getClient(this, gso).signOut();
 
+        //restart activity
         Intent intent = new Intent(getApplicationContext(), MasterActivity.class);
         finish();
         startActivity(intent);
@@ -241,14 +251,16 @@ public class MasterActivity extends AppCompatActivity
 
     @Override
     public void onLogOutBackupComplete() {
-        AppDatabase.deleteLocallySavedData(this);
-        //remove database instance so signing in has proper functionality
-        AppDatabase.closeDatabase();
         logOut();
     }
 
     @Override
-    public void onLogOutBackupFailure() {
+    public void onBackupComplete() {
+
+    }
+
+    @Override
+    public void onBackupFailure() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -259,16 +271,13 @@ public class MasterActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, final int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //if returning from firebase sign in activity, configure database and observe data
         if (requestCode == SIGN_IN_REQUEST_CODE) {
             sIsAuthUiActive = false;
 
             if (resultCode == RESULT_OK) {
-                RoomDatabase.Callback callback = databaseInitializer(this);
-                AppDatabase.getInstance(this, callback);
-
                 //observe user data via view model
                 observeData();
             } else {
@@ -643,6 +652,22 @@ public class MasterActivity extends AppCompatActivity
         });
     }
 
+    public static void launchConfirmationActivity(final Activity activity,
+                                                  final Object selectedData, final int requestId,
+                                                  final String action) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                Intent confirmationActivityIntent =
+                        new Intent(activity, ConfirmationActivity.class);
+                confirmationActivityIntent.setAction(action);
+                confirmationActivityIntent.putExtra(ConfirmationActivity.SELECTED_DATA_KEY,
+                        Parcels.wrap(selectedData));
+                activity.startActivityForResult(confirmationActivityIntent, requestId);
+            }
+        });
+    }
+
     public static void launchConfirmationActivity(final Fragment fragment,
                                                   final int requestId,
                                                   final String action) {
@@ -791,6 +816,8 @@ public class MasterActivity extends AppCompatActivity
                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                     @Override
                     public void run() {
+
+
                         String[] seriesWatchListTitles = context.getResources()
                                 .getStringArray(R.array.watch_status_series_titles);
                         for (String title: seriesWatchListTitles) {
@@ -799,16 +826,10 @@ public class MasterActivity extends AppCompatActivity
                                     .addList(watchListModel);
                         }
 
-                        //check if database has been restored already
-                        if (!isRestored[0]) {
-                            //restore backup;
-                            Intent intent = new Intent(context, RestoreService.class);
-                            intent.putExtra(RestoreService.FOLDER_KEY, RestoreService.WORKING_DATA_FOLDER_NAME);
-                            intent.putExtra(RestoreService.FILENAME_KEY, RestoreService.WORKING_DATA_FILE_NAME);
-                            RestoreService.enqueueWork(context, intent);
-                            //prevent restoring again if database opens
-                            isRestored[0] = true;
-                        }
+                        restoreWorkingData(context);
+
+                        //prevent restoring again if database opens
+                        isRestored[0] = true;
                     }
                 });
             }
@@ -816,17 +837,25 @@ public class MasterActivity extends AppCompatActivity
             @Override
             public void onOpen(@NonNull SupportSQLiteDatabase db) {
                 super.onOpen(db);
-                //check if database has been restored already (from onCreate method)
-                if (!isRestored[0]) {
-                    //restore backup;
-                    Intent intent = new Intent(context, RestoreService.class);
-                    intent.putExtra(RestoreService.FOLDER_KEY, RestoreService.WORKING_DATA_FOLDER_NAME);
-                    intent.putExtra(RestoreService.FILENAME_KEY, RestoreService.WORKING_DATA_FILE_NAME);
-                    RestoreService.enqueueWork(context, intent);
-                    isRestored[0] = true;
-                }
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        //check if database has been restored already (from onCreate method)
+                        if (!isRestored[0]) {
+                            restoreWorkingData(context);
+                        }
+                    }
+                });
             }
         };
+    }
+
+    private void restoreWorkingData(Context context) {
+        //restore backup;
+        Intent intent = new Intent(context, RestoreService.class);
+        intent.putExtra(RestoreService.FOLDER_KEY, RestoreService.WORKING_DATA_FOLDER_NAME);
+        intent.putExtra(RestoreService.FILENAME_KEY, RestoreService.WORKING_DATA_FILE_NAME);
+        RestoreService.enqueueWork(context, intent);
     }
 
     /**

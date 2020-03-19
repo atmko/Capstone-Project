@@ -9,6 +9,8 @@ import android.util.Log;
 
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.database.AppDatabase;
+import com.atmko.onmywatch.database.daos.FirebaseUserDataDao;
+import com.atmko.onmywatch.models.Backup;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.MovieDataRecord;
 import com.atmko.onmywatch.models.MovieNotifier;
@@ -19,6 +21,7 @@ import com.atmko.onmywatch.models.SeriesNotifier;
 import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.models.WatchListModel;
 import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
+import com.atmko.onmywatch.utils.network_utils.work_manager_workers.BackupWorker;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -32,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +44,8 @@ import java.util.concurrent.ExecutionException;
 @SuppressWarnings("unchecked")
 public class BackupLogic {
     private static final String TAG = com.atmko.onmywatch.utils.network_utils.work_manager_workers.BackupWorker.class.getSimpleName();
+
+    private static final int COUNTER_LIMIT = 10;
 
     private static final String USERS_PATH = "users";
     private static final String BACKUP_EXTENSION = ".json";
@@ -57,6 +63,7 @@ public class BackupLogic {
     private Context mContext;
     private AppDatabase mLocalDatabase;
     private Map mDatabaseMap;
+    private String mFolder;
     private String mFileName;
     private StorageReference mBackupRef;
 
@@ -64,14 +71,26 @@ public class BackupLogic {
         mContext = context;
         mLocalDatabase = AppDatabase.getInstance(mContext);
         mDatabaseMap = new HashMap();
+        mFolder = folder;
         mFileName = fileName;
         mBackupRef = FirebaseStorage.getInstance().getReference()
                 .child(USERS_PATH + "/" + MasterActivity.getCurrentUser().getUid()
                         + "/" + folder + "/" + fileName + BACKUP_EXTENSION);
     }
 
+    public static int getBackupCounter() {
+        Integer lastCounter = FirebaseUserDataDao.getBackupCounterAlt();
+        if (lastCounter == null || lastCounter == COUNTER_LIMIT) {
+            return 1;
+
+        } else {
+            return lastCounter + 1;
+        }
+    }
+
     public boolean backupToRemoteDatabase() {
         try {
+            Backup backup = new Backup(mFileName, new Date().getTime());
             //other methods run one after the other starting with pushMovieData
             pushMovieData();
             pushSeriesData();
@@ -83,6 +102,11 @@ public class BackupLogic {
             pushSeriesNotifiers();
             pushSeriesLogs();
             onPushComplete();
+
+            //only add a backup in remote database if saving backups and not working data
+            if (mFolder.equals(BackupWorker.BACKUP_FOLDER_NAME)) {
+                FirebaseUserDataDao.addBackupAlt(backup);
+            }
             return true;
         } catch (Exception e) {
             e.printStackTrace();

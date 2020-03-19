@@ -27,6 +27,8 @@ public class ConfirmationActivity extends AppCompatActivity {
     private String confirmationMessage;
 
     private TextView confirmationTextView;
+    private Button confirmationButton;
+    private Button cancelButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,14 +60,14 @@ public class ConfirmationActivity extends AppCompatActivity {
 
     private void defineViews() {
         confirmationTextView = findViewById(R.id.confirmation_text_view);
-        Button confirmationButton = findViewById(R.id.confirmation_button);
+        confirmationButton = findViewById(R.id.confirmation_button);
         confirmationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 returnConfirmationResult();
             }
         });
-        Button cancelButton = findViewById(R.id.cancel_button);
+        cancelButton = findViewById(R.id.cancel_button);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

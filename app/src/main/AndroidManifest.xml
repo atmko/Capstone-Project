@@ -84,10 +84,15 @@
             android:excludeFromRecents="true"
             android:launchMode="singleTop"
             android:theme="@style/Theme.PopupDialog" />
-        <activity android:name=".ConfirmationActivity"
+        <activity
+            android:name=".ConfirmationActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.PopupDialog"  />
+            android:theme="@style/Theme.PopupDialog" />
+        <activity android:name=".BackupActivity"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.PopupDialog"/>
         <activity
             android:name=".SettingsActivity"
             android:label="@string/options_settings_title"
@@ -110,10 +115,10 @@
             android:name=".utils.network_utils.RestoreService"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
-        <service android:name=".utils.network_utils.LogoutService"
+        <service
+            android:name=".utils.network_utils.BackupService"
             android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-        <!-- ad mob application id key: currently in test mode -->
+            android:permission="android.permission.BIND_JOB_SERVICE" /> <!-- ad mob application id key: currently in test mode -->
         <meta-data
             android:name="@string/ad_mob_application_id_key"
             android:value="ca-app-pub-3940256099942544~3347511713" />

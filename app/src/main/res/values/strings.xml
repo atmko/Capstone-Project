@@ -35,7 +35,7 @@
     <string name="settings_auto_sync_summary">Create automatic backups</string>
     <string name="settings_manual_backup_summary">Create a manual backup</string>
     <string name="settings_about_app_summary">On My Watch Version 1.0.0</string>
-    <string name="settings_restore_summary">Attempt to restore corrupted files to a previous state.</string>
+    <string name="settings_backups_summary">Backup or restore files to a previous state.</string>
     <!--settings summary-->
 
     <!--CONTENT DESCRIPTIONS-->

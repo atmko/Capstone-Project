@@ -71,7 +71,7 @@ public class RestoreService extends JobIntentService {
     public static final String BACKUP_CHANNEL_ID = "Backup Channel";
 
     public static final String FOLDER_KEY = "folder";
-    public static final String FILENAME_KEY = "filename";
+    public static final String FILENAME_KEY = "file_name";
 
     public static final String BACKUP_FOLDER_NAME = "backups";
     public static final String BACKUP_FILE_NAME = "backup";

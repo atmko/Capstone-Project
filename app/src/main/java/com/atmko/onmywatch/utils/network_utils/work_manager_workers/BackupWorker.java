@@ -15,6 +15,7 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.atmko.onmywatch.R;
+import com.atmko.onmywatch.database.daos.FirebaseUserDataDao;
 import com.atmko.onmywatch.utils.network_utils.BackupLogic;
 
 public class BackupWorker extends Worker {
@@ -22,8 +23,8 @@ public class BackupWorker extends Worker {
 
     private static final String BACKUP_CHANNEL_ID = "Backup Channel";
 
-    private static final String BACKUP_FOLDER_NAME = "backups";
-    private static final String BACKUP_FILE_NAME = "backup";
+    public static final String BACKUP_FOLDER_NAME = "backups";
+    public static final String BACKUP_FILE_NAME = "backup";
 
     public BackupWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -32,10 +33,15 @@ public class BackupWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        BackupLogic backupLogic = new BackupLogic(getApplicationContext(), BACKUP_FOLDER_NAME,
-                BACKUP_FILE_NAME);
+        int backupCounter = BackupLogic.getBackupCounter();
+        String fileName = BackupWorker.BACKUP_FILE_NAME + "_" + backupCounter;
+
+        BackupLogic backupLogic = new BackupLogic(getApplicationContext(),
+                BackupWorker.BACKUP_FOLDER_NAME, fileName);
         boolean backupSuccess = backupLogic.backupToRemoteDatabase();
         if (backupSuccess) {
+            FirebaseUserDataDao.setBackupCounter(backupCounter);
+
             Log.d(TAG, "backup success");
             return Result.success();
 

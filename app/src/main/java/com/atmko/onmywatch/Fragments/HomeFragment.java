@@ -364,7 +364,7 @@ public class HomeFragment extends Fragment {
             public boolean onMenuItemClick(MenuItem item) {
                 //launch settings activity
                 if (getActivity() != null) {
-                    MasterActivity.startLogOutService(getActivity());
+                    MasterActivity.startLogOutBackupService(getActivity());
                 }
 
                 return true;
