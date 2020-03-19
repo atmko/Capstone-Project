@@ -8,6 +8,7 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -39,12 +40,14 @@ import java.util.Map;
 
 public class BillingActivity extends AppCompatActivity implements
         SkuDetailsAdapter.OnListItemClickListener,
+        SkuDetailsAdapter.OnCheckPurchaseStateListener,
         PurchasesUpdatedListener, BillingClientStateListener {
     private static final String TAG = BillingActivity.class.getSimpleName();
 
     BillingClient mBillingClient;
     SkuDetailsAdapter mAdapter;
     Button inAppButton;
+    List<String> purchasedSkus;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -106,6 +109,16 @@ public class BillingActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onPurchaseStateCheck(String sku, AppCompatCheckBox checkBox) {
+        if (purchasedSkus.contains(sku)) {
+            checkBox.setVisibility(View.VISIBLE);
+
+        } else {
+            checkBox.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
     public void onBillingSetupFinished(final BillingResult billingResult) {
         inAppButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,6 +155,8 @@ public class BillingActivity extends AppCompatActivity implements
 
         //if connection successful
         if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
+            handleUncreditedPurchases();
+
             // The BillingClient is ready. You can query purchases here.
             mBillingClient.querySkuDetailsAsync(getInappSkuDetailsParams(), new SkuDetailsResponseListener() {
                 @Override
@@ -168,8 +183,6 @@ public class BillingActivity extends AppCompatActivity implements
                     }
                 }
             });
-
-            handleUncreditedPurchases();
         }
     }
 
@@ -203,7 +216,11 @@ public class BillingActivity extends AppCompatActivity implements
 
         if (inAppResult.getResponseCode() == BillingClient.BillingResponseCode.OK
                 && inAppPurchases != null) {
+            purchasedSkus = new ArrayList<>();
+
             for (Purchase purchase : inAppPurchases) {
+                purchasedSkus.add(purchase.getSku());
+
                 if (purchase.getSku().equals("pro_mode") && !MasterActivity.sIsProMode) {
                     Log.d(TAG, "handling pro_mode");
                     handlePurchase(purchase);

@@ -13,13 +13,30 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/x2_layout_margin">
 
-        <ImageView
-            android:id="@+id/icon_image_view"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+        <FrameLayout
+            android:id="@+id/icon_frame_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:contentDescription="@string/content_description_purchase_item" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/icon_image_view"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:contentDescription="@string/content_description_purchase_item" />
+
+            <CheckBox
+                android:id="@+id/checkbox_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:clickable="false"
+                android:checked="true"/>
+
+        </FrameLayout>
 
         <TextView
             android:id="@+id/title_text_view"
@@ -27,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/x1_layout_margin"
             tools:text="pro mode"
-            app:layout_constraintStart_toEndOf="@+id/icon_image_view"
+            app:layout_constraintStart_toEndOf="@+id/icon_frame_view"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -37,7 +54,7 @@
             android:layout_marginTop="@dimen/x1_layout_margin"
             android:layout_marginStart="@dimen/x1_layout_margin"
             tools:text="19.99"
-            app:layout_constraintStart_toEndOf="@+id/icon_image_view"
+            app:layout_constraintStart_toEndOf="@+id/icon_frame_view"
             app:layout_constraintTop_toBottomOf="@+id/title_text_view" />
 
         <TextView
@@ -48,7 +65,7 @@
             tools:text="Remove ads, unlock notifications, widget,  and unlimited custom lists."
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/icon_image_view" />
+            app:layout_constraintTop_toBottomOf="@id/icon_frame_view" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.billingclient.api.BillingClient;
@@ -31,6 +32,7 @@ public class SkuDetailsAdapter
 
     private final List<SkuDetails> mAdapterData;
     private final OnListItemClickListener mOnListItemClickListener;
+    private final OnCheckPurchaseStateListener mOnCheckPurchaseStateListener;
     private final Context mContext;
 
     //layout ids
@@ -39,8 +41,13 @@ public class SkuDetailsAdapter
 
     public SkuDetailsAdapter(OnListItemClickListener clickListener, Context context) {
         mOnListItemClickListener = clickListener;
+        mOnCheckPurchaseStateListener = ((OnCheckPurchaseStateListener) context);
         mAdapterData = new ArrayList<>();
         mContext = context;
+    }
+
+    public interface OnCheckPurchaseStateListener {
+        void onPurchaseStateCheck(String sku, AppCompatCheckBox checkBox);
     }
 
     public interface OnListItemClickListener {
@@ -52,6 +59,7 @@ public class SkuDetailsAdapter
 
         TextView titleTextView, priceTextView, descriptionTextView;
         ImageView iconImageView;
+        AppCompatCheckBox checkBox;
 
         private SkuDetailsAdapterViewHolder(@NonNull View itemView, int viewType) {
             super(itemView);
@@ -60,6 +68,7 @@ public class SkuDetailsAdapter
             priceTextView = itemView.findViewById(R.id.price_text_view);
             descriptionTextView = itemView.findViewById(R.id.description_text_view);
             iconImageView = itemView.findViewById(R.id.icon_image_view);
+            checkBox = itemView.findViewById(R.id.checkbox_view);
 
             itemView.setOnClickListener(this);
         }
@@ -100,6 +109,8 @@ public class SkuDetailsAdapter
         adapterViewHolder.titleTextView.setText(currentSkuDetails.getTitle());
         adapterViewHolder.priceTextView.setText(currentSkuDetails.getPrice());
         adapterViewHolder.descriptionTextView.setText(currentSkuDetails.getDescription());
+        mOnCheckPurchaseStateListener
+                .onPurchaseStateCheck(currentSkuDetails.getSku(), adapterViewHolder.checkBox);
 
         //load image with glide
         NetworkFunctions.loadImage(
