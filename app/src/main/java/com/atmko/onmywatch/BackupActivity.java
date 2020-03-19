@@ -58,7 +58,6 @@ public class BackupActivity extends AppCompatActivity implements BackupAdapter.O
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), BackupService.class);
-                intent.setAction(BackupService.ACTION_BACKUP);
                 BackupService.enqueueWork(BackupActivity.this, intent);
             }
         });

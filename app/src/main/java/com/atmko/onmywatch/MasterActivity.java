@@ -38,6 +38,7 @@ import com.atmko.onmywatch.Fragments.ListResultsParentFragment;
 import com.atmko.onmywatch.Fragments.PeopleDetailsFragment;
 import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.atmko.onmywatch.database.AppDatabase;
+import com.atmko.onmywatch.database.daos.FirebaseUserDataDao;
 import com.atmko.onmywatch.models.Backup;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MediaNotifier;
@@ -225,7 +226,6 @@ public class MasterActivity extends AppCompatActivity
     public static void startLogOutBackupService(Activity activity) {
         //backup before logging out;
         Intent intent = new Intent(activity, BackupService.class);
-        intent.setAction(BackupService.ACTION_WORKING_DATA);
         BackupService.enqueueWork(activity, intent);
     }
 
@@ -826,7 +826,7 @@ public class MasterActivity extends AppCompatActivity
                                     .addList(watchListModel);
                         }
 
-                        restoreWorkingData(context);
+                        restoreLatestBackup();
 
                         //prevent restoring again if database opens
                         isRestored[0] = true;
@@ -842,7 +842,7 @@ public class MasterActivity extends AppCompatActivity
                     public void run() {
                         //check if database has been restored already (from onCreate method)
                         if (!isRestored[0]) {
-                            restoreWorkingData(context);
+                            restoreLatestBackup();
                         }
                     }
                 });
@@ -850,12 +850,17 @@ public class MasterActivity extends AppCompatActivity
         };
     }
 
-    private void restoreWorkingData(Context context) {
-        //restore backup;
-        Intent intent = new Intent(context, RestoreService.class);
-        intent.putExtra(RestoreService.FOLDER_KEY, RestoreService.WORKING_DATA_FOLDER_NAME);
-        intent.putExtra(RestoreService.FILENAME_KEY, RestoreService.WORKING_DATA_FILE_NAME);
-        RestoreService.enqueueWork(context, intent);
+    private void restoreLatestBackup() {
+        List<Backup> backups = FirebaseUserDataDao.getBackupsAlt();
+        if (backups.size() != 0) {
+            Backup latestBackup = backups.get(backups.size() - 1);
+
+            //restore backup;
+            Intent intent = new Intent(this, RestoreService.class);
+            intent.putExtra(RestoreService.FOLDER_KEY, RestoreService.BACKUP_FOLDER_NAME);
+            intent.putExtra(RestoreService.FILENAME_KEY, latestBackup.getFileName());
+            RestoreService.enqueueWork(this, intent);
+        }
     }
 
     /**

@@ -104,6 +104,29 @@ public class FirebaseUserDataDao {
         return liveData;
     }
 
+    public static List<Backup> getBackupsAlt() {
+        List<Backup> backups = new ArrayList<>();
+
+        Task<QuerySnapshot> task = MasterActivity.getUserDbHomeReference()
+                .collection(BACKUPS_PATH)
+                .get();
+
+        try {
+            QuerySnapshot snapshots = Tasks.await(task);
+            for (DocumentSnapshot documentSnapshot: snapshots.getDocuments()) {
+                Backup backup = parseDataMapToBackup(documentSnapshot);
+                backups.add(backup);
+            }
+
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return backups;
+    }
+
     public static void addBackupAlt(Backup backup) {
         MasterActivity.getUserDbHomeReference()
                 .collection(BACKUPS_PATH).document(backup.getFileName())

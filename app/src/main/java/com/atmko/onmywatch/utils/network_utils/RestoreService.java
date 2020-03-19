@@ -74,9 +74,6 @@ public class RestoreService extends JobIntentService {
     public static final String FILENAME_KEY = "file_name";
 
     public static final String BACKUP_FOLDER_NAME = "backups";
-    public static final String BACKUP_FILE_NAME = "backup";
-    public static final String WORKING_DATA_FOLDER_NAME = "working_data";
-    public static final String WORKING_DATA_FILE_NAME = "working_data";
 
     public static final String USERS_PATH = "users";
     public static final String BACKUP_EXTENSION = ".json";

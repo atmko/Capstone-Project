@@ -103,10 +103,7 @@ public class BackupLogic {
             pushSeriesLogs();
             onPushComplete();
 
-            //only add a backup in remote database if saving backups and not working data
-            if (mFolder.equals(BackupWorker.BACKUP_FOLDER_NAME)) {
-                FirebaseUserDataDao.addBackupAlt(backup);
-            }
+            FirebaseUserDataDao.addBackupAlt(backup);
             return true;
         } catch (Exception e) {
             e.printStackTrace();

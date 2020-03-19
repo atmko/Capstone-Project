@@ -24,13 +24,7 @@ public class BackupService extends JobIntentService {
 
     public static final int JOB_ID = 11;
 
-    public static final String ACTION_WORKING_DATA = "working_data";
-    public static final String ACTION_BACKUP = "backup";
-
     private static final String BACKUP_CHANNEL_ID = "Backup Channel";
-
-    private static final String WORKING_DATA_FOLDER_NAME = "working_data";
-    private static final String WORKING_DATA_FILE_NAME = "working_data";
 
     private static OnBackupCompleteListener mBackupCompleteListener;
 
@@ -59,31 +53,13 @@ public class BackupService extends JobIntentService {
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
         int backupCounter = BackupLogic.getBackupCounter();
-        String folderName;
-        String fileName;
-        String mAction = intent.getAction();
-        if (mAction != null) {
-            if (mAction.equals(ACTION_WORKING_DATA)) {
-                folderName = WORKING_DATA_FOLDER_NAME;
-                fileName = WORKING_DATA_FILE_NAME;
+        String fileName = BackupWorker.BACKUP_FILE_NAME + "_" + backupCounter;
 
-            } else if (mAction.equals(ACTION_BACKUP)) {
-                folderName = BackupWorker.BACKUP_FOLDER_NAME;
-                fileName = BackupWorker.BACKUP_FILE_NAME + "_" + backupCounter;
-            } else {
-                return;
-            }
-        } else {
-            return;
-        }
-
-        BackupLogic backupLogic = new BackupLogic(getApplicationContext(), folderName, fileName);
+        BackupLogic backupLogic = new BackupLogic(getApplicationContext(),
+                BackupWorker.BACKUP_FOLDER_NAME, fileName);
         boolean backupSuccess = backupLogic.backupToRemoteDatabase();
         if (backupSuccess) {
-            //only add update backup counter in remote database if saving backups and not working data
-            if (folderName.equals(BackupWorker.BACKUP_FOLDER_NAME)) {
-                FirebaseUserDataDao.setBackupCounter(backupCounter);
-            }
+            FirebaseUserDataDao.setBackupCounter(backupCounter);
 
             Log.d(TAG, "backup success");
             mBackupCompleteListener.onBackupComplete();
