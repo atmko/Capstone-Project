@@ -441,13 +441,19 @@ public class MasterActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
-        Fragment fragment = fragments.get(fragments.size() - 1);
+        boolean hasDetailFragment = getSupportFragmentManager()
+                        .findFragmentById(R.id.detail_fragments_container) != null;
+        Fragment fragment;
+        if (!isTabletLandscape() && hasDetailFragment) {
+            fragment = getSupportFragmentManager().findFragmentById(R.id.detail_fragments_container);
+
+        } else {
+            fragment = fragments.get(fragments.size() - 1);
+        }
 
         //if in tablet landscape and there are only 2 fragments left, finish
         //OR if not in tablet landscape and there is only 1 fragment, finish
-        if ((isTabletLandscape() && fragments.size() == 2)
-                || (!isTabletLandscape() && fragments.size() == 1)
-                && fragment instanceof HomeFragment) {
+        if (fragments.size() == 1 && fragment instanceof HomeFragment) {
             finish();
             return;
         }
