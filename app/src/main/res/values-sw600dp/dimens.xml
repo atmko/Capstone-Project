@@ -2,6 +2,12 @@
 <resources>
     <!--MARGINS-->
     <dimen name="list_margin">32dp</dimen>
+
+    <!--detail margins-->
+    <dimen name="text_margin">@dimen/x8_layout_margin</dimen>
+    <dimen name="rating_margin">@dimen/x9_layout_margin</dimen>
+    <dimen name="trailer_button_margin">@dimen/x11_layout_margin</dimen>
+    <!--detail margins-->
     <!--MARGINS-->
     <dimen name="body_text_size">16sp</dimen>
 </resources>
