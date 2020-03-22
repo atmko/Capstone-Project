@@ -859,7 +859,7 @@ public class MasterActivity extends AppCompatActivity
     private void restoreLatestBackup() {
         List<Backup> backups = FirebaseUserDataDao.getBackupsAlt();
         if (backups.size() != 0) {
-            Backup latestBackup = backups.get(backups.size() - 1);
+            Backup latestBackup = backups.get(0);
 
             //restore backup;
             Intent intent = new Intent(this, RestoreService.class);
