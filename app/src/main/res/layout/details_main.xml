@@ -276,9 +276,9 @@
             android:background="@null"
             android:tag="@string/detail_overview_tag_show_less"
             android:src="@drawable/ic_show_more"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/overView_text_view"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             android:contentDescription="@string/content_description_show_more_button"/>
 
