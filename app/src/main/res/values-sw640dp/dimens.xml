@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--detail margins-->
+    <dimen name="text_margin">@dimen/x18_layout_margin</dimen>
+    <dimen name="rating_margin">@dimen/x19_layout_margin</dimen>
+    <dimen name="trailer_button_margin">@dimen/x21_layout_margin</dimen>
+    <!--detail margins-->
+
+    <!--TEXT DIMENSIONS-->
+    <dimen name="appbar_headline_text_size">26sp</dimen>
+    <dimen name="caption_text_size">17sp</dimen>
+    <dimen name="body_text_size">20sp</dimen>
+    <dimen name="subtitle_text_size">23sp</dimen>
+    <dimen name="headline_1_text_size">29sp</dimen>
+    <dimen name="headline_2_text_size">34sp</dimen>
+    <dimen name="headline_3_text_size">51sp</dimen>
+    <dimen name="headline_4_text_size">64sp</dimen>
+    <dimen name="headline_5_text_size">69sp</dimen>
+    <!--TEXT DIMENSIONS-->
+</resources>

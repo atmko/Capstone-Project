@@ -91,7 +91,7 @@
         <item name="android:layout_marginLeft">@dimen/x2_layout_margin</item>
         <item name="android:layout_marginStart">@dimen/x2_layout_margin</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textSize">@dimen/appbar_headline_18_text_size</item>
+        <item name="android:textSize">@dimen/appbar_headline_text_size</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
 

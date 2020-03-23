@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--MARGINS-->
-    <dimen name="list_margin">32dp</dimen>
-
     <!--detail margins-->
     <dimen name="text_margin">@dimen/x2_layout_margin</dimen>
     <dimen name="rating_margin">@dimen/x3_layout_margin</dimen>
     <dimen name="trailer_button_margin">@dimen/x5_layout_margin</dimen>
     <!--detail margins-->
-    <!--MARGINS-->
 </resources>

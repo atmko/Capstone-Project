@@ -43,7 +43,7 @@
                     android:textAlignment="textStart"
                     android:textAllCaps="false"
                     android:textColor="@android:color/black"
-                    android:textSize="@dimen/appbar_headline_18_text_size"
+                    android:textSize="@dimen/appbar_headline_text_size"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -79,7 +79,7 @@
                     android:background="@null"
                     android:text="@string/lists_text_literal"
                     android:textColor="@android:color/black"
-                    android:textSize="@dimen/appbar_headline_18_text_size"
+                    android:textSize="@dimen/appbar_headline_text_size"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@id/spinner_arrow_image_button"
                     app:layout_constraintTop_toTopOf="parent"

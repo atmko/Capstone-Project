@@ -14,8 +14,9 @@
     <dimen name="x9_layout_margin">72dp</dimen>
     <dimen name="x10_layout_margin">80dp</dimen>
     <dimen name="x11_layout_margin">88dp</dimen>
-    <dimen name="x13_layout_margin">104dp</dimen>
-    <dimen name="x15_layout_margin">104dp</dimen>
+    <dimen name="x18_layout_margin">144dp</dimen>
+    <dimen name="x19_layout_margin">152dp</dimen>
+    <dimen name="x21_layout_margin">168dp</dimen>
     <dimen name="list_margin">0dp</dimen>
 
     <dimen name="text_margin">@dimen/x2_layout_margin</dimen>
@@ -74,14 +75,14 @@
     <!--WIDGET DIMENSIONS-->
 
     <!--TEXT DIMENSIONS-->
-    <dimen name="appbar_headline_18_text_size">18sp</dimen>
-    <dimen name="caption_12_text_size">12sp</dimen>
+    <dimen name="appbar_headline_text_size">18sp</dimen>
+    <dimen name="caption_text_size">12sp</dimen>
     <dimen name="body_text_size">14sp</dimen>
-    <dimen name="subtitle_16_text_size">16sp</dimen>
-    <dimen name="headline_20_text_size">20sp</dimen>
-    <dimen name="headline_24_text_size">24sp</dimen>
-    <dimen name="headline_36_text_size">36sp</dimen>
-    <dimen name="headline_45_text_size">45sp</dimen>
-    <dimen name="headline_48_text_size">48sp</dimen>
+    <dimen name="subtitle_text_size">16sp</dimen>
+    <dimen name="headline_1_text_size">20sp</dimen>
+    <dimen name="headline_2_text_size">24sp</dimen>
+    <dimen name="headline_3_text_size">36sp</dimen>
+    <dimen name="headline_4_text_size">45sp</dimen>
+    <dimen name="headline_5_text_size">48sp</dimen>
     <!--TEXT DIMENSIONS-->
 </resources>
