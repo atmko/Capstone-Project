@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--MARGINS-->
+    <dimen name="list_margin">@dimen/x10_layout_margin</dimen>
+
     <!--detail margins-->
     <dimen name="text_margin">@dimen/x18_layout_margin</dimen>
     <dimen name="rating_margin">@dimen/x19_layout_margin</dimen>
     <dimen name="trailer_button_margin">@dimen/x21_layout_margin</dimen>
     <!--detail margins-->
+    <!--MARGINS-->
 
     <!--TEXT DIMENSIONS-->
     <dimen name="appbar_headline_text_size">26sp</dimen>
