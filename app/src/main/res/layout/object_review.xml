@@ -23,6 +23,7 @@
             android:layout_height="wrap_content"
             android:textStyle="bold"
             tools:text="placeholder"
+            android:textSize="@dimen/body_text_size"
             android:textColor="@color/color_subtext"/>
 
         <TextView
@@ -33,6 +34,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:textStyle="italic"
             tools:text="placeholder"
+            android:textSize="@dimen/body_text_size"
             android:textColor="@android:color/white"/>
 
     </LinearLayout>

@@ -26,6 +26,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/item_count_text_view"
         tools:text="list name"
+        android:textSize="@dimen/body_text_size"
         android:textAlignment="viewStart"
         android:gravity="start"
         android:textColor="@android:color/white" />
@@ -42,6 +43,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toStartOf="@id/checkbox_view"
         tools:text="count"
+        android:textSize="@dimen/body_text_size"
         android:textColor="@android:color/white" />
 
     <androidx.appcompat.widget.AppCompatCheckBox
