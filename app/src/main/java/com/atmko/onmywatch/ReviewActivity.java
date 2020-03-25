@@ -49,7 +49,7 @@ public class ReviewActivity extends AppCompatActivity {
 
         } else {
             if (savedInstanceState.containsKey(REVIEW_KEY)) {
-                mReview = savedInstanceState.getParcelable(REVIEW_KEY);
+                mReview = Parcels.unwrap(savedInstanceState.getParcelable(REVIEW_KEY));
             }
         }
 
