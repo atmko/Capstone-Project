@@ -75,7 +75,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="@dimen/divider"
         app:layout_constraintBottom_toBottomOf="parent"
         android:background="@color/list_divider_color"/>
 

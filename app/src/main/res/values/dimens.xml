@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--DIVIDER-->
+    <dimen name="divider">1dp</dimen>
+    <!--DIVIDER-->
 
     <!--MARGINS-->
     <dimen name="search_image_spacing">4dp</dimen>

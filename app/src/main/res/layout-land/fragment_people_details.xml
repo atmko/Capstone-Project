@@ -25,7 +25,7 @@
         </ScrollView>
 
         <FrameLayout
-            android:layout_width="1dp"
+            android:layout_width="@dimen/divider"
             android:layout_height="match_parent"
             android:background="@color/colorAccent" />
 

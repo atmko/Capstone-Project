@@ -20,7 +20,7 @@
             android:layout_weight="@integer/master_fragment_layout_weight"/>
 
         <View
-            android:layout_width="1dp"
+            android:layout_width="@dimen/divider"
             android:layout_height="match_parent"
             android:background="@color/colorAccent"/>
 

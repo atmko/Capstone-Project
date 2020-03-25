@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--DIVIDER-->
+    <dimen name="divider">2dp</dimen>
+    <!--DIVIDER-->
+
     <!--MARGINS-->
     <dimen name="search_image_spacing">6dp</dimen>
     <dimen name="half_layout_margin">6dp</dimen>
@@ -25,6 +29,13 @@
     <dimen name="trailer_button_margin">@dimen/x21_layout_margin</dimen>
     <!--detail margins-->
     <!--MARGINS-->
+
+    <!--VIEW DIMENSIONS-->
+    <!--tab indicator dimensions-->
+    <dimen name="indicator_height">6dp</dimen>
+    <dimen name="indicator_cross_line_height">1dp</dimen>
+    <dimen name="indicator_cross_line_margin_from_bottom">2.9dp</dimen>
+    <!--tab indicator dimensions-->
 
     <!--TEXT DIMENSIONS-->
     <dimen name="appbar_headline_text_size">26sp</dimen>
