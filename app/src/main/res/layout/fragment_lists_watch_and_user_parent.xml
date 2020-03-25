@@ -27,6 +27,7 @@
         <com.google.android.material.tabs.TabLayout
             style="@style/tab_style"
             android:id="@+id/list_type_tab_layout"
+            app:tabTextAppearance="@style/tab_text_style"
             app:tabMode="fixed">
 
             <!--TODO these are for test purposes only. apply programmatically instead-->

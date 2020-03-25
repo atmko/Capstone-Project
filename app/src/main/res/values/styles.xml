@@ -51,6 +51,10 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="tab_text_style" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">@dimen/body_text_size</item>
+    </style>
+
     <style name="tab_style">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>

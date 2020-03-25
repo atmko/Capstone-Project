@@ -39,6 +39,7 @@
             <com.google.android.material.tabs.TabLayout
                 style="@style/tab_style"
                 android:id="@+id/media_type_tab_layout"
+                app:tabTextAppearance="@style/tab_text_style"
                 app:tabMode="fixed">
 
                 <!--TODO these are for test purposes only. apply programmatically instead-->
@@ -70,6 +71,7 @@
             <com.google.android.material.tabs.TabLayout
                 style="@style/tab_style"
                 android:id="@+id/discover_presets_tab_layout"
+                app:tabTextAppearance="@style/tab_text_style"
                 app:tabMode="scrollable">
 
                 <!--TODO these TabItems are for visualization purposes only. Tabs applied programmatically instead.-->
