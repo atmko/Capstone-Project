@@ -9,4 +9,11 @@
     <dimen name="trailer_button_margin">@dimen/x5_layout_margin</dimen>
     <!--detail margins-->
     <!--MARGINS-->
+
+    <!--VIEW DIMENSIONS-->
+    <!--image_dimensions-->
+    <dimen name="spotlight_poster_height">225dp</dimen>
+    <dimen name="spotlight_poster_width">150dp</dimen>
+    <!--image_dimensions-->
+    <!--VIEW DIMENSIONS-->
 </resources>

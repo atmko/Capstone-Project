@@ -31,11 +31,17 @@
     <!--MARGINS-->
 
     <!--VIEW DIMENSIONS-->
+    <!--image_dimensions-->
+    <dimen name="spotlight_poster_height">450dp</dimen>
+    <dimen name="spotlight_poster_width">300dp</dimen>
+    <!--image_dimensions-->
+
     <!--tab indicator dimensions-->
     <dimen name="indicator_height">6dp</dimen>
     <dimen name="indicator_cross_line_height">1dp</dimen>
     <dimen name="indicator_cross_line_margin_from_bottom">2.9dp</dimen>
     <!--tab indicator dimensions-->
+    <!--VIEW DIMENSIONS-->
 
     <!--TEXT DIMENSIONS-->
     <dimen name="appbar_headline_text_size">26sp</dimen>

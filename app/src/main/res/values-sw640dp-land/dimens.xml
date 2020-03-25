@@ -8,4 +8,11 @@
     <dimen name="rating_margin">@dimen/x3_layout_margin</dimen>
     <dimen name="trailer_button_margin">@dimen/x5_layout_margin</dimen>
     <!--detail margins-->
+
+    <!--VIEW DIMENSIONS-->
+    <!--image_dimensions-->
+    <dimen name="spotlight_poster_height">375dp</dimen>
+    <dimen name="spotlight_poster_width">250dp</dimen>
+    <!--image_dimensions-->
+    <!--VIEW DIMENSIONS-->
 </resources>
