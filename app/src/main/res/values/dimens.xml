@@ -23,6 +23,10 @@
     <dimen name="x21_layout_margin">168dp</dimen>
     <dimen name="list_margin">0dp</dimen>
 
+    <!--review margins-->
+    <dimen name="review_margin">0dp</dimen>
+    <!--review margins-->
+
     <!--detail margins-->
     <dimen name="text_margin">@dimen/x2_layout_margin</dimen>
     <dimen name="rating_margin">@dimen/x3_layout_margin</dimen>

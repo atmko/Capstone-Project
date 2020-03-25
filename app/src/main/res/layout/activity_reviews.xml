@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent"
+    android:background="@color/background">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,6 +16,11 @@
             android:id="@+id/authorTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/review_margin"
+            android:layout_marginStart="@dimen/review_margin"
+            android:layout_marginEnd="@dimen/review_margin"
+            android:layout_marginRight="@dimen/review_margin"
+            android:textSize="@dimen/body_text_size"
             android:textStyle="bold"
             tools:text="placeholder"
             android:textColor="@color/color_subtext"/>
@@ -24,7 +30,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/x1_layout_margin"
+            android:layout_marginLeft="@dimen/review_margin"
+            android:layout_marginStart="@dimen/review_margin"
+            android:layout_marginEnd="@dimen/review_margin"
+            android:layout_marginRight="@dimen/review_margin"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textSize="@dimen/body_text_size"
             android:textStyle="italic"
             tools:text="placeholder"
             android:textColor="@android:color/white"/>
