@@ -10,4 +10,5 @@
     android:paddingRight="@dimen/x6_layout_margin"
     android:paddingEnd="@dimen/x6_layout_margin"
     android:paddingBottom="@dimen/x2_layout_margin"
-    tools:text="option title" />
+    tools:text="option title"
+    android:textSize="@dimen/body_text_size" />
