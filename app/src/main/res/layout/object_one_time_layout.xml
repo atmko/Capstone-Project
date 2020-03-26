@@ -44,6 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/x1_layout_margin"
             tools:text="pro mode"
+            android:textSize="@dimen/body_text_size"
             app:layout_constraintStart_toEndOf="@+id/icon_frame_view"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -54,6 +55,7 @@
             android:layout_marginTop="@dimen/x1_layout_margin"
             android:layout_marginStart="@dimen/x1_layout_margin"
             tools:text="19.99"
+            android:textSize="@dimen/body_text_size"
             app:layout_constraintStart_toEndOf="@+id/icon_frame_view"
             app:layout_constraintTop_toBottomOf="@+id/title_text_view" />
 
@@ -63,6 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/x1_layout_margin"
             tools:text="Remove ads, unlock notifications, widget,  and unlimited custom lists."
+            android:textSize="@dimen/body_text_size"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/icon_frame_view" />
