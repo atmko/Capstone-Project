@@ -32,7 +32,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/x1_layout_margin"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textStyle="italic"
             tools:text="placeholder"
             android:textSize="@dimen/body_text_size"
             android:textColor="@android:color/white"/>

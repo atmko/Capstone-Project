@@ -36,7 +36,6 @@
             android:layout_marginRight="@dimen/review_margin"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:textSize="@dimen/body_text_size"
-            android:textStyle="italic"
             tools:text="placeholder"
             android:textColor="@android:color/white"/>
 
