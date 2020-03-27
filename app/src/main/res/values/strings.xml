@@ -147,12 +147,15 @@
     <string name="list_delete_record_error_message">Error: media has NOT been removed from list</string>
     <string name="rating_disallowed_message">Rating only allowed if item has \"Watching\", \"Watched\" or \"Dropped\" watch status.</string>
     <string name="confirmation_error_message">An error occurred in confirmation</string>
-    <string name="restore_confirmation_message">This will overwrite all your current data.\nAre you sure?</string>
+    <string name="backup_completed_message">Backup Completed.</string>
+    <string name="backup_failure_message">Backup Failed.</string>
+    <string name="restore_completed_message">Restore Completed.</string>
 
     <string name="pro_mode_list_limit_message">More lists available in pro mode.</string>
     <!--SNACK BAR MESSAGES-->
 
     <!--CONFIRMATION MESSAGES-->
+    <string name="restore_confirmation_message">This will overwrite all your current data.\nAre you sure?</string>
     <string name="delete_confirmation_message">Are you sure you want to delete?</string>
     <string name="log_out_confirmation_message">Failed To Backup Data. Are You Sure You Want To Log Out?</string>
     <!--CONFIRMATION MESSAGES-->

@@ -92,7 +92,7 @@ public class RestoreService extends JobIntentService {
     private StorageReference mBackupRef;
     private String mJsonString;
 
-    private OnRestoreCompleteListener mOnRestoreCompleteListener;
+    private static OnRestoreCompleteListener mOnRestoreCompleteListener;
 
     public RestoreService() {
     }
@@ -114,6 +114,7 @@ public class RestoreService extends JobIntentService {
     }
 
     public static void enqueueWork(Context appContext, Intent intent) {
+        mOnRestoreCompleteListener = ((OnRestoreCompleteListener) appContext);
         enqueueWork(appContext, RestoreService.class, JOB_ID, intent);
     }
 
@@ -238,6 +239,7 @@ public class RestoreService extends JobIntentService {
     private void finishService() {
         stopForeground(true);
         stopSelf();
+        mOnRestoreCompleteListener.onRestoreComplete();
     }
 
     @SuppressWarnings({"ConstantConditions", "unchecked"})
