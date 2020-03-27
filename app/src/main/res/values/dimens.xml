@@ -43,7 +43,7 @@
 
     <!--image_dimensions-->
     <dimen name="search_box_padding">12dp</dimen>
-    <dimen name="up_button_padding">20dp</dimen>
+    <dimen name="up_button_padding">@dimen/x2_layout_margin</dimen>
 
     <dimen name="search_poster_height">160dp</dimen>
     <dimen name="spotlight_poster_height">300dp</dimen>

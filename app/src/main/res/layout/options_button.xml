@@ -5,7 +5,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="top|end"
-    android:layout_margin="@dimen/x2_layout_margin"
+    android:layout_margin="@dimen/up_button_padding"
     android:spinnerMode="dropdown"
     android:dropDownVerticalOffset="@dimen/x1_layout_margin"
     android:background="@drawable/options_icon_white"
