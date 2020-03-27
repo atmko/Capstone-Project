@@ -19,6 +19,8 @@
     </style>
 
     <style name="preferences_theme" parent="@style/Theme.AppCompat">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
         <item name="actionBarStyle">@style/preferences_theme.app_bar_style</item>
         <item name="android:textSize">@dimen/body_text_size</item>
         <item name="android:textColorPrimary">@android:color/white</item>
