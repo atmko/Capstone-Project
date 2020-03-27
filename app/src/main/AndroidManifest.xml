@@ -98,7 +98,9 @@
             android:label="@string/options_settings_title"
             android:launchMode="singleTop"
             android:theme="@style/preferences_theme" />
-        <activity android:name=".BillingActivity" />
+        <activity android:name=".BillingActivity"
+            android:label="@string/purchases_title"
+            android:theme="@style/AppTheme" />
 
         <service
             android:name=".widget.ListRemoteViewFactoryService"

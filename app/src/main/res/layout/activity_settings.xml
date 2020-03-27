@@ -6,13 +6,16 @@
     android:orientation="vertical"
     android:background="@color/background">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"/>
+
     <fragment
         android:id="@+id/fragment_settings"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="com.atmko.onmywatch.Fragments.SettingsFragment">
-
-    </fragment>
+        android:name="com.atmko.onmywatch.Fragments.SettingsFragment" />
 
 </LinearLayout>
 
