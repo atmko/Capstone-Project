@@ -3,8 +3,8 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="android:textColorSecondary">@android:color/black</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="android:textColorSecondary">@android:color/white</item>
+        <item name="colorPrimary">@color/background</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
@@ -61,7 +61,7 @@
     <style name="tab_style">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
-        <item name="tabIndicatorColor">@color/colorAccent</item>
+        <item name="tabIndicatorColor">@color/colorSecondary</item>
         <item name="tabTextColor">@android:color/white</item>
         <item name="tabIndicatorFullWidth">true</item>
         <item name="tabIndicatorHeight">@dimen/indicator_height</item>
@@ -112,15 +112,15 @@
         <item name="android:layout_marginEnd">@dimen/x1_layout_margin</item>
         <item name="android:layout_marginBottom">@dimen/x1_layout_margin</item>
         <item name="android:hint">@string/search_text_box_hint</item>
-        <item name="android:textColorHint">@android:color/black</item>
-        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textColorHint">@android:color/white</item>
+        <item name="android:textColor">@android:color/white</item>
         <item name="android:paddingLeft">@dimen/search_box_padding</item>
         <item name="android:paddingStart">@dimen/search_box_padding</item>
         <item name="android:paddingRight">@dimen/search_box_padding</item>
         <item name="android:paddingEnd">@dimen/search_box_padding</item>
         <item name="android:inputType">text</item>
         <item name="android:textCursorDrawable">@drawable/toolbar_search_box_cursor</item>
-        <item name="android:background">@drawable/background_search_box</item>
+        <item name="android:background">@null</item>
         <item name="android:imeOptions">actionSearch|flagNoExtractUi|flagNoFullscreen</item>
     </style>
 

@@ -17,8 +17,7 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/colorAccent">
+            android:layout_height="match_parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -44,7 +43,7 @@
                     tools:text="@string/media_type_movies_text"
                     android:textAlignment="textStart"
                     android:textAllCaps="false"
-                    android:textColor="@android:color/black"
+                    android:textColor="@android:color/white"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -58,7 +57,7 @@
                     android:layout_marginLeft="@dimen/x1_layout_margin"
                     android:layout_marginBottom="@dimen/x1_layout_margin"
                     android:background="@null"
-                    android:src="@drawable/ic_spinner_arrow"
+                    android:src="@drawable/ic_spinner_arrow_white"
                     app:layout_constraintBottom_toBottomOf="@+id/media_type_text_view"
                     app:layout_constraintStart_toEndOf="@id/media_type_text_view"
                     android:contentDescription="@string/content_description_media_type_button"/>
@@ -80,7 +79,7 @@
                     android:fontFamily="sans-serif-medium"
                     android:background="@null"
                     android:text="@string/lists_text_literal"
-                    android:textColor="@android:color/black"
+                    android:textColor="@android:color/white"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@id/spinner_arrow_image_button"
                     app:layout_constraintTop_toTopOf="parent"
@@ -97,7 +96,7 @@
                     android:layout_marginBottom="@dimen/x1_layout_margin"
                     android:background="@null"
                     android:padding="@dimen/x2_layout_margin"
-                    android:src="@drawable/ic_discover"
+                    android:src="@drawable/ic_discover_white"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"

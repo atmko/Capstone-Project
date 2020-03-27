@@ -28,7 +28,7 @@
                 android:layout_height="@dimen/indicator_cross_line_height"
                 android:layout_marginBottom="@dimen/indicator_cross_line_margin_from_bottom"
                 android:layout_gravity="bottom"
-                android:background="@color/colorAccent"/>
+                android:background="@color/colorSecondary"/>
 
             <com.google.android.material.tabs.TabLayout
                 style="@style/tab_style"
