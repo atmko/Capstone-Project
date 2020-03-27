@@ -10,7 +10,7 @@
     android:background="@color/background"
     android:focusableInTouchMode="true"
     android:focusable="true"
-    android:nextFocusDown="@id/media_type_tab_layout">
+    android:nextFocusDown="@id/tab_layout_1">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,78 +25,9 @@
             <include layout="@layout/toolbar_general" />
         </FrameLayout>
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize">
+        <include layout="@layout/tab_layout_1_degree"/>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/indicator_cross_line_height"
-                android:layout_marginBottom="@dimen/indicator_cross_line_margin_from_bottom"
-                android:layout_gravity="bottom"
-                android:background="@color/colorSecondary"/>
-
-            <com.google.android.material.tabs.TabLayout
-                style="@style/tab_style"
-                android:id="@+id/media_type_tab_layout"
-                app:tabTextAppearance="@style/tab_text_style"
-                app:tabMode="fixed">
-
-                <!--TODO these are for test purposes only. apply programmatically instead-->
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:text="@string/media_type_movies_text"/>
-
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:text="@string/media_type_series_text"/>
-            </com.google.android.material.tabs.TabLayout>
-
-        </FrameLayout>
-
-        <FrameLayout
-            android:id="@+id/discover_presets_top_layout"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize">
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/indicator_cross_line_height"
-                android:layout_marginBottom="@dimen/indicator_cross_line_margin_from_bottom"
-                android:layout_gravity="bottom"
-                android:background="@color/colorSecondary"/>
-
-            <com.google.android.material.tabs.TabLayout
-                style="@style/tab_style"
-                android:id="@+id/discover_presets_tab_layout"
-                app:tabTextAppearance="@style/tab_text_style"
-                app:tabMode="scrollable">
-
-                <!--TODO these TabItems are for visualization purposes only. Tabs applied programmatically instead.-->
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:text="airing today"/>
-
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:text="on the air"/>
-
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:text="popular"/>
-
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:text="top rated"/>
-            </com.google.android.material.tabs.TabLayout>
-
-        </FrameLayout>
+        <include layout="@layout/tab_layout_2_degree"/>
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/discover_results_view_pager"

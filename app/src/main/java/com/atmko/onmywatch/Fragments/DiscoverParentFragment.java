@@ -210,9 +210,9 @@ public class DiscoverParentFragment extends Fragment
             }
         });
 
-        mMediaTypeTabLayout = getView().findViewById(R.id.media_type_tab_layout);
-        mSearchPresetsTopLayout = getView().findViewById(R.id.discover_presets_top_layout);
-        mSearchPresetsTabLayout = getView().findViewById(R.id.discover_presets_tab_layout);
+        mMediaTypeTabLayout = getView().findViewById(R.id.tab_layout_1);
+        mSearchPresetsTopLayout = getView().findViewById(R.id.tab_degree_2_frame_layout);
+        mSearchPresetsTabLayout = getView().findViewById(R.id.tab_layout_2);
         mSearchResultsViewPager = getView().findViewById(R.id.discover_results_view_pager);
 
         try {

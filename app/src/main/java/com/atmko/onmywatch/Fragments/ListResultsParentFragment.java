@@ -189,7 +189,7 @@ public class ListResultsParentFragment extends Fragment
                         searchEditText, titleText);            }
         });
 
-        TabLayout mMediaTypeTabLayout = getView().findViewById(R.id.media_type_tab_layout);
+        TabLayout mMediaTypeTabLayout = getView().findViewById(R.id.tab_layout_1);
         final ViewPager mListsViewPager = getView().findViewById(R.id.lists_results_view_pager);
 
         //remove old tabs

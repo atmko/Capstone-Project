@@ -6,51 +6,13 @@
     android:layout_weight="@integer/details_extras_layout_weight"
     android:background="@color/background">
 
-    <FrameLayout
-        android:id="@+id/detail_extras_frame_layout"
-        android:layout_width="match_parent"
-        android:layout_height="?android:attr/actionBarSize"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/indicator_cross_line_height"
-            android:layout_marginBottom="@dimen/indicator_cross_line_margin_from_bottom"
-            android:layout_gravity="bottom"
-            android:background="@color/colorSecondary"/>
-
-        <com.google.android.material.tabs.TabLayout
-            style="@style/tab_style"
-            android:id="@+id/detail_extras_tab_layout"
-            app:tabTextAppearance="@style/tab_text_style"
-            app:tabMode="fixed">
-
-            <!--tabs handled programmatically-->
-            <!--these are for visualization purposes only-->
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="@string/detail_extra_recommended_text_literal" />
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="@string/detail_extra_cast_text_literal" />
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="@string/detail_extra_reviews_text_literal" />
-
-        </com.google.android.material.tabs.TabLayout>
-
-    </FrameLayout>
+    <include layout="@layout/tab_layout_1_degree"/>
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/details_extra_view_pager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@+id/detail_extras_frame_layout"
+        app:layout_constraintTop_toBottomOf="@+id/tab_degree_1_frame_layout"
         app:layout_constraintBottom_toBottomOf="parent">
     </androidx.viewpager.widget.ViewPager>
 

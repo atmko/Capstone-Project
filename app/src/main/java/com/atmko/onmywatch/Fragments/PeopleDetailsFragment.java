@@ -237,7 +237,7 @@ public class PeopleDetailsFragment extends Fragment {
         }
 
         //define views dependent on retrieving details
-        mDetailExtrasTabLayout = getView().findViewById(R.id.detail_extras_tab_layout);
+        mDetailExtrasTabLayout = getView().findViewById(R.id.tab_layout_1);
         mDetailExtrasViewPager = getView().findViewById(R.id.details_extra_view_pager);
 
         configureTabTitles();
