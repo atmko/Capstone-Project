@@ -14,6 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/x1_layout_margin"
         android:gravity="center_horizontal"
+        android:textSize="@dimen/body_text_size"
         android:textColor="@android:color/white"
         tools:text="Edris Elba"/>
 
@@ -23,6 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/x1_layout_margin"
         android:gravity="center_horizontal"
+        android:textSize="@dimen/body_text_size"
         android:textColor="@color/color_subtext"
         tools:text="John Luther"/>
 
