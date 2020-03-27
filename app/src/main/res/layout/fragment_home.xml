@@ -1,23 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:id="@+id/top_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/background"
     tools:context=".MasterActivity">
 
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.google.android.gms.ads.AdView
+                style="@style/style_home_list_display_container"
+                android:id="@+id/banner_ad"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                ads:adSize="BANNER"
+                ads:adUnitId="@string/ad_test_id" />
+
+            <TextView
+                style="@style/home_list_display_heading_style"
+                android:text="@string/spotlight_heading_text" />
+
+            <FrameLayout
+                style="@style/style_home_list_display_container"
+                android:id="@+id/spotlight_container"
+                android:layout_height="@dimen/spotlight_poster_height"
+                tools:background="@color/color_subtext"/>
+
+            <TextView
+                style="@style/home_list_display_heading_style"
+                android:id="@+id/upcoming_container_heading"
+                tools:text="upcoming" />
+
+            <FrameLayout
+                style="@style/style_home_list_display_container"
+                android:id="@+id/upcoming_media_container"
+                tools:background="@color/color_subtext"/>
+
+            <TextView
+                style="@style/home_list_display_heading_style"
+                android:id="@+id/ended_container_heading"
+                tools:text="ended" />
+
+            <FrameLayout
+                style="@style/style_home_list_display_container"
+                android:id="@+id/ended_media_container"
+                tools:background="@color/color_subtext"/>
+
+            <TextView
+                style="@style/home_list_display_heading_style"
+                android:id="@+id/undated_container_heading"
+                tools:text="undated" />
+
+            <FrameLayout
+                style="@style/style_home_list_display_container"
+                android:id="@+id/undated_media_container"
+                tools:background="@color/color_subtext"/>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize">
+        android:layout_height="wrap_content"
+        app:liftOnScroll="true">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="?attr/actionBarSize">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -109,67 +174,4 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <ScrollView
-        android:id="@+id/scroll_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <com.google.android.gms.ads.AdView
-                style="@style/style_home_list_display_container"
-                android:id="@+id/banner_ad"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                ads:adSize="BANNER"
-                ads:adUnitId="@string/ad_test_id" />
-
-            <TextView
-                style="@style/home_list_display_heading_style"
-                android:text="@string/spotlight_heading_text" />
-
-            <FrameLayout
-                style="@style/style_home_list_display_container"
-                android:id="@+id/spotlight_container"
-                android:layout_height="@dimen/spotlight_poster_height"
-                tools:background="@color/color_subtext"/>
-
-            <TextView
-                style="@style/home_list_display_heading_style"
-                android:id="@+id/upcoming_container_heading"
-                tools:text="upcoming" />
-
-            <FrameLayout
-                style="@style/style_home_list_display_container"
-                android:id="@+id/upcoming_media_container"
-                tools:background="@color/color_subtext"/>
-
-            <TextView
-                style="@style/home_list_display_heading_style"
-                android:id="@+id/ended_container_heading"
-                tools:text="ended" />
-
-            <FrameLayout
-                style="@style/style_home_list_display_container"
-                android:id="@+id/ended_media_container"
-                tools:background="@color/color_subtext"/>
-
-            <TextView
-                style="@style/home_list_display_heading_style"
-                android:id="@+id/undated_container_heading"
-                tools:text="undated" />
-
-            <FrameLayout
-                style="@style/style_home_list_display_container"
-                android:id="@+id/undated_media_container"
-                tools:background="@color/color_subtext"/>
-
-        </LinearLayout>
-
-    </ScrollView>
-
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
