@@ -17,17 +17,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.atmko.onmywatch.adapters.BackupAdapter;
 import com.atmko.onmywatch.models.Backup;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
-import com.atmko.onmywatch.utils.network_utils.BackupService;
 import com.atmko.onmywatch.utils.network_utils.RestoreService;
-import com.atmko.onmywatch.view_models.BackupActivityViewModel;
+import com.atmko.onmywatch.view_models.RestoreActivityViewModel;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.parceler.Parcels;
 
 import java.util.List;
 
-public class BackupActivity extends AppCompatActivity implements BackupAdapter.OnListItemClickListener,
-        BackupService.OnBackupCompleteListener, RestoreService.OnRestoreCompleteListener {
+public class RestoreActivity extends AppCompatActivity implements BackupAdapter.OnListItemClickListener,
+        RestoreService.OnRestoreCompleteListener {
     private static final int REQUEST_RESTORE = 1;
 
     private BackupAdapter adapter;
@@ -35,7 +34,7 @@ public class BackupActivity extends AppCompatActivity implements BackupAdapter.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_backup);
+        setContentView(R.layout.activity_restore);
 
         //configure percentage of display dialog activity takes
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
@@ -62,10 +61,10 @@ public class BackupActivity extends AppCompatActivity implements BackupAdapter.O
     }
 
     private void observeData() {
-        BackupActivityViewModel backupActivityViewModel =
-                ViewModelProviders.of(this).get(BackupActivityViewModel.class);
+        RestoreActivityViewModel restoreActivityViewModel =
+                ViewModelProviders.of(this).get(RestoreActivityViewModel.class);
 
-        backupActivityViewModel.getBackupsLiveData().observe(this, new Observer<List<Backup>>() {
+        restoreActivityViewModel.getBackupsLiveData().observe(this, new Observer<List<Backup>>() {
             @Override
             public void onChanged(List<Backup> backups) {
                 adapter.getAdapterData().clear();
@@ -93,11 +92,11 @@ public class BackupActivity extends AppCompatActivity implements BackupAdapter.O
                         Backup backup = Parcels.unwrap(
                                 data.getParcelableExtra(ConfirmationActivity.SELECTED_DATA_KEY));
 
-                        //restore backup;
-                        Intent intent = new Intent(BackupActivity.this, RestoreService.class);
+                        //restore backup
+                        Intent intent = new Intent(RestoreActivity.this, RestoreService.class);
                         intent.putExtra(RestoreService.FOLDER_KEY, RestoreService.BACKUP_FOLDER_NAME);
                         intent.putExtra(RestoreService.FILENAME_KEY, backup.getFileName());
-                        RestoreService.enqueueWork(BackupActivity.this, intent);
+                        RestoreService.enqueueWork(RestoreActivity.this, intent);
                     }
                 }
             });
@@ -114,33 +113,6 @@ public class BackupActivity extends AppCompatActivity implements BackupAdapter.O
         MasterActivity.launchConfirmationActivity(this,
                 adapter.getAdapterData().get(position), REQUEST_RESTORE,
                 ConfirmationActivity.ACTION_RESTORE);
-    }
-
-    @Override
-    public void onLogOutBackupComplete() {
-
-    }
-
-    @Override
-    public void onBackupComplete() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                progressLayout.setVisibility(View.GONE);
-                showSnackBarMessage(getString(R.string.backup_completed_message));
-            }
-        });
-    }
-
-    @Override
-    public void onBackupFailure() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                progressLayout.setVisibility(View.GONE);
-                showSnackBarMessage(getString(R.string.backup_failure_message));
-            }
-        });
     }
 
     @Override

@@ -17,12 +17,12 @@ import com.atmko.onmywatch.models.Backup;
 
 import java.util.List;
 
-public class BackupActivityViewModel extends AndroidViewModel {
-    private static final String TAG = BackupActivityViewModel.class.getSimpleName();
+public class RestoreActivityViewModel extends AndroidViewModel {
+    private static final String TAG = RestoreActivityViewModel.class.getSimpleName();
 
     private MutableLiveData<List<Backup>> backupsLiveData;
 
-    public BackupActivityViewModel(@NonNull Application application) {
+    public RestoreActivityViewModel(@NonNull Application application) {
         super(application);
         Log.d(TAG, "fetching user data from the database");
 

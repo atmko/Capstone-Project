@@ -89,7 +89,7 @@
             android:excludeFromRecents="true"
             android:launchMode="singleTop"
             android:theme="@style/Theme.PopupDialog" />
-        <activity android:name=".BackupActivity"
+        <activity android:name=".RestoreActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTop"
             android:theme="@style/Theme.PopupDialog"/>

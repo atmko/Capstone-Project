@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
-import com.atmko.onmywatch.BackupActivity;
+import com.atmko.onmywatch.RestoreActivity;
 import com.atmko.onmywatch.ConfirmationActivity;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
@@ -37,7 +37,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         @Override
                         public void run() {
                             if (getContext() != null) {
-                                Intent intent = new Intent(getContext(), BackupActivity.class);
+                                Intent intent = new Intent(getContext(), RestoreActivity.class);
                                 getContext().startActivity(intent);
                             }
                         }
