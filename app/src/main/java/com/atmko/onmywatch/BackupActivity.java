@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -57,15 +56,6 @@ public class BackupActivity extends AppCompatActivity implements BackupAdapter.O
         //configure recycler view
         RecyclerView backupRecyclerView = findViewById(R.id.backups_recycler_view);
         progressLayout = findViewById(R.id.progress_layout);
-        ImageButton createBackupButton = findViewById(R.id.create_backup_button);
-        createBackupButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                progressLayout.setVisibility(View.VISIBLE);
-                Intent intent = new Intent(getApplicationContext(), BackupService.class);
-                BackupService.enqueueWork(BackupActivity.this, intent);
-            }
-        });
         adapter = new BackupAdapter(this);
         backupRecyclerView.setLayoutManager(configureLayoutManager());
         backupRecyclerView.setAdapter(adapter);
