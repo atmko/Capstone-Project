@@ -135,7 +135,7 @@ public class MasterActivity extends AppCompatActivity
 
         } else {
             //observe user data via view model
-            observeData();
+            observeData(false);
         }
     }
 
@@ -150,12 +150,12 @@ public class MasterActivity extends AppCompatActivity
     }
 
     //retrieve data from the activity's view model
-    private void observeData() {
+    private void observeData(boolean isLoggingIn) {
         if (mIdlingResource != null) {
             mIdlingResource.setIdleState(false);
         }
 
-        RoomDatabase.Callback callback = databaseInitializer(this);
+        RoomDatabase.Callback callback = databaseInitializer(isLoggingIn);
         AppDatabase.getInstance(this, callback);
 
         MasterActivityViewModel masterActivityViewModel =
@@ -286,7 +286,7 @@ public class MasterActivity extends AppCompatActivity
                             @Override
                             public void run() {
                                 //observe user data via view model
-                                observeData();
+                                observeData(true);
                             }
                         });
                     } else {
@@ -818,7 +818,7 @@ public class MasterActivity extends AppCompatActivity
         searchEditText.setVisibility(View.VISIBLE);
     }
 
-    public RoomDatabase.Callback databaseInitializer(final Context context) {
+    public RoomDatabase.Callback databaseInitializer(final boolean isLoggingIn) {
         final boolean[] isRestored = {false};
         //reference
         //https://medium.com/@srinuraop/database-create-and-open-callbacks-in-room-7ca98c3286ab
@@ -828,11 +828,13 @@ public class MasterActivity extends AppCompatActivity
                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                     @Override
                     public void run() {
-                        addWatchLists();
-                        restoreLatestBackup();
+                        if (isLoggingIn) {
+                            addWatchLists();
+                            restoreLatestBackup();
 
-                        //prevent restoring again if database opens
-                        isRestored[0] = true;
+                            //prevent restoring again if database opens
+                            isRestored[0] = true;
+                        }
                     }
                 });
             }
@@ -843,9 +845,11 @@ public class MasterActivity extends AppCompatActivity
                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                     @Override
                     public void run() {
-                        //check if database has been restored already (from onCreate method)
-                        if (!isRestored[0]) {
-                            restoreLatestBackup();
+                        if (isLoggingIn) {
+                            //check if database has been restored already (from onCreate method)
+                            if (!isRestored[0]) {
+                                restoreLatestBackup();
+                            }
                         }
                     }
                 });
