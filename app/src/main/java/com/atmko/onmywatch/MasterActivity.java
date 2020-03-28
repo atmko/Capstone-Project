@@ -14,6 +14,7 @@ import android.os.Parcelable;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -100,6 +101,8 @@ public class MasterActivity extends AppCompatActivity
 
     private Bundle mSavedInstanceState;
 
+    private FrameLayout progressLayout;
+
     // The Idling Resource which will be null in production.
     @Nullable
     public SimpleIdlingResource mIdlingResource;
@@ -114,6 +117,7 @@ public class MasterActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_master);
 
+        defineViews();
         mSavedInstanceState = savedInstanceState;
 
         createNotificationChannels();
@@ -137,6 +141,10 @@ public class MasterActivity extends AppCompatActivity
             //observe user data via view model
             observeData(false);
         }
+    }
+
+    private void defineViews() {
+        progressLayout = findViewById(R.id.progress_layout);
     }
 
     public static FirebaseUser getCurrentUser() {
@@ -870,6 +878,14 @@ public class MasterActivity extends AppCompatActivity
     private void restoreLatestBackup() {
         List<Backup> backups = FirebaseUserDataDao.getBackupsAlt();
         if (backups.size() != 0) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    progressLayout.setVisibility(View.VISIBLE);
+                    showSnackBarMessage(getString(R.string.restoring_last_backup_message));
+                }
+            });
+
             Backup latestBackup = backups.get(0);
 
             //restore backup;
@@ -880,14 +896,32 @@ public class MasterActivity extends AppCompatActivity
         }
     }
 
+    private void showSnackBarMessage(String string) {
+        if (string == null || string.equals("")) return;
+        Snackbar.make(findViewById(R.id.top_layout), string, Snackbar.LENGTH_LONG).show();
+    }
+
     @Override
     public void onRestoreComplete() {
-
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressLayout.setVisibility(View.GONE);
+                showSnackBarMessage(getString(R.string.restore_completed_message));
+            }
+        });
     }
 
     @Override
     public void onRestoreFailed() {
         addWatchLists();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressLayout.setVisibility(View.GONE);
+                showSnackBarMessage(getString(R.string.restore_failed_message));
+            }
+        });
     }
 
     /**

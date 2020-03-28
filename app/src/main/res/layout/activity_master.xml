@@ -22,4 +22,6 @@
 
     </FrameLayout>
 
+    <include layout="@layout/progress_layout" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
