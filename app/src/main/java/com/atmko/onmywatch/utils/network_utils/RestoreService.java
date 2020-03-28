@@ -18,7 +18,6 @@ import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.database.Converters;
-import com.atmko.onmywatch.database.daos.FirebaseUserDataDao;
 import com.atmko.onmywatch.models.Episode;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MediaLog;
@@ -51,7 +50,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.atmko.onmywatch.database.daos.FirebaseUserDataDao.MIGRATION_LOCAL;
 import static com.atmko.onmywatch.models.ListModel.ITEM_COUNT_KEY;
 import static com.atmko.onmywatch.models.ListModel.LIST_NAME_KEY;
 import static com.atmko.onmywatch.models.MediaData.TAGS_KEY;
@@ -91,6 +89,7 @@ public class RestoreService extends JobIntentService {
     private AppDatabase mLocalDatabase;
     private StorageReference mBackupRef;
     private String mJsonString;
+    private boolean isRestoreSuccessful;
 
     private static OnRestoreCompleteListener mOnRestoreCompleteListener;
 
@@ -99,6 +98,7 @@ public class RestoreService extends JobIntentService {
 
     public interface OnRestoreCompleteListener {
         void onRestoreComplete();
+        void onRestoreFailed();
     }
 
     @Override
@@ -166,8 +166,13 @@ public class RestoreService extends JobIntentService {
 
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
+                    respondWithFailure();
                 } catch (IOException e) {
                     e.printStackTrace();
+                    respondWithFailure();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    respondWithFailure();
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -232,14 +237,30 @@ public class RestoreService extends JobIntentService {
     }
 
     public void onPullSeriesLogsComplete() {
-        FirebaseUserDataDao.setMigrationValue(MIGRATION_LOCAL);
+        //update success value fail and finish service
+        isRestoreSuccessful = true;
+        finishService();
+    }
+
+    private void respondWithFailure() {
+        //update success value fail, delete local database files and finish service
+        isRestoreSuccessful = false;
+        AppDatabase.deleteLocallySavedData(getApplicationContext());
         finishService();
     }
 
     private void finishService() {
         stopForeground(true);
         stopSelf();
-        mOnRestoreCompleteListener.onRestoreComplete();
+
+        if (isRestoreSuccessful) {
+            Log.d(TAG, "restore success");
+            mOnRestoreCompleteListener.onRestoreComplete();
+
+        } else {
+            Log.d(TAG, "restore failed");
+            mOnRestoreCompleteListener.onRestoreFailed();
+        }
     }
 
     @SuppressWarnings({"ConstantConditions", "unchecked"})

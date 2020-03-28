@@ -72,7 +72,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class MasterActivity extends AppCompatActivity
-        implements BackupService.OnBackupCompleteListener {
+        implements BackupService.OnBackupCompleteListener, RestoreService.OnRestoreCompleteListener {
     private static final int FREE_MODE_LIST_COUNT_LIMIT = 3;
 
     public static final int MEDIA_TYPE_SERIES = 0;
@@ -828,14 +828,7 @@ public class MasterActivity extends AppCompatActivity
                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                     @Override
                     public void run() {
-                        String[] seriesWatchListTitles = context.getResources()
-                                .getStringArray(R.array.watch_status_series_titles);
-                        for (String title: seriesWatchListTitles) {
-                            WatchListModel watchListModel = new WatchListModel(title);
-                            AppDatabase.getInstance(context).watchListsDao()
-                                    .addList(watchListModel);
-                        }
-
+                        addWatchLists();
                         restoreLatestBackup();
 
                         //prevent restoring again if database opens
@@ -860,6 +853,16 @@ public class MasterActivity extends AppCompatActivity
         };
     }
 
+    private void addWatchLists() {
+        String[] seriesWatchListTitles = getResources()
+                .getStringArray(R.array.watch_status_series_titles);
+        for (String title: seriesWatchListTitles) {
+            WatchListModel watchListModel = new WatchListModel(title);
+            AppDatabase.getInstance(this).watchListsDao()
+                    .addList(watchListModel);
+        }
+    }
+
     private void restoreLatestBackup() {
         List<Backup> backups = FirebaseUserDataDao.getBackupsAlt();
         if (backups.size() != 0) {
@@ -871,6 +874,16 @@ public class MasterActivity extends AppCompatActivity
             intent.putExtra(RestoreService.FILENAME_KEY, latestBackup.getFileName());
             RestoreService.enqueueWork(this, intent);
         }
+    }
+
+    @Override
+    public void onRestoreComplete() {
+
+    }
+
+    @Override
+    public void onRestoreFailed() {
+        addWatchLists();
     }
 
     /**

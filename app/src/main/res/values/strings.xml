@@ -150,6 +150,7 @@
     <string name="backup_completed_message">Backup Completed.</string>
     <string name="backup_failure_message">Backup Failed.</string>
     <string name="restore_completed_message">Restore Completed.</string>
+    <string name="restore_failed_message">Restore Failed.</string>
 
     <string name="pro_mode_list_limit_message">More lists available in pro mode.</string>
     <!--SNACK BAR MESSAGES-->
