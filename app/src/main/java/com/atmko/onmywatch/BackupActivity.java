@@ -144,8 +144,13 @@ public class BackupActivity extends AppCompatActivity implements BackupAdapter.O
 
     @Override
     public void onBackupFailure() {
-        progressLayout.setVisibility(View.GONE);
-        showSnackBarMessage(getString(R.string.backup_failure_message));
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressLayout.setVisibility(View.GONE);
+                showSnackBarMessage(getString(R.string.backup_failure_message));
+            }
+        });
     }
 
     @Override
