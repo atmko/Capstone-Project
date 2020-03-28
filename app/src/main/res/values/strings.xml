@@ -12,6 +12,7 @@
 
     <!--preference keys-->
     <string name="settings_key_restore">restore</string>
+    <string name="settings_key_create_backup">create_backup</string>
     <!--preference keys-->
 
     <!--settings titles-->
@@ -24,6 +25,7 @@
     <string name="settings_manual_backup_title">Backup</string>
     <string name="settings_about_app_title">About App</string>
     <string name="settings_restore_title">Restore Data</string>
+    <string name="settings_create_backup_title">Create Backup</string>
     <!--settings titles-->
 
     <!--settings summary-->
@@ -35,7 +37,8 @@
     <string name="settings_auto_sync_summary">Create automatic backups</string>
     <string name="settings_manual_backup_summary">Create a manual backup</string>
     <string name="settings_about_app_summary">On My Watch Version 1.0.0</string>
-    <string name="settings_backups_summary">Backup or restore files to a previous state.</string>
+    <string name="settings_restore_summary">Restore files to a previous state</string>
+    <string name="settings_create_backup_summary">Create a manual backup of current files</string>
     <!--settings summary-->
 
     <!--CONTENT DESCRIPTIONS-->
@@ -147,6 +150,7 @@
     <string name="list_delete_record_error_message">Error: media has NOT been removed from list</string>
     <string name="rating_disallowed_message">Rating only allowed if item has \"Watching\", \"Watched\" or \"Dropped\" watch status.</string>
     <string name="confirmation_error_message">An error occurred in confirmation</string>
+    <string name="restoring_last_backup_message">Restoring Latest Backup.</string>
     <string name="backup_completed_message">Backup Completed.</string>
     <string name="backup_failure_message">Backup Failed.</string>
     <string name="restore_completed_message">Restore Completed.</string>
@@ -157,6 +161,7 @@
 
     <!--CONFIRMATION MESSAGES-->
     <string name="restore_confirmation_message">This will overwrite all your current data.\nAre you sure?</string>
+    <string name="create_backup_confirmation_message">Create a manual backup?</string>
     <string name="delete_confirmation_message">Are you sure you want to delete?</string>
     <string name="log_out_confirmation_message">Failed To Backup Data. Are You Sure You Want To Log Out?</string>
     <!--CONFIRMATION MESSAGES-->
