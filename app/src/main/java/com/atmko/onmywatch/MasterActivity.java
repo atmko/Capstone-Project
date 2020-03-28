@@ -38,6 +38,8 @@ import com.atmko.onmywatch.Fragments.ListResultsParentFragment;
 import com.atmko.onmywatch.Fragments.PeopleDetailsFragment;
 import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.atmko.onmywatch.database.AppDatabase;
+import com.atmko.onmywatch.database.daos.FirebaseUserDataDao;
+import com.atmko.onmywatch.models.Backup;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieData;
@@ -48,6 +50,7 @@ import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
 import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.utils.network_utils.BackupService;
+import com.atmko.onmywatch.utils.network_utils.RestoreService;
 import com.atmko.onmywatch.utils.network_utils.work_manager_workers.BackupWorker;
 import com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker;
 import com.atmko.onmywatch.view_models.MasterActivityViewModel;
@@ -816,6 +819,7 @@ public class MasterActivity extends AppCompatActivity
     }
 
     public RoomDatabase.Callback databaseInitializer(final Context context) {
+        final boolean[] isRestored = {false};
         //reference
         //https://medium.com/@srinuraop/database-create-and-open-callbacks-in-room-7ca98c3286ab
         return new RoomDatabase.Callback() {
@@ -831,6 +835,11 @@ public class MasterActivity extends AppCompatActivity
                             AppDatabase.getInstance(context).watchListsDao()
                                     .addList(watchListModel);
                         }
+
+                        restoreLatestBackup();
+
+                        //prevent restoring again if database opens
+                        isRestored[0] = true;
                     }
                 });
             }
@@ -838,8 +847,30 @@ public class MasterActivity extends AppCompatActivity
             @Override
             public void onOpen(@NonNull SupportSQLiteDatabase db) {
                 super.onOpen(db);
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        //check if database has been restored already (from onCreate method)
+                        if (!isRestored[0]) {
+                            restoreLatestBackup();
+                        }
+                    }
+                });
             }
         };
+    }
+
+    private void restoreLatestBackup() {
+        List<Backup> backups = FirebaseUserDataDao.getBackupsAlt();
+        if (backups.size() != 0) {
+            Backup latestBackup = backups.get(0);
+
+            //restore backup;
+            Intent intent = new Intent(this, RestoreService.class);
+            intent.putExtra(RestoreService.FOLDER_KEY, RestoreService.BACKUP_FOLDER_NAME);
+            intent.putExtra(RestoreService.FILENAME_KEY, latestBackup.getFileName());
+            RestoreService.enqueueWork(this, intent);
+        }
     }
 
     /**
