@@ -5,7 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 
-@Entity(tableName = "search_list_tags", primaryKeys = {"tag"})
+@Entity(primaryKeys = {"tag"})
 public abstract class SearchTag {
     @NonNull
     @ColumnInfo(name = "tag")  public String mTag;
