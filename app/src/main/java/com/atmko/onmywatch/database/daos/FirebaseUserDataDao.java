@@ -104,11 +104,12 @@ public class FirebaseUserDataDao {
         return liveData;
     }
 
-    public static List<Backup> getBackupsAlt() {
+    private static List<Backup> getBackupsAlt() {
         List<Backup> backups = new ArrayList<>();
 
         Task<QuerySnapshot> task = MasterActivity.getUserDbHomeReference()
                 .collection(BACKUPS_PATH)
+                .orderBy(Backup.TIMESTAMP_KEY, Query.Direction.DESCENDING)
                 .get();
 
         try {
