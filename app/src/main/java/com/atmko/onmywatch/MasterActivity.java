@@ -268,10 +268,17 @@ public class MasterActivity extends AppCompatActivity
     }
 
     @Override
-    public void onBackupFailure() {
+    public void onBackupFailure(final String errorMessage) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                if (errorMessage != null && !errorMessage.equals("")) {
+                    showSnackBarMessage(errorMessage);
+
+                } else {
+                    showSnackBarMessage(getString(R.string.backup_failure_message));
+                }
+
                 launchConfirmationActivity(MasterActivity.this,
                         REQUEST_LOG_OUT, ConfirmationActivity.ACTION_LOG_OUT);
             }
@@ -876,8 +883,8 @@ public class MasterActivity extends AppCompatActivity
     }
 
     private void restoreLatestBackup() {
-        List<Backup> backups = FirebaseUserDataDao.getBackupsAlt();
-        if (backups.size() != 0) {
+        Backup latestBackup = FirebaseUserDataDao.getLatestBackupAlt();
+        if (latestBackup != null) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -885,9 +892,6 @@ public class MasterActivity extends AppCompatActivity
                     showSnackBarMessage(getString(R.string.restoring_last_backup_message));
                 }
             });
-
-            Backup latestBackup = backups.get(0);
-
             //restore backup;
             Intent intent = new Intent(this, RestoreService.class);
             intent.putExtra(RestoreService.FOLDER_KEY, RestoreService.BACKUP_FOLDER_NAME);

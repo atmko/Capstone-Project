@@ -127,6 +127,16 @@ public class FirebaseUserDataDao {
         return backups;
     }
 
+    public static Backup getLatestBackupAlt() {
+        List<Backup> backups = FirebaseUserDataDao.getBackupsAlt();
+        if (backups.size() != 0) {
+            return backups.get(0);
+        } else {
+            return null;
+        }
+    }
+
+
     public static void addBackupAlt(Backup backup) {
         MasterActivity.getUserDbHomeReference()
                 .collection(BACKUPS_PATH).document(backup.getFileName())
