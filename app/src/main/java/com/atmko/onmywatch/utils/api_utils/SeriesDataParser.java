@@ -68,6 +68,9 @@ public class SeriesDataParser {
     }
 
     static SeriesData parseTvMap(Map seriesDataMap) {
+        Double popularity = (Double) seriesDataMap.get(ApiConstants.POPULARITY_KEY);
+        popularity = popularity == null ? 0 : popularity;
+
         return new SeriesData(
                 //get by keys
                 checkAndConvertInteger(seriesDataMap.get(ApiConstants.ID_KEY)),
@@ -79,7 +82,7 @@ public class SeriesDataParser {
 
                 (String) seriesDataMap.get(SeriesApiConstants.NAME_KEY),
 
-                (Double) seriesDataMap.get(ApiConstants.POPULARITY_KEY),
+                popularity,
 
                 (String) seriesDataMap.get(ApiConstants.POSTER_PATH_KEY),
 
