@@ -64,20 +64,27 @@ public class MovieDataParser {
     }
 
     static MovieData parseMovieMap(Map movieDataMap) {
+        Boolean isVideo = (Boolean) movieDataMap.get(MovieApiConstants.VIDEO_KEY);
+        Double popularity = (Double) movieDataMap.get(ApiConstants.POPULARITY_KEY);
+        Boolean isAdult = (Boolean) movieDataMap.get(MovieApiConstants.ADULT_KEY);
+        isVideo = isVideo == null ? false : isVideo;
+        popularity = popularity == null ? 0 : popularity;
+        isAdult = isAdult == null ? false : isAdult;
+
         return new MovieData(
                 //get by keys
                 checkAndConvertInteger(movieDataMap.get(ApiConstants.ID_KEY)),
 
                 checkAndConvertNumber(movieDataMap.get(ApiConstants.VOTE_COUNT_KEY)),
 
-                (Boolean) movieDataMap.get(MovieApiConstants.VIDEO_KEY),
+                isVideo,
 
                 checkAndConvertNumber(
                         convertTo2Sf(((double) movieDataMap.get(ApiConstants.VOTE_AVERAGE_KEY)))),
 
                 (String) movieDataMap.get(MovieApiConstants.TITLE_KEY),
 
-                (Double) movieDataMap.get(ApiConstants.POPULARITY_KEY),
+                popularity,
 
                 (String) movieDataMap.get(ApiConstants.POSTER_PATH_KEY),
 
@@ -89,7 +96,7 @@ public class MovieDataParser {
 
                 (String) movieDataMap.get(ApiConstants.BACKDROP_PATH_KEY),
 
-                (Boolean) movieDataMap.get(MovieApiConstants.ADULT_KEY),
+                isAdult,
 
                 (String) movieDataMap.get(ApiConstants.OVERVIEW_KEY),
 
