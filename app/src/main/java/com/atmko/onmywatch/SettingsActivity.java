@@ -77,12 +77,17 @@ public class SettingsActivity extends AppCompatActivity implements BackupService
     }
 
     @Override
-    public void onBackupFailure() {
+    public void onBackupFailure(final String errorMessage) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 progressLayout.setVisibility(View.GONE);
-                showSnackBarMessage(getString(R.string.backup_failure_message));
+                if (errorMessage != null && !errorMessage.equals("")) {
+                    showSnackBarMessage(errorMessage);
+
+                } else {
+                    showSnackBarMessage(getString(R.string.backup_failure_message));
+                }
             }
         });
     }

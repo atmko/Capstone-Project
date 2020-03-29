@@ -20,7 +20,7 @@ import com.atmko.onmywatch.database.daos.FirebaseUserDataDao;
 import com.atmko.onmywatch.utils.network_utils.work_manager_workers.BackupWorker;
 
 public class BackupService extends JobIntentService {
-    private static final String TAG = com.atmko.onmywatch.utils.network_utils.work_manager_workers.BackupWorker.class.getSimpleName();
+    private static final String TAG = BackupService.class.getSimpleName();
 
     public static final int JOB_ID = 11;
 
@@ -42,7 +42,7 @@ public class BackupService extends JobIntentService {
     public interface OnBackupCompleteListener {
         void onLogOutBackupComplete();
         void onBackupComplete();
-        void onBackupFailure();
+        void onBackupFailure(String error);
     }
 
     public static void enqueueWork(Context appContext, Intent intent) {
@@ -67,7 +67,7 @@ public class BackupService extends JobIntentService {
 
         } else {
             Log.d(TAG, "backup failure");
-            mBackupCompleteListener.onBackupFailure();
+            mBackupCompleteListener.onBackupFailure(backupLogic.getErrorMessage());
         }
     }
 

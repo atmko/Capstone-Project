@@ -5,6 +5,7 @@
 package com.atmko.onmywatch.utils.network_utils;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.atmko.onmywatch.MasterActivity;
@@ -21,7 +22,6 @@ import com.atmko.onmywatch.models.SeriesNotifier;
 import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.models.WatchListModel;
 import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
-import com.atmko.onmywatch.utils.network_utils.work_manager_workers.BackupWorker;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -34,16 +34,23 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("unchecked")
 public class BackupLogic {
-    private static final String TAG = com.atmko.onmywatch.utils.network_utils.work_manager_workers.BackupWorker.class.getSimpleName();
+    private static final String TAG = BackupLogic.class.getSimpleName();
+
+    private static final String PREFS_NAME = "com.atmko.onmywatch.backup";
+    private static final String LAST_BACKED_UP_SUFFIX = "_last_backed_up";
+    private static final int SIZE_LIMIT = 10000000;
+    private static final int BACKUP_COOL_DOWN = 4;
 
     private static final int COUNTER_LIMIT = 10;
 
@@ -66,6 +73,7 @@ public class BackupLogic {
     private String mFolder;
     private String mFileName;
     private StorageReference mBackupRef;
+    private String mErrorMessage;
 
     public BackupLogic(Context context, String folder, String fileName) {
         mContext = context;
@@ -88,8 +96,82 @@ public class BackupLogic {
         }
     }
 
+    public String getErrorMessage() {
+        return mErrorMessage;
+    }
+
+    private static class BackupValidationException extends Exception {
+        final static Integer FILE_TOO_LARGE = 0;
+        final static Integer TOO_MANY_REQUESTS = 1;
+
+        static class Builder {
+            String message;
+
+            Builder(int errorCondition) {
+                if (errorCondition == FILE_TOO_LARGE) {
+                    message = "File too large, contact developer";
+
+                } else  if (errorCondition == TOO_MANY_REQUESTS) {
+                    message = "Too many requests";
+                }
+            }
+
+            public BackupValidationException Build() {
+                return new BackupValidationException(message);
+            }
+        }
+
+        BackupValidationException(String message) {
+            super(message);
+        }
+    }
+
+    //compares time since last backup with cool down time
+    private boolean isTooManyRequests() {
+        SharedPreferences backupPrefs =
+                mContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        long lastBackedUp = backupPrefs.getLong(mFileName + LAST_BACKED_UP_SUFFIX, -1);
+
+        if (lastBackedUp == -1) {
+            return false;
+
+        } else {
+            long timeSinceLastBackup = new Date().getTime() - lastBackedUp;
+            return timeSinceLastBackup <= TimeUnit.MINUTES.toMillis(BACKUP_COOL_DOWN);
+        }
+    }
+
+    //compares time since last backup with cool down time
+    private boolean isFileTooLarge() {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        try {
+            long sizeInBytes = gson.toJson(mDatabaseMap).getBytes("UTF-8").length;
+            return sizeInBytes > SIZE_LIMIT;
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return true;
+        }
+    }
+
+    //compares time since last backup with cool down time
+    private void updateBackupPreferences(long lastBackedUp) {
+        SharedPreferences.Editor backupPrefs =
+                mContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit();
+        backupPrefs.putLong(mFileName + LAST_BACKED_UP_SUFFIX, lastBackedUp);
+        backupPrefs.apply();
+    }
+
     public boolean backupToRemoteDatabase() {
         try {
+            if (isTooManyRequests()) {
+                BackupValidationException.Builder builder =
+                        new BackupValidationException.Builder(BackupValidationException.TOO_MANY_REQUESTS);
+                BackupValidationException exception = builder.Build();
+                mErrorMessage = exception.getMessage();
+                throw exception;
+            }
+
             Backup backup = new Backup(mFileName, new Date().getTime());
             //other methods run one after the other starting with pushMovieData
             pushMovieData();
@@ -104,6 +186,7 @@ public class BackupLogic {
             onPushComplete();
 
             FirebaseUserDataDao.addBackupAlt(backup);
+            updateBackupPreferences(new Date().getTime());
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -256,7 +339,15 @@ public class BackupLogic {
     }
 
     private void onPushComplete() throws IOException, ExecutionException, InterruptedException,
-            BackupException {
+            BackupException, BackupValidationException {
+        if (isFileTooLarge()) {
+            BackupValidationException.Builder builder =
+                    new BackupValidationException.Builder(BackupValidationException.FILE_TOO_LARGE);
+            BackupValidationException exception = builder.Build();
+            mErrorMessage = exception.getMessage();
+            throw exception;
+        }
+
         writeToFile(mDatabaseMap);
         writeToDatabase();
     }
