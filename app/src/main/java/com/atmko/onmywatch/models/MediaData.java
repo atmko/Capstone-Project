@@ -271,6 +271,11 @@ abstract public class MediaData {
     Map<String, Object> getFirebaseMediaDataMap(MediaData mediaData) {
         Map<String, Object> mediaDataMap = new HashMap<>();
 
+        List<String> tagStrings = new ArrayList<>();
+        for (SearchMediaTag searchTag: searchTags) {
+            tagStrings.add(searchTag.mTag);
+        }
+
         mediaDataMap.put(ApiConstants.ID_KEY, mediaData.getId());
         mediaDataMap.put(TraktApiConstants.TRAKT_ID_KEY, mediaData.getTraktId());
         mediaDataMap.put(ApiConstants.VOTE_AVERAGE_KEY, mediaData.getVoteAverage());
@@ -282,6 +287,7 @@ abstract public class MediaData {
         mediaDataMap.put(ApiConstants.RELEASE_STATUS_KEY, mediaData.getReleaseStatus());
         mediaDataMap.put(WATCH_STATUS_KEY, mediaData.getWatchStatus());
         mediaDataMap.put(USER_RATING_KEY, mediaData.getUserRating());
+        mediaDataMap.put(TAGS_KEY, tagStrings);
 
         return mediaDataMap;
     }

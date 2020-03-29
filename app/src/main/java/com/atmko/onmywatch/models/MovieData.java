@@ -139,17 +139,11 @@ public class MovieData extends MediaData{
     public Map<String, Object> parseMediaDataToDataMap() {
         Map<String, Object> firebaseMediaDataMap = getFirebaseMediaDataMap(this);
 
-        List<String> tagStrings = new ArrayList<>();
-        for (SearchMediaTag searchTag: searchTags) {
-            tagStrings.add(searchTag.mTag);
-        }
-
         firebaseMediaDataMap.put(MovieApiConstants.ADULT_KEY, isAdult());
         firebaseMediaDataMap.put(MovieApiConstants.TITLE_KEY, getTitle());
         firebaseMediaDataMap.put(MovieApiConstants.ORIG_TITLE_KEY, getOriginalTitle());
         firebaseMediaDataMap.put(MovieApiConstants.RELEASE_DATE_KEY, getReleaseDate());
         firebaseMediaDataMap.put(MovieApiConstants.CERTIFICATION_KEY, getMaturityRating());
-        firebaseMediaDataMap.put(TAGS_KEY, tagStrings);
         firebaseMediaDataMap.put(SCHEDULED_MEDIA_KEY,
                 Converters.scheduledMediaToLong(getScheduledMedia()));
 

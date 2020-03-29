@@ -130,17 +130,11 @@ public class SeriesData extends MediaData{
     public Map<String, Object> parseMediaDataToDataMap() {
         Map<String, Object> firebaseMediaDataMap = getFirebaseMediaDataMap(this);
 
-        List<String> tagStrings = new ArrayList<>();
-        for (SearchMediaTag searchTag: searchTags) {
-            tagStrings.add(searchTag.mTag);
-        }
-
         firebaseMediaDataMap.put(SeriesApiConstants.ORIGIN_COUNTRY_KEY, getCountryOfOrigin());
         firebaseMediaDataMap.put(SeriesApiConstants.NAME_KEY, getTitle());
         firebaseMediaDataMap.put(SeriesApiConstants.ORIG_NAME_KEY, getOriginalTitle());
         firebaseMediaDataMap.put(SeriesApiConstants.FIRST_AIR_DATE_KEY, getReleaseDate());
         firebaseMediaDataMap.put(SeriesApiConstants.RATING_KEY, getMaturityRating());
-        firebaseMediaDataMap.put(TAGS_KEY, tagStrings);
         firebaseMediaDataMap.put(NEXT_EPISODE_KEY,
                 Converters.episodeToString(getNextEpisodeToAir()));
 
