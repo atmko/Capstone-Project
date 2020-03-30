@@ -6,6 +6,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.atmko.onmywatch.models.MovieNotifier;
 
@@ -38,6 +39,9 @@ public interface MovieNotifierDao {
     //alternate method without live data
     @Query("SELECT * FROM movie_notifiers WHERE media_id = :mediaId")
     List<MovieNotifier> getNotifiersWithMediaIdAlt(String mediaId);
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    void updateNotifier(MovieNotifier movieNotifier);
 
     @Delete
     void deleteNotifier(MovieNotifier movieNotifier);

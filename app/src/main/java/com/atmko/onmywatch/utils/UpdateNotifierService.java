@@ -165,10 +165,13 @@ public class UpdateNotifierService extends JobIntentService {
         }
     }
 
+    //if saved notifier exists and active status has changed, update notifier status and return notifier
     //if notifier doesn't exist, create new Media release notifier in database and return notifier
     private MediaNotifier createReleaseNotifier(MediaData newMediaData, boolean isActive) {
         MediaNotifier savedNotifier = getNotifier(CONDITION_ON_RELEASE);
-        if (savedNotifier != null) return savedNotifier;
+        if (savedNotifier != null) {
+            return updateAndReturnSavedNotifier(savedNotifier, isActive);
+        }
 
         //create notifier
         MediaNotifier releaseNotifier;
@@ -388,15 +391,34 @@ public class UpdateNotifierService extends JobIntentService {
         }
     }
 
+    //if saved notifier exists and active status has changed, update notifier status and return notifier
+    //if notifier doesn't exist, create new Media release notifier in database and return notifier
     private SeriesNotifier createNewEpisodeNotifier(boolean isActive) {
         MediaNotifier savedNotifier = getNotifier(CONDITION_NEW_EPISODE);
-        if (savedNotifier != null) return ((SeriesNotifier) savedNotifier);
+        if (savedNotifier != null) {
+            return ((SeriesNotifier) updateAndReturnSavedNotifier(savedNotifier, isActive));
+        }
 
         SeriesNotifier newEpisodeNotifier =
                 new SeriesNotifier(newMediaData.getId(), CONDITION_NEW_EPISODE, isActive);
         mDatabase.seriesNotifierDao().addMediaNotifier(newEpisodeNotifier);
 
         return newEpisodeNotifier;
+    }
+
+    //if active status has changed, update notifier status and return notifier
+    private MediaNotifier updateAndReturnSavedNotifier(MediaNotifier savedNotifier, boolean isActive) {
+        if (savedNotifier.getIsActive() != isActive) {
+            savedNotifier.setIsActive(isActive);
+
+            if (newMediaData instanceof MovieData) {
+                mDatabase.movieNotifierDao().updateNotifier(((MovieNotifier) savedNotifier));
+            } else {
+                mDatabase.seriesNotifierDao().updateNotifier(((SeriesNotifier) savedNotifier));
+            }
+        }
+
+        return savedNotifier;
     }
 
     //retry method if api returns too may requests error
