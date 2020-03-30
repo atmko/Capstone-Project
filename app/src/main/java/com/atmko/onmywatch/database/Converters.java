@@ -128,12 +128,10 @@ public class Converters {
         List<SearchMediaTag> searchTags = new ArrayList<>();
 
         String trimmedString = tagString.trim();
+        String[] strings = trimmedString.split(" ");
 
-        if (trimmedString.contains(" ")) {
-            String[] strings = tagString.split(" ");
-            for (String tag : strings) {
-                searchTags.add(new SearchMediaTag(tag));
-            }
+        for (String tag : strings) {
+            searchTags.add(new SearchMediaTag(tag));
         }
 
         return searchTags;
