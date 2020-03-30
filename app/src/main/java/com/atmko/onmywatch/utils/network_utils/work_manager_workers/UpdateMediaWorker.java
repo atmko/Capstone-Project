@@ -23,8 +23,10 @@ import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.utils.UpdateNotifierService;
+import com.atmko.onmywatch.utils.api_utils.MovieApiConstants;
 import com.atmko.onmywatch.utils.api_utils.MovieDataParser;
 import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
+import com.atmko.onmywatch.utils.api_utils.SeriesApiConstants;
 import com.atmko.onmywatch.utils.api_utils.SeriesDataParser;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
@@ -170,9 +172,13 @@ public class UpdateMediaWorker extends Worker {
             mDatabase.seriesDataDao().updateSeriesData(((SeriesData) newMediaData));
         }
 
-        //if watch status supports notifiers launch update notifier service
-        if (newMediaData.getWatchStatus() == MediaData.WATCH_STATUS_TO_WATCH
-                || newMediaData.getWatchStatus() == MediaData.WATCH_STATUS_WATCHING) {
+        boolean supportsNotifiers = oldMediaData.getWatchStatus() == MediaData.WATCH_STATUS_TO_WATCH
+                || oldMediaData.getWatchStatus() == MediaData.WATCH_STATUS_WATCHING;
+        boolean requiresUpdates = !oldMediaData.getReleaseStatus().equals(SeriesApiConstants.RELEASE_STATUS_ENDED)
+                && !oldMediaData.getReleaseStatus().equals(MovieApiConstants.RELEASE_STATUS_RELEASED);
+
+        //if watch status supports notifiers and requires updates, launch update notifier service
+        if (supportsNotifiers && requiresUpdates) {
             Intent intent = new Intent(getApplicationContext(), UpdateNotifierService.class);
             intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(newMediaData));
             UpdateNotifierService.enqueueWork(mContext, intent);
