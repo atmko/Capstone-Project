@@ -19,12 +19,14 @@ import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.database.Converters;
 import com.atmko.onmywatch.models.Episode;
+import com.atmko.onmywatch.models.ListModel;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MediaLog;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.MovieDataRecord;
 import com.atmko.onmywatch.models.MovieNotifier;
 import com.atmko.onmywatch.models.ScheduledMedia;
+import com.atmko.onmywatch.models.SearchListTag;
 import com.atmko.onmywatch.models.SearchMediaTag;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesDataRecord;
@@ -423,6 +425,8 @@ public class RestoreService extends JobIntentService {
         for (Map map : movieMaps) {
             MovieData movieData = parseDataMapToMovieData(map);
             mLocalDatabase.movieDataDao().addMovieData(movieData);
+            //restore search tags
+            restoreSearchMediaTags(movieData.searchTags);
         }
 
         onPullMovieDataComplete();
@@ -439,9 +443,21 @@ public class RestoreService extends JobIntentService {
         for (Map map : seriesMaps) {
             SeriesData seriesData = parseDataMapToSeriesData(map);
             mLocalDatabase.seriesDataDao().addSeriesData(seriesData);
+            //restore search tags
+            restoreSearchMediaTags(seriesData.searchTags);
         }
 
         onPullSeriesDataComplete();
+    }
+
+    private void restoreSearchMediaTags(List<SearchMediaTag> searchMediaTags) {
+        for (SearchMediaTag tag: searchMediaTags) {
+            SearchMediaTag savedTag = mLocalDatabase.searchMediaTagsDao().getTagAlt(tag.mTag);
+
+            if (savedTag == null) {
+                mLocalDatabase.searchMediaTagsDao().addTag(tag);
+            }
+        }
     }
 
     //pull remotely saved watch lists to local database
@@ -471,9 +487,20 @@ public class RestoreService extends JobIntentService {
         for (Map map : listMaps) {
             UserListModel userListModel = parseUserListModel(map);
             mLocalDatabase.userListsDao().addList(userListModel);
+            //restore search tags
+            restoreSearchListTags(userListModel);
         }
 
         onPullUserListsComplete();
+    }
+
+    private void restoreSearchListTags(ListModel listModel) {
+        SearchListTag savedTag = mLocalDatabase.searchListTagsDao()
+                .getTagAlt(listModel.getName().toLowerCase());
+
+        if (savedTag == null) {
+            mLocalDatabase.searchListTagsDao().addTag(new SearchListTag(listModel.getName()));
+        }
     }
 
     //pull remotely saved movie data records to local database
