@@ -617,9 +617,9 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
     }
 
     private void deleteTags() {
-        if (mMediaData.searchTags == null) return;
+        if (mSavedMedia.searchTags == null) return;
 
-        for (SearchMediaTag tag: mMediaData.searchTags) {
+        for (SearchMediaTag tag: mSavedMedia.searchTags) {
             int tagUsage;
 
             AppDatabase localDb = AppDatabase.getLocalDatabase(this);
