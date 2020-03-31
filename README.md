@@ -1,7 +1,7 @@
 # On My Watch
 ### Track and manage movies and series you're watching
 
-#### Udacity android nanodegree capstone project
+#### On My Watch
 
 ![Feature Image](https://github.com/atmko/Capstone-Project/blob/master/images/feature_image.png)
 
@@ -11,9 +11,12 @@
 * View trailers
 * Search through your lists
 * Rate movies and series
+* Media Release Notifications
+* Home Screen Widget
+* Cloud backup
 
 #### Coming Soon
-* Cloud backup
+* Discussions
 * Friends feature
 * Share your lists
 
