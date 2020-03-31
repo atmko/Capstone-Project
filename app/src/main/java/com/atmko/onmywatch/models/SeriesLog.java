@@ -12,7 +12,7 @@ public class SeriesLog extends MediaLog {
     public static final String TYPE_EPISODE = "Episode";
 
     public static final String SEASON_NUMBER_KEY = "season_number";
-    public static final String EPISODE_NUMBER_KEY = "season";
+    public static final String EPISODE_NUMBER_KEY = "episode";
     public static final String IS_BUNDLED_KEY = "is_bundled";
 
     public int seasonNumber;
