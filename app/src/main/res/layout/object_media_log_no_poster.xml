@@ -12,15 +12,19 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/search_poster_height"
         android:foreground="@drawable/ripple_pressed"
-        android:nextFocusDown="@id/add_to_list_button">
+        android:nextFocusDown="@id/add_to_list_button"
+        android:background="@drawable/poster_image_placeholder">
 
-        <ImageView
-            android:id="@+id/posterImageView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:contentDescription="@string/poster_description"
-            android:scaleType="center"
-            android:focusable="false"/>
+        <TextView
+            android:id="@+id/poster_replacement_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/x2_layout_margin"
+            android:layout_gravity="center"
+            tools:text="movie title"
+            android:textSize="@dimen/body_text_size"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"/>
 
         <ImageButton
             android:id="@+id/add_to_list_button"

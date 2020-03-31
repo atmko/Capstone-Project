@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.models.MediaLog;
+import com.atmko.onmywatch.models.MovieLog;
 import com.atmko.onmywatch.models.SeriesLog;
 import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
 
@@ -35,7 +36,7 @@ public class MediaLogAdapter
         extends RecyclerView.Adapter<MediaLogAdapter.MediaLogAdapterViewHolder> {
 
     private final Fragment mFragment;
-    private final List<SeriesLog> mAdapterData;
+    private final List<MediaLog> mAdapterData;
     private final OnListItemClickListener mOnListItemClickListener;
     private int mPlaceHolderCapacity;
     private int mPlaceHolderCount;
@@ -171,7 +172,7 @@ public class MediaLogAdapter
             resourceId = R.layout.object_media_log;
 
         } else if (viewType == NO_POSTER_LAYOUT) {
-            resourceId = R.layout.no_poster_layout;
+            resourceId = R.layout.object_media_log_no_poster;
 
         } else if (viewType == PLACEHOLDER_ID) {
             resourceId = R.layout.item_empty_list;
@@ -205,7 +206,7 @@ public class MediaLogAdapter
         }
 
         //get current SeriesLog
-        SeriesLog currentMediaLog = mAdapterData.get(position);
+        MediaLog currentMediaLog = mAdapterData.get(position);
 
         //if item view type is no poster
         if (adapterViewHolder.getItemViewType() == NO_POSTER_LAYOUT) {
@@ -213,31 +214,37 @@ public class MediaLogAdapter
             adapterViewHolder.posterReplacementTextView.setText(currentMediaLog.title);
 
         } else {
-            String string;
-
-            if (currentMediaLog.type.equals(TYPE_SEASON)) {
-                string = TYPE_SEASON + " " + currentMediaLog.seasonNumber;
-
-            } else {
-                string = SEASON_SHORTHAND +
-                        currentMediaLog.seasonNumber +
-                        EPISODE_SHORTHAND +
-                        currentMediaLog.episodeNumber;
-            }
-
-            adapterViewHolder.typeTextView.setText(string);
-            if (currentMediaLog.condition == MediaLog.CONDITION_UNDATED) {
-                adapterViewHolder.countDownTextView.setVisibility(View.GONE);
-
-            } else {
-                adapterViewHolder.countDownTextView.setText(currentMediaLog.getCountdown());
-            }
-
             //load image with glide
             NetworkFunctions.loadImage(
                     mContext,
                     currentMediaLog.posterPath,
                     adapterViewHolder.moviePosterImageView);
+        }
+
+        String string;
+        if (currentMediaLog instanceof SeriesLog) {
+            SeriesLog seriesLog = ((SeriesLog) currentMediaLog);
+            if (currentMediaLog.type.equals(TYPE_SEASON)) {
+                string = TYPE_SEASON + " " + seriesLog.seasonNumber;
+
+            } else {
+                string = SEASON_SHORTHAND +
+                        seriesLog.seasonNumber +
+                        EPISODE_SHORTHAND +
+                        seriesLog.episodeNumber;
+            }
+
+            adapterViewHolder.typeTextView.setText(string);
+
+        } else {
+            adapterViewHolder.typeTextView.setVisibility(View.GONE);
+        }
+
+        if (currentMediaLog.condition == MediaLog.CONDITION_UNDATED) {
+            adapterViewHolder.countDownTextView.setVisibility(View.GONE);
+
+        } else {
+            adapterViewHolder.countDownTextView.setText(currentMediaLog.getCountdown());
         }
     }
 
@@ -265,7 +272,7 @@ public class MediaLogAdapter
         }
     }
 
-    public List<SeriesLog> getAdapterData() {
+    public List<MediaLog> getAdapterData() {
         return mAdapterData;
     }
 

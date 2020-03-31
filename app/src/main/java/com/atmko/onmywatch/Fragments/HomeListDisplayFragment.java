@@ -24,12 +24,16 @@ import com.atmko.onmywatch.adapters.MediaDataAdapter;
 import com.atmko.onmywatch.adapters.MediaLogAdapter;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MediaData;
+import com.atmko.onmywatch.models.MediaLog;
+import com.atmko.onmywatch.models.MovieData;
+import com.atmko.onmywatch.models.MovieLog;
 import com.atmko.onmywatch.models.SeriesLog;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.view_models.HomeListDisplayViewModel;
 import com.atmko.onmywatch.view_models.HomeListDisplayViewModelFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
@@ -55,7 +59,6 @@ public class HomeListDisplayFragment extends Fragment
 
     //post instantiation values
     private RecyclerView mRecyclerView;
-    private MediaDataAdapter mMediaDataAdapter;
     private MediaLogAdapter mMediaLogAdapter;
 
     public HomeListDisplayFragment() {
@@ -99,22 +102,12 @@ public class HomeListDisplayFragment extends Fragment
         mRecyclerView = getView().findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(configureLayoutManager());
 
-        if (mMediaType == MEDIA_TYPE_MOVIE) {
-            mMediaDataAdapter = new MediaDataAdapter(this, getActivity().getApplicationContext(),
-                    CustomParams.getSearchParams(this));
-            mMediaDataAdapter
-                    .setPlaceHolderCapacity(getResources().getInteger(R.integer.search_column_span));
+        mMediaLogAdapter = new MediaLogAdapter(this, getActivity().getApplicationContext(),
+                CustomParams.getSearchParams(this));
+        mMediaLogAdapter
+                .setPlaceHolderCapacity(getResources().getInteger(R.integer.search_column_span));
 
-            mRecyclerView.setAdapter(mMediaDataAdapter);
-
-        } else {
-            mMediaLogAdapter = new MediaLogAdapter(this, getActivity().getApplicationContext(),
-                    CustomParams.getSearchParams(this));
-            mMediaLogAdapter
-                    .setPlaceHolderCapacity(getResources().getInteger(R.integer.search_column_span));
-
-            mRecyclerView.setAdapter(mMediaLogAdapter);
-        }
+        mRecyclerView.setAdapter(mMediaLogAdapter);
     }
 
     private void observeData() {
@@ -141,19 +134,12 @@ public class HomeListDisplayFragment extends Fragment
         return layoutManager;
     }
 
-    private void populateAndNotifyAdapter(List mediaDataList) {
-        if (mMediaType == MEDIA_TYPE_MOVIE) {
-            mMediaDataAdapter.getAdapterData().clear();
-            mMediaDataAdapter.addAdapterData(mediaDataList);
+    private void populateAndNotifyAdapter(List mediaList) {
+        mMediaLogAdapter.getAdapterData().clear();
+        if (mMediaType == MEDIA_TYPE_MOVIE) mediaList = MovieLog.convertMediaToLogs(mediaList);
 
-            mMediaDataAdapter.setPlaceholders();
-
-        } else {
-            mMediaLogAdapter.getAdapterData().clear();
-            mMediaLogAdapter.addAdapterData(mediaDataList);
-
-            mMediaLogAdapter.setPlaceholders();
-        }
+        mMediaLogAdapter.addAdapterData(mediaList);
+        mMediaLogAdapter.setPlaceholders();
     }
     @Override
     public void onItemClick(final int position) {
@@ -162,39 +148,25 @@ public class HomeListDisplayFragment extends Fragment
             public void run() {
                 if (getActivity() == null) return;
 
-               if (mMediaType == MEDIA_TYPE_MOVIE) {
-                   if (mMediaDataAdapter.inPlaceholderMode(position)) {
-                       DiscoverParentFragment discoverParentFragment = DiscoverParentFragment.newInstance();
+                if (mMediaLogAdapter.inPlaceholderMode(position)) {
+                    DiscoverParentFragment discoverParentFragment = DiscoverParentFragment.newInstance();
 
-                       getActivity().getSupportFragmentManager().beginTransaction()
-                               .setCustomAnimations(R.anim.slide_down_entry, android.R.animator.fade_out)
-                               .add(R.id.master_fragments_container, discoverParentFragment,
-                                       DiscoverParentFragment.FRAGMENT_KEY)
-                               .commit();
+                    getActivity().getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(R.anim.slide_down_entry, android.R.animator.fade_out)
+                            .add(R.id.master_fragments_container, discoverParentFragment,
+                                    DiscoverParentFragment.FRAGMENT_KEY)
+                            .commit();
 
-                       return;
-                   }
-               } else {
-                   if (mMediaLogAdapter.inPlaceholderMode(position)) {
-                       DiscoverParentFragment discoverParentFragment = DiscoverParentFragment.newInstance();
+                    return;
+                }
 
-                       getActivity().getSupportFragmentManager().beginTransaction()
-                               .setCustomAnimations(R.anim.slide_down_entry, android.R.animator.fade_out)
-                               .add(R.id.master_fragments_container, discoverParentFragment,
-                                       DiscoverParentFragment.FRAGMENT_KEY)
-                               .commit();
-
-                       return;
-                   }
-               }
-
+                MediaLog mediaLog = mMediaLogAdapter.getAdapterData().get(position);
                 MediaData selectedData;
-
                 if (mMediaType == MEDIA_TYPE_MOVIE) {
-                    selectedData = mMediaDataAdapter.getAdapterData().get(position);
+                    selectedData = AppDatabase.getInstance(getContext())
+                            .movieDataDao().getMovieByIdAlt(mediaLog.parentId);
 
                 } else {
-                    SeriesLog mediaLog = mMediaLogAdapter.getAdapterData().get(position);
                     selectedData = AppDatabase.getInstance(getContext())
                             .seriesDataDao().getSeriesByIdAlt(mediaLog.parentId);
                 }
@@ -209,19 +181,20 @@ public class HomeListDisplayFragment extends Fragment
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
+                MediaLog mediaLog = mMediaLogAdapter.getAdapterData().get(position);
                 if (getActivity() != null) {
+                    MediaData mediaData;
                     if (mMediaType == MEDIA_TYPE_MOVIE) {
-                        ((MasterActivity) getActivity())
-                                .launchAddToListActivity(mMediaDataAdapter
-                                        .getAdapterData().get(position));
+                        mediaData = AppDatabase.getInstance(getActivity())
+                                .movieDataDao().getMovieByIdAlt(mediaLog.parentId);
 
                     } else {
-                        SeriesLog mediaLog = mMediaLogAdapter.getAdapterData().get(position);
-                        SeriesData seriesData = AppDatabase.getInstance(getActivity())
+                        mediaData = AppDatabase.getInstance(getActivity())
                                 .seriesDataDao().getSeriesByIdAlt(mediaLog.parentId);
-                        ((MasterActivity) getActivity())
-                                .launchAddToListActivity(seriesData);
                     }
+
+                    ((MasterActivity) getActivity())
+                            .launchAddToListActivity(mediaData);
                 }
             }
         });
