@@ -27,19 +27,19 @@ import static com.atmko.onmywatch.utils.GeneralUtils.ISO_DATE_FORMAT;
 
 @Parcel
 public class ScheduledMedia {
-    public static final String TIME_SUFFIX_YEARS = " year(s)";
-    public static final String TIME_SUFFIX_MONTHS = " month(s)";
-    public static final String TIME_SUFFIX_WEEKS = " week(s)";
-    public static final String TIME_SUFFIX_DAYS = " day(s)";
-    public static final String TIME_SUFFIX_HOURS = " hour(s)";
-    public static final String TIME_SUFFIX_MINUTES = " minute(s)";
-    public static final String TIME_SUFFIX_SECONDS = " second(s)";
-    public static final String DATE_TBD = "Date TBD";
-    public static final String DATE_ERROR = "Date Error";
+    private static final String TIME_SUFFIX_YEARS = " year(s)";
+    private static final String TIME_SUFFIX_MONTHS = " month(s)";
+    private static final String TIME_SUFFIX_WEEKS = " week(s)";
+    private static final String TIME_SUFFIX_DAYS = " day(s)";
+    private static final String TIME_SUFFIX_HOURS = " hour(s)";
+    private static final String TIME_SUFFIX_MINUTES = " minute(s)";
+    private static final String TIME_SUFFIX_SECONDS = " second(s)";
+    private static final String DATE_TBD = "Date TBD";
+    private static final String DATE_ERROR = "Date Error";
 
-    public static final int YEARS_CONVERSION = 365;
-    public static final int MONTHS_CONVERSION = 30;
-    public static final int WEEKS_CONVERSION = 7;
+    private static final int YEARS_CONVERSION = 365;
+    private static final int MONTHS_CONVERSION = 30;
+    private static final int WEEKS_CONVERSION = 7;
 
     String mAirDate;
     String mAirDateIso;
