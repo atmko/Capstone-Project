@@ -66,15 +66,8 @@ public class NotificationHandler {
                             seriesNotifier.setIsActive(false);
                             seriesNotifierDao.updateNotifier(seriesNotifier);
 
-                            //get saved series data to update series tracker logs
-                            SeriesData seriesData = AppDatabase.getInstance(context).seriesDataDao()
-                                    .getSeriesByIdAlt(mediaId);
-                            if (seriesData != null) {
-                                SeriesTracker.sActionMode = SeriesTracker.ACTION_SET;
-                                Intent intent = new Intent(context, SeriesTracker.class);
-                                intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(seriesData));
-                                SeriesTracker.enqueueWork(context, intent);
-                            }
+                            //update logs
+                            SeriesTracker.transferUpcomingLogToReleased(context, mediaId);
 
                             // The IdlingResource is null in production.
                             if (NotificationIdlingResource.getNotificationIdlingResource() != null) {

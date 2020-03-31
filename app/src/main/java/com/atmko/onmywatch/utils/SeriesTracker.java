@@ -16,6 +16,7 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.database.AppDatabase;
+import com.atmko.onmywatch.database.daos.SeriesLogsDao;
 import com.atmko.onmywatch.models.Episode;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.SeriesLog;
@@ -298,7 +299,26 @@ public class SeriesTracker extends JobIntentService {
         }, coolDownInMilliSecs);
     }
 
+    //deletes the upcoming log and updates upcoming log variable condition to CONDITION_AIRED
+    //deletes the upcoming log from database
+    //writes upcoming log(now with CONDITION_AIRED) to database, by creating or updating existing
+    public static void transferUpcomingLogToReleased(Context context, String mediaId) {
+        SeriesLogsDao logsDao = AppDatabase.getLocalDatabase(context).seriesLogsDao();
 
+        SeriesLog upcomingLog = logsDao.getLog(mediaId, CONDITION_UPCOMING);
+        if (upcomingLog != null) {
+            logsDao.deleteMediaLog(upcomingLog);
+            upcomingLog.condition = CONDITION_AIRED;
+        }
+
+        SeriesLog lastAiredLog = logsDao.getLog(mediaId, CONDITION_AIRED);
+        if (lastAiredLog != null) {
+            logsDao.updateLog(upcomingLog);
+
+        } else {
+            logsDao.addMediaLog(upcomingLog);
+        }
+    }
 
     private void deleteTrackedMedia() {
         List<SeriesLog> mediaLogs =

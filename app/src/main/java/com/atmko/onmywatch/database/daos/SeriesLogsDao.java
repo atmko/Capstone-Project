@@ -18,11 +18,16 @@ import java.util.List;
 
 @Dao
 public interface SeriesLogsDao {
-    @Insert()
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void addMediaLog(SeriesLog mediaLog);
 
     @Query("SELECT * FROM series_logs")
     List<SeriesLog> getAllLogsAlt();
+
+    @Query("SELECT * FROM series_logs "
+            + "WHERE parent_id = :mediaId "
+            + "AND condition = :condition")
+    SeriesLog getLog(String mediaId, int condition);
 
     @Query("SELECT * FROM series_logs "
             + "WHERE parent_id = :parentId")
@@ -44,6 +49,9 @@ public interface SeriesLogsDao {
             + "WHERE condition = 3 "
             + "LIMIT 10")
     LiveData<List<SeriesLog>> getUndated();
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    void updateLog(SeriesLog mediaLog);
 
     @Delete
     void deleteMediaLog(SeriesLog mediaLog);
