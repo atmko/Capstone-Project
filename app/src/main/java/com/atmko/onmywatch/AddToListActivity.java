@@ -515,6 +515,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
+                //TODO: ADD CONDITION TO DO NOTHING IF NO CHANGES ARE MADE
                 int userListNetCountChange = getUserListNetCountChange();
                 int newContainingListValue = mOriginalContainingLists.size() + userListNetCountChange;
 
@@ -524,8 +525,10 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
 
                 if (isMediaUnused) {
                     updateUserListRecords();
-                    deleteSavedMedia();
-                    deleteTags();
+                    if (mSavedMedia != null) {
+                        deleteSavedMedia();
+                        deleteTags();
+                    }
 
                 } else {
                     saveTags();
@@ -765,8 +768,6 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
     }
 
     private void deleteSavedMedia() {
-        if (mSavedMedia == null) return;
-
         if (mMediaType == MEDIA_TYPE_MOVIE) {
             mDatabase.movieDataDao().deleteMovieData(((MovieData) mSavedMedia));
 
