@@ -27,11 +27,19 @@ import static com.atmko.onmywatch.utils.GeneralUtils.ISO_DATE_FORMAT;
 
 @Parcel
 public class ScheduledMedia {
+    public static final String TIME_SUFFIX_YEARS = " year(s)";
+    public static final String TIME_SUFFIX_MONTHS = " month(s)";
+    public static final String TIME_SUFFIX_WEEKS = " week(s)";
     public static final String TIME_SUFFIX_DAYS = " day(s)";
     public static final String TIME_SUFFIX_HOURS = " hour(s)";
     public static final String TIME_SUFFIX_MINUTES = " minute(s)";
+    public static final String TIME_SUFFIX_SECONDS = " second(s)";
     public static final String DATE_TBD = "Date TBD";
     public static final String DATE_ERROR = "Date Error";
+
+    public static final int YEARS_CONVERSION = 365;
+    public static final int MONTHS_CONVERSION = 30;
+    public static final int WEEKS_CONVERSION = 7;
 
     String mAirDate;
     String mAirDateIso;
@@ -139,27 +147,25 @@ public class ScheduledMedia {
 
         long timeDifference = getBestTimeDifference();
 
+        boolean inFuture = timeDifference >= 0;
         int daysValue = Long.valueOf(TimeUnit.MILLISECONDS.toDays(timeDifference)).intValue();
+        int yearsValue = ((Double) Math.floor(daysValue / YEARS_CONVERSION)).intValue();
+        int monthsValue = ((Double) Math.floor(daysValue / MONTHS_CONVERSION)).intValue();
+        int weeksValue = ((Double) Math.floor(daysValue / WEEKS_CONVERSION)).intValue();
+        int hoursValue = Long.valueOf(TimeUnit.MILLISECONDS.toHours(timeDifference)).intValue();
+        int minutesValue = Long.valueOf(TimeUnit.MILLISECONDS.toMinutes(timeDifference)).intValue();
+        int secondsValue = Long.valueOf(TimeUnit.MILLISECONDS.toSeconds(timeDifference)).intValue();
 
-        if (daysValue < 1) {
-            int hoursValue = Long.valueOf(TimeUnit.MILLISECONDS.toHours(timeDifference)).intValue();
-
-            if (hoursValue < 1) {
-                int minutesValue = Long.valueOf(TimeUnit.MILLISECONDS.toMinutes(timeDifference)).intValue();
-
-                if (minutesValue < 1) {
-                    return DATE_TBD;
-
-                } else {
-                    return minutesValue + TIME_SUFFIX_MINUTES;
-                }
-
-            } else {
-                return hoursValue + TIME_SUFFIX_HOURS;
-            }
-
+        if (inFuture) {
+            if (yearsValue >= 1) return yearsValue + TIME_SUFFIX_YEARS;
+            if (monthsValue >= 1) return monthsValue + TIME_SUFFIX_MONTHS;
+            if (weeksValue >= 1) return weeksValue + TIME_SUFFIX_WEEKS;
+            if (daysValue >= 1) return daysValue + TIME_SUFFIX_DAYS;
+            if (hoursValue >= 1) return hoursValue + TIME_SUFFIX_HOURS;
+            if (minutesValue >= 1) return minutesValue + TIME_SUFFIX_MINUTES;
+            else return secondsValue + TIME_SUFFIX_SECONDS;
         } else {
-            return daysValue + TIME_SUFFIX_DAYS;
+            return DATE_TBD;
         }
     }
 
