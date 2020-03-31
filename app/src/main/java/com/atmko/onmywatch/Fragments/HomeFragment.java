@@ -102,11 +102,6 @@ public class HomeFragment extends Fragment {
 
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 
-        //configure home list display container layout params
-        configureListContainerParams(R.id.upcoming_media_container);
-        configureListContainerParams(R.id.undated_media_container);
-        configureListContainerParams(R.id.ended_media_container);
-
         TextView mediaTypeTextView = getView().findViewById(R.id.media_type_text_view);
         mediaTypeTextView.setOnClickListener(new View.OnClickListener() {
             @Override

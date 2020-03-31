@@ -87,7 +87,7 @@
 
     <style name="style_home_list_display_container">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">@dimen/search_poster_height</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">@dimen/x1_layout_margin</item>
     </style>
 

@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.atmko.onmywatch.R;
+import com.atmko.onmywatch.models.MediaLog;
 import com.atmko.onmywatch.models.SeriesLog;
 import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
 
@@ -97,6 +98,7 @@ public class MediaLogAdapter
         TextView posterReplacementTextView;
         ImageButton addButton;
         TextView typeTextView;
+        TextView countDownTextView;
 
         private MediaLogAdapterViewHolder(@NonNull View itemView, int viewType) {
             super(itemView);
@@ -104,6 +106,8 @@ public class MediaLogAdapter
             topFrameLayout = itemView.findViewById(R.id.top_frame_layout);
             topFrameLayout.setLayoutParams(getPosterDimensions(topFrameLayout));
             topFrameLayout.setLayoutParams(getPosterMargins(topFrameLayout));
+
+            countDownTextView = itemView.findViewById(R.id.count_down_text);
 
             itemView.setOnClickListener(this);
 
@@ -222,6 +226,12 @@ public class MediaLogAdapter
             }
 
             adapterViewHolder.typeTextView.setText(string);
+            if (currentMediaLog.condition == MediaLog.CONDITION_UNDATED) {
+                adapterViewHolder.countDownTextView.setVisibility(View.GONE);
+
+            } else {
+                adapterViewHolder.countDownTextView.setText(currentMediaLog.getCountdown());
+            }
 
             //load image with glide
             NetworkFunctions.loadImage(
