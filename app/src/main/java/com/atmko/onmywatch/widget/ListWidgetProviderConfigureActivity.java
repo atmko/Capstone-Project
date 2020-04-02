@@ -9,11 +9,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.atmko.onmywatch.Fragments.ListWatchAndUserFragment;
 import com.atmko.onmywatch.Fragments.ListsWatchAndUserParentFragment;
@@ -24,10 +28,14 @@ import com.atmko.onmywatch.adapters.ListsAdapter;
 import com.atmko.onmywatch.models.ListModel;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.utils.GeneralUtils;
+import com.atmko.onmywatch.view_models.MasterActivityViewModel;
+
+import java.util.List;
 
 import static com.atmko.onmywatch.Fragments.ListsWatchAndUserParentFragment.LIST_TYPE_WATCH;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
+import static com.atmko.onmywatch.MasterActivity.getCurrentUser;
 
 /**
  * The configuration screen for the {@link ListWidgetProvider NewAppWidget} AppWidget.
@@ -49,6 +57,8 @@ public class ListWidgetProviderConfigureActivity extends AppCompatActivity
 
     private TextView mMediaTypeTextView;
     private int mMediaType;
+    public static boolean mIsProMode;
+    private String[] mListTypeNames;
 
     public ListWidgetProviderConfigureActivity() {
         super();
@@ -140,16 +150,11 @@ public class ListWidgetProviderConfigureActivity extends AppCompatActivity
 
         setContentView(R.layout.widget_list_provider_configure);
 
-        if (savedInstanceState == null) {
-            String[] listTypeNames = getResources().getStringArray(R.array.list_type_titles_pro);
-            ListsWatchAndUserParentFragment listsParentFragment =
-                    ListsWatchAndUserParentFragment.newInstance(listTypeNames, false);
-
-            getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.slide_down_entry, android.R.animator.fade_out)
-                    .add(R.id.master_fragments_container, listsParentFragment,
-                            ListsWatchAndUserParentFragment.FRAGMENT_KEY)
-                    .commit();
+        //if current user is null start login
+        if (getCurrentUser() == null) {
+            Toast.makeText(this, "You're not logged in", Toast.LENGTH_LONG).show();
+            finish();
+            return;
         }
 
         //define views
@@ -168,6 +173,22 @@ public class ListWidgetProviderConfigureActivity extends AppCompatActivity
         // If this activity was started with an intent without an app widget ID, finish with an error.
         if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
             finish();
+
+        } else {
+            observeData(savedInstanceState);
+        }
+    }
+
+    private void loadUi(Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            ListsWatchAndUserParentFragment listsParentFragment =
+                    ListsWatchAndUserParentFragment.newInstance(mListTypeNames, false);
+
+            getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.slide_down_entry, android.R.animator.fade_out)
+                    .add(R.id.master_fragments_container, listsParentFragment,
+                            ListsWatchAndUserParentFragment.FRAGMENT_KEY)
+                    .commit();
         }
     }
 
@@ -187,6 +208,33 @@ public class ListWidgetProviderConfigureActivity extends AppCompatActivity
                         ListWidgetProviderConfigureActivity.this);
 
                 mMediaTypeTextView.setText(GeneralUtils.convertToDisplayText(mediaTitle));
+            }
+        });
+    }
+
+    private void observeData(final Bundle savedInstanceState) {
+        MasterActivityViewModel masterActivityViewModel =
+                ViewModelProviders.of(this).get(MasterActivityViewModel.class);
+
+        masterActivityViewModel.getIsProModeLiveData().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean isProMode) {
+                if (isProMode == null) return;
+
+                mIsProMode = isProMode;
+                if (!mIsProMode) {
+                    mListTypeNames = getResources().getStringArray(R.array.list_type_titles);
+
+                } else {
+                    mListTypeNames = getResources().getStringArray(R.array.list_type_titles_pro);
+                }
+
+                List<Fragment> fragments = getSupportFragmentManager().getFragments();
+                if (fragments.size() != 0) {
+                    getSupportFragmentManager().beginTransaction().remove(fragments.get(0));
+                }
+
+                loadUi(savedInstanceState);
             }
         });
     }
