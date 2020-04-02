@@ -3,9 +3,12 @@ package com.atmko.onmywatch.models;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 
+import org.parceler.Parcel;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@Parcel
 @Entity(tableName = "series_logs")
 public class SeriesLog extends MediaLog {
     public static final String TYPE_SEASON = "Season";
@@ -15,25 +18,36 @@ public class SeriesLog extends MediaLog {
     public static final String EPISODE_NUMBER_KEY = "episode";
     public static final String IS_BUNDLED_KEY = "is_bundled";
 
+    private static final String SEASON_SHORTHAND = "S";
+    private static final String EPISODE_SHORTHAND = "E";
+
     public int seasonNumber;
     public int episodeNumber;
     public boolean isBundled;
 
+    //constructor for parceler
+    @Ignore
+    public SeriesLog() {
+
+    }
+
     @Ignore
     public SeriesLog(String type, int seasonNumber, int condition, long timestamp, String title,
-                     String posterPath, String parentId, boolean isBundled) {
+                     String posterPath, String backdropPath, String parentId, boolean isBundled) {
         this.type = type;
         this.seasonNumber = seasonNumber;
         this.condition = condition;
         this.timestamp = timestamp;
         this.title = title;
         this.posterPath = posterPath;
+        this.backdropPath = backdropPath;
         this.parentId = parentId;
         this.isBundled = isBundled;
     }
 
     public SeriesLog(String type, int seasonNumber, int episodeNumber, int condition, long timestamp,
-                     String title, String posterPath, String parentId, boolean isBundled) {
+                     String title, String posterPath, String backdropPath, String parentId,
+                     boolean isBundled) {
         this.type = type;
         this.seasonNumber = seasonNumber;
         this.episodeNumber = episodeNumber;
@@ -41,8 +55,21 @@ public class SeriesLog extends MediaLog {
         this.timestamp = timestamp;
         this.title = title;
         this.posterPath = posterPath;
+        this.backdropPath = backdropPath;
         this.parentId = parentId;
         this.isBundled = isBundled;
+    }
+
+    public String getTypeString() {
+        if (type.equals(TYPE_SEASON)) {
+            return TYPE_SEASON + " " + seasonNumber;
+
+        } else {
+            return SEASON_SHORTHAND +
+                    seasonNumber +
+                    EPISODE_SHORTHAND +
+                    episodeNumber;
+        }
     }
 
     public Map<String, Object> parseLogToDataMap() {
@@ -54,6 +81,7 @@ public class SeriesLog extends MediaLog {
         seriesLogMap.put(TIMESTAMP_KEY, timestamp);
         seriesLogMap.put(TITLE_KEY, title);
         seriesLogMap.put(POSTER_PATH_KEY, posterPath);
+        seriesLogMap.put(BACKDROP_PATH_KEY, backdropPath);
         seriesLogMap.put(PARENT_ID_KEY, parentId);
         seriesLogMap.put(IS_BUNDLED_KEY, isBundled);
 

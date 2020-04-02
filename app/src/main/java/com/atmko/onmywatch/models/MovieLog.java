@@ -1,15 +1,28 @@
 package com.atmko.onmywatch.models;
 
+import androidx.room.Ignore;
+
+import org.parceler.Parcel;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Parcel
 public class MovieLog extends MediaLog {
-    private MovieLog(int condition, long timestamp, String title, String posterPath, String parentId) {
+    private MovieLog(int condition, long timestamp, String title, String posterPath,
+                     String backdropPath, String parentId) {
         this.condition = condition;
         this.timestamp = timestamp;
         this.title = title;
         this.posterPath = posterPath;
+        this.backdropPath = backdropPath;
         this.parentId = parentId;
+    }
+
+    //constructor for parceler
+    @Ignore
+    public MovieLog() {
+
     }
 
     public static ArrayList<MovieLog> convertMediaToLogs(List<MovieData> movieDataList) {
@@ -29,7 +42,7 @@ public class MovieLog extends MediaLog {
             }
 
             MovieLog movieLog = new MovieLog(condition, releaseTimestamp, movieData.getTitle(),
-                    movieData.mPosterPath, movieData.getId());
+                    movieData.mPosterPath, movieData.mBackdropPath, movieData.getId());
 
             movieLogs.add(movieLog);
         }

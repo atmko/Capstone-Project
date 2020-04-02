@@ -9,29 +9,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatCheckBox;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.fragment.app.Fragment;
 
+import com.atmko.onmywatch.Fragments.ListWatchAndUserFragment;
+import com.atmko.onmywatch.Fragments.ListsWatchAndUserParentFragment;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
+import com.atmko.onmywatch.adapters.ListWatchAndUserAdapter;
 import com.atmko.onmywatch.adapters.ListsAdapter;
-import com.atmko.onmywatch.adapters.WatchListsAdapter;
 import com.atmko.onmywatch.models.ListModel;
 import com.atmko.onmywatch.models.MediaData;
-import com.atmko.onmywatch.models.WatchListModel;
 import com.atmko.onmywatch.utils.GeneralUtils;
-import com.atmko.onmywatch.view_models.ListsWatchAndUserViewModel;
 
-import java.util.List;
-
+import static com.atmko.onmywatch.Fragments.ListsWatchAndUserParentFragment.LIST_TYPE_WATCH;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
 
@@ -39,21 +33,21 @@ import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
  * The configuration screen for the {@link ListWidgetProvider NewAppWidget} AppWidget.
  */
 public class ListWidgetProviderConfigureActivity extends AppCompatActivity
-        implements WatchListsAdapter.OnListItemClickListener {
+        implements ListsWatchAndUserParentFragment.ListFragmentImplementation,
+        ListWatchAndUserAdapter.LogicImplementation,
+        ListWatchAndUserFragment.OnListModelClickListener {
     private static final String TAG = "NewAppWidgetConfigureActivity";
 
     private static final String PREFS_NAME = "com.atmko.onmywatch.widget.NewAppWidget";
 
     private static final String PREF_PREFIX_KEY = "appwidget_";
     private static final String PREF_LIST_NAME_PREFIX_KEY = "list_name";
+    private static final String PREF_LIST_TYPE_PREFIX_KEY = "list_type";
     private static final String PREF_MEDIA_TYPE_PREFIX_KEY = "media_type";
 
     private int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
 
-    private ListsAdapter mAdapter;
     private TextView mMediaTypeTextView;
-    private RecyclerView mRecyclerView;
-    private int mListType;
     private int mMediaType;
 
     public ListWidgetProviderConfigureActivity() {
@@ -64,6 +58,12 @@ public class ListWidgetProviderConfigureActivity extends AppCompatActivity
     private static void saveTitlePref(Context context, int appWidgetId, String text) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.putString(PREF_PREFIX_KEY + appWidgetId + PREF_LIST_NAME_PREFIX_KEY, text);
+        prefs.apply();
+    }
+
+    private static void saveListTypePref(Context context, int appWidgetId, int listType) {
+        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
+        prefs.putInt(PREF_PREFIX_KEY + appWidgetId + PREF_LIST_TYPE_PREFIX_KEY, listType);
         prefs.apply();
     }
 
@@ -89,6 +89,15 @@ public class ListWidgetProviderConfigureActivity extends AppCompatActivity
 
     // Read the prefix from the SharedPreferences object for this widget.
     // If there is no preference saved, get the default from a resource
+    static int loadListTypePref(Context context, int appWidgetId) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
+
+        return prefs.getInt(
+                PREF_PREFIX_KEY + appWidgetId + PREF_LIST_TYPE_PREFIX_KEY, LIST_TYPE_WATCH);
+    }
+
+    // Read the prefix from the SharedPreferences object for this widget.
+    // If there is no preference saved, get the default from a resource
     static int loadMediaTypePref(Context context, int appWidgetId) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
         Integer mediaTypeValue = prefs.getInt(
@@ -109,6 +118,12 @@ public class ListWidgetProviderConfigureActivity extends AppCompatActivity
         prefs.apply();
     }
 
+    public static void deleteListTypePref(Context context, int appWidgetId) {
+        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
+        prefs.remove(PREF_PREFIX_KEY + appWidgetId + PREF_LIST_TYPE_PREFIX_KEY);
+        prefs.apply();
+    }
+
     static void deleteMediaTypePref(Context context, int appWidgetId) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.remove(PREF_PREFIX_KEY + appWidgetId + PREF_MEDIA_TYPE_PREFIX_KEY);
@@ -116,8 +131,8 @@ public class ListWidgetProviderConfigureActivity extends AppCompatActivity
     }
 
     @Override
-    public void onCreate(Bundle icicle) {
-        super.onCreate(icicle);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
         // Set the result to CANCELED.  This will cause the widget host to cancel
         // out of the widget placement if the user presses the back button.
@@ -125,11 +140,20 @@ public class ListWidgetProviderConfigureActivity extends AppCompatActivity
 
         setContentView(R.layout.widget_list_provider_configure);
 
+        if (savedInstanceState == null) {
+            String[] listTypeNames = getResources().getStringArray(R.array.list_type_titles_pro);
+            ListsWatchAndUserParentFragment listsParentFragment =
+                    ListsWatchAndUserParentFragment.newInstance(listTypeNames, false);
+
+            getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.slide_down_entry, android.R.animator.fade_out)
+                    .add(R.id.master_fragments_container, listsParentFragment,
+                            ListsWatchAndUserParentFragment.FRAGMENT_KEY)
+                    .commit();
+        }
+
         //define views
         defineViews();
-
-        //get watch lists
-        observeData();
 
         // Find the widget id from the intent.
         Intent intent = getIntent();
@@ -165,32 +189,6 @@ public class ListWidgetProviderConfigureActivity extends AppCompatActivity
                 mMediaTypeTextView.setText(GeneralUtils.convertToDisplayText(mediaTitle));
             }
         });
-
-        mRecyclerView = findViewById(R.id.lists_recycler_view);
-        mRecyclerView.setLayoutManager(configureLayoutManager());
-
-        mAdapter = new WatchListsAdapter(this);
-
-        mRecyclerView.setAdapter(mAdapter);
-    }
-
-    private GridLayoutManager configureLayoutManager() {
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 1);
-
-        layoutManager.setOrientation(RecyclerView.VERTICAL);
-        return layoutManager;
-    }
-
-    private void observeData() {
-        ListsWatchAndUserViewModel viewModel =
-                ViewModelProviders.of(this).get(ListsWatchAndUserViewModel.class);
-
-//        if (mAdapter instanceof WatchListsAdapter) {
-        loadWatchLists(viewModel);
-
-//        } else if (mAdapter instanceof UserListsAdapter) {
-//            loadUserLists(viewModel);
-//        }
     }
 
     private int loadDefaultMediaType() {
@@ -205,24 +203,42 @@ public class ListWidgetProviderConfigureActivity extends AppCompatActivity
         return defaultMediaType;
     }
 
-    private void loadWatchLists(final ListsWatchAndUserViewModel viewModel) {
-        viewModel.getWatchLists().observe(this, new Observer<List<WatchListModel>>() {
-            @Override
-            public void onChanged(List<WatchListModel> watchListModels) {
-                mAdapter.getAdapterData().clear();
-                mAdapter.addAdapterData(watchListModels);
+    @Override
+    public void onListFragmentResume(Fragment fragment) {
 
-                Log.d(TAG, "update watch lists");
-            }
-        });
     }
 
     @Override
-    public void onItemClick(ListModel listModel, AppCompatCheckBox checkBox) {
+    public void onAnimationEnd(Fragment fragment) {
+
+    }
+
+    @Override
+    public Fragment launchFragment(int position) {
+        ListWatchAndUserFragment fragment = null;
+        if (position == LIST_TYPE_WATCH) {
+            fragment = ListWatchAndUserFragment.newInstance(LIST_TYPE_WATCH, false);
+
+        } else if (position == ListsWatchAndUserParentFragment.LIST_TYPE_USER) {
+            fragment = ListWatchAndUserFragment
+                    .newInstance(ListsWatchAndUserParentFragment.LIST_TYPE_USER, false);
+
+        } else if (position == ListsWatchAndUserParentFragment.LIST_TYPE_AUTO) {
+            fragment = ListWatchAndUserFragment
+                    .newInstance(ListsWatchAndUserParentFragment.LIST_TYPE_AUTO, false);
+        }
+
+        return fragment;
+    }
+
+    @Override
+    public void onListModelClick(ListsAdapter adapter, Fragment childFragment, int listType,
+                                 ListModel listModel) {
         final Context context = ListWidgetProviderConfigureActivity.this;
 
         // When the button is clicked, store the string locally
         saveTitlePref(context, mAppWidgetId, listModel.getName());
+        saveListTypePref(context, mAppWidgetId, listType);
         saveMediaTypePref(context, mAppWidgetId, mMediaType);
 
         // It is the responsibility of the configuration activity to update the app widget

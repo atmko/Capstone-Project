@@ -12,6 +12,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesLog;
 
 import java.util.List;
@@ -38,6 +39,12 @@ public interface SeriesLogsDao {
             + "ORDER BY timestamp ASC "
             + "LIMIT 10")
     LiveData<List<SeriesLog>> getUpcoming();
+
+    @Query("SELECT * FROM series_logs "
+            + "WHERE condition = 1 "
+            + "ORDER BY timestamp ASC "
+            + "LIMIT 10")
+    List<SeriesLog> getUpcomingAlt();
 
     @Query("SELECT * FROM series_logs "
             + "WHERE condition = 2 "

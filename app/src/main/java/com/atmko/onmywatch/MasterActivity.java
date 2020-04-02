@@ -36,14 +36,21 @@ import androidx.work.WorkManager;
 import com.atmko.onmywatch.Fragments.DetailsFragment;
 import com.atmko.onmywatch.Fragments.HomeFragment;
 import com.atmko.onmywatch.Fragments.ListResultsParentFragment;
+import com.atmko.onmywatch.Fragments.ListWatchAndUserFragment;
+import com.atmko.onmywatch.Fragments.ListsWatchAndUserParentFragment;
 import com.atmko.onmywatch.Fragments.PeopleDetailsFragment;
+import com.atmko.onmywatch.adapters.ListWatchAndUserAdapter;
+import com.atmko.onmywatch.adapters.ListsAdapter;
 import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.database.daos.FirebaseUserDataDao;
 import com.atmko.onmywatch.models.Backup;
+import com.atmko.onmywatch.models.ListModel;
 import com.atmko.onmywatch.models.MediaData;
+import com.atmko.onmywatch.models.MediaLog;
 import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieData;
+import com.atmko.onmywatch.models.MovieLog;
 import com.atmko.onmywatch.models.PersonData;
 import com.atmko.onmywatch.models.SimpleIdlingResource;
 import com.atmko.onmywatch.models.WatchListModel;
@@ -73,7 +80,10 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class MasterActivity extends AppCompatActivity
-        implements BackupService.OnBackupCompleteListener, RestoreService.OnRestoreCompleteListener {
+        implements BackupService.OnBackupCompleteListener, RestoreService.OnRestoreCompleteListener,
+        ListsWatchAndUserParentFragment.ListFragmentImplementation,
+        ListWatchAndUserAdapter.LogicImplementation,
+        ListWatchAndUserFragment.OnListModelClickListener {
     private static final int FREE_MODE_LIST_COUNT_LIMIT = 3;
 
     public static final int MEDIA_TYPE_SERIES = 0;
@@ -105,7 +115,7 @@ public class MasterActivity extends AppCompatActivity
 
     // The Idling Resource which will be null in production.
     @Nullable
-    public SimpleIdlingResource mIdlingResource;
+    public static SimpleIdlingResource sIdlingResource;
 
     public static boolean sIsAuthUiActive;
     public static boolean sIsProMode;
@@ -159,8 +169,8 @@ public class MasterActivity extends AppCompatActivity
 
     //retrieve data from the activity's view model
     private void observeData(boolean isLoggingIn) {
-        if (mIdlingResource != null) {
-            mIdlingResource.setIdleState(false);
+        if (sIdlingResource != null) {
+            sIdlingResource.setIdleState(false);
         }
 
         RoomDatabase.Callback callback = databaseInitializer(isLoggingIn);
@@ -211,8 +221,8 @@ public class MasterActivity extends AppCompatActivity
 
         getSupportFragmentManager().executePendingTransactions();
 
-        if (mIdlingResource != null) {
-            mIdlingResource.setIdleState(true);
+        if (sIdlingResource != null) {
+            sIdlingResource.setIdleState(true);
         }
     }
 
@@ -327,12 +337,13 @@ public class MasterActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
+    protected void onNewIntent(final Intent intent) {
         super.onNewIntent(intent);
 
         Bundle extras = intent.getExtras();
 
-        if (intent.getAction().equals(DetailsFragment.ACTION_LAUNCH_DETAILS)) {
+        if (intent.getAction() != null
+                && intent.getAction().equals(DetailsFragment.ACTION_LAUNCH_DETAILS)) {
             launchDetailsFromIntent(intent, extras);
         }
     }
@@ -605,13 +616,33 @@ public class MasterActivity extends AppCompatActivity
                 .commit();
     }
 
-    private void launchDetailsFromIntent(Intent intent, Bundle extras) {
-        String quickAction = extras.getString(DetailsFragment.QUICK_ACTION_KEY);
+    private void launchDetailsFromIntent(final Intent intent, Bundle extras) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                Bundle extras = intent.getExtras();
 
-        MediaData mediaData =
-                Parcels.unwrap(intent.getParcelableExtra(DetailsFragment.MEDIA_DATA_PARCELABLE_KEY));
+                String quickAction = extras.getString(DetailsFragment.QUICK_ACTION_KEY);
 
-        launchDetailsFragment(mediaData, quickAction);
+                Object object =
+                        Parcels.unwrap(intent.getParcelableExtra(DetailsFragment.MEDIA_DATA_PARCELABLE_KEY));
+
+                //if object is media log, media log id to get parent media data
+                if (object instanceof MediaLog) {
+                    MediaLog mediaLog = ((MediaLog) object);
+                    if (mediaLog instanceof MovieLog) {
+                        object = AppDatabase.getLocalDatabase(MasterActivity.this).movieDataDao()
+                                .getMovieByIdAlt(mediaLog.parentId);
+
+                    } else {
+                        object = AppDatabase.getLocalDatabase(MasterActivity.this).seriesDataDao()
+                                .getSeriesByIdAlt(mediaLog.parentId);
+                    }
+                }
+
+                launchDetailsFragment(((MediaData) object), quickAction);
+            }
+        });
     }
 
     public void launchAddToListActivity(MediaData mediaData) {
@@ -746,7 +777,7 @@ public class MasterActivity extends AppCompatActivity
         backgroundFragmentParentView.setVisibility(View.GONE);
     }
 
-    public void onSearchButtonPressed(ImageButton searchButton,
+    public static void onSearchButtonPressed(ImageButton searchButton,
                                       SuperEditText searchEditText, TextView toolbarTitle) {
         if (searchEditText.getVisibility() == View.VISIBLE) {
             searchEditText.setText("");
@@ -823,7 +854,7 @@ public class MasterActivity extends AppCompatActivity
     }
 
     //convenience method for hiding search bar edit text
-    private void hideSearchBar(SuperEditText searchEditText) {
+    private static void hideSearchBar(SuperEditText searchEditText) {
         hideSoftKeyboard(searchEditText);
         searchEditText.setVisibility(View.GONE);
     }
@@ -933,10 +964,53 @@ public class MasterActivity extends AppCompatActivity
      */
 //    @VisibleForTesting
     @NonNull
-    public SimpleIdlingResource getIdlingResource() {
-        if (mIdlingResource == null) {
-            mIdlingResource = new SimpleIdlingResource();
+    public static SimpleIdlingResource getIdlingResource() {
+        if (sIdlingResource == null) {
+            sIdlingResource = new SimpleIdlingResource();
         }
-        return mIdlingResource;
+        return sIdlingResource;
+    }
+
+    @Override
+    public void onListFragmentResume(Fragment fragment) {
+        onResumeMasterContainerFragment(fragment);
+    }
+
+    @Override
+    public void onAnimationEnd(Fragment fragment) {
+        hideBackgroundFragment(fragment);
+    }
+
+    @Override
+    public Fragment launchFragment(int position) {
+        ListWatchAndUserFragment fragment;
+        if (position == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
+            fragment = ListWatchAndUserFragment
+                    .newInstance(ListsWatchAndUserParentFragment.LIST_TYPE_WATCH, false);
+        } else  {
+            fragment = ListWatchAndUserFragment
+                    .newInstance(ListsWatchAndUserParentFragment.LIST_TYPE_USER, true);
+        }
+
+        return fragment;
+    }
+
+    @Override
+    public void onListModelClick(ListsAdapter adapter, Fragment childFragment, int listType,
+                                 ListModel listModel) {
+        if (adapter.inPlaceholderMode()) {
+            if (childFragment.getParentFragment() != null) {
+                MasterActivity.launchCreateListActivity(childFragment.getParentFragment().getActivity());
+
+                return;
+            }
+        }
+
+        Fragment fragment = ListResultsParentFragment.newInstance(listType, listModel.getName());
+
+        childFragment.getParentFragment().getActivity().getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
+                .add(R.id.master_fragments_container, fragment, ListResultsParentFragment.FRAGMENT_KEY)
+                .commit();
     }
 }

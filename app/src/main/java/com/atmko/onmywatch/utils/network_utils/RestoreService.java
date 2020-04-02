@@ -409,6 +409,7 @@ public class RestoreService extends JobIntentService {
                 timestamp,
                 (String) map.get(MediaLog.TITLE_KEY),
                 (String) map.get(MediaLog.POSTER_PATH_KEY),
+                (String) map.get(MediaLog.BACKDROP_PATH_KEY),
                 (String) map.get(MediaLog.PARENT_ID_KEY),
                 (boolean) map.get(SeriesLog.IS_BUNDLED_KEY)
         );

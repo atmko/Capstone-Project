@@ -19,6 +19,7 @@ public abstract class MediaLog {
     public static final String TIMESTAMP_KEY = "timestamp";
     public static final String TITLE_KEY = "title";
     public static final String POSTER_PATH_KEY = "poster_path";
+    public static final String BACKDROP_PATH_KEY = "backdrop_path";
     public static final String PARENT_ID_KEY = "parent_id";
 
     private static final String TIME_SUFFIX_YEARS = " year(s)";
@@ -40,6 +41,7 @@ public abstract class MediaLog {
     public long timestamp;
     public String title;
     public String posterPath;
+    public String backdropPath;
     @NonNull @ColumnInfo(name = "parent_id") public String parentId;
 
     @Ignore

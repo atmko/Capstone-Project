@@ -248,7 +248,8 @@ public class SeriesTracker extends JobIntentService {
 
     private void insertSeason(int seasonNumber, int condition, long timestamp, boolean isBundled) {
         SeriesLog mediaLog = new SeriesLog(TYPE_SEASON, seasonNumber, condition, timestamp,
-                newMediaData.getTitle(), newMediaData.getPosterPath(), newMediaData.getId(), isBundled);
+                newMediaData.getTitle(), newMediaData.getPosterPath(), newMediaData.getBackdropPath(),
+                newMediaData.getId(), isBundled);
 
         mDatabase.seriesLogsDao().addMediaLog(mediaLog);
     }
@@ -257,7 +258,7 @@ public class SeriesTracker extends JobIntentService {
                                boolean isBundled) {
         SeriesLog mediaLog = new SeriesLog(TYPE_EPISODE, seasonNumber, episodeNumber, condition,
                 timestamp, newMediaData.getTitle(), newMediaData.getPosterPath(),
-                newMediaData.getId(), isBundled);
+                newMediaData.getBackdropPath(), newMediaData.getId(), isBundled);
 
         mDatabase.seriesLogsDao().addMediaLog(mediaLog);
     }

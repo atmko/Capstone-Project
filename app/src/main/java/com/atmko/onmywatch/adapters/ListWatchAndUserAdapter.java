@@ -9,35 +9,38 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
-import com.atmko.onmywatch.Fragments.ListWatchAndUserFragment;
-import com.atmko.onmywatch.Fragments.ListsWatchAndUserParentFragment;
-
 /*
  * pager adapter hosting ListsWatchAndUserParentFragment's child fragments
  */
 
 public class ListWatchAndUserAdapter extends FragmentStatePagerAdapter {
-    private static final int TAB_COUNT = 2;
+    private int mCount;
+    private LogicImplementation mLogicImplementation;
 
     public ListWatchAndUserAdapter(@NonNull FragmentManager fm, int behavior) {
         super(fm, behavior);
     }
 
+    public interface LogicImplementation {
+        Fragment launchFragment(int position);
+    }
+
+    public void setLogicImplementation(LogicImplementation logicImplementation) {
+        mLogicImplementation = logicImplementation;
+    }
+
+    public void setTabCount(int count) {
+        mCount = count;
+    }
+
     @NonNull
     @Override
     public Fragment getItem(int position) {
-
-        if (position == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
-            return ListWatchAndUserFragment
-                    .newInstance(ListsWatchAndUserParentFragment.LIST_TYPE_WATCH);
-        } else  {
-            return ListWatchAndUserFragment
-                    .newInstance(ListsWatchAndUserParentFragment.LIST_TYPE_USER);
-        }
+        return mLogicImplementation.launchFragment(position);
     }
 
     @Override
     public int getCount() {
-        return TAB_COUNT;
+        return mCount;
     }
 }

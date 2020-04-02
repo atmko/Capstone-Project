@@ -121,8 +121,9 @@ public class HomeFragment extends Fragment {
         listsTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String[] listTypeNames = getResources().getStringArray(R.array.list_type_titles);
                 ListsWatchAndUserParentFragment listsParentFragment =
-                        ListsWatchAndUserParentFragment.newInstance();
+                        ListsWatchAndUserParentFragment.newInstance(listTypeNames, true);
 
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.slide_down_entry, android.R.animator.fade_out)

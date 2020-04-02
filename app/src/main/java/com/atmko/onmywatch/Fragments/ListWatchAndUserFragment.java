@@ -5,10 +5,12 @@
 package com.atmko.onmywatch.Fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,16 +55,23 @@ import org.parceler.Parcels;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.atmko.onmywatch.Fragments.ListsWatchAndUserParentFragment.LIST_TYPE_AUTO;
+
 public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.OnListItemClickListener,
         UserListsAdapter.OnSpinnerItemClickListener {
 
     public static String FRAGMENT_KEY = "list_watch_and_user_fragment";
 
+
     private static final int REQUEST_DELETE = 1;
 
     //fragment initialization parameters
     private static final String LIST_TYPE_KEY = "list_type";
+    private static String SHOW_FAB_KEY = "show_fab";
     private int mListType;
+    private boolean mShowFab;
+
+    private static ListWatchAndUserFragment.OnListModelClickListener sOnListModelClickListener;
 
     //check for restoring state
     private AppDatabase mDatabase;
@@ -77,12 +86,28 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
         // Required empty public constructor
     }
 
-    public static ListWatchAndUserFragment newInstance(int listType) {
+    public static ListWatchAndUserFragment newInstance(int listType, boolean showFab) {
         ListWatchAndUserFragment fragment = new ListWatchAndUserFragment();
         Bundle args = new Bundle();
         args.putInt(LIST_TYPE_KEY, listType);
+        args.putBoolean(SHOW_FAB_KEY, showFab);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public interface OnListModelClickListener {
+        void onListModelClick(ListsAdapter adapter, Fragment childFragment, int listType,
+                              ListModel listModel);
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (!(context instanceof OnListModelClickListener)) {
+            Log.d(FRAGMENT_KEY, OnListModelClickListener.class.getSimpleName() + " must be implemented");
+        } else {
+            sOnListModelClickListener = ((OnListModelClickListener) context);
+        }
     }
 
     @Override
@@ -90,6 +115,7 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mListType = getArguments().getInt(LIST_TYPE_KEY);
+            mShowFab = getArguments().getBoolean(SHOW_FAB_KEY);
         }
     }
 
@@ -125,21 +151,17 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
         mRecyclerView = getView().findViewById(R.id.lists_recycler_view);
         mRecyclerView.setLayoutManager(configureLayoutManager());
 
-        if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
+        if (mListType != ListsWatchAndUserParentFragment.LIST_TYPE_USER) {
             mAdapter = new WatchListsAdapter(this);
 
-        } else if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_USER) {
+        } else {
             mAdapter = new UserListsAdapter(this);
-
         }
 
         mRecyclerView.setAdapter(mAdapter);
 
         mFab = getView().findViewById(R.id.new_list_fab);
-        if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
-            mFab.hide();
-
-        } else {
+        if (mShowFab) {
             mFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -148,6 +170,8 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
                     }
                 }
             });
+        } else {
+            mFab.hide();
         }
 
         //get search bar from parent fragment
@@ -198,29 +222,38 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
 
     private void observeData(final Bundle savedInstanceState) {
         ListsWatchAndUserViewModel viewModel = ViewModelProviders.of(getParentFragment()).get(ListsWatchAndUserViewModel.class);
-        LiveData<List<WatchListModel>> watchListsLiveData = viewModel.getWatchLists();
-        LiveData<List<UserListModel>> userListsLiveData = viewModel.getUserLists();
+        LiveData listsLiveData;
 
-        if (mAdapter instanceof WatchListsAdapter) {
-            watchListsLiveData.observe(getParentFragment(), new Observer<List<WatchListModel>>() {
+        if (!(mAdapter instanceof UserListsAdapter)) {
+            if (mListType == LIST_TYPE_AUTO) {
+                listsLiveData = viewModel.getAutoLists();
+
+            } else {
+                listsLiveData = viewModel.getWatchLists();
+            }
+
+            listsLiveData.observe(getParentFragment(), new Observer<List<WatchListModel>>() {
                 @Override
                 public void onChanged(List<WatchListModel> watchListModels) {
                     mAdapter.getAdapterData().clear();
                     mAdapter.addAdapterData(watchListModels);
 
                     //restore search if it exists
-                    MasterActivity.restoreSearchIfAvailable(ListWatchAndUserFragment.this, savedInstanceState);
+                    MasterActivity.restoreSearchIfAvailable(ListWatchAndUserFragment.this,
+                            savedInstanceState);
                 }
             });
 
-        } else if (mAdapter instanceof UserListsAdapter) {
-            userListsLiveData.observe(getParentFragment(), new Observer<List<UserListModel>>() {
+        } else {
+            listsLiveData = viewModel.getUserLists();
+            listsLiveData.observe(getParentFragment(), new Observer<List<UserListModel>>() {
                 @Override
                 public void onChanged(List<UserListModel> userListModels) {
                     populateAndNotifyAdapter(userListModels);
 
                     //restore search if it exists
-                    MasterActivity.restoreSearchIfAvailable(ListWatchAndUserFragment.this, savedInstanceState);
+                    MasterActivity.restoreSearchIfAvailable(ListWatchAndUserFragment.this,
+                            savedInstanceState);
                 }
             });
         }
@@ -301,20 +334,7 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
 
     @Override
     public void onItemClick(ListModel listModel, AppCompatCheckBox checkBox) {
-        if (mAdapter.inPlaceholderMode()) {
-            if (getParentFragment() != null) {
-                MasterActivity.launchCreateListActivity(getParentFragment().getActivity());
-
-                return;
-            }
-        }
-
-        Fragment fragment = ListResultsParentFragment.newInstance(mListType, listModel.getName());
-
-        getParentFragment().getActivity().getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
-                .add(R.id.master_fragments_container, fragment, ListResultsParentFragment.FRAGMENT_KEY)
-                .commit();
+        sOnListModelClickListener.onListModelClick(mAdapter, this, mListType, listModel);
     }
 
     @Override
@@ -379,7 +399,7 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
     private SimpleIdlingResource getIdlingResource() {
         if (getActivity() == null) return null;
 
-        return ((MasterActivity) getActivity()).mIdlingResource;
+        return MasterActivity.sIdlingResource;
     }
 
     //checks if media tags are in use and deletes them if not

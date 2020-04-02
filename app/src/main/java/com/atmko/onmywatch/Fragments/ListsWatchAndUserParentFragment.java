@@ -6,8 +6,10 @@ package com.atmko.onmywatch.Fragments;
 
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -28,25 +31,53 @@ import com.atmko.onmywatch.adapters.ListWatchAndUserAdapter;
 import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.google.android.material.tabs.TabLayout;
 
-
 public class ListsWatchAndUserParentFragment extends Fragment
         implements SuperEditText.OnKeyBoardDismissListener {
+    public static final String TAG = ListsWatchAndUserParentFragment.class.getSimpleName();
     public static final String FRAGMENT_KEY = "lists_watch_and_user_parent_fragment";
     public static final int LIST_TYPE_WATCH = 0;
     public static final int LIST_TYPE_USER = 1;
+    public static final int LIST_TYPE_AUTO = 2;
+
+    private static final String LIST_TYPE_NAMES_KEY = "list_type_names";
+    private static final String IS_UP_ENABLED_KEY = "is_up_enabled";
 
     private Bundle mSavedInstanceState;
+    private static ListFragmentImplementation sFragmentImplementation;
+    private String[] mListTypeNames;
+    private boolean mIsUpEnabled;
 
     public ListsWatchAndUserParentFragment() {
         // Required empty public constructor
     }
 
-    // TODO: Rename and change types and number of parameters
-    public static ListsWatchAndUserParentFragment newInstance() {
+    public static ListsWatchAndUserParentFragment newInstance(String[] listTypeNames,
+                                                              boolean isUpEnabled) {
         ListsWatchAndUserParentFragment fragment = new ListsWatchAndUserParentFragment();
         Bundle args = new Bundle();
+        args.putStringArray(LIST_TYPE_NAMES_KEY, listTypeNames);
+        args.putBoolean(IS_UP_ENABLED_KEY, isUpEnabled);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (!(context instanceof ListFragmentImplementation)) {
+            Log.d(TAG, ListFragmentImplementation.class.getSimpleName() + " must be implemented");
+        } else {
+            sFragmentImplementation = ((ListFragmentImplementation) context);
+        }
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mListTypeNames = getArguments().getStringArray(LIST_TYPE_NAMES_KEY);
+            mIsUpEnabled = getArguments().getBoolean(IS_UP_ENABLED_KEY);
+        }
     }
 
     @Override
@@ -56,6 +87,11 @@ public class ListsWatchAndUserParentFragment extends Fragment
         return inflater.inflate(R.layout.fragment_lists_watch_and_user_parent, container, false);
     }
 
+    public interface ListFragmentImplementation {
+        void onListFragmentResume(Fragment fragment);
+        void onAnimationEnd(Fragment fragment);
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -63,7 +99,7 @@ public class ListsWatchAndUserParentFragment extends Fragment
         Toolbar toolbar = getView().findViewById(R.id.toolbar);
 
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(mIsUpEnabled);
 
         //save saveInstanceState value for onCreateAnimator to check if this is the first instance
         mSavedInstanceState = savedInstanceState;
@@ -80,9 +116,7 @@ public class ListsWatchAndUserParentFragment extends Fragment
     @Override
     public void onResume() {
         super.onResume();
-
-        ((MasterActivity) getActivity()).onResumeMasterContainerFragment(this);
-
+        sFragmentImplementation.onListFragmentResume(this);
     }
 
     @Nullable
@@ -106,9 +140,8 @@ public class ListsWatchAndUserParentFragment extends Fragment
                     defineViews();
 
                     //reserve focus by hiding background fragment
-                    ((MasterActivity) getActivity())
-                            .hideBackgroundFragment(ListsWatchAndUserParentFragment.this);
-
+                    sFragmentImplementation
+                            .onAnimationEnd(ListsWatchAndUserParentFragment.this);
                 }
 
                 @Override
@@ -151,11 +184,9 @@ public class ListsWatchAndUserParentFragment extends Fragment
         searchImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MasterActivity) getActivity()).onSearchButtonPressed(searchImageButton,
-                        searchEditText, titleText);
+                MasterActivity.onSearchButtonPressed(searchImageButton, searchEditText, titleText);
             }
         });
-
 
         TabLayout mMediaTypeTabLayout = getView().findViewById(R.id.tab_layout_1);
         final ViewPager mListsViewPager = getView().findViewById(R.id.lists_view_pager);
@@ -164,17 +195,19 @@ public class ListsWatchAndUserParentFragment extends Fragment
         mMediaTypeTabLayout.removeAllTabs();
 
         //add new tabs
-        String[] listTypeNames = getContext().getResources().getStringArray(R.array.list_type_titles);
-
-        for (String type : listTypeNames) {
+        for (String type : mListTypeNames) {
             mMediaTypeTabLayout.addTab(mMediaTypeTabLayout.newTab().setText(type));
         }
 
-        mListsViewPager.setOffscreenPageLimit(listTypeNames.length - 1);
+        mListsViewPager.setOffscreenPageLimit(mListTypeNames.length - 1);
 
         ListWatchAndUserAdapter mListWatchAndUserAdapter =
                 new ListWatchAndUserAdapter(getChildFragmentManager(),
                         FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+
+        mListWatchAndUserAdapter
+                .setLogicImplementation((ListWatchAndUserAdapter.LogicImplementation) getActivity());
+        mListWatchAndUserAdapter.setTabCount(mListTypeNames.length);
 
         mListsViewPager.setAdapter(mListWatchAndUserAdapter);
 

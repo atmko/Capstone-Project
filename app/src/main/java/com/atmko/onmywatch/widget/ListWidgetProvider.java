@@ -117,6 +117,7 @@ public class ListWidgetProvider extends AppWidgetProvider {
         // When the user deletes the widget, delete the preference associated with it.
         for (int appWidgetId : appWidgetIds) {
             ListWidgetProviderConfigureActivity.deleteTitlePref(context, appWidgetId);
+            ListWidgetProviderConfigureActivity.deleteListTypePref(context, appWidgetId);
             ListWidgetProviderConfigureActivity.deleteMediaTypePref(context, appWidgetId);
         }
     }

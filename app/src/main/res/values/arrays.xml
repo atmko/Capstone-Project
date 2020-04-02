@@ -21,6 +21,16 @@
         <item>@string/list_type_user_text</item>
     </array>
 
+    <string-array name="list_type_titles_pro">
+        <item>@string/list_type_watch_text</item>
+        <item>@string/list_type_user_text</item>
+        <item>@string/list_type_auto_text</item>
+    </string-array>
+
+    <string-array name="auto_list_titles">
+        <item>Upcoming</item>
+    </string-array>
+
     <array name="discover_manual_media_types">
         <item>@string/media_type_series_text</item>
         <item>@string/media_type_movies_text</item>

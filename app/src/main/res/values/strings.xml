@@ -83,6 +83,7 @@
         <!--list type text-->
         <string name="list_type_watch_text">Watch Lists</string>
         <string name="list_type_user_text">User Lists</string>
+        <string name="list_type_auto_text">Auto Lists</string>
         <!--list type text-->
 
         <!--home text-->

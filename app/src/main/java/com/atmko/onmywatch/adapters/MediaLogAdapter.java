@@ -19,14 +19,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.models.MediaLog;
-import com.atmko.onmywatch.models.MovieLog;
 import com.atmko.onmywatch.models.SeriesLog;
 import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.atmko.onmywatch.models.SeriesLog.TYPE_SEASON;
 
 /*
  * data adapter for Media data objects
@@ -47,10 +44,6 @@ public class MediaLogAdapter
     private final int STANDARD_LAYOUT_ID = 1;
     private final int NO_POSTER_LAYOUT = 2;
     private final int PLACEHOLDER_ID = -1;
-
-    private final String SEASON_SHORTHAND = "S";
-    private final String EPISODE_SHORTHAND = "E";
-
 
     public MediaLogAdapter(OnListItemClickListener clickListener, Context context, int[] params) {
         mFragment = ((Fragment) clickListener);
@@ -221,20 +214,8 @@ public class MediaLogAdapter
                     adapterViewHolder.moviePosterImageView);
         }
 
-        String string;
         if (currentMediaLog instanceof SeriesLog) {
-            SeriesLog seriesLog = ((SeriesLog) currentMediaLog);
-            if (currentMediaLog.type.equals(TYPE_SEASON)) {
-                string = TYPE_SEASON + " " + seriesLog.seasonNumber;
-
-            } else {
-                string = SEASON_SHORTHAND +
-                        seriesLog.seasonNumber +
-                        EPISODE_SHORTHAND +
-                        seriesLog.episodeNumber;
-            }
-
-            adapterViewHolder.typeTextView.setText(string);
+            adapterViewHolder.typeTextView.setText(((SeriesLog) currentMediaLog).getTypeString());
 
         } else {
             adapterViewHolder.typeTextView.setVisibility(View.GONE);

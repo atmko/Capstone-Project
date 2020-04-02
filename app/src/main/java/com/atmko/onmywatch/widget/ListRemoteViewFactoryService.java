@@ -14,6 +14,9 @@ import android.widget.RemoteViewsService;
 
 import com.atmko.onmywatch.Fragments.DetailsFragment;
 import com.atmko.onmywatch.models.MediaData;
+import com.atmko.onmywatch.models.MediaLog;
+import com.atmko.onmywatch.models.MovieLog;
+import com.atmko.onmywatch.models.SeriesLog;
 import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
 import com.bumptech.glide.request.FutureTarget;
 import com.atmko.onmywatch.MasterActivity;
@@ -28,6 +31,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import static com.atmko.onmywatch.Fragments.ListsWatchAndUserParentFragment.LIST_TYPE_AUTO;
+import static com.atmko.onmywatch.Fragments.ListsWatchAndUserParentFragment.LIST_TYPE_USER;
+import static com.atmko.onmywatch.Fragments.ListsWatchAndUserParentFragment.LIST_TYPE_WATCH;
 
 public class ListRemoteViewFactoryService extends RemoteViewsService {
     private static final String TAG = "ListRemoteViewFactory";
@@ -69,10 +76,12 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     private final Context mContext;
     private final AppDatabase mDatabase;
     private final int mAppWidgetId;
-    private String mListName;
+    private int mListType;
     private int mMediaType;
     private List<MovieData> mMovieDataList;
     private List<SeriesData> mSeriesDataList;
+    private List<MovieLog> mMovieLogs;
+    private List<SeriesLog> mSeriesLogs;
 
     ListRemoteViewsFactory(Context applicationContext, int appWidgetId) {
         mContext = applicationContext;
@@ -97,19 +106,42 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
                 mContext.getResources().getStringArray(R.array.watch_status_movie_titles);
         final List<String> titleList = Arrays.asList(watchStatusMoviesTitles);
 
-        mListName = ListWidgetProviderConfigureActivity.loadTitlePref(mContext, mAppWidgetId);
+        String mListName = ListWidgetProviderConfigureActivity.loadTitlePref(mContext, mAppWidgetId);
+        mListType = ListWidgetProviderConfigureActivity.loadListTypePref(mContext, mAppWidgetId);
         mMediaType = ListWidgetProviderConfigureActivity.loadMediaTypePref(mContext, mAppWidgetId);
 
-        //if media data is movie
-        if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
-            mMovieDataList = mDatabase.movieDataDao()
-                    .getMoviesByWatchStatusAlt(titleList.indexOf(mListName));
+        if (mListType == LIST_TYPE_WATCH) {
+            //if media data is movie
+            if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
+                mMovieDataList = mDatabase.movieDataDao()
+                        .getMoviesByWatchStatusAlt(titleList.indexOf(mListName));
 
-        //if media data is series
-        } else if (mMediaType == MasterActivity.MEDIA_TYPE_SERIES) {
-            mSeriesDataList = mDatabase.seriesDataDao()
-                    .getSeriesByWatchStatusAlt(titleList.indexOf(mListName));
+                //if media data is series
+            } else if (mMediaType == MasterActivity.MEDIA_TYPE_SERIES) {
+                mSeriesDataList = mDatabase.seriesDataDao()
+                        .getSeriesByWatchStatusAlt(titleList.indexOf(mListName));
+            }
 
+        } else if (mListType == LIST_TYPE_USER) {
+            //if media data is movie
+            if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
+                mMovieDataList = mDatabase.movieDataRecordsDao()
+                        .getAllMoviesInListAlt((mListName));
+
+                //if media data is series
+            } else if (mMediaType == MasterActivity.MEDIA_TYPE_SERIES) {
+                mSeriesDataList = mDatabase.seriesDataRecordsDao()
+                        .getAllSeriesInListAlt(mListName);
+            }
+
+        } else if (mListType == LIST_TYPE_AUTO) {
+            if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
+                mMovieDataList = mDatabase.movieDataDao().getUserUpcomingMoviesAlt();
+                mMovieLogs = MovieLog.convertMediaToLogs(mMovieDataList);
+
+            } else {
+                mSeriesLogs = mDatabase.seriesLogsDao().getUpcomingAlt();
+            }
         }
     }
 
@@ -121,41 +153,77 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     @Override
     public int getCount() {
         if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
-            if (mMovieDataList == null) return 0;
+            if (mListType == LIST_TYPE_AUTO) {
+                if (mMovieLogs == null) return 0;
+                return mMovieLogs.size();
 
-            return mMovieDataList.size();
-
-        } else if (mMediaType == MasterActivity.MEDIA_TYPE_SERIES){
-            if (mSeriesDataList == null) return 0;
-
-            return mSeriesDataList.size();
+            } else {
+                if (mMovieDataList == null) return 0;
+                return mMovieDataList.size();
+            }
 
         } else {
-            return 0;
+            if (mListType == LIST_TYPE_AUTO) {
+                if (mSeriesLogs == null) return 0;
+                return mSeriesLogs.size();
+
+            } else {
+                if (mSeriesDataList == null) return 0;
+                return mSeriesDataList.size();
+            }
         }
     }
 
     @Override
     public RemoteViews getViewAt(int position) {
-        final RemoteViews remoteViews = new RemoteViews(mContext.getPackageName(), R.layout.widget_list_object);
+        final RemoteViews remoteViews;
+        if (mListType == LIST_TYPE_AUTO) {
+            remoteViews = new RemoteViews(mContext.getPackageName(), R.layout.widget_list_log_object);
 
-        final MediaData mediaData;
+        } else {
+            remoteViews = new RemoteViews(mContext.getPackageName(), R.layout.widget_list_object);
+        }
+
+        MediaData mediaData = null;
+        MediaLog mediaLog = null;
         final String title;
+        String countdown = null;
+        String type = null;
         final String backdropUrl;
 
         if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
-            mediaData = mMovieDataList.get(position);
-            title = mMovieDataList.get(position).getTitle();
-            backdropUrl = mMovieDataList.get(position).getBackdropPath();
+            if (mListType == LIST_TYPE_AUTO) {
+                mediaLog = mMovieLogs.get(position);
+                title = mMovieLogs.get(position).title;
+                countdown = mMovieLogs.get(position).getCountdown();
+                backdropUrl = mMovieLogs.get(position).backdropPath;
+
+            } else {
+                mediaData = mMovieDataList.get(position);
+                title = mMovieDataList.get(position).getTitle();
+                backdropUrl = mMovieDataList.get(position).getBackdropPath();
+            }
 
         } else {
-            mediaData = mSeriesDataList.get(position);
-            title = mSeriesDataList.get(position).getTitle();
-            backdropUrl = mSeriesDataList.get(position).getBackdropPath();
+            if (mListType == LIST_TYPE_AUTO) {
+                mediaLog = mSeriesLogs.get(position);
+                title = mSeriesLogs.get(position).title;
+                countdown = mSeriesLogs.get(position).getCountdown();
+                type = mSeriesLogs.get(position).getTypeString();
+                backdropUrl = mSeriesLogs.get(position).backdropPath;
 
+            } else {
+                mediaData = mSeriesDataList.get(position);
+                title = mSeriesDataList.get(position).getTitle();
+                backdropUrl = mSeriesDataList.get(position).getBackdropPath();
+            }
         }
 
         remoteViews.setTextViewText(R.id.title_text_view, title);
+        if (mListType == LIST_TYPE_AUTO) {
+            remoteViews.setTextViewText(R.id.count_down_text, countdown);
+            remoteViews.setTextViewText(R.id.type_text_view, type);
+        }
 
         loadImageForListItem(mContext, backdropUrl, remoteViews);
 
@@ -163,7 +231,13 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         Bundle detailsExtras = new Bundle();
 
         Intent detailsFillInIntent = new Intent();
-        detailsFillInIntent.putExtra(DetailsFragment.MEDIA_DATA_PARCELABLE_KEY, Parcels.wrap(mediaData));
+        if (mListType == LIST_TYPE_AUTO) {
+            detailsFillInIntent.putExtra(DetailsFragment.MEDIA_DATA_PARCELABLE_KEY, Parcels.wrap(mediaLog));
+
+        } else {
+            detailsFillInIntent.putExtra(DetailsFragment.MEDIA_DATA_PARCELABLE_KEY, Parcels.wrap(mediaData));
+        }
+
         detailsFillInIntent.putExtras(detailsExtras);
         remoteViews.setOnClickFillInIntent(R.id.backdrop_image_view, detailsFillInIntent);
 
@@ -172,7 +246,12 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         shareExtras.putString(DetailsFragment.QUICK_ACTION_KEY, DetailsFragment.QUICK_ACTION_SHARE);
 
         Intent shareFillInIntent = new Intent();
-        shareFillInIntent.putExtra(DetailsFragment.MEDIA_DATA_PARCELABLE_KEY, Parcels.wrap(mediaData));
+        if (mListType == LIST_TYPE_AUTO) {
+            shareFillInIntent.putExtra(DetailsFragment.MEDIA_DATA_PARCELABLE_KEY, Parcels.wrap(mediaLog));
+
+        } else {
+            shareFillInIntent.putExtra(DetailsFragment.MEDIA_DATA_PARCELABLE_KEY, Parcels.wrap(mediaData));
+        }
         shareFillInIntent.putExtras(shareExtras);
         remoteViews.setOnClickFillInIntent(R.id.share_button, shareFillInIntent);
 
@@ -181,7 +260,12 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         rateExtras.putString(DetailsFragment.QUICK_ACTION_KEY, DetailsFragment.QUICK_ACTION_RATE);
 
         Intent rateInIntent = new Intent();
-        rateInIntent.putExtra(DetailsFragment.MEDIA_DATA_PARCELABLE_KEY, Parcels.wrap(mediaData));
+        if (mListType == LIST_TYPE_AUTO) {
+            rateInIntent.putExtra(DetailsFragment.MEDIA_DATA_PARCELABLE_KEY, Parcels.wrap(mediaLog));
+
+        } else {
+            rateInIntent.putExtra(DetailsFragment.MEDIA_DATA_PARCELABLE_KEY, Parcels.wrap(mediaData));
+        }
         rateInIntent.putExtras(rateExtras);
         remoteViews.setOnClickFillInIntent(R.id.rate_button, rateInIntent);
 
@@ -209,7 +293,7 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public int getViewTypeCount() {
-        return 1;
+        return 2;
     }
 
     @Override
