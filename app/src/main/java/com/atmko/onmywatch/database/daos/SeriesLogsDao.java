@@ -12,7 +12,6 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesLog;
 
 import java.util.List;

@@ -6,6 +6,8 @@ package com.atmko.onmywatch.models;
 
 import org.parceler.Parcel;
 
+import java.util.Date;
+
 /*
  * episode model class
  */
@@ -36,5 +38,9 @@ public class Episode extends ScheduledMedia {
         } else {
             timestamp = Long.MAX_VALUE;
         }
+    }
+
+    public boolean isInFuture() {
+        return new Date().getTime() < timestamp;
     }
 }

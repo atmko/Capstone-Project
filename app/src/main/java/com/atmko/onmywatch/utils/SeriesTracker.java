@@ -200,9 +200,16 @@ public class SeriesTracker extends JobIntentService {
         String nextEpisodeAirDate = nextEpisode.getBestAvailableDateString();
 
         if (nextEpisodeAirDate != null && !nextEpisodeAirDate.equals("")) {
-            //set season upcoming
-            insertSeason(lastSeason.seasonNumber, CONDITION_UPCOMING,
-                    nextEpisode.timestamp, lastSeason.isBundled);
+            if (nextEpisode.isInFuture()) {
+                //set season upcoming
+                insertSeason(lastSeason.seasonNumber, CONDITION_UPCOMING,
+                        nextEpisode.timestamp, lastSeason.isBundled);
+
+            } else {
+                //set season aired
+                insertSeason(lastSeason.seasonNumber, CONDITION_AIRED,
+                        nextEpisode.timestamp, lastSeason.isBundled);
+            }
 
         } else {
             //set season undated
@@ -212,19 +219,11 @@ public class SeriesTracker extends JobIntentService {
     }
 
     private void processSingles() {
-        //set episode ended
         Episode currentEpisode = null;
-
         if (lastSeason.episodesAired > 0) {
             currentEpisode = lastSeason.getEpisode(lastSeason.episodesAired);
         }
 
-        if (currentEpisode != null) {
-            insertEpisode(lastSeason.seasonNumber, currentEpisode.episodeNumber, CONDITION_AIRED,
-                    currentEpisode.timestamp, lastSeason.isBundled);
-        }
-
-        //set upcoming episode if air date available else set without air date
         Episode nextEpisode = lastSeason.getNextEpisodeInSeason();
         String nextEpisodeAirDate = null;
 
@@ -232,10 +231,32 @@ public class SeriesTracker extends JobIntentService {
             nextEpisodeAirDate = nextEpisode.getBestAvailableDateString();
         }
 
-        if (nextEpisodeAirDate != null && !nextEpisodeAirDate.equals("")) {
-            //set episode upcoming
-            insertEpisode(lastSeason.seasonNumber, nextEpisode.episodeNumber, CONDITION_UPCOMING,
+        //if both current and next episodes are in the past, log next episode aired only
+        if (currentEpisode != null && nextEpisode != null
+                && !currentEpisode.isInFuture() && !nextEpisode.isInFuture()) {
+            insertEpisode(lastSeason.seasonNumber, nextEpisode.episodeNumber, CONDITION_AIRED,
                     nextEpisode.timestamp, lastSeason.isBundled);
+            return;
+        }
+
+        //set episode ended
+        if (currentEpisode != null) {
+            insertEpisode(lastSeason.seasonNumber, currentEpisode.episodeNumber, CONDITION_AIRED,
+                    currentEpisode.timestamp, lastSeason.isBundled);
+        }
+
+        //set upcoming / aired episode if air date available else set without air date
+        if (nextEpisodeAirDate != null && !nextEpisodeAirDate.equals("")) {
+            if (nextEpisode.isInFuture()) {
+                //set episode upcoming
+                insertEpisode(lastSeason.seasonNumber, nextEpisode.episodeNumber, CONDITION_UPCOMING,
+                        nextEpisode.timestamp, lastSeason.isBundled);
+
+            } else {
+                //set episode upcoming
+                insertEpisode(lastSeason.seasonNumber, nextEpisode.episodeNumber, CONDITION_AIRED,
+                        nextEpisode.timestamp, lastSeason.isBundled);
+            }
 
         } else {
             //set episode undated
