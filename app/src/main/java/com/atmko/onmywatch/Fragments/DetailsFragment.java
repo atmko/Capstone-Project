@@ -654,17 +654,15 @@ public class DetailsFragment extends Fragment {
     }
 
     private void setMovieCountDown(MovieData movieData) {
-        if (!movieData.getReleaseStatus().equals(MovieApiConstants.RELEASE_STATUS_RELEASED)) {
-            //set count down if available
-            ScheduledMedia releaseMedia = movieData.getScheduledMedia();
-            if (releaseMedia != null && releaseMedia.getCountdown() != null) {
-                mCountDownTextView.setText(releaseMedia.getCountdown());
+        //set count down if available
+        ScheduledMedia releaseMedia = movieData.getScheduledMedia();
+        if (releaseMedia != null && releaseMedia.getCountdown() != null) {
+            mCountDownTextView.setText(releaseMedia.getCountdown());
 
-            } else {
-                mCountDownTextView.setText(ScheduledMedia.NO_DATES);
-            }
-            mCountDownTextView.setVisibility(View.VISIBLE);
+        } else {
+            mCountDownTextView.setText(ScheduledMedia.NO_DATES);
         }
+        mCountDownTextView.setVisibility(View.VISIBLE);
     }
 
     private void setSeriesCountDown(SeriesData seriesData) {
