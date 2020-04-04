@@ -34,6 +34,8 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.androidnetworking.common.ANRequest;
@@ -44,6 +46,7 @@ import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.RateActivity;
 import com.atmko.onmywatch.adapters.DetailMovieExtrasAdapter;
 import com.atmko.onmywatch.adapters.DetailSeriesExtrasAdapter;
+import com.atmko.onmywatch.adapters.DetailsAdapter;
 import com.atmko.onmywatch.adapters.SpinnerDetailsOptionsAdapter;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.Episode;
@@ -54,7 +57,6 @@ import com.atmko.onmywatch.models.ScheduledMedia;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.utils.GeneralUtils;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
-import com.atmko.onmywatch.utils.api_utils.MovieApiConstants;
 import com.atmko.onmywatch.utils.api_utils.MovieDataParser;
 import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
 import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
@@ -89,15 +91,14 @@ public class DetailsFragment extends Fragment {
     private static final String DETAIL_URL_KEY = "detail_url";
     public static final String MEDIA_DATA_PARCELABLE_KEY = "media_data";
     private static final String SEARCH_PREFERENCES_KEY = "search_preferences";
-
-    private String COUNTDOWN_KEY = "countdown";
+    private static final String DETAIL_OBJECTS_KEY = "detail_objects";
 
     public static final String ACTION_LAUNCH_DETAILS = "launch_details";
     public static final String QUICK_ACTION_KEY = "quick_action";
     public static final String QUICK_ACTION_SHARE = "qa_share";
     public static final String QUICK_ACTION_RATE = "qa_rate";
 
-    public static final int COOL_DOWN_REQUEST_TMDB_ID = 0;
+    private static final int COOL_DOWN_REQUEST_TMDB_ID = 0;
     public static final int COOL_DOWN_REQUEST_TRAKT_ID = 1;
 
     private int mMediaType;
@@ -111,12 +112,11 @@ public class DetailsFragment extends Fragment {
     private int mWatchStatus;
 
     private FloatingActionButton mFab;
+    private DetailsAdapter mDetailsAdapter;
 
     //details views
     private TabLayout mDetailExtrasTabLayout;
     private ViewPager mDetailExtrasViewPager;
-    private TextView mReleaseStatusTextView;
-    private TextView mCountDownTextView;
 
     //values
     private int mOverviewCutoffIndex;
@@ -178,27 +178,6 @@ public class DetailsFragment extends Fragment {
 
         } catch (NullPointerException e) {
             e.printStackTrace();
-        }
-
-
-        if (savedInstanceState == null) {
-            //startup code moved to onCreateAnimator
-
-        } else {
-            //check if details value exists.
-            //If so set detail values and configure extras adapter, otherwise get detail values
-            if (mMediaData.getReleaseStatus() != null) {
-                try {
-                    setDetailViewValues(mMediaData);
-                    populateDetailExtrasAdapter();
-
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                }
-
-            } else {
-                getMediaDetails();
-            }
         }
 
         //basic values as opposed to values retrieved by getting details
@@ -274,9 +253,7 @@ public class DetailsFragment extends Fragment {
         //update initialized media data
         assert getArguments() != null;
         getArguments().putParcelable(MEDIA_DATA_PARCELABLE_KEY, Parcels.wrap(mMediaData));
-
-        outState.putString(ApiConstants.RELEASE_STATUS_KEY, mReleaseStatusTextView.getText().toString());
-        outState.putString(COUNTDOWN_KEY, mCountDownTextView.getText().toString());
+        outState.putParcelable(DETAIL_OBJECTS_KEY, Parcels.wrap(mDetailsAdapter.getAdapterData()));
     }
 
     private static final String STATUS_BAR_IDENTIFIER = "status_bar_height";
@@ -318,6 +295,11 @@ public class DetailsFragment extends Fragment {
                 ((MasterActivity) getActivity()).launchAddToListActivity(mMediaData);
             }
         });
+
+        RecyclerView mDetailsRecyclerView = getView().findViewById(R.id.details_recycler_view);
+        mDetailsRecyclerView.setLayoutManager(configureLayoutManager());
+        mDetailsAdapter = new DetailsAdapter(getContext());
+        mDetailsRecyclerView.setAdapter(mDetailsAdapter);
 
         final Spinner detailSpinner = getView().findViewById(R.id.options_button);
         final String [] detailOptions = getResources().getStringArray(R.array.detail_options);
@@ -392,13 +374,39 @@ public class DetailsFragment extends Fragment {
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
-
-        mReleaseStatusTextView = getView().findViewById(R.id.release_status_text);
-        mCountDownTextView = getView().findViewById(R.id.count_down_text);
     }
 
     private void defineValues() {
         mOverviewCutoffIndex = getResources().getInteger(R.integer.detail_overview_cutoff_index);
+        if (mSavedInstanceState == null) {
+            DetailsAdapter.DetailObject watchStatusDetail =
+                    new DetailsAdapter.DetailObject(DetailsAdapter.DetailObject.ID_WATCH_STATUS,
+                            "", R.drawable.ic_notify_white, View.GONE);
+            mDetailsAdapter.addDetailObjectData(watchStatusDetail);
+
+        } else {
+            //check if details value exists.
+            //If so set detail values and configure extras adapter, otherwise get detail values
+            if (mMediaData.getReleaseStatus() != null) {
+                try {
+                    setDetailViewValues(mMediaData);
+                    populateDetailExtrasAdapter();
+
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+
+            } else {
+                getMediaDetails();
+            }
+        }
+    }
+
+    private LinearLayoutManager configureLayoutManager() {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+
+        layoutManager.setOrientation(RecyclerView.HORIZONTAL);
+        return layoutManager;
     }
 
     // TODO: NullPointerException handled in caller
@@ -475,8 +483,10 @@ public class DetailsFragment extends Fragment {
                         : watchStatusShorthandList[0];
 
                 //set shorthand text
-                ((TextView) getView().findViewById(R.id.watch_status_shorthand_text))
-                        .setText(shorthand);
+                DetailsAdapter.DetailObject watchStatusDetail =
+                        mDetailsAdapter.getAdapterData().get(DetailsAdapter.DetailObject.ID_WATCH_STATUS);
+                watchStatusDetail.text = shorthand;
+                mDetailsAdapter.notifyItemChanged(watchStatusDetail.index);
 
                 //configure user rating related UI
                 int userRating = mediaData != null ? castedMediaData.getUserRating() : 0;
@@ -498,22 +508,37 @@ public class DetailsFragment extends Fragment {
                 int containingListsCount = listNames != null ? listNames.size() : 0;
 
                 //set counts text
-                ((TextView) getView().findViewById(R.id.list_counts_text))
-                        .setText(String.valueOf(containingListsCount));
+                DetailsAdapter.DetailObject listCountDetail =
+                        mDetailsAdapter.getDetailObject(DetailsAdapter.DetailObject.ID_LIST_COUNT);
+
+                if (listCountDetail == null) {
+                    listCountDetail = new DetailsAdapter.DetailObject(
+                            DetailsAdapter.DetailObject.ID_LIST_COUNT,
+                            String.valueOf(containingListsCount));
+                    mDetailsAdapter.addDetailObjectData(listCountDetail);
+
+                } else {
+                    listCountDetail.text = String.valueOf(containingListsCount);
+                    mDetailsAdapter.notifyItemChanged(listCountDetail.index);
+                }
             }
         });
 
         notifiersLiveData.observe(this, new Observer<List<MediaNotifier>>() {
             @Override
             public void onChanged(List<MediaNotifier> movieNotifiers) {
+                int visibility;
                 if (movieNotifiers.size() != 0) {
-                    //set image
-                    getView().findViewById(R.id.notify_image_view).setVisibility(View.VISIBLE);
+                    visibility = View.VISIBLE;
 
                 } else {
-                    //set image
-                    getView().findViewById(R.id.notify_image_view).setVisibility(View.GONE);
+                    visibility = View.GONE;
                 }
+
+                DetailsAdapter.DetailObject watchStatusDetail =
+                        mDetailsAdapter.getAdapterData().get(DetailsAdapter.DetailObject.ID_WATCH_STATUS);
+                watchStatusDetail.imageVisibility = visibility;
+                mDetailsAdapter.notifyItemChanged(watchStatusDetail.index);
             }
         });
     }
@@ -656,25 +681,31 @@ public class DetailsFragment extends Fragment {
     private void setMovieCountDown(MovieData movieData) {
         //set count down if available
         ScheduledMedia releaseMedia = movieData.getScheduledMedia();
+        String countdown;
         if (releaseMedia != null && releaseMedia.getCountdown() != null) {
-            mCountDownTextView.setText(releaseMedia.getCountdown());
+            countdown = releaseMedia.getCountdown();
 
         } else {
-            mCountDownTextView.setText(ScheduledMedia.NO_DATES);
+            countdown = ScheduledMedia.NO_DATES;
         }
-        mCountDownTextView.setVisibility(View.VISIBLE);
+        DetailsAdapter.DetailObject releaseStatusDetail =
+                new DetailsAdapter.DetailObject(DetailsAdapter.DetailObject.ID_COUNTDOWN, countdown);
+        mDetailsAdapter.addDetailObjectData(releaseStatusDetail);
     }
 
     private void setSeriesCountDown(SeriesData seriesData) {
         //set count down if available
         Episode nextEpisode = seriesData.getNextEpisodeToAir();
+        String countdown;
         if (nextEpisode != null && nextEpisode.getCountdown() != null) {
-            mCountDownTextView.setText(nextEpisode.getCountdown());
+            countdown = nextEpisode.getCountdown();
 
         } else {
-            mCountDownTextView.setText(ScheduledMedia.NO_DATES);
+            countdown = ScheduledMedia.NO_DATES;
         }
-        mCountDownTextView.setVisibility(View.VISIBLE);
+        DetailsAdapter.DetailObject releaseStatusDetail =
+                new DetailsAdapter.DetailObject(DetailsAdapter.DetailObject.ID_COUNTDOWN, countdown);
+        mDetailsAdapter.addDetailObjectData(releaseStatusDetail);
     }
 
     private void loadOfflineMode() {
@@ -885,8 +916,24 @@ public class DetailsFragment extends Fragment {
     // TODO: NullPointerException handled in caller
     @SuppressWarnings("ConstantConditions")
     private void setDetailViewValues(MediaData mediaData) throws NullPointerException {
-        mReleaseStatusTextView.setText(mediaData.getReleaseStatus());
-        mReleaseStatusTextView.setVisibility(View.VISIBLE);
+        if (mSavedInstanceState == null) {
+            DetailsAdapter.DetailObject releaseStatusDetail =
+                    new DetailsAdapter.DetailObject(DetailsAdapter.DetailObject.ID_RELEASE_STATUS,
+                            mediaData.getReleaseStatus());
+            mDetailsAdapter.addDetailObjectData(releaseStatusDetail);
+
+            if (mediaData instanceof SeriesData) {
+                DetailsAdapter.DetailObject networkDetail =
+                        new DetailsAdapter.DetailObject(DetailsAdapter.DetailObject.ID_NETWORK,
+                                ((SeriesData) mediaData).getNetwork());
+                mDetailsAdapter.addDetailObjectData(networkDetail);
+            }
+        } else {
+            Map<Integer, DetailsAdapter.DetailObject> detailObjects =
+                    Parcels.unwrap(mSavedInstanceState.getParcelable(DETAIL_OBJECTS_KEY));
+            mDetailsAdapter.addAdapterData(detailObjects);
+        }
+
 
         //set trailer button visibility
         try {
@@ -928,18 +975,7 @@ public class DetailsFragment extends Fragment {
             }
         }
 
-        if (mSavedInstanceState != null) {
-            mCountDownTextView.setText(mSavedInstanceState.getString(COUNTDOWN_KEY));
-            if (!mCountDownTextView.getText().toString().equals("")) {
-                mCountDownTextView.setVisibility(View.VISIBLE);
-            }
-        }
 
-        if (mediaData instanceof SeriesData) {
-            TextView networkTextView = getView().findViewById(R.id.network_text_view);
-            networkTextView.setText(((SeriesData) mediaData).getNetwork());
-            networkTextView.setVisibility(View.VISIBLE);
-        }
     }
 
     //limit long text
