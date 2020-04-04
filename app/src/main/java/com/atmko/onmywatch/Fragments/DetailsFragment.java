@@ -924,6 +924,11 @@ public class DetailsFragment extends Fragment {
             }
         }
 
+        if (mediaData instanceof SeriesData) {
+            ((TextView) getView().findViewById(R.id.network_text_view))
+                    .setText(((SeriesData) mediaData).getNetwork());
+        }
+
         if (mSavedInstanceState != null) {
             mCountDownTextView.setText(mSavedInstanceState.getString(COUNTDOWN_KEY));
             if (!mCountDownTextView.getText().toString().equals("")) {

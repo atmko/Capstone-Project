@@ -43,6 +43,23 @@
             tools:text="7.5"
             android:background="@drawable/background_box_white"/>
 
+        <TextView
+            android:id="@+id/user_rating_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_box_white"
+            android:paddingStart="@dimen/x1_layout_margin"
+            android:paddingTop="@dimen/half_layout_margin"
+            android:paddingEnd="@dimen/x1_layout_margin"
+            android:paddingBottom="@dimen/half_layout_margin"
+            tools:text="7.5"
+            android:textSize="@dimen/caption_text_size"
+            android:textColor="@android:color/white"
+            app:layout_constraintStart_toStartOf="@id/rating_text_view"
+            app:layout_constraintTop_toBottomOf="@+id/rating_text_view"
+            app:layout_constraintBottom_toBottomOf="@id/rating_text_view"
+            app:layout_constraintEnd_toEndOf="@id/rating_text_view"/>
+
         <Button
             android:id="@+id/trailer_button"
             android:layout_width="wrap_content"
@@ -231,7 +248,7 @@
             android:visibility="gone"/>
 
         <TextView
-            android:id="@+id/user_rating_text"
+            android:id="@+id/network_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/x1_layout_margin"
@@ -242,7 +259,7 @@
             android:paddingTop="@dimen/half_layout_margin"
             android:paddingEnd="@dimen/x1_layout_margin"
             android:paddingBottom="@dimen/half_layout_margin"
-            tools:text="7.5"
+            tools:text="network"
             android:textSize="@dimen/caption_text_size"
             android:textColor="@android:color/white"
             app:layout_constraintStart_toEndOf="@+id/count_down_text"

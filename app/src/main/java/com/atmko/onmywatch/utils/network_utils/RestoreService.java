@@ -330,7 +330,8 @@ public class RestoreService extends JobIntentService {
                 (String) map.get(SeriesApiConstants.RATING_KEY),
                 (String) map.get(ApiConstants.RELEASE_STATUS_KEY),
                 episode,
-                searchTags
+                searchTags,
+                (String) map.get(SeriesApiConstants.NETWORK_KEY)
         );
 
         seriesData.setWatchStatus(

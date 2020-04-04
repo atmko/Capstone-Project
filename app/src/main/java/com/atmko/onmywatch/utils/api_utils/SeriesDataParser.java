@@ -117,6 +117,18 @@ public class SeriesDataParser {
         //create new series data
         SeriesData detailsSeriesData = parseTvMap(returnedMap);
 
+        //get rating(network name)
+        ArrayList<Map> networks = ((ArrayList<Map>) returnedMap.get(SeriesApiConstants.NETWORKS_KEY));
+        if (networks != null && networks.size() > 0) {
+            Map network = networks.get(0);
+            if (network != null) {
+                String name = ((String) network.get(SeriesApiConstants.NAME_KEY));
+                if (name != null && !name.equals("")) {
+                    detailsSeriesData.setNetwork(name);
+                }
+            }
+        }
+
         //get rating(maturity rating)
         ArrayList<String> countriesOfOrigin = detailsSeriesData.getCountryOfOrigin();
         String fallbackLocale = countriesOfOrigin.size() >= 1? countriesOfOrigin.get(0) :
@@ -131,9 +143,7 @@ public class SeriesDataParser {
 
         //parse cast
         Map creditsMap = (Map) returnedMap.get(PeopleApiConstants.CREDITS_KEY);
-
         ArrayList<CastData> castList = new ArrayList<>();
-
         ArrayList<Map> castMapList = (ArrayList<Map>) creditsMap.get(PeopleApiConstants.CAST_KEY);
         for (Map castMap: castMapList) {
             String character = (String) castMap.get(PeopleApiConstants.CHARACTER_KEY);

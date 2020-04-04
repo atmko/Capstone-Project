@@ -29,6 +29,7 @@ public class SeriesData extends MediaData{
 
     //primary attributes
     @ColumnInfo(name = "country_of_origin") ArrayList<String> mCountryOfOrigin;
+    @ColumnInfo(name = "network") String mNetwork;
     @Ignore ArrayList<String> mReviews;
     @ColumnInfo(name = "next_episode") Episode mNextEpisodeToAir;
 
@@ -78,7 +79,7 @@ public class SeriesData extends MediaData{
                       String posterPath, String originalLanguage, String originalTitle,
                       ArrayList<String> countryOfOrigin, ArrayList<String> genres, String backdropPath,
                       String overview, String releaseDate, String maturityRating, String releaseStatus,
-                      Episode nextEpisodeToAir, List<SearchMediaTag> searchTags) {
+                      Episode nextEpisodeToAir, List<SearchMediaTag> searchTags, String network) {
 
         this.mId = id;
         this.mTraktId = traktId;
@@ -96,6 +97,7 @@ public class SeriesData extends MediaData{
         this.mReleaseStatus = releaseStatus;
         this.mNextEpisodeToAir = nextEpisodeToAir;
         this.searchTags = searchTags;
+        this.mNetwork = network;
     }
 
     public String getVoteAverage() {
@@ -122,6 +124,14 @@ public class SeriesData extends MediaData{
         this.mNextEpisodeToAir = nextEpisodeToAir;
     }
 
+    public String getNetwork() {
+        return mNetwork != null && !mNetwork.equals("") ? mNetwork : SeriesApiConstants.NO_NETWORKS;
+    }
+
+    public void setNetwork(String network) {
+        this.mNetwork = network;
+    }
+
     @Override
     public String getMediaUrl(Context context, String mediaId) {
         return context.getString(R.string.series_base_url) + "/" + mediaId;
@@ -137,6 +147,7 @@ public class SeriesData extends MediaData{
         firebaseMediaDataMap.put(SeriesApiConstants.RATING_KEY, getMaturityRating());
         firebaseMediaDataMap.put(NEXT_EPISODE_KEY,
                 Converters.episodeToString(getNextEpisodeToAir()));
+        firebaseMediaDataMap.put(SeriesApiConstants.NETWORK_KEY, getNetwork());
 
         return firebaseMediaDataMap;
     }

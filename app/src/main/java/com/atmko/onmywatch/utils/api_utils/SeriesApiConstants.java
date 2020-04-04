@@ -33,4 +33,9 @@ public class SeriesApiConstants {
 
     //EPISODE VALUES
     public static final String NEXT_EPISODE_TO_AIR_KEY = "next_episode_to_air";
+
+    //release status values
+    public static final String NETWORK_KEY = "network";
+    static final String NETWORKS_KEY = "networks";
+    public static final String NO_NETWORKS = "network";
 }
