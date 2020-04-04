@@ -659,8 +659,11 @@ public class DetailsFragment extends Fragment {
             ScheduledMedia releaseMedia = movieData.getScheduledMedia();
             if (releaseMedia != null && releaseMedia.getCountdown() != null) {
                 mCountDownTextView.setText(releaseMedia.getCountdown());
-                mCountDownTextView.setVisibility(View.VISIBLE);
+
+            } else {
+                mCountDownTextView.setText(ScheduledMedia.NO_DATES);
             }
+            mCountDownTextView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -669,8 +672,11 @@ public class DetailsFragment extends Fragment {
         Episode nextEpisode = seriesData.getNextEpisodeToAir();
         if (nextEpisode != null && nextEpisode.getCountdown() != null) {
             mCountDownTextView.setText(nextEpisode.getCountdown());
-            mCountDownTextView.setVisibility(View.VISIBLE);
+
+        } else {
+            mCountDownTextView.setText(ScheduledMedia.NO_DATES);
         }
+        mCountDownTextView.setVisibility(View.VISIBLE);
     }
 
     private void loadOfflineMode() {
@@ -924,16 +930,17 @@ public class DetailsFragment extends Fragment {
             }
         }
 
-        if (mediaData instanceof SeriesData) {
-            ((TextView) getView().findViewById(R.id.network_text_view))
-                    .setText(((SeriesData) mediaData).getNetwork());
-        }
-
         if (mSavedInstanceState != null) {
             mCountDownTextView.setText(mSavedInstanceState.getString(COUNTDOWN_KEY));
             if (!mCountDownTextView.getText().toString().equals("")) {
                 mCountDownTextView.setVisibility(View.VISIBLE);
             }
+        }
+
+        if (mediaData instanceof SeriesData) {
+            TextView networkTextView = getView().findViewById(R.id.network_text_view);
+            networkTextView.setText(((SeriesData) mediaData).getNetwork());
+            networkTextView.setVisibility(View.VISIBLE);
         }
     }
 

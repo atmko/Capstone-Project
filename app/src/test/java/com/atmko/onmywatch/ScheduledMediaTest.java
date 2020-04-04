@@ -17,7 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import static com.atmko.onmywatch.models.ScheduledMedia.DATE_TBD;
+import static com.atmko.onmywatch.models.ScheduledMedia.NO_DATES;
 import static com.atmko.onmywatch.models.ScheduledMedia.TIME_SUFFIX_DAYS;
 import static com.atmko.onmywatch.models.ScheduledMedia.TIME_SUFFIX_HOURS;
 import static com.atmko.onmywatch.models.ScheduledMedia.TIME_SUFFIX_MINUTES;
@@ -72,7 +72,7 @@ public class ScheduledMediaTest {
             fail();
         }
 
-        assertEquals(DATE_TBD, releaseSchedule.getCountdown());
+        assertEquals(NO_DATES, releaseSchedule.getCountdown());
     }
 
     @Test

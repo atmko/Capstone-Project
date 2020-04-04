@@ -34,7 +34,7 @@ public class ScheduledMedia {
     private static final String TIME_SUFFIX_HOURS = " hour(s)";
     private static final String TIME_SUFFIX_MINUTES = " minute(s)";
     private static final String TIME_SUFFIX_SECONDS = " second(s)";
-    private static final String DATE_TBD = "Date TBD";
+    public static final String NO_DATES = "No Dates";
     private static final String DATE_ERROR = "Date Error";
 
     private static final int YEARS_CONVERSION = 365;
@@ -165,7 +165,7 @@ public class ScheduledMedia {
             if (minutesValue >= 1) return minutesValue + TIME_SUFFIX_MINUTES;
             else return secondsValue + TIME_SUFFIX_SECONDS;
         } else {
-            return DATE_TBD;
+            return NO_DATES;
         }
     }
 
