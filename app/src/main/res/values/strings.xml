@@ -8,6 +8,8 @@
     <string name="agreement_error_text">You must accept this condition to continue</string>
     <string name="continue_text_literal">continue</string>
     <string name="accept_terms_text">By clicking continue, you are agreeing to our Terms of Use and Privacy Policy</string>
+    <string name="terms_url">https://majik.flycricket.io/terms.html</string>
+    <string name="privacy_url">https://majik.flycricket.io/privacy.html</string>
     <!--LAUNCH ACTIVITY TEXT-->
 
     <string name="ad_mob_application_id_key" translatable="false">com.google.android.gms.ads.APPLICATION_ID</string>
@@ -165,6 +167,7 @@
     <string name="backup_failure_message">Backup Failed.</string>
     <string name="restore_completed_message">Restore Completed.</string>
     <string name="restore_failed_message">Restore Failed.</string>
+    <string name="no_browser_error_message">No browser to launch page</string>
 
     <string name="pro_mode_list_limit_message">More lists available in pro mode.</string>
     <!--SNACK BAR MESSAGES-->

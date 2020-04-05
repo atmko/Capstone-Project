@@ -1,13 +1,10 @@
 package com.atmko.onmywatch;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatCheckBox;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -17,7 +14,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
+import com.google.android.material.snackbar.Snackbar;
 
 public class LaunchActivity extends AppCompatActivity {
     public static final String APPLICATION_PREFERENCE_KEY = "application";
@@ -48,13 +51,13 @@ public class LaunchActivity extends AppCompatActivity {
         ClickableSpan termsClickableSpan = new ClickableSpan() {
             @Override
             public void onClick(@NonNull View view) {
-                Toast.makeText(LaunchActivity.this, "launch terms", Toast.LENGTH_SHORT).show();
+                launchBrowserIntent(getString(R.string.terms_url));
             }
         };
         ClickableSpan privacyClickableSpan = new ClickableSpan() {
             @Override
             public void onClick(@NonNull View view) {
-                Toast.makeText(LaunchActivity.this, "launch privacy", Toast.LENGTH_SHORT).show();
+                launchBrowserIntent(getString(R.string.privacy_url));
             }
         };
         int[] clickableSpans = getResources().getIntArray(R.array.terms_clickable_spans);
@@ -106,6 +109,17 @@ public class LaunchActivity extends AppCompatActivity {
                 getSharedPreferences(APPLICATION_PREFERENCE_KEY, Context.MODE_PRIVATE).edit();
         editor.putBoolean(AGREEMENT_KEY, checkBox.isChecked());
         editor.apply();
+    }
+
+    private void launchBrowserIntent(String url) {
+        Uri webPage = Uri.parse(url);
+        Intent intent = new Intent(Intent.ACTION_VIEW, webPage);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        } else  {
+            ConstraintLayout topView = findViewById(R.id.top_layout);
+            Snackbar.make(topView, R.string.no_browser_error_message, Snackbar.LENGTH_SHORT).show();
+        }
     }
 
     private void startMasterActivity() {
