@@ -2,6 +2,8 @@ package com.atmko.onmywatch.models;
 
 import androidx.room.Ignore;
 
+import com.atmko.onmywatch.Fragments.HomeListDisplayFragment;
+
 import org.parceler.Parcel;
 
 import java.util.ArrayList;
@@ -25,19 +27,16 @@ public class MovieLog extends MediaLog {
 
     }
 
-    public static ArrayList<MovieLog> convertMediaToLogs(List<MovieData> movieDataList) {
+    public static ArrayList<MovieLog> convertMediaToLogs(List<MovieData> movieDataList, String listName) {
         ArrayList<MovieLog> movieLogs = new ArrayList<>();
         for (MovieData movieData: movieDataList) {
-            int condition;
+            int condition = convertListNameToCondition(listName);
             long releaseTimestamp;
             ScheduledMedia scheduledMedia = movieData.getScheduledMedia();
             if (scheduledMedia == null) {
-                condition = CONDITION_UNDATED;
                 releaseTimestamp = Long.MAX_VALUE;
 
             } else {
-                long timeDifference = scheduledMedia.getBestTimeDifference();
-                condition = timeDifference >= 0 ? CONDITION_UPCOMING : CONDITION_AIRED;
                 releaseTimestamp = scheduledMedia.getBestLocalAirDate().getTime();
             }
 
@@ -48,5 +47,18 @@ public class MovieLog extends MediaLog {
         }
 
         return movieLogs;
+    }
+
+    private static int convertListNameToCondition(String listName) {
+        switch (listName) {
+            case HomeListDisplayFragment.UPCOMING_MOVIES:
+                return CONDITION_UPCOMING;
+            case HomeListDisplayFragment.ALREADY_RELEASED_MOVIES:
+                return CONDITION_AIRED;
+            case HomeListDisplayFragment.UNDATED_MOVIES:
+                return CONDITION_UNDATED;
+            default:
+                return 0;
+        }
     }
 }

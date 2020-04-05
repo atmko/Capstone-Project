@@ -137,7 +137,7 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         } else if (mListType == LIST_TYPE_AUTO) {
             if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
                 mMovieDataList = mDatabase.movieDataDao().getUserUpcomingMoviesAlt();
-                mMovieLogs = MovieLog.convertMediaToLogs(mMovieDataList);
+                mMovieLogs = MovieLog.convertMediaToLogs(mMovieDataList, mListName);
 
             } else {
                 mSeriesLogs = mDatabase.seriesLogsDao().getUpcomingAlt();

@@ -136,7 +136,7 @@ public class HomeListDisplayFragment extends Fragment
 
     private void populateAndNotifyAdapter(List mediaList) {
         mMediaLogAdapter.getAdapterData().clear();
-        if (mMediaType == MEDIA_TYPE_MOVIE) mediaList = MovieLog.convertMediaToLogs(mediaList);
+        if (mMediaType == MEDIA_TYPE_MOVIE) mediaList = MovieLog.convertMediaToLogs(mediaList, mListName);
 
         mMediaLogAdapter.addAdapterData(mediaList);
         mMediaLogAdapter.setPlaceholders();
