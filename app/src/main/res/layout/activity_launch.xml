@@ -92,7 +92,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:text="@string/agreement_error_text"
-        android:textColor="@android:color/holo_red_dark"
+        android:textColor="@color/colorAccent"
         android:textSize="@dimen/subtitle_text_size"
         android:visibility="gone"
         tools:visibility="visible"/>
