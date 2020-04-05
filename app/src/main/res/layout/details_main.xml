@@ -82,22 +82,31 @@
             app:layout_constraintBottom_toBottomOf="@+id/backdrop_image_view"
             app:layout_constraintStart_toStartOf="@+id/backdrop_image_view" />
 
-        <TextView
-            android:id="@+id/title_text_view"
+        <HorizontalScrollView
+            android:id="@+id/title_scroll_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/x1_layout_margin"
             android:layout_marginStart="@dimen/text_margin"
             android:layout_marginLeft="@dimen/x2_layout_margin"
-            android:layout_marginTop="@dimen/x1_layout_margin"
             android:layout_marginEnd="@dimen/x2_layout_margin"
             android:layout_marginRight="@dimen/x2_layout_margin"
-            tools:text="Alita Battle Angel"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/headline_2_text_size"
+            android:orientation="horizontal"
             app:layout_constraintEnd_toStartOf="@id/rating_text_view"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/backdrop_image_view" />
+            app:layout_constraintTop_toBottomOf="@id/backdrop_image_view"
+            android:scrollbars="none">
+
+            <TextView
+                android:id="@+id/title_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Alita Battle Angel"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/headline_2_text_size" />
+
+        </HorizontalScrollView>
 
         <TextView
             android:id="@+id/date_text_view"
@@ -109,7 +118,7 @@
             android:textSize="@dimen/caption_text_size"
             android:textColor="@color/color_subtext"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/title_text_view"
+            app:layout_constraintTop_toBottomOf="@+id/title_scroll_view"
             tools:text="2019" />
 
         <TextView
@@ -122,7 +131,7 @@
             android:textSize="@dimen/caption_text_size"
             android:textColor="@color/color_subtext"
             app:layout_constraintStart_toEndOf="@+id/date_text_view"
-            app:layout_constraintTop_toBottomOf="@+id/title_text_view"
+            app:layout_constraintTop_toBottomOf="@+id/title_scroll_view"
             tools:text="PG-13" />
 
         <TextView
@@ -135,7 +144,7 @@
             android:textSize="@dimen/caption_text_size"
             android:textColor="@color/color_subtext"
             app:layout_constraintStart_toEndOf="@+id/maturity_rating_text_view"
-            app:layout_constraintTop_toBottomOf="@+id/title_text_view"
+            app:layout_constraintTop_toBottomOf="@+id/title_scroll_view"
             tools:text="action" />
 
         <TextView
@@ -148,7 +157,7 @@
             android:textSize="@dimen/caption_text_size"
             android:textColor="@color/color_subtext"
             app:layout_constraintStart_toEndOf="@+id/genre_0_text_view"
-            app:layout_constraintTop_toBottomOf="@+id/title_text_view"
+            app:layout_constraintTop_toBottomOf="@+id/title_scroll_view"
             tools:text="drama" />
 
         <androidx.recyclerview.widget.RecyclerView

@@ -89,12 +89,6 @@ abstract public class MediaData {
     }
 
     public String getFormattedTitle() {
-        if (mTitle.contains(": ")) {
-            String[] titleStringArray = mTitle.split(": ", 2);
-
-            return titleStringArray[0] + ":" + "\n" + titleStringArray[1];
-        }
-
         return mTitle;
     }
 
