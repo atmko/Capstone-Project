@@ -1,6 +1,15 @@
 <resources>
     <string name="app_name">On My Watch</string>
 
+    <!--LAUNCH ACTIVITY TEXT-->
+    <string name="app_description">Manage And Track What You Watch</string>
+    <string name="streaming_disclaimer">On My Watch can NOT stream movies or series</string>
+    <string name="streaming_confirmation_text">I understand</string>
+    <string name="agreement_error_text">You must accept this condition to continue</string>
+    <string name="continue_text_literal">continue</string>
+    <string name="accept_terms_text">By clicking continue, you are agreeing to our Terms of Use and Privacy Policy</string>
+    <!--LAUNCH ACTIVITY TEXT-->
+
     <string name="ad_mob_application_id_key" translatable="false">com.google.android.gms.ads.APPLICATION_ID</string>
     <string name="ad_test_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
 
@@ -64,77 +73,77 @@
     <!--CONTENT DESCRIPTIONS-->
 
     <!--VIEW TEXT-->
-        <!--general text-->
-        <string name="search_text_box_hint">Search</string>
-        <string name="name_text_box_hint">Name</string>
-        <string name="save_button_text">Save</string>
-        <string name="cancel_button_text">Cancel</string>
-        <string name="delete_button_text">Delete</string>
-        <string name="yes_button_text">Yes</string>
-        <string name="no_button_text">No</string>
-        <!--general text-->
+    <!--general text-->
+    <string name="search_text_box_hint">Search</string>
+    <string name="name_text_box_hint">Name</string>
+    <string name="save_button_text">Save</string>
+    <string name="cancel_button_text">Cancel</string>
+    <string name="delete_button_text">Delete</string>
+    <string name="yes_button_text">Yes</string>
+    <string name="no_button_text">No</string>
+    <!--general text-->
 
-        <!--media type text-->
-        <string name="media_type_movies_text">Movies</string>
-        <string name="media_type_series_text">Series</string>
-        <string name="media_type_people_text">People</string>
-        <!--media type text-->
+    <!--media type text-->
+    <string name="media_type_movies_text">Movies</string>
+    <string name="media_type_series_text">Series</string>
+    <string name="media_type_people_text">People</string>
+    <!--media type text-->
 
-        <!--list type text-->
-        <string name="list_type_watch_text">Watch Lists</string>
-        <string name="list_type_user_text">User Lists</string>
-        <string name="list_type_auto_text">Auto Lists</string>
-        <!--list type text-->
+    <!--list type text-->
+    <string name="list_type_watch_text">Watch Lists</string>
+    <string name="list_type_user_text">User Lists</string>
+    <string name="list_type_auto_text">Auto Lists</string>
+    <!--list type text-->
 
-        <!--home text-->
-        <string name="spotlight_heading_text">Spotlight</string>
-        <string name="upcoming_episodes">Upcoming Episodes</string>
-        <string name="no_release_date">No Release Date</string>
-        <string name="fully_released">Fully Released</string>
-        <string name="upcoming_movies">Upcoming Movies</string>
-        <string name="already_released">Already Released</string>
-        <!--home text-->
+    <!--home text-->
+    <string name="spotlight_heading_text">Spotlight</string>
+    <string name="upcoming_episodes">Upcoming Episodes</string>
+    <string name="no_release_date">No Release Date</string>
+    <string name="fully_released">Fully Released</string>
+    <string name="upcoming_movies">Upcoming Movies</string>
+    <string name="already_released">Already Released</string>
+    <!--home text-->
 
-        <!--lists text-->
-        <string name="lists_text_literal">Lists</string>
-        <string name="user_lists_literal">User Lists</string>
-        <string name="watch_lists_literal">Watch Lists</string>
-        <!--lists text-->
+    <!--lists text-->
+    <string name="lists_text_literal">Lists</string>
+    <string name="user_lists_literal">User Lists</string>
+    <string name="watch_lists_literal">Watch Lists</string>
+    <!--lists text-->
 
-        <!--discover text-->
-        <string name="discover_text_literal">Discover</string>
-        <!--search text-->
+    <!--discover text-->
+    <string name="discover_text_literal">Discover</string>
+    <!--search text-->
 
-        <!--details text-->
-        <string name="detail_trailer_text_title">Trailer</string>
-        <string name="detail_notify_text_title">Notify</string>
-        <string name="detail_share_text_title">Share</string>
-        <string name="detail_rate_text_title">Rate</string>
+    <!--details text-->
+    <string name="detail_trailer_text_title">Trailer</string>
+    <string name="detail_notify_text_title">Notify</string>
+    <string name="detail_share_text_title">Share</string>
+    <string name="detail_rate_text_title">Rate</string>
 
-        <string name="detail_extra_cast_text_literal">Cast</string>
-        <string name="detail_extra_recommended_text_literal">Recommended</string>
-        <string name="detail_extra_reviews_text_literal">Reviews</string>
+    <string name="detail_extra_cast_text_literal">Cast</string>
+    <string name="detail_extra_recommended_text_literal">Recommended</string>
+    <string name="detail_extra_reviews_text_literal">Reviews</string>
 
-        <string name="rate_divider">/</string>
-        <string name="rate_default_overall_rating">10</string>
+    <string name="rate_divider">/</string>
+    <string name="rate_default_overall_rating">10</string>
 
-        <string name="detail_overview_tag_show_more" translatable="false">show more</string>
-        <string name="detail_overview_tag_show_less" translatable="false">show less</string>
-        <!--details text-->
+    <string name="detail_overview_tag_show_more" translatable="false">show more</string>
+    <string name="detail_overview_tag_show_less" translatable="false">show less</string>
+    <!--details text-->
 
-        <!--person details text-->
-        <string name="department_text_literal">Department</string>
-        <string name="date_of_birth_text_literal">Date of Birth</string>
-        <!--person details text-->
+    <!--person details text-->
+    <string name="department_text_literal">Department</string>
+    <string name="date_of_birth_text_literal">Date of Birth</string>
+    <!--person details text-->
 
-        <!--watch_status text-->
-        <string name="watch_status_none_title">None</string>
-        <string name="watch_status_to_watch_title">To Watch</string>
-        <string name="watch_status_watching_title">Watching</string>
-        <string name="watch_status_watched_title">Watched</string>
-        <string name="watch_status_dropped_title">Dropped</string>
-        <string name="watch_status_other_title">Other</string>
-        <!--add to list text-->
+    <!--watch_status text-->
+    <string name="watch_status_none_title">None</string>
+    <string name="watch_status_to_watch_title">To Watch</string>
+    <string name="watch_status_watching_title">Watching</string>
+    <string name="watch_status_watched_title">Watched</string>
+    <string name="watch_status_dropped_title">Dropped</string>
+    <string name="watch_status_other_title">Other</string>
+    <!--add to list text-->
     <!--VIEW TEXT-->
 
     <!--SNACK BAR MESSAGES-->

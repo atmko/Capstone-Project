@@ -47,8 +47,7 @@
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
-        <activity
-            android:name=".MasterActivity"
+        <activity android:name=".LaunchActivity"
             android:launchMode="singleTop"
             android:theme="@style/splashScreenTheme">
             <intent-filter>
@@ -57,6 +56,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".MasterActivity"
+            android:launchMode="singleTop" />
+
         <activity
             android:name=".widget.ListWidgetProviderConfigureActivity"
             android:autoRemoveFromRecents="true"
@@ -89,16 +93,18 @@
             android:excludeFromRecents="true"
             android:launchMode="singleTop"
             android:theme="@style/Theme.PopupDialog" />
-        <activity android:name=".RestoreActivity"
+        <activity
+            android:name=".RestoreActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.PopupDialog"/>
+            android:theme="@style/Theme.PopupDialog" />
         <activity
             android:name=".SettingsActivity"
             android:label="@string/options_settings_title"
             android:launchMode="singleTop"
             android:theme="@style/preferences_theme" />
-        <activity android:name=".BillingActivity"
+        <activity
+            android:name=".BillingActivity"
             android:label="@string/purchases_title"
             android:theme="@style/AppTheme" />
 

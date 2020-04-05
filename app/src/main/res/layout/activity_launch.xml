@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    tools:context=".LaunchActivity">
+
+    <TextView
+        android:id="@+id/logo_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/x3_layout_margin"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="@string/app_name"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/headline_4_text_size"/>
+
+    <TextView
+        android:id="@+id/description_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/x3_layout_margin"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/logo_text_view"
+        android:text="@string/app_description"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/headline_2_text_size"/>
+
+    <TextView
+        android:id="@+id/no_streaming_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/x3_layout_margin"
+        android:layout_marginEnd="@dimen/x3_layout_margin"
+        android:layout_marginBottom="@dimen/x1_layout_margin"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/i_understand_linear_layout"
+        android:text="@string/streaming_disclaimer"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/headline_3_text_size"/>
+
+    <LinearLayout
+        android:id="@+id/i_understand_linear_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/x17_layout_margin"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/button_continue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/i_understand_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/x1_layout_margin"
+            android:paddingBottom="@dimen/x1_layout_margin"
+            android:text="@string/streaming_confirmation_text"
+            app:layout_constraintBottom_toTopOf="@+id/button_continue"
+            app:layout_constraintEnd_toStartOf="@+id/i_understand_checkbox"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/i_understand_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/x1_layout_margin"
+            app:layout_constraintBottom_toTopOf="@+id/button_continue"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/i_understand_text_view" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/agreement_error_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/x1_layout_margin"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/i_understand_linear_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/agreement_error_text"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="@dimen/subtitle_text_size"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+    <Button
+        android:id="@+id/button_continue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/x1_layout_margin"
+        app:layout_constraintBottom_toTopOf="@id/terms_text_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/continue_text_literal"
+        android:background="@drawable/background_box_white"/>
+
+    <TextView
+        android:id="@+id/terms_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/x3_layout_margin"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/accept_terms_text"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/subtitle_text_size"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

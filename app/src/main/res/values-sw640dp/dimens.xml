@@ -60,8 +60,9 @@
     <dimen name="subtitle_text_size">23sp</dimen>
     <dimen name="headline_1_text_size">29sp</dimen>
     <dimen name="headline_2_text_size">34sp</dimen>
-    <dimen name="headline_3_text_size">51sp</dimen>
-    <dimen name="headline_4_text_size">64sp</dimen>
-    <dimen name="headline_5_text_size">69sp</dimen>
+    <dimen name="headline_3_text_size">43sp</dimen>
+    <dimen name="headline_4_text_size">51sp</dimen>
+    <dimen name="headline_5_text_size">64sp</dimen>
+    <dimen name="headline_6_text_size">69sp</dimen>
     <!--TEXT DIMENSIONS-->
 </resources>
