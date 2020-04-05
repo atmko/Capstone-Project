@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.atmko.onmywatch.R;
 
+import org.parceler.Parcel;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +36,7 @@ public class DetailsAdapter
         mAdapterData = new HashMap<>();
     }
 
+    @Parcel
     public static class DetailObject {
         public static final int ID_WATCH_STATUS = 0;
         public static final int ID_LIST_COUNT = 1;
@@ -46,6 +49,10 @@ public class DetailsAdapter
         public String text;
         private Integer imageId;
         public Integer imageVisibility;
+
+        //constructor for parceler
+        public DetailObject() {
+        }
 
         public DetailObject(int id, String text) {
             this.id = id;
@@ -130,6 +137,6 @@ public class DetailsAdapter
         detailObject.index = mAdapterData.size();
         mAdapterData.put(detailObject.id, detailObject);
 
-        notifyItemChanged(detailObject.index);
+        notifyDataSetChanged();
     }
 }

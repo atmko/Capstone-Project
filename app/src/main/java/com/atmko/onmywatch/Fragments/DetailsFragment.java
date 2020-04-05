@@ -688,9 +688,10 @@ public class DetailsFragment extends Fragment {
         } else {
             countdown = ScheduledMedia.NO_DATES;
         }
-        DetailsAdapter.DetailObject releaseStatusDetail =
+
+        DetailsAdapter.DetailObject countdownDetail =
                 new DetailsAdapter.DetailObject(DetailsAdapter.DetailObject.ID_COUNTDOWN, countdown);
-        mDetailsAdapter.addDetailObjectData(releaseStatusDetail);
+        mDetailsAdapter.addDetailObjectData(countdownDetail);
     }
 
     private void setSeriesCountDown(SeriesData seriesData) {
@@ -703,9 +704,10 @@ public class DetailsFragment extends Fragment {
         } else {
             countdown = ScheduledMedia.NO_DATES;
         }
-        DetailsAdapter.DetailObject releaseStatusDetail =
+
+        DetailsAdapter.DetailObject countdownDetail =
                 new DetailsAdapter.DetailObject(DetailsAdapter.DetailObject.ID_COUNTDOWN, countdown);
-        mDetailsAdapter.addDetailObjectData(releaseStatusDetail);
+        mDetailsAdapter.addDetailObjectData(countdownDetail);
     }
 
     private void loadOfflineMode() {
