@@ -22,6 +22,7 @@ import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.SeriesData;
+import com.atmko.onmywatch.utils.NoNotifierService;
 import com.atmko.onmywatch.utils.UpdateNotifierService;
 import com.atmko.onmywatch.utils.api_utils.MovieApiConstants;
 import com.atmko.onmywatch.utils.api_utils.MovieDataParser;
@@ -176,12 +177,24 @@ public class UpdateMediaWorker extends Worker {
                 || oldMediaData.getWatchStatus() == MediaData.WATCH_STATUS_WATCHING;
         boolean requiresUpdates = !oldMediaData.getReleaseStatus().equals(SeriesApiConstants.RELEASE_STATUS_ENDED)
                 && !oldMediaData.getReleaseStatus().equals(MovieApiConstants.RELEASE_STATUS_RELEASED);
-
+        boolean isProMode =
+                mContext
+                .getSharedPreferences(mContext.getString(R.string.application_shared_prefs_key),
+                        Context.MODE_PRIVATE)
+                        .getBoolean(mContext.getString(R.string.is_pro_mode_key),false);
         //if watch status supports notifiers and requires updates, launch update notifier service
         if (supportsNotifiers && requiresUpdates) {
-            Intent intent = new Intent(getApplicationContext(), UpdateNotifierService.class);
-            intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(newMediaData));
-            UpdateNotifierService.enqueueWork(mContext, intent);
+            Intent intent;
+            if (isProMode) {
+                intent = new Intent(getApplicationContext(), UpdateNotifierService.class);
+                intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(newMediaData));
+                UpdateNotifierService.enqueueWork(mContext, intent);
+
+            } else {
+                intent = new Intent(getApplicationContext(), NoNotifierService.class);
+                intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(newMediaData));
+                NoNotifierService.enqueueWork(mContext, intent);
+            }
         }
 
         Log.d(TAG, newMediaData.getTitle() + " data updated");

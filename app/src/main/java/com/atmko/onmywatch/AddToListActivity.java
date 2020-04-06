@@ -4,6 +4,7 @@
 
 package com.atmko.onmywatch;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -46,6 +47,7 @@ import com.atmko.onmywatch.models.SeriesDataRecord;
 import com.atmko.onmywatch.models.SimpleIdlingResource;
 import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.models.WatchListModel;
+import com.atmko.onmywatch.utils.NoNotifierService;
 import com.atmko.onmywatch.utils.UpdateNotifierService;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 import com.atmko.onmywatch.utils.api_utils.MovieDataParser;
@@ -680,9 +682,21 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
     }
 
     private void setNotifiers() {
-        Intent intent = new Intent(getApplicationContext(), UpdateNotifierService.class);
-        intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(mMediaData));
-        UpdateNotifierService.enqueueWork(getApplicationContext(), intent);
+        boolean isProMode =
+                getSharedPreferences(getString(R.string.application_shared_prefs_key),
+                        Context.MODE_PRIVATE)
+                        .getBoolean(getString(R.string.is_pro_mode_key),false);
+        Intent intent;
+        if (isProMode) {
+            intent = new Intent(getApplicationContext(), UpdateNotifierService.class);
+            intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(mMediaData));
+            UpdateNotifierService.enqueueWork(getApplicationContext(), intent);
+
+        } else {
+            intent = new Intent(getApplicationContext(), NoNotifierService.class);
+            intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(mMediaData));
+            NoNotifierService.enqueueWork(getApplicationContext(), intent);
+        }
     }
 
     private void updateWatchListCounts() {

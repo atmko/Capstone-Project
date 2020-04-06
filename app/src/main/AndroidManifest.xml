@@ -37,7 +37,10 @@
                 <action android:name="android.intent.action.TIME_SET" />
             </intent-filter>
         </receiver>
-
+        <service
+            android:name=".utils.NoNotifierService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
         <service
             android:name=".utils.UpdateNotifierService"
             android:exported="false"
@@ -126,7 +129,8 @@
         <service
             android:name=".utils.network_utils.BackupService"
             android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE" /> <!-- ad mob application id key: currently in test mode -->
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <!-- ad mob application id key: currently in test mode -->
         <meta-data
             android:name="@string/ad_mob_application_id_key"
             android:value="ca-app-pub-3940256099942544~3347511713" />
