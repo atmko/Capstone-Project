@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,7 +56,7 @@ public class ListWidgetProviderConfigureActivity extends AppCompatActivity
 
     private TextView mMediaTypeTextView;
     private int mMediaType;
-    public static boolean mIsProMode;
+    public boolean mIsProMode;
     private String[] mListTypeNames;
 
     public ListWidgetProviderConfigureActivity() {

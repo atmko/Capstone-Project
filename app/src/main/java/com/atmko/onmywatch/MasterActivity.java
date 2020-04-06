@@ -183,7 +183,13 @@ public class MasterActivity extends AppCompatActivity
             public void onChanged(Boolean isProMode) {
                 if (isProMode == null) return;
 
+                //update pro mode variable and shared preference
                 sIsProMode = isProMode;
+                getSharedPreferences(getString(R.string.application_shared_prefs_key),
+                        Context.MODE_PRIVATE).edit()
+                        .putBoolean(getString(R.string.is_pro_mode_key), isProMode)
+                        .apply();
+
                 if (!sIsProMode) {
                     initializeAdMob();
                 }
@@ -259,6 +265,12 @@ public class MasterActivity extends AppCompatActivity
 
         FirebaseAuth.getInstance().signOut();
         GoogleSignIn.getClient(this, gso).signOut();
+
+        //remove pro mode value
+        getSharedPreferences(getString(R.string.application_shared_prefs_key),
+                Context.MODE_PRIVATE).edit()
+                .putBoolean(getString(R.string.is_pro_mode_key), false)
+                .apply();
 
         //restart activity
         Intent intent = new Intent(getApplicationContext(), MasterActivity.class);

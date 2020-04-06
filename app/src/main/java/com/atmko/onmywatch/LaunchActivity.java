@@ -23,11 +23,12 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.google.android.material.snackbar.Snackbar;
 
 public class LaunchActivity extends AppCompatActivity {
-    public static final String APPLICATION_PREFERENCE_KEY = "application";
     public static final String AGREEMENT_KEY = "agreement";
 
     private AppCompatCheckBox checkBox;
     private TextView agreementErrorTextView;
+
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,11 +36,11 @@ public class LaunchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launch);
 
+        defineViews();
+        defineValues();
+
         if (isAgreementAcknowledged()) {
             startMasterActivity();
-
-        } else {
-            defineViews();
         }
     }
 
@@ -94,9 +95,12 @@ public class LaunchActivity extends AppCompatActivity {
         });
     }
 
+    private void defineValues() {
+        sharedPreferences = getSharedPreferences(getString(R.string.application_shared_prefs_key),
+                Context.MODE_PRIVATE);
+    }
+
     private boolean isAgreementAcknowledged() {
-        SharedPreferences sharedPreferences =
-                getSharedPreferences(APPLICATION_PREFERENCE_KEY, Context.MODE_PRIVATE);
         return sharedPreferences.getBoolean(AGREEMENT_KEY, false);
     }
 
@@ -105,10 +109,9 @@ public class LaunchActivity extends AppCompatActivity {
     }
 
     private void updateAgreementPreference() {
-        SharedPreferences.Editor editor =
-                getSharedPreferences(APPLICATION_PREFERENCE_KEY, Context.MODE_PRIVATE).edit();
-        editor.putBoolean(AGREEMENT_KEY, checkBox.isChecked());
-        editor.apply();
+        sharedPreferences.edit()
+                .putBoolean(AGREEMENT_KEY, checkBox.isChecked())
+                .apply();
     }
 
     private void launchBrowserIntent(String url) {

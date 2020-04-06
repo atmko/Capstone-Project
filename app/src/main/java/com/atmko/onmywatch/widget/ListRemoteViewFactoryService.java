@@ -135,12 +135,28 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
             }
 
         } else if (mListType == LIST_TYPE_AUTO) {
+            boolean isProMode =
+                    mContext
+                    .getSharedPreferences(mContext.getString(R.string.application_shared_prefs_key),
+                            Context.MODE_PRIVATE)
+                    .getBoolean(mContext.getString(R.string.is_pro_mode_key),false);
+
             if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
-                mMovieDataList = mDatabase.movieDataDao().getUserUpcomingMoviesAlt();
-                mMovieLogs = MovieLog.convertMediaToLogs(mMovieDataList, mListName);
+                if (isProMode) {
+                    mMovieDataList = mDatabase.movieDataDao().getUserUpcomingMoviesAlt();
+                    mMovieLogs = MovieLog.convertMediaToLogs(mMovieDataList, mListName);
+
+                } else {
+                    mMovieLogs = new ArrayList<>();
+                }
 
             } else {
-                mSeriesLogs = mDatabase.seriesLogsDao().getUpcomingAlt();
+                if (isProMode) {
+                    mSeriesLogs = mDatabase.seriesLogsDao().getUpcomingAlt();
+
+                } else {
+                    mSeriesLogs = new ArrayList<>();
+                }
             }
         }
     }

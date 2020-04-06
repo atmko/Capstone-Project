@@ -28,6 +28,11 @@
     <string name="settings_key_terms">terms</string>
     <!--preference keys-->
 
+    <!--shared preference keys-->
+    <string name="application_shared_prefs_key">application</string>
+    <string name="is_pro_mode_key">is_pro_mode</string>
+    <!--shared preference keys-->
+
     <!--settings titles-->
     <string name="settings_review_title">Review this app</string>
     <string name="settings_contact_developer_title">Contact Developer</string>
