@@ -265,6 +265,8 @@ public class UpdateNotifierService extends JobIntentService {
                                 //rerun the function with non null trakt id
                                 if (outputTraktId != null) {
                                     newMediaData.setTraktId(outputTraktId);
+                                    //save trakt id
+                                    updateMedia(newMediaData);
 
                                     getTraktNextEpisodeDetails();
                                 }
@@ -281,6 +283,8 @@ public class UpdateNotifierService extends JobIntentService {
                                     //if there is a next episode and date, create notifier using date, otherwise try using tmdb details
                                     Episode nextEpisode = ((SeriesData) newMediaData).getNextEpisodeToAir();
                                     if (nextEpisode != null && nextEpisode.getBestAvailableDateString() != null) {
+                                        //save next episode
+                                        updateMedia(newMediaData);
                                         setNewEpisodeNotifierThroughDateComparison();
 
                                     } else {
@@ -321,9 +325,6 @@ public class UpdateNotifierService extends JobIntentService {
 
     //creates new episode notifier and notification alarm if release date exists and is in the future
     private void setNewEpisodeNotifierThroughDateComparison() {
-        //update media data to save trakt id and countdown
-        mDatabase.seriesDataDao().updateSeriesData(((SeriesData) newMediaData));
-
         Episode nextEpisode = ((SeriesData) newMediaData).getNextEpisodeToAir();
 
         boolean releaseDateInPast =
@@ -359,6 +360,8 @@ public class UpdateNotifierService extends JobIntentService {
             //if there is a next episode and date, create notifier using date, otherwise create notifier without alarm
             Episode nextEpisode = ((SeriesData) newMediaData).getNextEpisodeToAir();
             if (nextEpisode != null && nextEpisode.getBestAvailableDateString() != null) {
+                //save next episode
+                updateMedia(newMediaData);
                 setNewEpisodeNotifierThroughDateComparison();
 
             } else {
@@ -470,6 +473,14 @@ public class UpdateNotifierService extends JobIntentService {
         if (notifier != null) {
             //cancel alarm and delete media notifier
             NotificationHandler.cancelAlarm(this, notifier);
+        }
+    }
+
+    private void updateMedia(MediaData mediaData) {
+        if (mediaData instanceof MovieData) {
+            mDatabase.movieDataDao().updateMovieData(((MovieData) mediaData));
+        } else {
+            mDatabase.seriesDataDao().updateSeriesData(((SeriesData) mediaData));
         }
     }
 
