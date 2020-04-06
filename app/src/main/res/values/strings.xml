@@ -171,7 +171,8 @@
     <string name="list_delete_record_error_message">Error: media has NOT been removed from list</string>
     <string name="rating_disallowed_message">Rating only allowed if item has \"Watching\", \"Watched\" or \"Dropped\" watch status.</string>
     <string name="confirmation_error_message">An error occurred in confirmation</string>
-    <string name="restoring_last_backup_message">Restoring Latest Backup.</string>
+    <string name="checking_for_backups_message">Checking For Backups.</string>
+    <string name="backups_found_message">Backups Found</string>
     <string name="backup_completed_message">Backup Completed.</string>
     <string name="backup_failure_message">Backup Failed.</string>
     <string name="restore_completed_message">Restore Completed.</string>

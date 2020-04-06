@@ -26,8 +26,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.room.RoomDatabase;
-import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
@@ -58,7 +56,6 @@ import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
 import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.utils.network_utils.BackupService;
-import com.atmko.onmywatch.utils.network_utils.RestoreService;
 import com.atmko.onmywatch.utils.network_utils.work_manager_workers.BackupWorker;
 import com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker;
 import com.atmko.onmywatch.view_models.MasterActivityViewModel;
@@ -79,8 +76,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class MasterActivity extends AppCompatActivity
-        implements BackupService.OnBackupCompleteListener, RestoreService.OnRestoreCompleteListener,
+public class MasterActivity extends AppCompatActivity implements
+        BackupService.OnBackupCompleteListener,
         ListsWatchAndUserParentFragment.ListFragmentImplementation,
         ListWatchAndUserAdapter.LogicImplementation,
         ListWatchAndUserFragment.OnListModelClickListener {
@@ -172,8 +169,11 @@ public class MasterActivity extends AppCompatActivity
             sIdlingResource.setIdleState(false);
         }
 
-        RoomDatabase.Callback callback = databaseInitializer(isLoggingIn);
-        AppDatabase.getInstance(this, callback);
+        if (isLoggingIn) {
+            addWatchListsAndCheckForBackups();
+        }
+
+        AppDatabase.getInstance(this);
 
         MasterActivityViewModel masterActivityViewModel =
                 ViewModelProviders.of(this).get(MasterActivityViewModel.class);
@@ -875,43 +875,15 @@ public class MasterActivity extends AppCompatActivity
         searchEditText.setVisibility(View.VISIBLE);
     }
 
-    public RoomDatabase.Callback databaseInitializer(final boolean isLoggingIn) {
-        final boolean[] isRestored = {false};
-        //reference
-        //https://medium.com/@srinuraop/database-create-and-open-callbacks-in-room-7ca98c3286ab
-        return new RoomDatabase.Callback() {
+    private void addWatchListsAndCheckForBackups() {
+        showSnackBarMessage(getString(R.string.checking_for_backups_message));
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
-            public void onCreate(@NonNull SupportSQLiteDatabase db) {
-                AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (isLoggingIn) {
-                            addWatchLists();
-                            restoreLatestBackup();
-
-                            //prevent restoring again if database opens
-                            isRestored[0] = true;
-                        }
-                    }
-                });
+            public void run() {
+                addWatchLists();
+                checkForBackups();
             }
-
-            @Override
-            public void onOpen(@NonNull SupportSQLiteDatabase db) {
-                super.onOpen(db);
-                AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (isLoggingIn) {
-                            //check if database has been restored already (from onCreate method)
-                            if (!isRestored[0]) {
-                                restoreLatestBackup();
-                            }
-                        }
-                    }
-                });
-            }
-        };
+        });
     }
 
     private void addWatchLists() {
@@ -924,50 +896,17 @@ public class MasterActivity extends AppCompatActivity
         }
     }
 
-    private void restoreLatestBackup() {
+    private void checkForBackups() {
         Backup latestBackup = FirebaseUserDataDao.getLatestBackupAlt();
         if (latestBackup != null) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    progressLayout.setVisibility(View.VISIBLE);
-                    showSnackBarMessage(getString(R.string.restoring_last_backup_message));
-                }
-            });
-            //restore backup;
-            Intent intent = new Intent(this, RestoreService.class);
-            intent.putExtra(RestoreService.FOLDER_KEY, RestoreService.BACKUP_FOLDER_NAME);
-            intent.putExtra(RestoreService.FILENAME_KEY, latestBackup.getFileName());
-            RestoreService.enqueueWork(this, intent);
+            Intent intent = new Intent(this, RestoreActivity.class);
+            startActivity(intent);
         }
     }
 
     private void showSnackBarMessage(String string) {
         if (string == null || string.equals("")) return;
         Snackbar.make(findViewById(R.id.top_layout), string, Snackbar.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void onRestoreComplete() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                progressLayout.setVisibility(View.GONE);
-                showSnackBarMessage(getString(R.string.restore_completed_message));
-            }
-        });
-    }
-
-    @Override
-    public void onRestoreFailed() {
-        addWatchLists();
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                progressLayout.setVisibility(View.GONE);
-                showSnackBarMessage(getString(R.string.restore_failed_message));
-            }
-        });
     }
 
     /**

@@ -67,6 +67,10 @@ public class RestoreActivity extends AppCompatActivity implements BackupAdapter.
         restoreActivityViewModel.getBackupsLiveData().observe(this, new Observer<List<Backup>>() {
             @Override
             public void onChanged(List<Backup> backups) {
+                if (backups.size() > 0) {
+                    showSnackBarMessage(getString(R.string.backups_found_message));
+                }
+
                 adapter.getAdapterData().clear();
                 adapter.addAdapterData(backups);
             }
