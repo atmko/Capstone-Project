@@ -150,7 +150,9 @@ public class NotificationHandler {
         List<MovieNotifier> notifiers = database.movieNotifierDao().getActiveNotifiersAlt();
 
         for (MovieNotifier notifier: notifiers) {
+            if (notifier == null) continue;
             MediaData mediaData = database.movieDataDao().getMovieByIdAlt(notifier.getMediaId());
+            if (mediaData == null) continue;
 
             if (notifier.getCondition() == MediaNotifier.CONDITION_ON_RELEASE) {
                 //skip if release date is empty
@@ -165,7 +167,9 @@ public class NotificationHandler {
         List<SeriesNotifier> notifiers = database.seriesNotifierDao().getActiveNotifiersAlt();
 
         for (SeriesNotifier notifier: notifiers) {
+            if (notifier == null) continue;
             SeriesData seriesData = database.seriesDataDao().getSeriesByIdAlt(notifier.getMediaId());
+            if (seriesData == null || seriesData.getNextEpisodeToAir() == null) continue;
             String alarmDate = seriesData.getNextEpisodeToAir().getBestAvailableDateString();
 
             //skip if alarm date is empty
