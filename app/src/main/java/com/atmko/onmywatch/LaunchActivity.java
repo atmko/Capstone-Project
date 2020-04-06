@@ -75,7 +75,7 @@ public class LaunchActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isAgreed) {
                 if (isAgreed) {
-                    agreementErrorTextView.setVisibility(View.GONE);
+                    agreementErrorTextView.setVisibility(View.INVISIBLE);
                 }
             }
         });
