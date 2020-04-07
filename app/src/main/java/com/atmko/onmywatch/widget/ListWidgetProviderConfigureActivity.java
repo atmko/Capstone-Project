@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.atmko.onmywatch.Fragments.ListResultsParentFragment;
 import com.atmko.onmywatch.Fragments.ListWatchAndUserFragment;
 import com.atmko.onmywatch.Fragments.ListsWatchAndUserParentFragment;
 import com.atmko.onmywatch.MasterActivity;
@@ -281,6 +282,14 @@ public class ListWidgetProviderConfigureActivity extends AppCompatActivity
     @Override
     public void onListModelClick(ListsAdapter adapter, Fragment childFragment, int listType,
                                  ListModel listModel) {
+        if (adapter.inPlaceholderMode()) {
+            if (childFragment.getParentFragment() != null) {
+                MasterActivity.launchCreateListActivity(this);
+
+                return;
+            }
+        }
+
         final Context context = ListWidgetProviderConfigureActivity.this;
 
         // When the button is clicked, store the string locally

@@ -967,7 +967,7 @@ public class MasterActivity extends AppCompatActivity implements
                                  ListModel listModel) {
         if (adapter.inPlaceholderMode()) {
             if (childFragment.getParentFragment() != null) {
-                MasterActivity.launchCreateListActivity(childFragment.getParentFragment().getActivity());
+                launchCreateListActivity(this);
 
                 return;
             }
