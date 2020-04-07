@@ -26,6 +26,14 @@
         app:allowDividerBelow="true"/>
 
     <Preference
+        android:title="The Movie Database"
+        android:summary="This product uses the TMDb API but is not endorsed or certified by TMDb."
+        android:icon="@drawable/ic_tmdb_logo"
+        app:iconSpaceReserved="false"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="true"/>
+
+    <Preference
         android:title="@string/settings_privacy_policy_title"
         android:key="@string/settings_key_privacy"
         app:iconSpaceReserved="false"
