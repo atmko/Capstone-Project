@@ -148,7 +148,8 @@ public class UpdateMediaWorker extends Worker {
                         //notify user of error
                         if (anError.getErrorCode() == ApiConstants.TOO_MANY_REQUESTS) {
                             retryAfterCoolDOwn(anError, oldMediaData, detailUrl, searchPreferences);
-                        }                    }
+                        }
+                    }
                 });
             }
         });

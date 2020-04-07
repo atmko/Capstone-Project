@@ -141,8 +141,9 @@ public class SeriesTracker extends JobIntentService {
 
                         //make data congruent by...
                         //setting episodes aired using series next episode property
-                        //replacing corresponding episode with series next episode
-                        if (newMediaData.getNextEpisodeToAir() != null) {
+                        //replacing corresponding episode with series next episode only if net episode's source is trakt
+                        if (newMediaData.getNextEpisodeToAir() != null &&
+                                newMediaData.getNextEpisodeToAir().source == Episode.SOURCE_TRAKT) {
                             if (lastSeason.seasonNumber == newMediaData.getNextEpisodeToAir().seasonNumber) {
                                 lastSeason.episodesAired = newMediaData.getNextEpisodeToAir().episodeNumber - 1;
                                 lastSeason.overrideEpisode(newMediaData.getNextEpisodeToAir());

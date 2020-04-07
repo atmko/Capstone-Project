@@ -172,6 +172,7 @@ public class SeriesDataParser {
 
             if (nextEpisodeAirDate != null) {
                 Episode nextEpisode = EpisodeParser.parseTraktEpisode(seriesData.getId(), returnedMap);
+                nextEpisode.source = Episode.SOURCE_TMDB;
                 try {
                     nextEpisode.setAirDate(nextEpisodeAirDate);
                     detailsSeriesData.setNextEpisodeToAir(nextEpisode);
@@ -273,6 +274,7 @@ public class SeriesDataParser {
 
             if (nextEpisodeAirDate != null) {
                 Episode nextEpisode = EpisodeParser.parseTraktEpisode(seriesData.getId(), returnedMap);
+                if (nextEpisode != null) nextEpisode.source = Episode.SOURCE_TRAKT;
                 try {
                     nextEpisode.setAirDate(nextEpisodeAirDate);
                     seriesData.setNextEpisodeToAir(nextEpisode);
@@ -395,6 +397,7 @@ public class SeriesDataParser {
         }
 
         static Season parseTraktSeason(String mediaId, Map seasonMap) {
+            //TODO: REMOVE HARDCODED STRINGS
             Double episodeNumberDouble = ((Double) seasonMap.get("number"));
             int seasonNumber = episodeNumberDouble != null ? episodeNumberDouble.intValue() : 0;
             String firstAired = ((String) seasonMap.get("first_aired"));
@@ -428,16 +431,19 @@ public class SeriesDataParser {
         }
 
         static Episode parseTraktEpisode(String mediaId, Map episodeMap) {
+            //TODO: REMOVE HARDCODED STRINGS
             Double seasonNumberDouble = ((Double) episodeMap.get("season"));
             Double episodeNumberDouble = ((Double) episodeMap.get("number"));
             int seasonNumber = seasonNumberDouble != null ? seasonNumberDouble.intValue() : 0;
             int episodeNumber = episodeNumberDouble != null ? episodeNumberDouble.intValue() : 0;
+            int source = Episode.SOURCE_TRAKT;
             String firstAired = ((String) episodeMap.get("first_aired"));
 
             return new Episode(
                     mediaId,
                     seasonNumber,
                     episodeNumber,
+                    source,
                     firstAired
             );
         }

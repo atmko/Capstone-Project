@@ -14,18 +14,23 @@ import java.util.Date;
 
 @Parcel
 public class Episode extends ScheduledMedia {
+    public static final int SOURCE_TMDB = 0;
+    public static final int SOURCE_TRAKT = 1;
+
     public String parentMediaId;
     public int seasonNumber;
     public int episodeNumber;
     public long timestamp;
+    public int source;
 
     public Episode() {
     }
 
-    public Episode(String parentMediaId, int seasonNumber, int episodeNumber, String airDate) {
+    public Episode(String parentMediaId, int seasonNumber, int episodeNumber, int source, String airDate) {
         this.parentMediaId = parentMediaId;
         this.seasonNumber = seasonNumber;
         this.episodeNumber = episodeNumber;
+        this.source = source;
         try {
             setAirDate(airDate);
         } catch (DateFormatException e) {

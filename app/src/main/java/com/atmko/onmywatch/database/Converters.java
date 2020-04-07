@@ -77,11 +77,12 @@ public class Converters {
 
             int seasonNumber = Integer.valueOf(strings[1].split(":")[1]);
             int episodeNumber = Integer.valueOf(strings[2].split(":")[1]);
+            int source = Integer.valueOf(strings[3].split(":")[1]);
 
             String airDate = strings[3].split(":", 2)[1];
             airDate = !airDate.equals(NULL_STRING)? airDate: null;
 
-            return new Episode(parentMediaId, seasonNumber, episodeNumber, airDate);
+            return new Episode(parentMediaId, seasonNumber, episodeNumber, source, airDate);
         }
     }
 
@@ -101,6 +102,10 @@ public class Converters {
                     "episode_number" +
                     ":" +
                     episode.episodeNumber +
+                    "," +
+                    "source" +
+                    ":" +
+                    episode.source +
                     "," +
                     "air_date" +
                     ":" +
