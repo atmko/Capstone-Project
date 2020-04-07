@@ -76,6 +76,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import hotchemi.android.rate.AppRate;
+
 public class MasterActivity extends AppCompatActivity implements
         BackupService.OnBackupCompleteListener,
         ListsWatchAndUserParentFragment.ListFragmentImplementation,
@@ -149,6 +151,19 @@ public class MasterActivity extends AppCompatActivity implements
         }
     }
 
+    private void startReviewsLibrary() {
+        AppRate.with(this)
+                .setInstallDays(1) // default 10, 0 means install day.
+                .setLaunchTimes(3) // default 10
+                .setRemindInterval(2) // default 1
+                .setShowLaterButton(true) // default true
+
+                .monitor();
+
+        // Show a dialog if meets conditions
+        AppRate.showRateDialogIfMeetsConditions(this);
+    }
+
     private void defineViews() {
         progressLayout = findViewById(R.id.progress_layout);
     }
@@ -202,6 +217,8 @@ public class MasterActivity extends AppCompatActivity implements
     }
 
     public void loadUi() {
+        startReviewsLibrary();
+
         //remove all fragments
         Fragment masterFragment =
                 getSupportFragmentManager().findFragmentById(R.id.master_fragments_container);

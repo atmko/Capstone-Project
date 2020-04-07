@@ -97,6 +97,8 @@ dependencies {
 
     //billing
     implementation 'com.android.billingclient:billing:2.1.0'
+
+    implementation 'com.github.hotchemi:android-rate:1.0.1'
 }
 
 //test dependencies
