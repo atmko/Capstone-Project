@@ -169,8 +169,8 @@
     </array>
 
     <array name="spotlight_url">
-        <item>https://api.themoviedb.org/3/tv/popular?api_key={api_key}&amp;language={language}&amp;page={page}</item>
-        <item>https://api.themoviedb.org/3/movie/popular?api_key={api_key}&amp;language={language}&amp;page={page}&amp;region={region}</item>
+        <item>https://api.themoviedb.org/3/trending/tv/week?api_key={api_key}</item>
+        <item>https://api.themoviedb.org/3/trending/movie/week?api_key={api_key}</item>
     </array>
 
     <array name="genre_id_key">
