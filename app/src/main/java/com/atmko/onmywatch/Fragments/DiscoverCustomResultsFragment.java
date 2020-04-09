@@ -71,6 +71,8 @@ public class DiscoverCustomResultsFragment extends Fragment implements
     private static final String SEARCH_URL_KEY = "search_url";
     private static final String SEARCH_PREFERENCES_KEY = "search_preferences";
 
+    private static final String IS_SEARCH_WINDOW_SHOWN_KEY = "is_search_window_shown";
+
     private String mSearchType;
     private int mMediaType;
     private String mSearchUrl;
@@ -136,6 +138,9 @@ public class DiscoverCustomResultsFragment extends Fragment implements
         restoreCustomSpinnerValues(savedInstanceState);
 
         if (savedInstanceState != null) {
+            boolean searchActive = savedInstanceState.getBoolean(IS_SEARCH_WINDOW_SHOWN_KEY);
+            setSearchActive(searchActive);
+
             MasterActivity.restoreSearchIfAvailable(DiscoverCustomResultsFragment.this, savedInstanceState);
 
             List mediaDataList;
@@ -571,6 +576,7 @@ public class DiscoverCustomResultsFragment extends Fragment implements
         //save search bar visibility
         outState.putInt(MasterActivity.SEARCH_BAR_VISIBILITY_KEY, mSearchTextView.getVisibility());
 
+        outState.putBoolean(IS_SEARCH_WINDOW_SHOWN_KEY, isSearchActive());
     }
 
     @Override
