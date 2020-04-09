@@ -4,7 +4,9 @@
 
 package com.atmko.onmywatch.utils.api_utils;
 
-import com.atmko.onmywatch.utils.api_utils.ApiConstants;
+import android.content.Context;
+
+import com.atmko.onmywatch.R;
 
 import org.parceler.Parcel;
 
@@ -14,11 +16,6 @@ import org.parceler.Parcel;
 public final class SearchPreferences {
     //urls & paths
     private static String mQueryUrlString;//final url used by MovieLoader
-
-    //sort parameters---------------------------------------------------------------
-    public static final String SORT_BY_POPULAR = "popular";
-    public static final String SORT_BY_TOP_RATED = "top_rated";
-    public static final String SORT_BY_FAVORITES = "favorites";
 
     //language parameters
     String mLanguageParamVal;
@@ -47,6 +44,12 @@ public final class SearchPreferences {
     //first air date year parameter
     String mFirstAirDateYear;
 
+    String mGenres;
+
+    String mNetworks;
+
+    String mSortBy;
+
     //---------------------------------------------------------
 
     //constructor for parceler
@@ -58,7 +61,7 @@ public final class SearchPreferences {
     }
 
     public String[] getPreferenceValueList(){
-        String[] preferenceList = new String[9];
+        String[] preferenceList = new String[12];
         preferenceList[0] = ApiConstants.API_KEY;
         preferenceList[1] = getLanguageValue();
         preferenceList[2] = getQuery();
@@ -68,6 +71,9 @@ public final class SearchPreferences {
         preferenceList[6] = getYear();
         preferenceList[7] = getPrimaryReleaseYear();
         preferenceList[8] = getFirstAirDateYear();
+        preferenceList[9] = getGenres();
+        preferenceList[10] = getNetworks();
+        preferenceList[11] = getSortBy();
 
         return preferenceList;
     }
@@ -158,5 +164,53 @@ public final class SearchPreferences {
 
     public void setQueryUrlString(String urlString) {
         mQueryUrlString = urlString;
+    }
+
+    public void setGenres(Context context, int[] genresIndices) {
+        String[] genreKeys = context.getResources().getStringArray(R.array.genre_id_key);
+
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < genresIndices.length; i++) {
+            String genreKey = genreKeys[genresIndices[i]];
+            if (genreKey.equals(genreKeys[0])) continue;
+
+            stringBuilder.append(genreKey);
+            if (i != genresIndices.length - 1) stringBuilder.append(",");
+        }
+
+        mGenres = stringBuilder.toString();
+    }
+
+    public void setNetworks(Context context, int[] networkIndices) {
+        String[] networkKeys = context.getResources().getStringArray(R.array.network_keys);
+
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < networkIndices.length; i++) {
+            String genreKey = networkKeys[networkIndices[i]];
+            if (genreKey.equals(networkKeys[0])) continue;
+
+            stringBuilder.append(genreKey);
+            if (i != networkIndices.length - 1) stringBuilder.append(",");
+        }
+
+        mNetworks = stringBuilder.toString();
+    }
+
+    public void setSortBy(Context context, int sortByIndex) {
+        String[] sortByKeys = context.getResources().getStringArray(R.array.sort_keys);
+
+        mSortBy = !sortByKeys[sortByIndex].equals(sortByKeys[0]) ? sortByKeys[sortByIndex] : "";
+    }
+
+    public String getGenres() {
+        return mGenres != null && !mGenres.equals("") ? mGenres : "";
+    }
+
+    public String getNetworks() {
+        return mNetworks != null && !mNetworks.equals("") ? mNetworks : "";
+    }
+
+    public String getSortBy() {
+        return mSortBy != null && !mSortBy.equals("") ? mSortBy : "";
     }
 }

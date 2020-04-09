@@ -38,6 +38,7 @@
     </array>
 
     <array name="preset_movie_discover_titles">
+        <item>custom</item>
         <item>now playing</item>
         <item>upcoming</item>
         <item>popular</item>
@@ -45,6 +46,7 @@
     </array>
 
     <array name="preset_movie_discover_urls">
+        <item>https://api.themoviedb.org/3/discover/movie?api_key={api_key}&amp;language={language}&amp;sort_by={sort_by}&amp;include_adult=false&amp;include_video=false&amp;page={page}&amp;with_genres={genres}</item>
         <item>https://api.themoviedb.org/3/movie/now_playing?api_key={api_key}&amp;language={language}&amp;page={page}&amp;region={region}</item>
         <item>https://api.themoviedb.org/3/movie/upcoming?api_key={api_key}&amp;language={language}&amp;page={page}&amp;region={region}</item>
         <item>https://api.themoviedb.org/3/movie/popular?api_key={api_key}&amp;language={language}&amp;page={page}&amp;region={region}</item>
@@ -54,7 +56,7 @@
     <!--___________________________________________-->
 
     <array name="preset_series_discover_titles">
-        <!--<item>latest</item>-->
+        <item>custom</item>
         <item>airing today</item>
         <item>on the air</item>
         <item>popular</item>
@@ -62,6 +64,7 @@
     </array>
 
     <array name="preset_series_discover_urls">
+        <item>https://api.themoviedb.org/3/discover/tv?api_key={api_key}&amp;language={language}&amp;sort_by={sort_by}&amp;page={page}&amp;timezone=America%2FNew_York&amp;with_genres={genres}&amp;with_networks={networks}&amp;include_null_first_air_dates=false</item>
         <item>https://api.themoviedb.org/3/tv/airing_today?api_key={api_key}&amp;language={language}&amp;page={page}</item>
         <item>https://api.themoviedb.org/3/tv/on_the_air?api_key={api_key}&amp;language={language}&amp;page={page}</item>
         <item>https://api.themoviedb.org/3/tv/popular?api_key={api_key}&amp;language={language}&amp;page={page}</item>
@@ -111,6 +114,9 @@
         <item>year</item>
         <item>primary_release_year</item>
         <item>first_air_date_year</item><!--for series-->
+        <item>genres</item>
+        <item>networks</item><!--for series-->
+        <item>sort_by</item>
     </array>
 
     <!--DATABASE-->
@@ -174,6 +180,7 @@
     </array>
 
     <array name="genre_id_key">
+        <item>none</item>
         <item>"28"</item>
         <item>"12"</item>
         <item>"16"</item>
@@ -196,6 +203,7 @@
     </array>
 
     <array name="genre_id_value">
+        <item>none</item>
         <item>Action</item>
         <item>Adventure</item>
         <item>Animation</item>
@@ -215,6 +223,61 @@
         <item>Thriller</item>
         <item>War</item>
         <item>Western</item>
+    </array>
+
+    <array name="custom_search_titles">
+        <item>Genre 1</item>
+        <item>Genre 2</item>
+        <item>Network</item>
+        <item>Sort By</item>
+    </array>
+
+    <array name="network_keys">
+        <item>none</item>
+        <item>"213"</item>
+        <item>"174"</item>
+        <item>"49"</item>
+        <item>"6"</item>
+        <item>"19"</item>
+        <item>"1024"</item>
+        <item>"2"</item>
+        <item>"16"</item>
+    </array>
+
+    <array name="network_values">
+        <item>none</item>
+        <item>Netflix</item>
+        <item>AMC</item>
+        <item>HBO</item>
+        <item>NBC</item>
+        <item>FOX</item>
+        <item>Amazon</item>
+        <item>ABC</item>
+        <item>CBS</item>
+    </array>
+
+    <array name="sort_keys">
+        <item>none</item>
+        <item>vote_average.desc</item>
+        <item>vote_average.asc</item>
+        <item>popularity.desc</item>
+        <item>popularity.asc</item>
+        <item>release_date.desc</item>
+        <item>release_date.asc</item>
+        <item>original_title.desc</item>
+        <item>original_title.asc</item>
+    </array>
+
+    <array name="sort_values">
+        <item>none</item>
+        <item>Rating.desc</item>
+        <item>Rating.asc</item>
+        <item>Popularity.desc</item>
+        <item>Popularity.asc</item>
+        <item>Release Date.desc</item>
+        <item>Release Date.asc</item>
+        <item>Title.desc</item>
+        <item>Title.asc</item>
     </array>
 
     <array name="notifier_movies_keys">

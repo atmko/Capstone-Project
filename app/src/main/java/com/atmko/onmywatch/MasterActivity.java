@@ -24,6 +24,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.work.Constraints;
@@ -32,6 +33,8 @@ import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
 import com.atmko.onmywatch.Fragments.DetailsFragment;
+import com.atmko.onmywatch.Fragments.DiscoverCustomResultsFragment;
+import com.atmko.onmywatch.Fragments.DiscoverParentFragment;
 import com.atmko.onmywatch.Fragments.HomeFragment;
 import com.atmko.onmywatch.Fragments.ListResultsParentFragment;
 import com.atmko.onmywatch.Fragments.ListWatchAndUserFragment;
@@ -527,7 +530,25 @@ public class MasterActivity extends AppCompatActivity implements
                         .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
                         .remove(fragment).commit();
 
-            //condition for navigation
+            } else if (fragment instanceof DiscoverParentFragment) {
+                DiscoverParentFragment parentFragment = ((DiscoverParentFragment) fragment);
+                FragmentManager fragmentManager = parentFragment.getChildFragmentManager();
+                DiscoverCustomResultsFragment customResultsFragment =
+                        ((DiscoverCustomResultsFragment) fragmentManager.getFragments().get(0));
+
+                boolean isCurrentTab = customResultsFragment.isCurrentTab();
+                boolean isSearchActive = customResultsFragment.isSearchWindowShown();
+                if (isCurrentTab && isSearchActive) {
+                    customResultsFragment.showSearchWindow();
+
+                } else {
+                    getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(R.anim.slide_down_entry, R.anim.slide_up_exit)
+                            .remove(fragment)
+                            .commit();
+                }
+
+                //condition for navigation
             } else {
                 getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.slide_down_entry, R.anim.slide_up_exit)
