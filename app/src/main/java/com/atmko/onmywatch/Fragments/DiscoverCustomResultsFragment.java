@@ -442,10 +442,11 @@ public class DiscoverCustomResultsFragment extends Fragment implements
                 ((PeopleDataAdapter) mDataAdapter).getAdapterData().get(0);
 
             } else {
-                firstMediaData =
-                        ((MediaDataAdapter) mDataAdapter).getAdapterData().get(0);
+                if (((MediaDataAdapter) mDataAdapter).getAdapterData().size() > 0) {
+                    firstMediaData = ((MediaDataAdapter) mDataAdapter).getAdapterData().get(0);
 
-                ((MasterActivity) getActivity()).launchDetailsFragment(firstMediaData, null);
+                    ((MasterActivity) getActivity()).launchDetailsFragment(firstMediaData, null);
+                }
             }
         }
     }
