@@ -65,6 +65,7 @@
         <item name="tabTextColor">@android:color/white</item>
         <item name="tabIndicatorFullWidth">true</item>
         <item name="tabIndicatorHeight">@dimen/indicator_height</item>
+        <item name="android:background">@color/background</item>
     </style>
 
     <style name="fab_base_style">
