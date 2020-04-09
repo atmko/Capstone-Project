@@ -536,10 +536,8 @@ public class MasterActivity extends AppCompatActivity implements
                 DiscoverCustomResultsFragment customResultsFragment =
                         ((DiscoverCustomResultsFragment) fragmentManager.getFragments().get(0));
 
-                boolean isCurrentTab = customResultsFragment.isCurrentTab();
-                boolean isSearchActive = customResultsFragment.isSearchWindowShown();
-                if (isCurrentTab && isSearchActive) {
-                    customResultsFragment.showSearchWindow();
+                if (customResultsFragment.isCurrentTab() && customResultsFragment.isSearchActive()) {
+                    customResultsFragment.setSearchActive(false);
 
                 } else {
                     getSupportFragmentManager().beginTransaction()

@@ -250,7 +250,7 @@ public class DiscoverCustomResultsFragment extends Fragment implements
                 mSearchPreferences.setNetworks(getContext(), indices);
                 mSearchPreferences.setSortBy(getContext(), sortByIndex);
 
-                hideSearchWindow();
+                activateSearch();
 
                 loadSearch();
             }
@@ -488,20 +488,29 @@ public class DiscoverCustomResultsFragment extends Fragment implements
         }
     }
 
-    public boolean isSearchWindowShown() {
+    public boolean isSearchActive() {
         return recyclerView.getVisibility() == View.VISIBLE;
     }
 
-    public void showSearchWindow() {
-        searchButton.setVisibility(View.VISIBLE);
-        customSearchLayout.setVisibility(View.VISIBLE);
-        recyclerView.setVisibility(View.GONE);
+    public void setSearchActive(boolean searchActive) {
+        if (searchActive) {
+            activateSearch();
+
+        } else {
+            deactivateSearch();
+        }
     }
 
-    public void hideSearchWindow() {
+    private void activateSearch() {
         searchButton.setVisibility(View.GONE);
         customSearchLayout.setVisibility(View.GONE);
         recyclerView.setVisibility(View.VISIBLE);
+    }
+
+    private void deactivateSearch() {
+        searchButton.setVisibility(View.VISIBLE);
+        customSearchLayout.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.GONE);
     }
 
     @Override
