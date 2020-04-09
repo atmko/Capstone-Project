@@ -82,7 +82,9 @@ public class Stack extends RecyclerView.OnScrollListener {
     }
 
     public int[] saveBlockStructure() {
-        int[] blockIndexRange = new int[2];
+        int[] blockIndexRange = {0, 0};
+
+        if (mPagingBlockMap.size() == 0) return blockIndexRange;
 
         blockIndexRange[0] = mPagingBlockMap.keyAt(0);
 
