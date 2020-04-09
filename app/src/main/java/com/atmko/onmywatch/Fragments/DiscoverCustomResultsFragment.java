@@ -87,7 +87,7 @@ public class DiscoverCustomResultsFragment extends Fragment implements
     private SuperEditText mSearchTextView;
 
     private RecyclerView recyclerView;
-    private View customSearchLayout;
+    private ViewGroup customSearchLayout;
     private Button searchButton;
     private Map<Integer, View> idMap;
     private static Map<Integer, Integer> selectionMap;
@@ -261,20 +261,39 @@ public class DiscoverCustomResultsFragment extends Fragment implements
             }
         });
 
-        customSearchLayout = getView().findViewById(R.id.custom_search_layout);
-        int[] ids = {R.id.genre1_search_item, R.id.genre2_search_item,
-                R.id.network_search_item, R.id.sort_by_search_item};
+        String[] titleValues;
+
+        if (mMediaType == MEDIA_TYPE_MOVIE) {
+            customSearchLayout = getView().findViewById(R.id.items_custom_movie_search);
+            customSearchLayout.setVisibility(View.VISIBLE);
+            getView().findViewById(R.id.items_custom_series_search).setVisibility(View.GONE);
+
+            titleValues = getResources().getStringArray(R.array.custom_movie_search_titles);
+
+        } else {
+            customSearchLayout = getView().findViewById(R.id.items_custom_series_search);
+            customSearchLayout.setVisibility(View.VISIBLE);
+            getView().findViewById(R.id.items_custom_movie_search).setVisibility(View.GONE);
+
+            titleValues = getResources().getStringArray(R.array.custom_series_search_titles);
+        }
+
+        int[] ids = new int[customSearchLayout.getChildCount()];
+        for (int i = 0; i < customSearchLayout.getChildCount(); i++) {
+            ids[i] = customSearchLayout.getChildAt(i).getId();
+        }
 
         idMap = new HashMap<>();
 
         for (int i = 0; i < ids.length; i++) {
             View advancedSearchItem = customSearchLayout.findViewById(ids[i]);
+            Log.d("dsfff", (advancedSearchItem==null)+"sd");
 
-            String[] titleValues = getResources().getStringArray(R.array.custom_search_titles);
             TextView titleTextView = advancedSearchItem.findViewById(R.id.title_text_view);
             titleTextView.setText(titleValues[i]);
 
             Spinner spinner = advancedSearchItem.findViewById(R.id.spinner);
+            Log.d("fdfdfdf", (spinner==null)+"sd");
             idMap.put(ids[i], spinner);
 
             int spinnerValues;
@@ -320,7 +339,7 @@ public class DiscoverCustomResultsFragment extends Fragment implements
 
     private int getSpinnerIndices(int key) {
         Spinner spinner = ((Spinner) idMap.get(key));
-        return spinner.getSelectedItemPosition();
+        return spinner != null ? spinner.getSelectedItemPosition() : 0;
     }
 
     private void loadSearch() {

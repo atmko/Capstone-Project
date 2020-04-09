@@ -225,7 +225,13 @@
         <item>Western</item>
     </array>
 
-    <array name="custom_search_titles">
+    <array name="custom_movie_search_titles">
+        <item>Genre 1</item>
+        <item>Genre 2</item>
+        <item>Sort By</item>
+    </array>
+
+    <array name="custom_series_search_titles">
         <item>Genre 1</item>
         <item>Genre 2</item>
         <item>Network</item>
