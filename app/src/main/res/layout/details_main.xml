@@ -164,6 +164,7 @@
             android:id="@+id/details_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/text_margin"
             android:layout_marginEnd="@dimen/x2_layout_margin"
             app:layout_constraintTop_toBottomOf="@id/date_text_view" />
 

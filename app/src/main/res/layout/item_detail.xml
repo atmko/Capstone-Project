@@ -6,11 +6,11 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginTop="@dimen/x1_layout_margin"
+    android:layout_marginEnd="@dimen/x2_layout_margin"
     android:paddingStart="@dimen/x1_layout_margin"
     android:paddingTop="@dimen/half_layout_margin"
     android:paddingEnd="@dimen/x1_layout_margin"
     android:paddingBottom="@dimen/half_layout_margin"
-    android:layout_marginStart="@dimen/text_margin"
     android:background="@drawable/background_info_box">
 
     <ImageButton
