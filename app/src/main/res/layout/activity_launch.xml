@@ -107,6 +107,7 @@
         tools:visibility="visible"/>
 
     <Button
+        style="@style/Confirmation_ButtonStyle_End"
         android:id="@+id/button_continue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -114,8 +115,7 @@
         app:layout_constraintBottom_toTopOf="@id/terms_text_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:text="@string/continue_text_literal"
-        android:background="@drawable/background_box_white"/>
+        android:text="@string/continue_text_literal"/>
 
     <TextView
         android:id="@+id/terms_text_view"
