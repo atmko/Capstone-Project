@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize">
 
-    <include layout="@layout/tab_layout_1" android:id="@+id/tab_layout_1" />
+    <include layout="@layout/tab_layout" android:id="@+id/tab_layout_1" />
 
     <View
         android:layout_width="match_parent"

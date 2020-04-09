@@ -4,8 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/tab_style"
-    app:tabTextAppearance="@style/tab_text_style"
-    app:tabMode="scrollable">
+    app:tabTextAppearance="@style/tab_text_style">
 
     <!--TODO these are for test purposes only. apply programmatically instead-->
     <com.google.android.material.tabs.TabItem
