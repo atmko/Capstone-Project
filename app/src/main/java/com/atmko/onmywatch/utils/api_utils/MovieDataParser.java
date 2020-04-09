@@ -57,7 +57,7 @@ public class MovieDataParser {
             Map currentObject = (Map) results.get(index);//get current movie
 
             //create new MovieData from @param movieDataMap
-            movieDataList.add(parseMovieMap(currentObject));
+            if (currentObject != null) movieDataList.add(parseMovieMap(currentObject));
         }
 
         return movieDataList;

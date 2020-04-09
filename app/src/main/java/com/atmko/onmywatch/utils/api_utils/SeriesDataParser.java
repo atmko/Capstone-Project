@@ -61,7 +61,7 @@ public class SeriesDataParser {
             Map currentObject = (Map) results.get(index);//get current tv series
 
             //create new TvData from currentObject
-            seriesDataList.add(parseTvMap(currentObject));
+            if (currentObject != null) seriesDataList.add(parseTvMap(currentObject));
         }
 
         return seriesDataList;
