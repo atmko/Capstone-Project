@@ -62,10 +62,10 @@ public class AddToListAdapter extends ListsAdapter {
         int resourceId;
 
         if (viewType == EMPTY_ADAPTER_ID) {
-            resourceId = R.layout.item_list_placeholder;
+            resourceId = R.layout.item_list_placeholder_marginless;
 
         } else {
-            resourceId = R.layout.object_list_model;
+            resourceId = R.layout.object_list_model_marginless;
         }
 
         View view = layoutInflater.inflate(resourceId, viewGroup, false);
