@@ -362,6 +362,9 @@ public class DiscoverParentFragment extends Fragment
 
             }
         });
+
+        //skip 0 index(custom search) and set default tab to index 1
+        mSearchPresetsTabLayout.getTabAt(1).select();
     }
 
     private void loadManualSearchUi() {
