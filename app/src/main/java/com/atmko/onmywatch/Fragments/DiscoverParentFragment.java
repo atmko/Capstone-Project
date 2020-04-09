@@ -38,7 +38,7 @@ import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
 
 public class DiscoverParentFragment extends Fragment
         implements SuperEditText.OnKeyBoardDismissListener {
-    public static final String FRAGMENT_KEY = "search_parent_fragment";
+    public static final String FRAGMENT_KEY = "discover_parent_fragment";
 
     public static final String SEARCH_MODE_PRESET = "preset_search";
     public static final String SEARCH_MODE_MANUAL = "manual_search";
