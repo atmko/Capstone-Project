@@ -47,6 +47,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import org.parceler.Parcels;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -79,6 +80,7 @@ public class DiscoverCustomResultsFragment extends Fragment implements
 
     private static final String ADAPTER_DATA_LIST_KEY = "adapter_data_list";
     private static final String PAGING_BLOCK_MAP_KEY = "paging_block_map";
+    private static final String SAVED_INDICES_KEY = "saved_indices";
 
     //check for restoring state
     private RecyclerView.Adapter mDataAdapter;
@@ -89,8 +91,7 @@ public class DiscoverCustomResultsFragment extends Fragment implements
     private RecyclerView recyclerView;
     private ViewGroup customSearchLayout;
     private Button searchButton;
-    private Map<Integer, View> idMap;
-    private static Map<Integer, Integer> selectionMap;
+    private Map<Integer, Integer> selectionMap;
 
     public DiscoverCustomResultsFragment() {
         // Required empty public constructor
@@ -247,9 +248,10 @@ public class DiscoverCustomResultsFragment extends Fragment implements
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int[] genreIndices = {getSpinnerIndices(R.id.genre1_search_item), getSpinnerIndices(R.id.genre2_search_item)};
-                int[] indices = {getSpinnerIndices(R.id.network_search_item)};
-                int sortByIndex = getSpinnerIndices(R.id.sort_by_search_item);
+                int[] genreIndices = {selectionMap.get(R.id.genre1_search_item),
+                        selectionMap.get(R.id.genre2_search_item)};
+                int[] indices = {selectionMap.get(R.id.network_search_item)};
+                int sortByIndex = selectionMap.get(R.id.sort_by_search_item);
 
                 mSearchPreferences.setGenres(getContext(), genreIndices);
                 mSearchPreferences.setNetworks(getContext(), indices);
@@ -278,30 +280,23 @@ public class DiscoverCustomResultsFragment extends Fragment implements
             titleValues = getResources().getStringArray(R.array.custom_series_search_titles);
         }
 
-        int[] ids = new int[customSearchLayout.getChildCount()];
         for (int i = 0; i < customSearchLayout.getChildCount(); i++) {
-            ids[i] = customSearchLayout.getChildAt(i).getId();
-        }
+            View customSearchItem = customSearchLayout.findViewById(customSearchLayout.getChildAt(i).getId());
 
-        idMap = new HashMap<>();
-
-        for (int i = 0; i < ids.length; i++) {
-            View advancedSearchItem = customSearchLayout.findViewById(ids[i]);
-
-            TextView titleTextView = advancedSearchItem.findViewById(R.id.title_text_view);
+            TextView titleTextView = customSearchItem.findViewById(R.id.title_text_view);
             titleTextView.setText(titleValues[i]);
 
-            Spinner spinner = advancedSearchItem.findViewById(R.id.spinner);
-            idMap.put(ids[i], spinner);
+            Spinner spinner = customSearchItem.findViewById(R.id.spinner);
 
             int spinnerValues;
-            if (ids[i] == R.id.genre1_search_item || ids[i] == R.id.genre2_search_item) {
+            if (customSearchItem.getId() == R.id.genre1_search_item
+                    || customSearchItem.getId() == R.id.genre2_search_item) {
                 spinnerValues = R.array.genre_id_value;
 
-            } else if (ids[i] == R.id.network_search_item) {
+            } else if (customSearchItem.getId() == R.id.network_search_item) {
                 spinnerValues = R.array.network_values;
 
-            } else if (ids[i] == R.id.sort_by_search_item) {
+            } else if (customSearchItem.getId() == R.id.sort_by_search_item) {
                 spinnerValues = R.array.sort_values;
             } else {
                 spinnerValues = 0;
@@ -314,18 +309,28 @@ public class DiscoverCustomResultsFragment extends Fragment implements
         }
     }
 
-    private void restoreCustomSpinnerValues(Bundle bundle) {
-        if (bundle == null) {
-            selectionMap = new HashMap<>();
-            selectionMap.put(R.id.genre1_search_item, 0);
-            selectionMap.put(R.id.genre2_search_item, 0);
-            selectionMap.put(R.id.network_search_item, 0);
-            selectionMap.put(R.id.sort_by_search_item, 0);
+    private void restoreCustomSpinnerValues(Bundle savedInstanceState) {
+        selectionMap = new HashMap<>();
+
+        if (savedInstanceState == null) {
+            for (int i = 0; i < customSearchLayout.getChildCount(); i++) {
+                View customSearchItem =
+                        customSearchLayout.findViewById(customSearchLayout.getChildAt(i).getId());
+                selectionMap.put(customSearchItem.getId(), 0);
+            }
+        } else {
+            ArrayList<Integer> savedIndices = savedInstanceState.getIntegerArrayList(SAVED_INDICES_KEY);
+            if (savedIndices != null) {
+                for (int i = 0; i < customSearchLayout.getChildCount(); i++) {
+                    View customSearchItem =
+                            customSearchLayout.findViewById(customSearchLayout.getChildAt(i).getId());
+                    selectionMap.put(customSearchItem.getId(), savedIndices.get(i));
+                }
+            }
         }
 
         for (final int key : selectionMap.keySet()) {
-            final Spinner spinner = getView().findViewById(key).findViewById(R.id.spinner);
-
+            final Spinner spinner = customSearchLayout.findViewById(key).findViewById(R.id.spinner);
             spinner.post(new Runnable() {
                 public void run() {
                     spinner.setOnItemSelectedListener(DiscoverCustomResultsFragment.this);
@@ -333,11 +338,6 @@ public class DiscoverCustomResultsFragment extends Fragment implements
                 }
             });
         }
-    }
-
-    private int getSpinnerIndices(int key) {
-        Spinner spinner = ((Spinner) idMap.get(key));
-        return spinner != null ? spinner.getSelectedItemPosition() : 0;
     }
 
     private void loadSearch() {
@@ -595,6 +595,16 @@ public class DiscoverCustomResultsFragment extends Fragment implements
         outState.putInt(MasterActivity.SEARCH_BAR_VISIBILITY_KEY, mSearchTextView.getVisibility());
 
         outState.putBoolean(IS_SEARCH_WINDOW_SHOWN_KEY, isSearchActive());
+
+        //save spinner indices
+        ArrayList<Integer> savedIndices = new ArrayList<>();
+        for (int i = 0; i < customSearchLayout.getChildCount(); i++) {
+            View customSearchItem =
+                    customSearchLayout.findViewById(customSearchLayout.getChildAt(i).getId());
+            Spinner spinner = customSearchItem.findViewById(R.id.spinner);
+            savedIndices.add(spinner.getSelectedItemPosition());
+        }
+        outState.putIntegerArrayList(SAVED_INDICES_KEY, savedIndices);
     }
 
     @Override
