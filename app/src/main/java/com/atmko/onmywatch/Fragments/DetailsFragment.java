@@ -34,8 +34,6 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.androidnetworking.common.ANRequest;
@@ -46,7 +44,6 @@ import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.RateActivity;
 import com.atmko.onmywatch.adapters.DetailMovieExtrasAdapter;
 import com.atmko.onmywatch.adapters.DetailSeriesExtrasAdapter;
-import com.atmko.onmywatch.adapters.DetailsAdapter;
 import com.atmko.onmywatch.adapters.SpinnerDetailsOptionsAdapter;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.Episode;
@@ -82,6 +79,7 @@ import static com.atmko.onmywatch.models.MediaData.WATCH_STATUS_DROPPED;
 import static com.atmko.onmywatch.models.MediaData.WATCH_STATUS_WATCHED;
 import static com.atmko.onmywatch.models.MediaData.WATCH_STATUS_WATCHING;
 import static com.atmko.onmywatch.utils.GeneralUtils.MILLISECOND_CONVERSION;
+import static com.atmko.onmywatch.utils.api_utils.SeriesApiConstants.NETWORK_KEY;
 
 public class DetailsFragment extends Fragment {
     public static final String FRAGMENT_KEY = "details_fragment";
@@ -91,7 +89,8 @@ public class DetailsFragment extends Fragment {
     private static final String DETAIL_URL_KEY = "detail_url";
     public static final String MEDIA_DATA_PARCELABLE_KEY = "media_data";
     private static final String SEARCH_PREFERENCES_KEY = "search_preferences";
-    private static final String DETAIL_OBJECTS_KEY = "detail_objects";
+
+    private String COUNTDOWN_KEY = "countdown";
 
     public static final String ACTION_LAUNCH_DETAILS = "launch_details";
     public static final String QUICK_ACTION_KEY = "quick_action";
@@ -112,11 +111,13 @@ public class DetailsFragment extends Fragment {
     private int mWatchStatus;
 
     private FloatingActionButton mFab;
-    private DetailsAdapter mDetailsAdapter;
 
     //details views
     private TabLayout mDetailExtrasTabLayout;
     private ViewPager mDetailExtrasViewPager;
+    private TextView mReleaseStatusTextView;
+    private TextView mCountDownTextView;
+    private TextView mNetworkTextView;
 
     //values
     private int mOverviewCutoffIndex;
@@ -253,7 +254,6 @@ public class DetailsFragment extends Fragment {
         //update initialized media data
         assert getArguments() != null;
         getArguments().putParcelable(MEDIA_DATA_PARCELABLE_KEY, Parcels.wrap(mMediaData));
-        outState.putParcelable(DETAIL_OBJECTS_KEY, Parcels.wrap(mDetailsAdapter.getAdapterData()));
     }
 
     private static final String STATUS_BAR_IDENTIFIER = "status_bar_height";
@@ -295,11 +295,6 @@ public class DetailsFragment extends Fragment {
                 ((MasterActivity) getActivity()).launchAddToListActivity(mMediaData);
             }
         });
-
-        RecyclerView mDetailsRecyclerView = getView().findViewById(R.id.details_recycler_view);
-        mDetailsRecyclerView.setLayoutManager(configureLayoutManager());
-        mDetailsAdapter = new DetailsAdapter(getContext());
-        mDetailsRecyclerView.setAdapter(mDetailsAdapter);
 
         final Spinner detailSpinner = getView().findViewById(R.id.options_button);
         final String [] detailOptions = getResources().getStringArray(R.array.detail_options);
@@ -371,6 +366,10 @@ public class DetailsFragment extends Fragment {
             configureBackDropDimensions();
             configureDetailExtrasSize();
 
+            mReleaseStatusTextView = getView().findViewById(R.id.release_status_text);
+            mCountDownTextView = getView().findViewById(R.id.count_down_text);
+            mNetworkTextView = getView().findViewById(R.id.network_text_view);
+
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
@@ -378,13 +377,7 @@ public class DetailsFragment extends Fragment {
 
     private void defineValues() {
         mOverviewCutoffIndex = getResources().getInteger(R.integer.detail_overview_cutoff_index);
-        if (mSavedInstanceState == null) {
-            DetailsAdapter.DetailObject watchStatusDetail =
-                    new DetailsAdapter.DetailObject(DetailsAdapter.DetailObject.ID_WATCH_STATUS,
-                            "", R.drawable.ic_notify_white, View.GONE);
-            mDetailsAdapter.addDetailObjectData(watchStatusDetail);
-
-        } else {
+        if (mSavedInstanceState != null) {
             //check if details value exists.
             //If so set detail values and configure extras adapter, otherwise get detail values
             if (mMediaData.getReleaseStatus() != null) {
@@ -400,13 +393,6 @@ public class DetailsFragment extends Fragment {
                 getMediaDetails();
             }
         }
-    }
-
-    private LinearLayoutManager configureLayoutManager() {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-
-        layoutManager.setOrientation(RecyclerView.HORIZONTAL);
-        return layoutManager;
     }
 
     // TODO: NullPointerException handled in caller
@@ -483,10 +469,8 @@ public class DetailsFragment extends Fragment {
                         : watchStatusShorthandList[0];
 
                 //set shorthand text
-                DetailsAdapter.DetailObject watchStatusDetail =
-                        mDetailsAdapter.getAdapterData().get(DetailsAdapter.DetailObject.ID_WATCH_STATUS);
-                watchStatusDetail.text = shorthand;
-                mDetailsAdapter.notifyItemChanged(watchStatusDetail.index);
+                ((TextView) getView().findViewById(R.id.watch_status_shorthand_text))
+                        .setText(shorthand);
 
                 //configure user rating related UI
                 int userRating = mediaData != null ? castedMediaData.getUserRating() : 0;
@@ -508,19 +492,8 @@ public class DetailsFragment extends Fragment {
                 int containingListsCount = listNames != null ? listNames.size() : 0;
 
                 //set counts text
-                DetailsAdapter.DetailObject listCountDetail =
-                        mDetailsAdapter.getDetailObject(DetailsAdapter.DetailObject.ID_LIST_COUNT);
-
-                if (listCountDetail == null) {
-                    listCountDetail = new DetailsAdapter.DetailObject(
-                            DetailsAdapter.DetailObject.ID_LIST_COUNT,
-                            String.valueOf(containingListsCount));
-                    mDetailsAdapter.addDetailObjectData(listCountDetail);
-
-                } else {
-                    listCountDetail.text = String.valueOf(containingListsCount);
-                    mDetailsAdapter.notifyItemChanged(listCountDetail.index);
-                }
+                ((TextView) getView().findViewById(R.id.list_counts_text))
+                        .setText(String.valueOf(containingListsCount));
             }
         });
 
@@ -535,10 +508,7 @@ public class DetailsFragment extends Fragment {
                     visibility = View.GONE;
                 }
 
-                DetailsAdapter.DetailObject watchStatusDetail =
-                        mDetailsAdapter.getAdapterData().get(DetailsAdapter.DetailObject.ID_WATCH_STATUS);
-                watchStatusDetail.imageVisibility = visibility;
-                mDetailsAdapter.notifyItemChanged(watchStatusDetail.index);
+                getView().findViewById(R.id.notify_image_view).setVisibility(visibility);
             }
         });
     }
@@ -689,9 +659,8 @@ public class DetailsFragment extends Fragment {
             countdown = ScheduledMedia.NO_DATES;
         }
 
-        DetailsAdapter.DetailObject countdownDetail =
-                new DetailsAdapter.DetailObject(DetailsAdapter.DetailObject.ID_COUNTDOWN, countdown);
-        mDetailsAdapter.addDetailObjectData(countdownDetail);
+        mCountDownTextView.setText(countdown);
+        mCountDownTextView.setVisibility(View.VISIBLE);
     }
 
     private void setSeriesCountDown(SeriesData seriesData) {
@@ -705,9 +674,8 @@ public class DetailsFragment extends Fragment {
             countdown = ScheduledMedia.NO_DATES;
         }
 
-        DetailsAdapter.DetailObject countdownDetail =
-                new DetailsAdapter.DetailObject(DetailsAdapter.DetailObject.ID_COUNTDOWN, countdown);
-        mDetailsAdapter.addDetailObjectData(countdownDetail);
+        mCountDownTextView.setText(countdown);
+        mCountDownTextView.setVisibility(View.VISIBLE);
     }
 
     private void loadOfflineMode() {
@@ -918,24 +886,15 @@ public class DetailsFragment extends Fragment {
     // TODO: NullPointerException handled in caller
     @SuppressWarnings("ConstantConditions")
     private void setDetailViewValues(MediaData mediaData) throws NullPointerException {
-        if (mSavedInstanceState == null) {
-            DetailsAdapter.DetailObject releaseStatusDetail =
-                    new DetailsAdapter.DetailObject(DetailsAdapter.DetailObject.ID_RELEASE_STATUS,
-                            mediaData.getReleaseStatus());
-            mDetailsAdapter.addDetailObjectData(releaseStatusDetail);
-
-            if (mediaData instanceof SeriesData) {
-                DetailsAdapter.DetailObject networkDetail =
-                        new DetailsAdapter.DetailObject(DetailsAdapter.DetailObject.ID_NETWORK,
-                                ((SeriesData) mediaData).getNetwork());
-                mDetailsAdapter.addDetailObjectData(networkDetail);
-            }
+        mReleaseStatusTextView.setText(mediaData.getReleaseStatus());
+        mReleaseStatusTextView.setVisibility(View.VISIBLE);
+        if (mediaData instanceof MovieData) {
+            setMovieCountDown(((MovieData) mediaData));
         } else {
-            Map<Integer, DetailsAdapter.DetailObject> detailObjects =
-                    Parcels.unwrap(mSavedInstanceState.getParcelable(DETAIL_OBJECTS_KEY));
-            mDetailsAdapter.addAdapterData(detailObjects);
+            setSeriesCountDown(((SeriesData) mediaData));
         }
-
+        mNetworkTextView.setText(((SeriesData) mMediaData).getNetwork());
+        mNetworkTextView.setVisibility(View.VISIBLE);
 
         //set trailer button visibility
         try {

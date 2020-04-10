@@ -160,13 +160,140 @@
             app:layout_constraintTop_toBottomOf="@+id/title_scroll_view"
             tools:text="drama" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/details_recycler_view"
+        <HorizontalScrollView
+            android:id="@+id/detail_horizontal_scroll_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/text_margin"
-            android:layout_marginEnd="@dimen/x2_layout_margin"
-            app:layout_constraintTop_toBottomOf="@id/date_text_view" />
+            android:layout_marginEnd="@dimen/text_margin"
+            app:layout_constraintTop_toBottomOf="@id/date_text_view"
+            app:layout_constraintStart_toStartOf="parent"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/watch_status_frame_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/x1_layout_margin"
+                    android:layout_marginEnd="@dimen/x2_layout_margin"
+                    android:layout_marginRight="@dimen/x2_layout_margin"
+                    android:paddingStart="@dimen/x1_layout_margin"
+                    android:paddingTop="@dimen/half_layout_margin"
+                    android:paddingEnd="@dimen/x1_layout_margin"
+                    android:background="@drawable/background_info_box"
+                    android:paddingBottom="@dimen/half_layout_margin">
+
+                    <ImageButton
+                        android:id="@+id/notify_image_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/x1_layout_margin"
+                        android:layout_marginRight="@dimen/x1_layout_margin"
+                        android:layout_gravity="center"
+                        android:foreground="@drawable/ripple_pressed"
+                        android:background="@null"
+                        android:src="@drawable/ic_notify_white"
+                        android:contentDescription="@string/content_description_notify_button"/>
+
+                    <TextView
+                        android:id="@+id/watch_status_shorthand_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tw"
+                        android:textSize="@dimen/caption_text_size"
+                        android:textColor="@android:color/white"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/date_text_view" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/list_counts_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/x1_layout_margin"
+                    android:layout_marginEnd="@dimen/x2_layout_margin"
+                    android:layout_marginRight="@dimen/x2_layout_margin"
+                    android:background="@drawable/background_info_box"
+                    android:paddingStart="@dimen/x1_layout_margin"
+                    android:paddingTop="@dimen/half_layout_margin"
+                    android:paddingEnd="@dimen/x1_layout_margin"
+                    android:paddingBottom="@dimen/half_layout_margin"
+                    android:text="5"
+                    android:textSize="@dimen/caption_text_size"
+                    android:textColor="@android:color/white"
+                    app:layout_constraintStart_toEndOf="@+id/watch_status_frame_layout"
+                    app:layout_constraintTop_toBottomOf="@id/date_text_view" />
+
+                <TextView
+                    android:id="@+id/release_status_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/x1_layout_margin"
+                    android:layout_marginEnd="@dimen/x2_layout_margin"
+                    android:layout_marginRight="@dimen/x2_layout_margin"
+                    android:background="@drawable/background_info_box"
+                    android:paddingStart="@dimen/x1_layout_margin"
+                    android:paddingTop="@dimen/half_layout_margin"
+                    android:paddingEnd="@dimen/x1_layout_margin"
+                    android:paddingBottom="@dimen/half_layout_margin"
+                    tools:text="Unreleased"
+                    android:textSize="@dimen/caption_text_size"
+                    android:textColor="@android:color/white"
+                    app:layout_constraintStart_toEndOf="@+id/list_counts_text"
+                    app:layout_constraintTop_toBottomOf="@id/date_text_view"
+                    tools:visibility="visible"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/count_down_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/x1_layout_margin"
+                    android:layout_marginEnd="@dimen/x2_layout_margin"
+                    android:layout_marginRight="@dimen/x2_layout_margin"
+                    android:background="@drawable/background_info_box"
+                    android:paddingStart="@dimen/x1_layout_margin"
+                    android:paddingTop="@dimen/half_layout_margin"
+                    android:paddingEnd="@dimen/x1_layout_margin"
+                    android:paddingBottom="@dimen/half_layout_margin"
+                    tools:text="30 days"
+                    android:textSize="@dimen/caption_text_size"
+                    android:textColor="@android:color/white"
+                    app:layout_constraintStart_toEndOf="@+id/release_status_text"
+                    app:layout_constraintTop_toBottomOf="@id/date_text_view"
+                    tools:visibility="visible"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/network_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/x1_layout_margin"
+                    android:layout_marginEnd="@dimen/x2_layout_margin"
+                    android:layout_marginRight="@dimen/x2_layout_margin"
+                    android:background="@drawable/background_info_box"
+                    android:paddingStart="@dimen/x1_layout_margin"
+                    android:paddingTop="@dimen/half_layout_margin"
+                    android:paddingEnd="@dimen/x1_layout_margin"
+                    android:paddingBottom="@dimen/half_layout_margin"
+                    tools:text="network"
+                    android:textSize="@dimen/caption_text_size"
+                    android:textColor="@android:color/white"
+                    app:layout_constraintStart_toEndOf="@+id/count_down_text"
+                    app:layout_constraintTop_toBottomOf="@id/date_text_view"
+                    tools:visibility="visible"
+                    android:visibility="gone"/>
+
+            </LinearLayout>
+
+        </HorizontalScrollView>
+
 
         <TextView
             android:id="@+id/overView_text_view"
@@ -184,7 +311,7 @@
             android:textColor="@android:color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/details_recycler_view" />
+            app:layout_constraintTop_toBottomOf="@id/detail_horizontal_scroll_view" />
 
         <ImageButton
             android:id="@+id/show_more_button"
