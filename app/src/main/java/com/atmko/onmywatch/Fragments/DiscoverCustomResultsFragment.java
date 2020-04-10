@@ -287,13 +287,11 @@ public class DiscoverCustomResultsFragment extends Fragment implements
 
         for (int i = 0; i < ids.length; i++) {
             View advancedSearchItem = customSearchLayout.findViewById(ids[i]);
-            Log.d("dsfff", (advancedSearchItem==null)+"sd");
 
             TextView titleTextView = advancedSearchItem.findViewById(R.id.title_text_view);
             titleTextView.setText(titleValues[i]);
 
             Spinner spinner = advancedSearchItem.findViewById(R.id.spinner);
-            Log.d("fdfdfdf", (spinner==null)+"sd");
             idMap.put(ids[i], spinner);
 
             int spinnerValues;
