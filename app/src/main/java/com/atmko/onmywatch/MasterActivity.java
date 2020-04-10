@@ -533,25 +533,22 @@ public class MasterActivity extends AppCompatActivity implements
             } else if (fragment instanceof DiscoverParentFragment) {
                 DiscoverParentFragment parentFragment = ((DiscoverParentFragment) fragment);
                 FragmentManager fragmentManager = parentFragment.getChildFragmentManager();
-                DiscoverCustomResultsFragment customResultsFragment =
-                        ((DiscoverCustomResultsFragment) fragmentManager.getFragments().get(0));
+                Fragment childFragment = fragmentManager.getFragments().get(0);
 
-                if (customResultsFragment.isCurrentTab() && customResultsFragment.isSearchActive()) {
-                    customResultsFragment.setSearchActive(false);
+                if (childFragment instanceof DiscoverCustomResultsFragment) {
+                    DiscoverCustomResultsFragment customResultsFragment =
+                            ((DiscoverCustomResultsFragment) childFragment);
+                    if (customResultsFragment.isCurrentTab() && customResultsFragment.isSearchActive()) {
+                        customResultsFragment.setSearchActive(false);
 
+                    } else {
+                        removeFragment(fragment, R.anim.slide_down_entry, R.anim.slide_up_exit);
+                    }
                 } else {
-                    getSupportFragmentManager().beginTransaction()
-                            .setCustomAnimations(R.anim.slide_down_entry, R.anim.slide_up_exit)
-                            .remove(fragment)
-                            .commit();
+                    removeFragment(fragment, R.anim.slide_down_entry, R.anim.slide_up_exit);
                 }
-
-                //condition for navigation
             } else {
-                getSupportFragmentManager().beginTransaction()
-                        .setCustomAnimations(R.anim.slide_down_entry, R.anim.slide_up_exit)
-                        .remove(fragment)
-                        .commit();
+                removeFragment(fragment, R.anim.slide_down_entry, R.anim.slide_up_exit);
             }
         }
 
@@ -568,6 +565,13 @@ public class MasterActivity extends AppCompatActivity implements
         }
 
         if (backgroundFragment != null) showBackgroundFragment(backgroundFragment);
+    }
+
+    private void removeFragment(Fragment fragment, int entry, int exit) {
+        getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(entry, exit)
+                .remove(fragment)
+                .commit();
     }
 
     private void showBackgroundFragment(@NonNull Fragment backgroundFragment) {
