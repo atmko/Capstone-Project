@@ -893,8 +893,10 @@ public class DetailsFragment extends Fragment {
         } else {
             setSeriesCountDown(((SeriesData) mediaData));
         }
-        mNetworkTextView.setText(((SeriesData) mMediaData).getNetwork());
-        mNetworkTextView.setVisibility(View.VISIBLE);
+        if (mediaData instanceof SeriesData) {
+            mNetworkTextView.setText(((SeriesData) mediaData).getNetwork());
+            mNetworkTextView.setVisibility(View.VISIBLE);
+        }
 
         //set trailer button visibility
         try {
