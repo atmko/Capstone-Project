@@ -88,6 +88,7 @@ public class RecommendationsFragment extends Fragment
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mMediaType = getArguments().getInt(MEDIA_TYPE_KEY);
+            //todo: read form get resources once and then use index to get media type
             if (mMediaType == MEDIA_TYPE_MOVIE) {
                 mRecommendationUrl =
                         getResources().getStringArray(R.array.recommendation_urls)[MEDIA_TYPE_MOVIE];

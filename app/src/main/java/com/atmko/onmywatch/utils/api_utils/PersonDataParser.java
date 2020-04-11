@@ -96,6 +96,17 @@ public class PersonDataParser {
         );
     }
 
+    public static ArrayList<CastData> parseCast(String returnedJSONString) {
+        //skips code below if returnedJSONString null or empty
+        if (returnedJSONString == null || returnedJSONString.equals("")){
+            return new ArrayList<>();
+        }
+
+        Gson gson = new Gson();
+        Map creditsMap = gson.fromJson(returnedJSONString, Map.class);
+        return parseCastList(creditsMap);
+    }
+
     static ArrayList<CastData> parseCastList(Map creditsMap) {
         //parse cast data list
         ArrayList<CastData> castList = new ArrayList<>();

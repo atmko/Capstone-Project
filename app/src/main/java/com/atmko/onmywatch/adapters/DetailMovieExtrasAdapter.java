@@ -14,7 +14,6 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import com.atmko.onmywatch.Fragments.CastFragment;
 import com.atmko.onmywatch.Fragments.RecommendationsFragment;
 import com.atmko.onmywatch.Fragments.ReviewsFragment;
-import com.atmko.onmywatch.models.CastData;
 import com.atmko.onmywatch.models.MovieData;
 
 import org.parceler.Parcels;
@@ -47,9 +46,7 @@ public class DetailMovieExtrasAdapter extends FragmentStatePagerAdapter {
                 return RecommendationsFragment.newInstance(MEDIA_TYPE_MOVIE, mMovieData.getId());
 
             case 1:
-                ArrayList<CastData> castList = mMovieData.getCast();
-                Parcelable parceledCastList = Parcels.wrap(castList);
-                return CastFragment.newInstance(parceledCastList);
+                return CastFragment.newInstance(MEDIA_TYPE_MOVIE, mMovieData.getId());
 
             case 2:
                 ArrayList reviewList = mMovieData.getReviews();

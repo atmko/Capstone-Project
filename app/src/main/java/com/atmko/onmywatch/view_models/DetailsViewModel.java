@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.database.AppDatabase;
+import com.atmko.onmywatch.models.CastData;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MediaNotifier;
 
@@ -23,7 +24,8 @@ public class DetailsViewModel extends ViewModel {
     private LiveData mediaData;
     private LiveData<List<String>> containingUserLists;
     private LiveData notifiers;
-    private List<MediaData> recommendations;
+    private List<MediaData> mRecommendations;
+    private List<CastData> mCast;
 
     DetailsViewModel(@NonNull AppDatabase database, int mediaType, String mediaId) {
         Log.d(TAG, "fetching media from the database");
@@ -46,11 +48,11 @@ public class DetailsViewModel extends ViewModel {
     }
 
     public void setRecommendations(List<MediaData> recommendations) {
-        this.recommendations = recommendations;
+        this.mRecommendations = recommendations;
     }
 
     public List<MediaData> getRecommendations() {
-        return recommendations;
+        return mRecommendations;
     }
 
     public LiveData getMediaData() {
@@ -63,5 +65,13 @@ public class DetailsViewModel extends ViewModel {
 
     public LiveData<List<MediaNotifier>> getNotifiers() {
         return notifiers;
+    }
+
+    public void setCast(List<CastData> cast) {
+        this.mCast = cast;
+    }
+
+    public List<CastData> getCast() {
+        return this.mCast;
     }
 }

@@ -78,13 +78,18 @@
     </array>
 
     <array name="details_urls">
-        <item>https://api.themoviedb.org/3/tv/{id}?api_key={api_key}&amp;language={language}&amp;append_to_response=credits,videos,reviews,similar,content_ratings</item>
-        <item>https://api.themoviedb.org/3/movie/{id}?api_key={api_key}&amp;language={language}&amp;append_to_response=credits,videos,reviews,similar,release_dates</item>
+        <item>https://api.themoviedb.org/3/tv/{id}?api_key={api_key}&amp;language={language}&amp;append_to_response=videos,reviews,similar,content_ratings</item>
+        <item>https://api.themoviedb.org/3/movie/{id}?api_key={api_key}&amp;language={language}&amp;append_to_response=videos,reviews,similar,release_dates</item>
     </array>
 
     <array name="recommendation_urls">
         <item>https://api.themoviedb.org/3/tv/{id}/recommendations?api_key={api_key}&amp;language={language}&amp;page={page}</item>
         <item>https://api.themoviedb.org/3/movie/{id}/recommendations?api_key={api_key}&amp;language={language}&amp;page={page}</item>
+    </array>
+
+    <array name="cast_urls">
+        <item>https://api.themoviedb.org/3/tv/{id}/credits?api_key={api_key}&amp;language=en-US</item>
+        <item>https://api.themoviedb.org/3/movie/{id}/credits?api_key={api_key}</item>
     </array>
 
     <array name="trakt_matching_media_urls">

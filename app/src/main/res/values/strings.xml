@@ -169,6 +169,7 @@
     <string name="spotlight_fetch_error_message">Error loading spotlight</string>
     <string name="discover_results_fetch_error_message">Error loading discover results</string>
     <string name="recommendations_fetch_error_message">Error loading recommendations</string>
+    <string name="cast_fetch_error_message">Error loading cast</string>
     <string name="no_created_lists_message">You have\'t created any lists</string>
     <string name="new_list_created_message">New list created</string>
     <string name="list_updated_message">List Configuration Updated</string>
