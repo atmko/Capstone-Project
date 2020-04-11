@@ -23,6 +23,7 @@ import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesNotifier;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
+import com.atmko.onmywatch.widget.ListWidgetProvider;
 
 import org.parceler.Parcels;
 
@@ -69,6 +70,9 @@ public class NotificationHandler {
                             //update logs
                             SeriesTracker.transferUpcomingLogToReleased(context, mediaId);
 
+                            //update widgets
+                            ListWidgetProvider.updateWidgets(context);
+
                             // The IdlingResource is null in production.
                             if (NotificationIdlingResource.getNotificationIdlingResource() != null) {
                                 NotificationIdlingResource.getNotificationIdlingResource().addToIdleCounter();
@@ -81,6 +85,9 @@ public class NotificationHandler {
 
                     //remove media notifier from the database
                     removeMediaNotifier(context, mediaType, mediaId, condition);
+
+                    //update widgets
+                    ListWidgetProvider.updateWidgets(context);
 
                     // The IdlingResource is null in production.
                     if (NotificationIdlingResource.getNotificationIdlingResource() != null) {
