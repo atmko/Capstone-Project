@@ -290,45 +290,19 @@ public class DetailsFragment extends Fragment {
             upNavigationButton.setVisibility(View.GONE);
         }
 
+        //configure trailer button
+        getView().findViewById(R.id.share_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchShareWindow();
+            }
+        });
+
         mFab = getView().findViewById(R.id.add_to_list_fab);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ((MasterActivity) getActivity()).launchAddToListActivity(mMediaData);
-            }
-        });
-
-        final Spinner detailSpinner = getView().findViewById(R.id.options_button);
-        final String [] detailOptions = getResources().getStringArray(R.array.detail_options);
-        SpinnerDetailsOptionsAdapter mDetailSpinnerAdapter = new SpinnerDetailsOptionsAdapter(detailOptions, this);
-        detailSpinner.setAdapter(mDetailSpinnerAdapter);
-        detailSpinner.setSelection(detailOptions.length - 1);
-        detailSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String option = detailOptions[i];
-                if (option.equals(detailOptions[0])) {
-                    try {
-                        launchRateActivity();
-
-                    } catch (NullPointerException e) {
-                        e.printStackTrace();
-                    }
-
-                } else if (option.equals(detailOptions[1])) {
-                    try {
-                        launchShareWindow();
-
-                    } catch (NullPointerException e) {
-                        e.printStackTrace();
-                    }
-                }
-                detailSpinner.setSelection(detailOptions.length - 1, false);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
             }
         });
 
@@ -367,6 +341,13 @@ public class DetailsFragment extends Fragment {
 
             configureBackDropDimensions();
             configureDetailExtrasSize();
+
+            getView().findViewById(R.id.user_rating_text).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    launchRateActivity();
+                }
+            });
 
             mReleaseStatusTextView = getView().findViewById(R.id.release_status_text);
             mCountDownTextView = getView().findViewById(R.id.count_down_text);
@@ -475,14 +456,14 @@ public class DetailsFragment extends Fragment {
                         .setText(shorthand);
 
                 //configure user rating related UI
+                TextView userRatingTextView = getView().findViewById(R.id.user_rating_text);
                 int userRating = mediaData != null ? castedMediaData.getUserRating() : 0;
                 if (userRating != 0) {
-                    TextView userRatingTextView = getView().findViewById(R.id.user_rating_text);
                     userRatingTextView.setVisibility(View.VISIBLE);
                     userRatingTextView.setText(userRating + ".0");
 
                 } else {
-                    getView().findViewById(R.id.user_rating_text).setVisibility(View.GONE);
+                    userRatingTextView.setText(getString(R.string.rate_text_literal));
                 }
             }
         });

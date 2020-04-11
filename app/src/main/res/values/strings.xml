@@ -131,7 +131,11 @@
 
     <!--discover text-->
     <string name="discover_text_literal">Discover</string>
-    <!--search text-->
+    <!--discover text-->
+
+    <!--rate text-->
+    <string name="rate_text_literal">Rate</string>
+    <!--rate text-->
 
     <!--details text-->
     <string name="detail_trailer_text_title">Trailer</string>

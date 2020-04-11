@@ -52,7 +52,7 @@
             android:paddingTop="@dimen/half_layout_margin"
             android:paddingEnd="@dimen/x1_layout_margin"
             android:paddingBottom="@dimen/half_layout_margin"
-            tools:text="7.5"
+            android:text="@string/rate_text_literal"
             android:textSize="@dimen/caption_text_size"
             android:textColor="@android:color/white"
             app:layout_constraintStart_toStartOf="@id/rating_text_view"
@@ -333,6 +333,6 @@
 
     <include layout="@layout/up_navigation_button" />
 
-    <include layout="@layout/options_button" />
+    <include layout="@layout/share_button" />
 
 </FrameLayout>
