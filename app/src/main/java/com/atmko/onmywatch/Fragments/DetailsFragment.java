@@ -112,6 +112,8 @@ public class DetailsFragment extends Fragment {
 
     private FloatingActionButton mFab;
 
+    DetailsViewModel viewModel;
+
     //details views
     private TabLayout mDetailExtrasTabLayout;
     private ViewPager mDetailExtrasViewPager;
@@ -447,7 +449,7 @@ public class DetailsFragment extends Fragment {
         DetailsViewModelFactory viewModelFactory =
                 new DetailsViewModelFactory(database, mMediaType, mMediaData.getId());
 
-        final DetailsViewModel viewModel = ViewModelProviders.of(this, viewModelFactory).get(DetailsViewModel.class);
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(DetailsViewModel.class);
         final LiveData<MediaData> mediaDataLiveData = viewModel.getMediaData();
         final LiveData<List<String>> containingUserLists = viewModel.getContainingLists();
         final LiveData<List<MediaNotifier>> notifiersLiveData = viewModel.getNotifiers();
@@ -511,6 +513,10 @@ public class DetailsFragment extends Fragment {
                 getView().findViewById(R.id.notify_image_view).setVisibility(visibility);
             }
         });
+    }
+
+    DetailsViewModel getViewModel() {
+        return viewModel;
     }
 
     private void launchQuickAction() {

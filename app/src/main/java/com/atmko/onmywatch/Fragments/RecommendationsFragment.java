@@ -27,12 +27,13 @@ import com.atmko.onmywatch.adapters.MediaDataAdapter;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.SeriesData;
+import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 import com.atmko.onmywatch.utils.api_utils.MovieDataParser;
+import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
 import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
 import com.atmko.onmywatch.utils.api_utils.SeriesDataParser;
-import com.atmko.onmywatch.utils.api_utils.ApiConstants;
-import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
+import com.atmko.onmywatch.view_models.DetailsViewModel;
 import com.atmko.stack.Stack;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -59,8 +60,9 @@ public class RecommendationsFragment extends Fragment
     private String mMediaId;
     private String mRecommendationUrl;
 
-    private static final String ADAPTER_DATA_LIST_KEY = "adapter_data_list";
     private static final String PAGING_BLOCK_MAP_KEY = "paging_block_map";
+
+    private DetailsViewModel viewModel;
 
     private MediaDataAdapter mDataAdapter;
     private Stack mStack;
@@ -110,30 +112,42 @@ public class RecommendationsFragment extends Fragment
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        viewModel = ((DetailsFragment) getParentFragment()).getViewModel();
         defineViews();
 
+        //not saving/restoring adapter data to to TransactionTooLargeException
         if (savedInstanceState == null) {
-            mSearchPreferences = new SearchPreferences();
-            loadSearch();
+            startNewSearch();
 
         } else {
-            mSearchPreferences = Parcels.unwrap(savedInstanceState.getParcelable(SEARCH_PREFERENCES_KEY));
+            //get saved adapter data list, if null, start new search, otherwise restore old search
+            List mediaDataList = viewModel.getRecommendations();
+            if (mediaDataList != null) {
+                restoreSearch(savedInstanceState, mediaDataList);
 
-            //get saved adapter data list
-            List mediaDataList = Parcels.unwrap(
-                    savedInstanceState.getParcelable(ADAPTER_DATA_LIST_KEY));
-
-            mDataAdapter.addAdapterData(mediaDataList);
-
-            //get saved paging block map
-            int[] pagingBlockRange = savedInstanceState.getIntArray(PAGING_BLOCK_MAP_KEY);
-            mStack.restorePagingBlockStructure(pagingBlockRange, mediaDataList);
-
-            //set total pages
-            mStack.setTotalPages(mSearchPreferences.getTotalPages());
-
-            checkIfEmptyAdapter();
+            } else {
+                startNewSearch();
+            }
         }
+    }
+
+    private void startNewSearch() {
+        mSearchPreferences = new SearchPreferences();
+        loadSearch();
+    }
+
+    private void restoreSearch(Bundle savedInstanceState, List mediaDataList) {
+        mSearchPreferences = Parcels.unwrap(savedInstanceState.getParcelable(SEARCH_PREFERENCES_KEY));
+        mDataAdapter.addAdapterData(mediaDataList);
+
+        //get saved paging block map
+        int[] pagingBlockRange = savedInstanceState.getIntArray(PAGING_BLOCK_MAP_KEY);
+        mStack.restorePagingBlockStructure(pagingBlockRange, mediaDataList);
+
+        //set total pages
+        mStack.setTotalPages(mSearchPreferences.getTotalPages());
+
+        checkIfEmptyAdapter();
     }
 
     private void defineViews() {
@@ -281,7 +295,7 @@ public class RecommendationsFragment extends Fragment
         //do nothing if selecting stack placeholder
         if (selectedData.getId() == null) return;
 
-        if (getParentFragment() != null && getParentFragment().getActivity() != null) {
+        if ((getParentFragment() != null) && (getParentFragment().getActivity() != null)) {
             ((MasterActivity) getParentFragment().getActivity()).launchDetailsFragment(selectedData, null);
         }
     }
@@ -305,10 +319,10 @@ public class RecommendationsFragment extends Fragment
 
         outState.putParcelable(SEARCH_PREFERENCES_KEY, Parcels.wrap(mSearchPreferences));
 
-        outState.putParcelable(ADAPTER_DATA_LIST_KEY,
-                Parcels.wrap(mDataAdapter.getAdapterData()));
-
         outState.putIntArray(PAGING_BLOCK_MAP_KEY, mStack.saveBlockStructure());
+
+        //save adapter data into view model(will survive config changes but not process killing)
+        viewModel.setRecommendations(mDataAdapter.getAdapterData());
     }
 
     private void checkIfEmptyAdapter() {
