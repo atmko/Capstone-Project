@@ -250,11 +250,14 @@ public class DiscoverCustomResultsFragment extends Fragment implements
             public void onClick(View view) {
                 int[] genreIndices = {selectionMap.get(R.id.genre1_search_item),
                         selectionMap.get(R.id.genre2_search_item)};
-                int[] indices = {selectionMap.get(R.id.network_search_item)};
-                int sortByIndex = selectionMap.get(R.id.sort_by_search_item);
-
                 mSearchPreferences.setGenres(getContext(), genreIndices);
-                mSearchPreferences.setNetworks(getContext(), indices);
+
+                if (mMediaType == MEDIA_TYPE_SERIES) {
+                    int[] indices = {selectionMap.get(R.id.network_search_item)};
+                    mSearchPreferences.setNetworks(getContext(), indices);
+                }
+
+                int sortByIndex = selectionMap.get(R.id.sort_by_search_item);
                 mSearchPreferences.setSortBy(getContext(), sortByIndex);
 
                 activateSearch();
