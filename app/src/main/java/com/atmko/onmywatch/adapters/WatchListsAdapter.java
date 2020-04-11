@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 
 import com.atmko.onmywatch.R;
+import com.atmko.onmywatch.models.ListModel;
+import com.atmko.onmywatch.utils.GeneralUtils;
 
 /*
  * data adapter for WatchList objects
@@ -51,5 +53,19 @@ public class WatchListsAdapter extends ListsAdapter {
         View view = layoutInflater.inflate(resourceId, viewGroup, false);
 
         return new WatchListsAdapterViewHolder(view, viewType);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull final ListsAdapterViewHolder adapterViewHolder,
+                                 int position) {
+        if (adapterViewHolder.getItemViewType() == EMPTY_ADAPTER_ID) return;
+
+        //get current listData
+        ListModel currentListModel = mAdapterData.get(position);
+
+        adapterViewHolder.listNameTextView.setText(
+                GeneralUtils.convertToDisplayText(currentListModel.getName()));
+        adapterViewHolder.itemCountTextView.
+                setText(String.valueOf(currentListModel.getItemCount()));
     }
 }

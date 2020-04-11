@@ -65,17 +65,17 @@ public class GeneralUtils {
     }
 
     public static String convertToDisplayText(String text) {
-        String displayText = "";
+        StringBuilder stringBuilder = new StringBuilder();
 
-        String[] strings = text.split(" ");
+        String[] split = text.split(" ");
+        for (int i = 0; i < split.length; i++) {
+            String word = split[i];
+            stringBuilder.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1));
 
-        for (String string: strings) {
-            displayText +=
-                    string.replaceFirst(String.valueOf(string.charAt(0)),
-                            String.valueOf(string.charAt(0)).toUpperCase()) + " ";
+            if (i != split.length - 1) stringBuilder.append(" ");
         }
 
-        return displayText;
+        return stringBuilder.toString();
     }
 
     //check for int/double errors

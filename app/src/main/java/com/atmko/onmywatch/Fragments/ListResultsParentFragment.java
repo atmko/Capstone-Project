@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.custom_views.SuperEditText;
+import com.atmko.onmywatch.utils.GeneralUtils;
 import com.google.android.material.tabs.TabLayout;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.ListResultsUserPagerAdapter;
@@ -152,7 +153,7 @@ public class ListResultsParentFragment extends Fragment
 
     private void defineViews() {
         final TextView titleText = getView().findViewById(R.id.title_text_view);
-        titleText.setText(mListName);
+        titleText.setText(GeneralUtils.convertToDisplayText(mListName));
 
         //configure floating action button
         getView().findViewById(R.id.search_list_fab).setOnClickListener(new View.OnClickListener() {
