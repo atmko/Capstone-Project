@@ -141,9 +141,6 @@ public class SeriesDataParser {
             detailsSeriesData.setMaturityRating(contentRating);
         }
 
-        //parse cast
-        Map creditsMap = (Map) returnedMap.get(PeopleApiConstants.CREDITS_KEY);
-        detailsSeriesData.setCast(PersonDataParser.parseCastList(creditsMap));
         detailsSeriesData.setVideos(parseVideos(((Map) returnedMap.get(ApiConstants.VIDEOS_KEY))));
         detailsSeriesData.setReviews(parseReviews(((Map) returnedMap.get(ApiConstants.REVIEWS_KEY))));
 

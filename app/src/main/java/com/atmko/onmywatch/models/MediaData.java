@@ -58,7 +58,6 @@ abstract public class MediaData {
     public @ColumnInfo(name = "tags") List<SearchMediaTag> searchTags;
 
     //secondary attributes(details)
-    @Ignore ArrayList<CastData> mCast;
     @Ignore ArrayList<Map<String, String>> mVideos;
     @Ignore ArrayList<Review> mReviews;
     public @ColumnInfo(name = "maturityRating") String mMaturityRating;
@@ -191,14 +190,6 @@ abstract public class MediaData {
 
     public void setTraktId(String traktId) {
         this.mTraktId = traktId;
-    }
-
-    public ArrayList<CastData> getCast() {
-        return mCast;
-    }
-
-    public void setCast(ArrayList<CastData> cast) {
-        this.mCast = cast;
     }
 
     public ArrayList<Map<String, String>> getVideos() {

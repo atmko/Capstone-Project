@@ -150,9 +150,6 @@ public class MovieDataParser {
                     .setMaturityRating(releaseDateAndCertification[1]);
         }
 
-        //parse cast
-        Map creditsMap = (Map) returnedMap.get(PeopleApiConstants.CREDITS_KEY);
-        detailsMovieData.setCast(PersonDataParser.parseCastList(creditsMap));
         detailsMovieData.setVideos(parseVideos(((Map) returnedMap.get(ApiConstants.VIDEOS_KEY))));
         detailsMovieData.setReviews(parseReviews(((Map) returnedMap.get(ApiConstants.REVIEWS_KEY))));
 
