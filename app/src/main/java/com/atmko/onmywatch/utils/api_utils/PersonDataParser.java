@@ -4,6 +4,7 @@
 
 package com.atmko.onmywatch.utils.api_utils;
 
+import com.atmko.onmywatch.models.CastData;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.stack.Stack;
 import com.google.gson.Gson;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.atmko.onmywatch.utils.GeneralUtils.checkAndConvertInteger;
+import static com.atmko.onmywatch.utils.GeneralUtils.checkAndConvertNumber;
 
 public class PersonDataParser {
     public static List<PersonData> parseData(String returnedJSONString, Stack stack,
@@ -92,6 +94,30 @@ public class PersonDataParser {
 
                 (boolean) peopleDataMap.get(PeopleApiConstants.ADULT_KEY)
         );
+    }
+
+    static ArrayList<CastData> parseCastList(Map creditsMap) {
+        //parse cast data list
+        ArrayList<CastData> castList = new ArrayList<>();
+        ArrayList<Map> castMapList = (ArrayList<Map>) creditsMap.get(PeopleApiConstants.CAST_KEY);
+        for (Map castMap: castMapList) {
+            castList.add(parseCastData(castMap));
+        }
+
+        return castList;
+    }
+
+    private static CastData parseCastData(Map castMap) {
+        //parse cast data
+        String character = (String) castMap.get(PeopleApiConstants.CHARACTER_KEY);
+        String creditId = checkAndConvertNumber(castMap.get(PeopleApiConstants.CREDIT_ID_KEY));
+        String id = checkAndConvertNumber(castMap.get(ApiConstants.ID_KEY));
+        String name = (String) castMap.get(PeopleApiConstants.NAME_KEY);
+        String gender = checkAndConvertNumber(castMap.get(PeopleApiConstants.GENDER_KEY));
+        String profilePath = (String) castMap.get(PeopleApiConstants.PROFILE_PATH_KEY);
+        String order = checkAndConvertNumber(castMap.get(PeopleApiConstants.ORDER_KEY));
+
+        return new CastData(id, creditId, name, gender, character, profilePath, order);
     }
 
     @SuppressWarnings("unchecked")

@@ -152,24 +152,7 @@ public class MovieDataParser {
 
         //parse cast
         Map creditsMap = (Map) returnedMap.get(PeopleApiConstants.CREDITS_KEY);
-
-        ArrayList<CastData> castList = new ArrayList<>();
-
-        ArrayList<Map> castMapList = (ArrayList<Map>) creditsMap.get(PeopleApiConstants.CAST_KEY);
-        for (Map castMap: castMapList) {
-            String character = (String) castMap.get(PeopleApiConstants.CHARACTER_KEY);
-            String creditId = checkAndConvertNumber(castMap.get(PeopleApiConstants.CREDIT_ID_KEY));
-            String id = checkAndConvertNumber(castMap.get(ApiConstants.ID_KEY));
-            String name = (String) castMap.get(PeopleApiConstants.NAME_KEY);
-            String gender = checkAndConvertNumber(castMap.get(PeopleApiConstants.GENDER_KEY));
-            String profilePath = (String) castMap.get(PeopleApiConstants.PROFILE_PATH_KEY);
-            String order = checkAndConvertNumber(castMap.get(PeopleApiConstants.ORDER_KEY));
-
-            CastData castData = new CastData(id, creditId, name, gender, character, profilePath, order);
-            castList.add(castData);
-        }
-
-        detailsMovieData.setCast(castList);
+        detailsMovieData.setCast(PersonDataParser.parseCastList(creditsMap));
         detailsMovieData.setVideos(parseVideos(((Map) returnedMap.get(ApiConstants.VIDEOS_KEY))));
         detailsMovieData.setReviews(parseReviews(((Map) returnedMap.get(ApiConstants.REVIEWS_KEY))));
 
