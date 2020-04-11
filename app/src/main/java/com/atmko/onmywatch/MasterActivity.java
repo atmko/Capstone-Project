@@ -29,6 +29,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.NetworkType;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
@@ -460,6 +461,7 @@ public class MasterActivity extends AppCompatActivity implements
     private void startWorkers() {
         Constraints constraints = new Constraints.Builder()
                 .setRequiresBatteryNotLow(true)
+                .setRequiredNetworkType(NetworkType.CONNECTED)
                 .setRequiresStorageNotLow(true)
                 .build();
 
