@@ -886,14 +886,9 @@ public class DetailsFragment extends Fragment {
         }
 
         //set trailer button visibility
-        try {
-            //checks for trailer
-            mediaData.getVideos().get(0);
-            getView().findViewById(R.id.trailer_button).setVisibility(View.VISIBLE);
-
-        } catch (IndexOutOfBoundsException e) {
-            getView().findViewById(R.id.trailer_button).setVisibility(View.GONE);
-
+        if (mediaData.getVideos().size() <= 0) {
+            ((TextView) getView().findViewById(R.id.trailer_button))
+                    .setTextColor(getResources().getColor(R.color.color_inactive));
         }
 
         ((TextView) getView().findViewById(R.id.maturity_rating_text_view))
