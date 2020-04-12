@@ -101,7 +101,8 @@ public class MasterActivity extends AppCompatActivity implements
 
     private static final String UPDATE_MEDIA_WORKER_KEY = "update_media_worker";
     private static final String BACKUP_WORKER_KEY = "backup worker";
-    private static final int REPEAT_INTERVAL = 2;
+    private static final int UPDATE_REPEAT_INTERVAL = 18;
+    private static final int BACKUP_REPEAT_INTERVAL = 12;
     private static final int INITIAL_DELAY = 15;
 
     private static final String USER_COLLECTION_PATH = "users";
@@ -469,7 +470,7 @@ public class MasterActivity extends AppCompatActivity implements
                 .build();
 
         PeriodicWorkRequest updateMediaDataRequest = new PeriodicWorkRequest.Builder(
-                UpdateMediaWorker.class, REPEAT_INTERVAL, TimeUnit.HOURS)
+                UpdateMediaWorker.class, UPDATE_REPEAT_INTERVAL, TimeUnit.HOURS)
                 .setConstraints(constraints)
                 .setInitialDelay(INITIAL_DELAY, TimeUnit.MINUTES)
                 .build();
@@ -478,7 +479,7 @@ public class MasterActivity extends AppCompatActivity implements
                 UPDATE_MEDIA_WORKER_KEY, ExistingPeriodicWorkPolicy.KEEP, updateMediaDataRequest);
 
         PeriodicWorkRequest backupRequest = new PeriodicWorkRequest.Builder(
-                BackupWorker.class, REPEAT_INTERVAL, TimeUnit.HOURS)
+                BackupWorker.class, BACKUP_REPEAT_INTERVAL, TimeUnit.HOURS)
                 .setConstraints(constraints)
                 .setInitialDelay(INITIAL_DELAY, TimeUnit.MINUTES)
                 .build();
