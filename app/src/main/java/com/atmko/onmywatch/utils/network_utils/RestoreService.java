@@ -109,8 +109,8 @@ public class RestoreService extends JobIntentService {
         mLocalDatabase = AppDatabase.getLocalDatabase(getApplicationContext());
         startForeground(JOB_ID,
                 buildNotification(getApplicationContext(),
-                        getString(R.string.notification_migration_title),
-                        getString(R.string.notification_free_migration_content)
+                        getString(R.string.notification_restore_title),
+                        getString(R.string.notification_restore_content)
                 )
         );
     }

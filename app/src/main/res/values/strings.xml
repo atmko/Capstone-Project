@@ -239,6 +239,12 @@
     <string name="notification_new_trailer_content_suffix">A {replace} trailer has been released</string>
     <string name="notification_channel_videos">Videos</string>
     <string name="notification_channel_videos_description">Notifications for videos</string>
+
+    <string name="notification_restore_title">Restoring</string>
+    <string name="notification_restore_content">Restoring files</string>
+
+    <string name="notification_backup_title">Backing Up</string>
+    <string name="notification_backup_content">Creating backup</string>
     <!--NOTIFICATION TEXT-->
 
     <!--SHARE TEXT-->

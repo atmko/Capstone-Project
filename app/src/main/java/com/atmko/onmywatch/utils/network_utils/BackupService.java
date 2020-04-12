@@ -33,8 +33,8 @@ public class BackupService extends JobIntentService {
         super.onCreate();
         startForeground(JOB_ID,
                 buildNotification(getApplicationContext(),
-                        getString(R.string.notification_migration_title),
-                        getString(R.string.notification_free_migration_content)
+                        getString(R.string.notification_backup_title),
+                        getString(R.string.notification_backup_content)
                 )
         );
     }
