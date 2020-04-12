@@ -5,6 +5,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/list_margin"
+    android:layout_marginLeft="@dimen/list_margin"
+    android:layout_marginEnd="@dimen/list_margin"
+    android:layout_marginRight="@dimen/list_margin"
     android:orientation="vertical">
 
     <androidx.constraintlayout.widget.ConstraintLayout
