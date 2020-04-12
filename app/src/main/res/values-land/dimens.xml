@@ -2,11 +2,17 @@
 <resources>
     <!--MARGINS-->
     <dimen name="list_margin">120dp</dimen>
+    <!--MARGINS-->
 
     <!--VIEW DIMENSIONS-->
         <!--floating action button dimensions-->
         <dimen name="fab_top_margin">187dp</dimen>
         <!--floating action button dimensions-->
+
+    <!--image_dimensions-->
+    <dimen name="spotlight_poster_height">225dp</dimen>
+    <dimen name="spotlight_poster_width">150dp</dimen>
+    <!--image_dimensions-->
     <!--VIEW DIMENSIONS-->
 
 </resources>
