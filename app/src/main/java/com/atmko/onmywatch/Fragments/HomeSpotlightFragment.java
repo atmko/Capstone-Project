@@ -128,7 +128,6 @@ public class HomeSpotlightFragment extends Fragment implements
                 getActivity().getApplicationContext());
 
         recyclerView.setAdapter(mDataAdapter);
-
     }
 
     private GridLayoutManager configureLayoutManager() {
