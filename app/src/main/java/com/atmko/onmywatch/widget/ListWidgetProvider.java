@@ -138,5 +138,14 @@ public class ListWidgetProvider extends AppWidgetProvider {
 
         ListWidgetService.enqueueWork(context, intent);
     }
+
+    public static void updateWidgets(Context context) {
+        int[] ids = AppWidgetManager.getInstance(context)
+                .getAppWidgetIds(new ComponentName(context, ListWidgetProvider.class));
+        Intent intent = new Intent(context, ListWidgetProvider.class);
+        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+        context.sendBroadcast(intent);
+    }
 }
 
