@@ -30,6 +30,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
@@ -202,6 +203,8 @@ public class MasterActivity extends AppCompatActivity implements
             public void onChanged(Boolean isProMode) {
                 if (isProMode == null) return;
 
+                boolean justTurnedPro = !sIsProMode && isProMode;
+
                 //update pro mode variable and shared preference
                 sIsProMode = isProMode;
                 getSharedPreferences(getString(R.string.application_shared_prefs_key),
@@ -215,7 +218,7 @@ public class MasterActivity extends AppCompatActivity implements
 
                 if (getSupportFragmentManager().getFragments().size() == 0) loadUi();
                 //start background work managers
-                startWorkers();
+                startWorkers(justTurnedPro);
             }
         });
     }
@@ -458,7 +461,7 @@ public class MasterActivity extends AppCompatActivity implements
         MediaNotifier.createReleaseNotificationChannel(this);
     }
 
-    private void startWorkers() {
+    private void startWorkers(boolean justTurnedPro) {
         Constraints constraints = new Constraints.Builder()
                 .setRequiresBatteryNotLow(true)
                 .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -482,6 +485,15 @@ public class MasterActivity extends AppCompatActivity implements
 
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
                 BACKUP_WORKER_KEY, ExistingPeriodicWorkPolicy.KEEP, backupRequest);
+
+        if (justTurnedPro) {
+            OneTimeWorkRequest proUpdateForNotifications = new OneTimeWorkRequest.Builder(
+                    UpdateMediaWorker.class)
+                    .setConstraints(constraints)
+                    .build();
+
+            WorkManager.getInstance(this).enqueue(proUpdateForNotifications);
+        }
     }
 
     @Override
