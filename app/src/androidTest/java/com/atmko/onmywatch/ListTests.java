@@ -654,6 +654,9 @@ public class ListTests {
 
         onView(withText("Delete")).perform(click());
 
+        //click confirmation text
+        onView(withText("Yes")).perform(click());
+
         //check user list deleted
         UserListModel deletedList = db.userListsDao().getListByNameAlt("test list");
         if (deletedList != null) fail();
@@ -726,6 +729,9 @@ public class ListTests {
         }
 
         onView(withText("Delete")).perform(click());
+
+        //click confirmation text
+        onView(withText("Yes")).perform(click());
 
         //check user list deleted
         UserListModel deletedList = db.userListsDao().getListByNameAlt("test list");

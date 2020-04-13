@@ -344,10 +344,6 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
 
     @Override
     public void onDeleteClick(final ListModel userListModel) {
-        if (getIdlingResource() != null) {
-            getIdlingResource().setIdleState(false);
-        }
-
         if (getParentFragment() != null) {
             MasterActivity.launchConfirmationActivity(getParentFragment(), userListModel,
                     REQUEST_DELETE, ConfirmationActivity.ACTION_DELETE);
@@ -359,6 +355,10 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_DELETE && resultCode == Activity.RESULT_OK) {
+            if (getIdlingResource() != null) {
+                getIdlingResource().setIdleState(false);
+            }
+
             AppExecutors.getInstance().diskIO().execute(new Runnable() {
                 @Override
                 public void run() {
