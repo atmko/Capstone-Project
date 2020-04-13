@@ -30,9 +30,9 @@ public class ScheduledMedia {
     private static final String TIME_SUFFIX_YEARS = " year(s)";
     private static final String TIME_SUFFIX_MONTHS = " month(s)";
     private static final String TIME_SUFFIX_WEEKS = " week(s)";
-    private static final String TIME_SUFFIX_DAYS = " day(s)";
-    private static final String TIME_SUFFIX_HOURS = " hour(s)";
-    private static final String TIME_SUFFIX_MINUTES = " minute(s)";
+    public static final String TIME_SUFFIX_DAYS = " day(s)";
+    public static final String TIME_SUFFIX_HOURS = " hour(s)";
+    public static final String TIME_SUFFIX_MINUTES = " minute(s)";
     private static final String TIME_SUFFIX_SECONDS = " second(s)";
     public static final String NO_DATES = "No Dates";
     private static final String DATE_ERROR = "Date Error";
