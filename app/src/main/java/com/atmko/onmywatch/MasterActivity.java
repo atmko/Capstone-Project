@@ -147,6 +147,8 @@ public class MasterActivity extends AppCompatActivity implements
     public static boolean sIsAuthUiActive;
     public static boolean sIsProMode;
     public static boolean sAllowCloudBackup;
+
+    //checks if sIsProMode value has be observed from view model
     private boolean mInitialProCheck = true;
 
     private static BillingClient mBillingClient;
@@ -262,8 +264,11 @@ public class MasterActivity extends AppCompatActivity implements
                     initializeAdMob();
                 }
 
-                //activate billing client here only if initial pro check
+                //activate billing client here only if mInitialProCheck
                 //subsequent billing client calls handled in on resume
+                //this is necessary to avoid unneeded purchase verifications because sIsProMode...
+                //...is always false before observing data and purchase verification happens if...
+                //...sIsProMode is false
                 if (mInitialProCheck) {
                     startBillingClient();
                     mInitialProCheck = false;
@@ -440,8 +445,9 @@ public class MasterActivity extends AppCompatActivity implements
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        //save keyboard visibility value
+        //save initial pro check value
         outState.putBoolean(INITIAL_PRO_CHECK_KEY, mInitialProCheck);
+        //save keyboard visibility value
         outState.putBoolean(KEYBOARD_VISIBILITY_KEY, sIsKeyboardVisible);
     }
 
