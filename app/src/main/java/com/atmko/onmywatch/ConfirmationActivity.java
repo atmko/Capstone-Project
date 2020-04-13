@@ -17,6 +17,7 @@ public class ConfirmationActivity extends AppCompatActivity {
     public static final String ACTION_LOG_OUT = "log_out";
     public static final String ACTION_RESTORE = "restore";
     public static final String ACTION_CREATE_BACKUP = "create_backup";
+    public static final String ACTION_PENDING_PURCHASE = "pending_purchase";
 
     public static final String ACTION_KEY = "action";
     public static final String CONFIRMATION_MESSAGE_KEY = "confirmation_message";
@@ -110,6 +111,10 @@ public class ConfirmationActivity extends AppCompatActivity {
 
                 case ACTION_CREATE_BACKUP:
                     confirmationMessage = getString(R.string.create_backup_confirmation_message);
+                    break;
+
+                case ACTION_PENDING_PURCHASE:
+                    confirmationMessage = getString(R.string.pending_purchase_confirmation_message);
                     break;
             }
 

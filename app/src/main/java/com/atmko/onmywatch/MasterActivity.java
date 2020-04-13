@@ -11,6 +11,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -34,6 +35,13 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
+import com.android.billingclient.api.AcknowledgePurchaseParams;
+import com.android.billingclient.api.AcknowledgePurchaseResponseListener;
+import com.android.billingclient.api.BillingClient;
+import com.android.billingclient.api.BillingClientStateListener;
+import com.android.billingclient.api.BillingResult;
+import com.android.billingclient.api.Purchase;
+import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.atmko.onmywatch.Fragments.DetailsFragment;
 import com.atmko.onmywatch.Fragments.DiscoverCustomResultsFragment;
 import com.atmko.onmywatch.Fragments.DiscoverParentFragment;
@@ -68,32 +76,45 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.HttpsCallableResult;
 
 import org.parceler.Parcels;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import hotchemi.android.rate.AppRate;
+
+import static com.atmko.onmywatch.ConfirmationActivity.ACTION_PENDING_PURCHASE;
 
 public class MasterActivity extends AppCompatActivity implements
         BackupService.OnBackupCompleteListener,
         ListsWatchAndUserParentFragment.ListFragmentImplementation,
         ListWatchAndUserAdapter.LogicImplementation,
-        ListWatchAndUserFragment.OnListModelClickListener {
+        ListWatchAndUserFragment.OnListModelClickListener,
+        BillingClientStateListener,
+        PurchasesUpdatedListener {
+    private static final String TAG = MasterActivity.class.getSimpleName();
+
     private static final int FREE_MODE_LIST_COUNT_LIMIT = 3;
 
     public static final int MEDIA_TYPE_SERIES = 0;
     public static final int MEDIA_TYPE_MOVIE = 1;
     public static final int MEDIA_TYPE_PEOPLE = 2;
 
+    private static final String INITIAL_PRO_CHECK_KEY = "initial_pro_check";
     private static final String KEYBOARD_VISIBILITY_KEY = "keyboard_visibility";
 
     public static final String SEARCH_TEXT_KEY = "search_text";
@@ -108,6 +129,7 @@ public class MasterActivity extends AppCompatActivity implements
     private static final String USER_COLLECTION_PATH = "users";
     private final int SIGN_IN_REQUEST_CODE = 10;
     private static final int REQUEST_LOG_OUT = 20;
+    private static final int PENDING_PURCHASE_ID = 1;
 
     //for restoring keyboard visibility upon configuration change
     public static boolean sIsKeyboardVisible;
@@ -125,6 +147,9 @@ public class MasterActivity extends AppCompatActivity implements
     public static boolean sIsAuthUiActive;
     public static boolean sIsProMode;
     public static boolean sAllowCloudBackup;
+    private boolean mInitialProCheck = true;
+
+    private static BillingClient mBillingClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,6 +195,28 @@ public class MasterActivity extends AppCompatActivity implements
         AppRate.showRateDialogIfMeetsConditions(this);
     }
 
+    private void startBillingClient() {
+        if (mBillingClient != null) {
+            if (mBillingClient.isReady()) {
+                queryPurchases(this);
+
+            } else {
+                mBillingClient.startConnection(this);
+            }
+        } else {
+            mBillingClient = BillingClient.newBuilder(this)
+                    .enablePendingPurchases()
+                    .setListener(this).build();
+            mBillingClient.startConnection(this);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!mInitialProCheck) startBillingClient();
+    }
+
     private void defineViews() {
         progressLayout = findViewById(R.id.progress_layout);
     }
@@ -204,8 +251,6 @@ public class MasterActivity extends AppCompatActivity implements
             public void onChanged(Boolean isProMode) {
                 if (isProMode == null) return;
 
-                boolean justTurnedPro = !sIsProMode && isProMode;
-
                 //update pro mode variable and shared preference
                 sIsProMode = isProMode;
                 getSharedPreferences(getString(R.string.application_shared_prefs_key),
@@ -217,9 +262,16 @@ public class MasterActivity extends AppCompatActivity implements
                     initializeAdMob();
                 }
 
+                //activate billing client here only if initial pro check
+                //subsequent billing client calls handled in on resume
+                if (mInitialProCheck) {
+                    startBillingClient();
+                    mInitialProCheck = false;
+                }
+
                 if (getSupportFragmentManager().getFragments().size() == 0) loadUi();
                 //start background work managers
-                startWorkers(justTurnedPro);
+                startWorkers();
             }
         });
     }
@@ -319,10 +371,10 @@ public class MasterActivity extends AppCompatActivity implements
             @Override
             public void run() {
                 if (errorMessage != null && !errorMessage.equals("")) {
-                    showSnackBarMessage(errorMessage);
+                    showSnackBarMessage(errorMessage, MasterActivity.this);
 
                 } else {
-                    showSnackBarMessage(getString(R.string.backup_failure_message));
+                    showSnackBarMessage(getString(R.string.backup_failure_message), MasterActivity.this);
                 }
 
                 launchConfirmationActivity(MasterActivity.this,
@@ -389,6 +441,7 @@ public class MasterActivity extends AppCompatActivity implements
         super.onSaveInstanceState(outState);
 
         //save keyboard visibility value
+        outState.putBoolean(INITIAL_PRO_CHECK_KEY, mInitialProCheck);
         outState.putBoolean(KEYBOARD_VISIBILITY_KEY, sIsKeyboardVisible);
     }
 
@@ -462,7 +515,7 @@ public class MasterActivity extends AppCompatActivity implements
         MediaNotifier.createReleaseNotificationChannel(this);
     }
 
-    private void startWorkers(boolean justTurnedPro) {
+    private void startWorkers() {
         Constraints constraints = new Constraints.Builder()
                 .setRequiresBatteryNotLow(true)
                 .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -486,15 +539,6 @@ public class MasterActivity extends AppCompatActivity implements
 
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
                 BACKUP_WORKER_KEY, ExistingPeriodicWorkPolicy.KEEP, backupRequest);
-
-        if (justTurnedPro) {
-            OneTimeWorkRequest proUpdateForNotifications = new OneTimeWorkRequest.Builder(
-                    UpdateMediaWorker.class)
-                    .setConstraints(constraints)
-                    .build();
-
-            WorkManager.getInstance(this).enqueue(proUpdateForNotifications);
-        }
     }
 
     @Override
@@ -931,7 +975,7 @@ public class MasterActivity extends AppCompatActivity implements
     }
 
     private void addWatchListsAndCheckForBackups() {
-        showSnackBarMessage(getString(R.string.checking_for_backups_message));
+        showSnackBarMessage(getString(R.string.checking_for_backups_message), this);
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -959,9 +1003,9 @@ public class MasterActivity extends AppCompatActivity implements
         }
     }
 
-    private void showSnackBarMessage(String string) {
+    private static void showSnackBarMessage(String string, Activity activity) {
         if (string == null || string.equals("")) return;
-        Snackbar.make(findViewById(R.id.top_layout), string, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(activity.findViewById(R.id.top_layout), string, Snackbar.LENGTH_LONG).show();
     }
 
     /**
@@ -1017,5 +1061,141 @@ public class MasterActivity extends AppCompatActivity implements
                 .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
                 .add(R.id.master_fragments_container, fragment, ListResultsParentFragment.FRAGMENT_KEY)
                 .commit();
+    }
+
+    @Override
+    public void onBillingSetupFinished(BillingResult billingResult) {
+        //if connection successful
+        if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
+            queryPurchases(this);
+        }
+    }
+
+    @Override
+    public void onBillingServiceDisconnected() {
+        mBillingClient.startConnection(this);
+    }
+
+    @Override
+    public void onPurchasesUpdated(BillingResult billingResult, @Nullable List<Purchase> purchases) {
+        if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK
+                && purchases != null) {
+            for (Purchase purchase : purchases) {
+                handlePurchase(purchase, this);
+            }
+
+        } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.USER_CANCELED) {
+            showSnackBarMessage(billingResult.getDebugMessage(), this);
+            // Handle an error caused by a user cancelling the purchase flow.
+        } else {
+            showSnackBarMessage(billingResult.getDebugMessage(), this);
+            // Handle any other error codes.
+        }
+    }
+
+    //get purchases made by user
+    //ensures app values match purchases
+    public static void queryPurchases(Activity activity) {
+        Log.d(TAG, "fetch user's purchases");
+        //get in app purchases to check for unverified, unacknowledged and pending transactions
+        Purchase.PurchasesResult inAppResult = mBillingClient.queryPurchases(BillingClient.SkuType.INAPP);
+        List<Purchase> inAppPurchases = inAppResult.getPurchasesList();
+
+        if (inAppResult.getResponseCode() == BillingClient.BillingResponseCode.OK
+                && inAppPurchases != null) {
+            //iterate through list and ensure that app values match purchases
+            //handle purchases if app values are false
+            for (Purchase purchase : inAppPurchases) {
+                if (purchase.getSku().equals("pro_mode") && !MasterActivity.sIsProMode) {
+                    Log.d(TAG, "handling pro_mode");
+                    handlePurchase(purchase, activity);
+
+                } else if (purchase.getSku().equals("android.test.purchased")
+                        && (!MasterActivity.sIsProMode)) {
+                    Log.d(TAG, "handling android.test.purchased");
+                    handlePurchase(purchase, activity);
+                }
+            }
+        } else {
+            showSnackBarMessage(inAppResult.getBillingResult().getDebugMessage(), activity);
+        }
+    }
+
+    static void handlePurchase(final Purchase purchase, final Activity activity) {
+        if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
+            showSnackBarMessage("Your Purchase Has Been Completed", activity);
+
+            // Acknowledge the purchase if it hasn't already been acknowledged.
+            if (!purchase.isAcknowledged()) {
+                AcknowledgePurchaseParams acknowledgePurchaseParams =
+                        AcknowledgePurchaseParams.newBuilder()
+                                .setPurchaseToken(purchase.getPurchaseToken())
+                                .build();
+                mBillingClient.acknowledgePurchase(acknowledgePurchaseParams,
+                        new AcknowledgePurchaseResponseListener() {
+                            @Override
+                            public void onAcknowledgePurchaseResponse(BillingResult billingResult) {
+                                if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
+                                    Log.d(TAG, "Purchase Acknowledged");
+                                    // Grant entitlement to the user.
+                                    verifyPurchase(purchase, activity);
+                                } else {
+                                    Log.d(TAG, "Acknowledgement Failed");
+                                }
+                            }
+                        });
+            } else {
+                // Grant entitlement to the user.
+                verifyPurchase(purchase, activity);
+            }
+
+        } else if (purchase.getPurchaseState() == Purchase.PurchaseState.PENDING) {
+            MasterActivity.launchConfirmationActivity(activity,
+                    PENDING_PURCHASE_ID, ACTION_PENDING_PURCHASE);
+            //inform user of steps to complete purchase
+        }
+    }
+
+    private static void verifyPurchase(final Purchase purchase, final Activity activity) {
+        List<String> credentials = new ArrayList<>();
+        credentials.add(purchase.getSku());
+        credentials.add(purchase.getPurchaseToken());
+        FirebaseFunctions.getInstance().getHttpsCallable("verifyPurchase").call(credentials)
+                .addOnSuccessListener(new OnSuccessListener<HttpsCallableResult>() {
+                    @Override
+                    public void onSuccess(HttpsCallableResult httpsCallableResult) {
+                        Map<String, String> results = ((Map<String, String>) httpsCallableResult.getData());
+                        if (results.get("error") != null) {
+                            showSnackBarMessage(results.get("error"), activity);
+
+                        } else if (results.get("status") != null) {
+                            //query purchases to update check marks on purchases
+                            showSnackBarMessage("Purchase Verified", activity);
+                            justTurnedPro(activity);
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, e.getMessage());
+                Log.d(TAG, "Purchase Verification Failed");
+                showSnackBarMessage("sever down, purchase will complete when server available", activity);
+            }
+        });
+    }
+
+    private static void justTurnedPro(Activity activity) {
+        Constraints constraints = new Constraints.Builder()
+                .setRequiresBatteryNotLow(true)
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .setRequiresStorageNotLow(true)
+                .build();
+
+        OneTimeWorkRequest proUpdateForNotifications = new OneTimeWorkRequest.Builder(
+                    UpdateMediaWorker.class)
+                    .setConstraints(constraints)
+                    .build();
+
+            WorkManager.getInstance(activity).enqueue(proUpdateForNotifications);
     }
 }

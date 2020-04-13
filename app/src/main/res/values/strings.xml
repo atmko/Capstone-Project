@@ -200,6 +200,7 @@
     <string name="create_backup_confirmation_message">Create a manual backup?</string>
     <string name="delete_confirmation_message">Are you sure you want to delete?</string>
     <string name="log_out_confirmation_message">Failed To Backup Data. Are You Sure You Want To Log Out?</string>
+    <string name="pending_purchase_confirmation_message">Your purchase is processing, we\'ll let you know when its done.</string>
     <!--CONFIRMATION MESSAGES-->
 
     <!--PLACEHOLDER TEXT-->
