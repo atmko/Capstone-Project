@@ -332,14 +332,14 @@ public class SeriesTracker extends JobIntentService {
         if (upcomingLog != null) {
             logsDao.deleteMediaLog(upcomingLog);
             upcomingLog.condition = CONDITION_AIRED;
-        }
 
-        SeriesLog lastAiredLog = logsDao.getLog(mediaId, CONDITION_AIRED);
-        if (lastAiredLog != null) {
-            logsDao.updateLog(upcomingLog);
+            SeriesLog lastAiredLog = logsDao.getLog(mediaId, CONDITION_AIRED);
+            if (lastAiredLog != null) {
+                logsDao.updateLog(upcomingLog);
 
-        } else {
-            logsDao.addMediaLog(upcomingLog);
+            } else {
+                logsDao.addMediaLog(upcomingLog);
+            }
         }
     }
 
