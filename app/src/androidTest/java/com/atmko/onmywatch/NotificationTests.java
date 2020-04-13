@@ -118,7 +118,7 @@ public class NotificationTests {
 
         db.movieDataDao().addMovieData(movieData);
         db.movieNotifierDao().addMediaNotifier(new MovieNotifier(movieData.getId(),
-                MovieNotifier.CONDITION_ON_RELEASE));
+                MovieNotifier.CONDITION_ON_RELEASE, true));
 
         //ensure notifier is created
         MovieNotifier movieNotifier =
@@ -158,9 +158,9 @@ public class NotificationTests {
 
         db.seriesDataDao().addSeriesData(seriesData);
         db.seriesNotifierDao().addMediaNotifier(new SeriesNotifier(seriesData.getId(),
-                SeriesNotifier.CONDITION_ON_RELEASE));
+                SeriesNotifier.CONDITION_ON_RELEASE, true));
         db.seriesNotifierDao().addMediaNotifier(new SeriesNotifier(seriesData.getId(),
-                SeriesNotifier.CONDITION_NEW_EPISODE));
+                SeriesNotifier.CONDITION_NEW_EPISODE, true));
 
         //ensure notifier is created
         SeriesNotifier releaseNotifier =
@@ -216,7 +216,7 @@ public class NotificationTests {
         addToListActivityTestRule.launchActivity(intent);
 
         registerSimpleIdleResource();
-        registerNotificationIdleResource(1);
+        registerNotificationIdleResource();
 
         //release notifier created with either "To Watch" or "Watching" watch status
         //randomize selecting to watch and watching
@@ -238,6 +238,7 @@ public class NotificationTests {
                 0, "", "", "",
                 new ArrayList<String>(), new ArrayList<String>(), "", "", "");
 
+        seriesData.setReleaseStatus("Running");
         seriesData.setTraktId("1393");
         Episode nextEpisode = new Episode();
 
@@ -261,7 +262,7 @@ public class NotificationTests {
         addToListActivityTestRule.launchActivity(intent);
 
         registerSimpleIdleResource();
-        registerNotificationIdleResource(1);
+        registerNotificationIdleResource();
 
         onView(withText("Watching")).perform(click());
         onView(withText("SAVE")).perform(click());
@@ -326,7 +327,7 @@ public class NotificationTests {
         addToListActivityTestRule.launchActivity(intent);
 
         registerSimpleIdleResource();
-        registerNotificationIdleResource(1);
+        registerNotificationIdleResource();
 
         //release notifier created with either "To Watch" or "Watching" watch status
         //randomize selecting to watch and watching
@@ -355,6 +356,7 @@ public class NotificationTests {
                 0, "", "", "",
                 new ArrayList<String>(), new ArrayList<String>(), "", "", "");
 
+        seriesData.setReleaseStatus("Running");
         seriesData.setTraktId("1393");
 
         Episode nextEpisode = new Episode();
@@ -381,7 +383,7 @@ public class NotificationTests {
         addToListActivityTestRule.launchActivity(intent);
 
         registerSimpleIdleResource();
-        registerNotificationIdleResource(1);
+        registerNotificationIdleResource();
 
         onView(withText("Watching")).perform(click());
         onView(withText("SAVE")).perform(click());
@@ -418,7 +420,7 @@ public class NotificationTests {
         addToListActivityTestRule.launchActivity(intent);
 
         registerSimpleIdleResource();
-        registerNotificationIdleResource(1);
+        registerNotificationIdleResource();
 
         onView(withText("Watching")).perform(click());
         onView(withText("SAVE")).perform(click());
@@ -453,7 +455,7 @@ public class NotificationTests {
         addToListActivityTestRule.launchActivity(intent);
 
         registerSimpleIdleResource();
-        registerNotificationIdleResource(1);
+        registerNotificationIdleResource();
 
         onView(withText("Watching")).perform(click());
         onView(withText("SAVE")).perform(click());
@@ -487,7 +489,7 @@ public class NotificationTests {
         addToListActivityTestRule.launchActivity(intent);
 
         registerSimpleIdleResource();
-        registerNotificationIdleResource(1);
+        registerNotificationIdleResource();
 
         onView(withText("To Watch")).perform(click());
         onView(withText("SAVE")).perform(click());
@@ -516,6 +518,7 @@ public class NotificationTests {
                 0, "", "", "",
                 new ArrayList<String>(), new ArrayList<String>(), "", "", "");
 
+        seriesData.setReleaseStatus("Running");
         seriesData.setTraktId("1393");
         Episode nextEpisode = new Episode();
 
@@ -539,7 +542,7 @@ public class NotificationTests {
         addToListActivityTestRule.launchActivity(intent);
 
         registerSimpleIdleResource();
-        registerNotificationIdleResource(1);
+        registerNotificationIdleResource();
 
         onView(withText("Watching")).perform(click());
         onView(withText("SAVE")).perform(click());
@@ -596,51 +599,6 @@ public class NotificationTests {
         if (seriesNotifier != null) fail();
     }
 
-    //tests recurring next episode notifications
-    @Test
-    public void doubleNextEpisodeNotificationTest() {
-        SeriesData seriesData = new SeriesData("43435", "", "", "Dead",
-                0, "", "", "",
-                new ArrayList<String>(), new ArrayList<String>(), "", "", "");
-
-        seriesData.setTraktId("1393");
-        Episode nextEpisode = new Episode();
-
-        //set date in past to ensure notification first and second triggered with bypass logic
-        try {
-            nextEpisode.setAirDate("2019-08-08T05:00:00.000Z");
-        } catch (ScheduledMedia.DateFormatException e) {
-            e.printStackTrace();
-        }
-
-        //bypass logic to allow past air date to be posted as notification
-        GeneralUtils.LOGIC_BYPASS = true;
-
-        seriesData.setNextEpisodeToAir(nextEpisode);
-
-        Intent intent = new Intent(getInstrumentation().getTargetContext(), AddToListActivity.class);
-        intent.putExtra(AddToListActivity.MEDIA_DATA_KEY, Parcels.wrap(seriesData));
-        intent.putExtra(AddToListActivity.MEDIA_TYPE_KEY, MasterActivity.MEDIA_TYPE_SERIES);
-
-        addToListActivityTestRule.launchActivity(intent);
-
-        registerSimpleIdleResource();
-        registerNotificationIdleResource(2);
-
-        onView(withText("Watching")).perform(click());
-        onView(withText("SAVE")).perform(click());
-
-        checkForNotification(seriesData, SeriesNotifier.CONDITION_NEW_EPISODE);
-
-        //ensure notifier isn't removed after notification
-        SeriesNotifier seriesNotifier =
-                db.seriesNotifierDao().getNotifierByIdAlt(seriesData.getId(),
-                        SeriesNotifier.CONDITION_NEW_EPISODE);
-
-        if (seriesNotifier == null) fail();
-    }
-
-    //test that notification click displays correct item
     @Test
     public void testNotificationClickFunctionality() {
         //test first notification displays correct item
@@ -648,6 +606,7 @@ public class NotificationTests {
                 0, "", "", "",
                 new ArrayList<String>(), new ArrayList<String>(), "", "", "");
 
+        seriesData.setReleaseStatus("Running");
         seriesData.setTraktId("1393");
         Episode nextEpisode = new Episode();
 
@@ -671,7 +630,7 @@ public class NotificationTests {
         addToListActivityTestRule.launchActivity(intent);
 
         registerSimpleIdleResource();
-        registerNotificationIdleResource(1);
+        registerNotificationIdleResource();
 
         onView(withText("Watching")).perform(click());
         onView(withText("SAVE")).perform(click());
@@ -682,6 +641,7 @@ public class NotificationTests {
                 0, "", "", "",
                 new ArrayList<String>(), new ArrayList<String>(), "", "", "");
 
+        seriesData2.setReleaseStatus("Running");
         seriesData2.setTraktId("43973");
         Episode nextEpisode2 = new Episode();
 
@@ -718,9 +678,8 @@ public class NotificationTests {
         IdlingRegistry.getInstance().register(addToListIdlingResource);
     }
 
-    private void registerNotificationIdleResource(int idleCountLimit) {
+    private void registerNotificationIdleResource() {
         notificationIdlingResource = NotificationIdlingResource.getInstance();
-        notificationIdlingResource.setIdleCountLimit(idleCountLimit);
         IdlingRegistry.getInstance().register(notificationIdlingResource);
     }
 

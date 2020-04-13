@@ -10,12 +10,10 @@ import androidx.annotation.Nullable;
 import androidx.test.espresso.IdlingResource;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class NotificationIdlingResource implements IdlingResource {
     private static final Object LOCK = new Object();
     private static NotificationIdlingResource sInstance;
-    private int idleCountLimit;
 
     public static NotificationIdlingResource getInstance() {
         if (sInstance == null) {
@@ -36,7 +34,6 @@ public class NotificationIdlingResource implements IdlingResource {
 
     // Idleness is controlled with this boolean.
     private AtomicBoolean mIsIdleNow = new AtomicBoolean(true);
-    private AtomicInteger mIdleCounter;
 
     @Override
     public String getName() {
@@ -58,22 +55,10 @@ public class NotificationIdlingResource implements IdlingResource {
      * @param isIdleNow false if there are pending operations, true if idle.
      */
     public void setIdleState(boolean isIdleNow) {
-
         mIsIdleNow.set(isIdleNow);
         if (isIdleNow && mCallback != null) {
             //noinspection ConstantConditions
             mCallback.onTransitionToIdle();
         }
-    }
-
-    public void addToIdleCounter() {
-        mIdleCounter.addAndGet(1);
-
-        if (mIdleCounter.intValue() == idleCountLimit) setIdleState(true);
-    }
-
-    public void setIdleCountLimit(int idleCountLimit) {
-        this.idleCountLimit = idleCountLimit;
-        this.mIdleCounter = new AtomicInteger(0);
     }
 }

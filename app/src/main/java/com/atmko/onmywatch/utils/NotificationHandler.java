@@ -25,13 +25,10 @@ import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.widget.ListWidgetProvider;
 
-import org.parceler.Parcels;
-
 import java.util.List;
 
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
-import static com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker.NEW_MEDIA_DATA_KEY;
 
 public class NotificationHandler {
     public static class AlarmReceiver extends BroadcastReceiver {
@@ -75,7 +72,7 @@ public class NotificationHandler {
 
                             // The IdlingResource is null in production.
                             if (NotificationIdlingResource.getNotificationIdlingResource() != null) {
-                                NotificationIdlingResource.getNotificationIdlingResource().addToIdleCounter();
+                                NotificationIdlingResource.getNotificationIdlingResource().setIdleState(true);
                             }
 
                             //skip notifier deletion if condition is new episodes
@@ -91,7 +88,7 @@ public class NotificationHandler {
 
                     // The IdlingResource is null in production.
                     if (NotificationIdlingResource.getNotificationIdlingResource() != null) {
-                        NotificationIdlingResource.getNotificationIdlingResource().addToIdleCounter();
+                        NotificationIdlingResource.getNotificationIdlingResource().setIdleState(true);
                     }
                 }
             });
