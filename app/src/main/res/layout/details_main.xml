@@ -21,7 +21,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:scaleType="centerCrop"
-            android:contentDescription="@string/content_description_backdrop_image"/>
+            android:contentDescription="@string/content_description_backdrop_image"
+            android:background="@color/color_poster_background"/>
 
         <TextView
             android:id="@+id/rating_text_view"
