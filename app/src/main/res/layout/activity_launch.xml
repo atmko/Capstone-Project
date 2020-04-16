@@ -119,15 +119,24 @@
     </LinearLayout>
 
     <Button
-        style="@style/Confirmation_ButtonStyle_End"
         android:id="@+id/google_continue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/x1_layout_margin"
+        app:layout_constraintBottom_toTopOf="@id/guest_continue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/google_continue_text_literal"/>
+
+    <Button
+        android:id="@+id/guest_continue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/x1_layout_margin"
         app:layout_constraintBottom_toTopOf="@id/terms_text_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:text="@string/continue_text_literal"/>
+        android:text="@string/guest_continue_text_literal"/>
 
     <TextView
         android:id="@+id/terms_text_view"

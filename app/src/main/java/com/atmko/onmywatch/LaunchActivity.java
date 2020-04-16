@@ -136,6 +136,19 @@ public class LaunchActivity extends AppCompatActivity {
                 }
             }
         });
+
+        Button guestContinue = findViewById(R.id.guest_continue);
+        guestContinue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (checkBox.isChecked()) {
+                    continueAsGuest();
+
+                } else {
+                    showMissingAgreements();
+                }
+            }
+        });
     }
 
     private void continueWithGoogle() {
@@ -184,6 +197,22 @@ public class LaunchActivity extends AppCompatActivity {
                         .requestEmail()
                         .build();
         GoogleSignIn.getClient(this, gso).signOut();
+    }
+
+    private void continueAsGuest() {
+        FirebaseAuth.getInstance().signInAnonymously()
+                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                    @Override
+                    public void onSuccess(AuthResult authResult) {
+                        updateAgreementPreference();
+                        startMasterActivity(true);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                showSnackBarMessage(getString(R.string.log_in_failed_message));
+            }
+        });
     }
 
     private void defineValues() {
