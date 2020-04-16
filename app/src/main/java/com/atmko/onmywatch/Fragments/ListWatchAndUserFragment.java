@@ -147,6 +147,10 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
     }
 
     private void defineViews() {
+        if (getView() == null) return;
+        if (getParentFragment() == null) return;
+        if (getParentFragment().getView() == null) return;
+
         mDatabase = AppDatabase.getInstance(getContext());
         mRecyclerView = getView().findViewById(R.id.lists_recycler_view);
         mRecyclerView.setLayoutManager(configureLayoutManager());
@@ -221,6 +225,8 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
     }
 
     private void observeData(final Bundle savedInstanceState) {
+        if (getParentFragment() == null) return;
+
         ListsWatchAndUserViewModel viewModel = ViewModelProviders.of(getParentFragment()).get(ListsWatchAndUserViewModel.class);
         LiveData listsLiveData;
 
@@ -325,6 +331,8 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
     }
 
     private void launchCreateListActivity(UserListModel userListModel) {
+        if (getActivity() == null) return;
+
         Intent intent = new Intent(getActivity().getApplicationContext(), CreateListActivity.class);
         intent.putExtra(CreateListActivity.MODE_KEY, CreateListActivity.MODE_EDIT);
         intent.putExtra(CreateListActivity.USER_LIST_KEY, Parcels.wrap(userListModel));

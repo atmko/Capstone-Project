@@ -107,7 +107,7 @@ public class HomeSpotlightFragment extends Fragment implements
 
             mDataAdapter.addAdapterData(mediaDataList);
 
-            loadDetailFragment();
+            if (canLaunchDetailFragmentAlongside()) loadDetailFragmentIfCapable();
         }
     }
 
@@ -121,6 +121,9 @@ public class HomeSpotlightFragment extends Fragment implements
     }
 
     private void defineViews() {
+        if (getView() == null) return;
+        if (getActivity() == null) return;
+
         RecyclerView recyclerView = getView().findViewById(R.id.discover_results_recycler_view);
         recyclerView.setLayoutManager(configureLayoutManager());
 
@@ -137,6 +140,9 @@ public class HomeSpotlightFragment extends Fragment implements
     }
 
     private void executeSearch() {
+        if (getParentFragment() == null) return;
+        if (getParentFragment().getActivity() == null) return;
+
         //build AN request
         ANRequest request = NetworkFunctions.agnosticSearchRequest(mSearchUrl,
                 mSearchPreferences, getParentFragment().getActivity());
@@ -162,8 +168,7 @@ public class HomeSpotlightFragment extends Fragment implements
                 mDataAdapter.getAdapterData().clear();
                 mDataAdapter.addAdapterData(dataList);
 
-                loadDetailFragment();
-
+                if (canLaunchDetailFragmentAlongside()) loadDetailFragmentIfCapable();
             }
 
             @Override
@@ -174,6 +179,7 @@ public class HomeSpotlightFragment extends Fragment implements
                     return;
                 }
 
+                if (getActivity() == null) return;
                 //notify user of error
                 Snackbar.make(getActivity().findViewById(R.id.top_layout),
                         getString(R.string.spotlight_fetch_error_message), Snackbar.LENGTH_LONG).show();
@@ -197,44 +203,51 @@ public class HomeSpotlightFragment extends Fragment implements
         }, coolDownInMilliSecs);
     }
 
+    private boolean canLaunchDetailFragmentAlongside() {
+        if (getActivity() == null) return false;
+        boolean isTabletLandscape = ((MasterActivity) getActivity()).isTabletLandscape();
+        boolean isAdapterEmpty = mDataAdapter.getAdapterData().size() > 0;
+        return isAdapterEmpty && isTabletLandscape;
+    }
+
     //loads detail fragment:
     //if tablet is landscape
     // && detail fragment container has no fragment
     // && is containing fragment on top in fragment detail container
-    private void loadDetailFragment() {
+    private void loadDetailFragmentIfCapable() {
+        if (getActivity() == null) return;
+        if (getParentFragment() == null) return;
+        if (getParentFragment().getActivity() == null) return;
+
         MasterActivity masterActivity = ((MasterActivity) getParentFragment().getActivity());
 
         if (masterActivity == null) return;
 
         Fragment activeFragment = masterActivity.getSupportFragmentManager()
                 .findFragmentById(R.id.master_fragments_container);
+
+        if (activeFragment == null) return;
         String activeClassName = activeFragment.getClass().getName();
         String parentClassName = getParentFragment().getClass().getName();
 
         boolean isParentActive = activeClassName.equals(parentClassName);
 
-        if (masterActivity.isTabletLandscape()
-                && !masterActivity.hasFragment(R.id.detail_fragments_container)
+        if (!masterActivity.hasFragment(R.id.detail_fragments_container)
                 //TODO consider detaching fragments to disable background updates instead of "isParentActive"//fixes
                 //fixes bug where media data of bottom fragments get loaded into details container
                 // instead of topmost fragment
                 && isParentActive) {
 
             MediaData firstMediaData = mDataAdapter.getAdapterData().get(0);
-
-            startDetailsFragment(firstMediaData);
+            ((MasterActivity) getActivity()).launchDetailsFragment(firstMediaData, null);
         }
-    }
-
-    private void startDetailsFragment(MediaData selectedData) {
-        ((MasterActivity) getActivity()).launchDetailsFragment(selectedData, null);
     }
 
     @Override
     public void onItemClick(int position) {
+        if (getActivity() == null) return;
         MediaData selectedData = mDataAdapter.getAdapterData().get(position);
-
-        startDetailsFragment(selectedData);
+        ((MasterActivity) getActivity()).launchDetailsFragment(selectedData, null);
     }
 
     @Override

@@ -94,11 +94,13 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
+        if (getActivity() == null) return;
         ((MasterActivity) getActivity()).onResumeMasterContainerFragment(this);
     }
 
     private void defineViews() {
+        if (getView() == null) return;
+        if (getActivity() == null) return;
         setHasOptionsMenu(true);
 
         Toolbar toolbar = getView().findViewById(R.id.toolbar);
@@ -124,6 +126,7 @@ public class HomeFragment extends Fragment {
         listsTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (getActivity() == null) return;
                 String[] listTypeNames = getResources().getStringArray(R.array.list_type_titles);
                 ListsWatchAndUserParentFragment listsParentFragment =
                         ListsWatchAndUserParentFragment.newInstance(listTypeNames, true);
@@ -140,6 +143,7 @@ public class HomeFragment extends Fragment {
         searchImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (getActivity() == null) return;
                 DiscoverParentFragment discoverParentFragment = DiscoverParentFragment.newInstance();
 
                 getActivity().getSupportFragmentManager().beginTransaction()
@@ -183,6 +187,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadMediaLabel() {
+        if (getView() == null) return;
         final TextView mediaTypeTextView = getView().findViewById(R.id.media_type_text_view);
 
         if (mMediaType == MEDIA_TYPE_SERIES) {
@@ -205,8 +210,7 @@ public class HomeFragment extends Fragment {
         SearchPreferences searchPreferences =  new SearchPreferences();
 
         if (mMediaType == MEDIA_TYPE_MOVIE) {
-            String spotlightUrl =
-                    getContext().getResources().getStringArray(R.array.spotlight_url)[MEDIA_TYPE_MOVIE];
+            String spotlightUrl = getResources().getStringArray(R.array.spotlight_url)[MEDIA_TYPE_MOVIE];
 
             HomeSpotlightFragment spotLightDisplay = HomeSpotlightFragment
                     .newInstance(mMediaType, spotlightUrl, searchPreferences);
@@ -233,8 +237,7 @@ public class HomeFragment extends Fragment {
                     .commit();
 
         } else if (mMediaType == MEDIA_TYPE_SERIES) {
-            String spotlightUrl =
-                    getContext().getResources().getStringArray(R.array.spotlight_url)[MEDIA_TYPE_SERIES];
+            String spotlightUrl = getResources().getStringArray(R.array.spotlight_url)[MEDIA_TYPE_SERIES];
 
             HomeSpotlightFragment spotLightDisplay = HomeSpotlightFragment
                     .newInstance(mMediaType, spotlightUrl, searchPreferences);
@@ -264,6 +267,8 @@ public class HomeFragment extends Fragment {
 
     //configures width, height and margins of home list display container
     private void configureListContainerParams(int containerId) {
+        if (getView() == null) return;
+        if (getActivity() == null) return;
         final FrameLayout fragmentContainer = getView().findViewById(containerId);
 
         DisplayMetrics displayDimensions = Resources.getSystem().getDisplayMetrics();

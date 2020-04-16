@@ -118,6 +118,11 @@ public class ListResultsFragment extends Fragment
     }
 
     private void defineViews() {
+        if (getActivity() == null) return;
+        if (getView() == null) return;
+        if (getParentFragment() == null) return;
+        if (getParentFragment().getView() == null) return;
+
         RecyclerView mListResultsRecyclerView =
                 getView().findViewById(R.id.list_results_recycler_view);
 
@@ -166,9 +171,11 @@ public class ListResultsFragment extends Fragment
     }
 
     private void observeData(final Bundle savedInstanceState) {
+        if (getParentFragment() == null) return;
+
         database = AppDatabase.getInstance(getContext());
 
-        final String[] watchStatusMoviesTitles = getContext().getResources()
+        final String[] watchStatusMoviesTitles = getResources()
                 .getStringArray(R.array.watch_status_movie_titles);
         List<String> titleList = Arrays.asList(watchStatusMoviesTitles);
 
@@ -374,7 +381,14 @@ public class ListResultsFragment extends Fragment
         mDataAdapter.addAdapterData(mediaDataList);
         mDataAdapter.setPlaceholders();
 
-        if (mDataAdapter.getAdapterData().size() > 0 ) loadDetailFragment();
+        if (canLaunchDetailFragmentAlongside()) loadDetailFragmentIfCapable();
+    }
+
+    private boolean canLaunchDetailFragmentAlongside() {
+        if (getActivity() == null) return false;
+        boolean isAdapterEmpty = mDataAdapter.getAdapterData().size() == 0;
+        boolean isTabletLandscape = ((MasterActivity) getActivity()).isTabletLandscape();
+        return isAdapterEmpty && isTabletLandscape;
     }
 
     //loads detail fragment:
@@ -382,19 +396,22 @@ public class ListResultsFragment extends Fragment
     // && detail fragment container has no fragment
     //&& this is currently selected tab
     // && is containing fragment on top in fragment detail container
-    private void loadDetailFragment() {
+    private void loadDetailFragmentIfCapable() {
+        if (getParentFragment() == null) return;
         MasterActivity masterActivity = ((MasterActivity) getParentFragment().getActivity());
+
+        if (masterActivity == null) return;
+        Fragment activeFragment = masterActivity.getSupportFragmentManager()
+                .findFragmentById(R.id.master_fragments_container);
+
+        if (activeFragment == null) return;
+        String activeClassName = activeFragment.getClass().getName();
+        String parentClassName = getParentFragment().getClass().getName();
 
         boolean isCurrentTab =
                 mMediaType == ((ListResultsParentFragment) getParentFragment()).getCurrentTabPosition();
 
-        Fragment activeFragment = masterActivity.getSupportFragmentManager()
-                .findFragmentById(R.id.master_fragments_container);
-        String activeClassName = activeFragment.getClass().getName();
-        String parentClassName = getParentFragment().getClass().getName();
-
         boolean isParentActive = activeClassName.equals(parentClassName);
-
         if (masterActivity.isTabletLandscape()
                 && !masterActivity.hasFragment(R.id.detail_fragments_container)
                 && isCurrentTab
@@ -409,6 +426,7 @@ public class ListResultsFragment extends Fragment
 
     @Override
     public void onItemClick(int position) {
+        if (getActivity() == null) return;
         if (mDataAdapter.inPlaceholderMode(position)) {
             DiscoverParentFragment discoverParentFragment = DiscoverParentFragment.newInstance();
 
@@ -439,6 +457,7 @@ public class ListResultsFragment extends Fragment
     }
 
     private void startDetailsFragment(MediaData selectedData) {
+        if (getActivity() == null) return;
         ((MasterActivity) getActivity()).launchDetailsFragment(selectedData, null);
     }
 }

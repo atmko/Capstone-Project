@@ -113,6 +113,8 @@ public class RecommendationsFragment extends Fragment
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        if (getParentFragment() == null) return;
+
         viewModel = ((DetailsFragment) getParentFragment()).getViewModel();
         defineViews();
 
@@ -152,6 +154,9 @@ public class RecommendationsFragment extends Fragment
     }
 
     private void defineViews() {
+        if (getView() == null) return;
+        if (getActivity() == null) return;
+
         Stack.PagingBlockTemplate pagingBlockTemplate =
                 new Stack.PagingBlockTemplate(new Stack.PagingBlockTemplate.OnCreatePageLoader() {
                     @Override
@@ -219,6 +224,7 @@ public class RecommendationsFragment extends Fragment
     }
 
     private void executeSearch(final int blockNumber, final int targetPage, final int stackOperation) {
+        if (getParentFragment() == null) return;
         if (getParentFragment().getActivity() == null) return;
 
         //build AN request
@@ -259,6 +265,7 @@ public class RecommendationsFragment extends Fragment
                     return;
                 }
 
+                if (getActivity() == null) return;
                 //mStack page on failure to include empty results in recycler view,
                 //also so mStack can keep counts for when to remove a block
                 mStack.stackPage(blockNumber, targetPage, null, stackOperation);

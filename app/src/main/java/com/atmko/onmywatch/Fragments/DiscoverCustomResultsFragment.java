@@ -168,11 +168,16 @@ public class DiscoverCustomResultsFragment extends Fragment implements
             //set total pages
             mStack.setTotalPages(mSearchPreferences.getTotalPages());
 
-            loadDetailFragment();
+            if (canLaunchDetailFragmentAlongside()) loadDetailFragmentIfCapable();
         }
     }
 
     private void defineViews() {
+        if (getActivity() == null) return;
+        if (getView() == null) return;
+        if (getParentFragment() == null) return;
+        if (getParentFragment().getView() == null) return;
+
         configureCustomSpinners();
 
         Stack.PagingBlockTemplate pagingBlockTemplate =
@@ -244,6 +249,9 @@ public class DiscoverCustomResultsFragment extends Fragment implements
     }
 
     private void configureCustomSpinners() {
+        if (getView() == null) return;
+        if (getContext() == null) return;
+
         searchButton = getView().findViewById(R.id.search_button);
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -356,6 +364,7 @@ public class DiscoverCustomResultsFragment extends Fragment implements
     }
 
     private void executeSearch(final int blockNumber, final int targetPage, final int stackOperation) {
+        if (getParentFragment() == null) return;
         if (getParentFragment().getActivity() == null) return;
 
         //build AN request
@@ -387,12 +396,12 @@ public class DiscoverCustomResultsFragment extends Fragment implements
 
                 mStack.stackPage(blockNumber, targetPage, dataList, stackOperation);
 
-                loadDetailFragment();
-
+                if (canLaunchDetailFragmentAlongside()) loadDetailFragmentIfCapable();
             }
 
             @Override
             public void onError(ANError anError) {
+                if (getActivity() == null) return;
                 if (anError.getErrorCode() == ApiConstants.TOO_MANY_REQUESTS) {
                     mStack.setIsFrozen(true);
                     retryAfterCoolDOwn(anError, blockNumber, targetPage, stackOperation);
@@ -431,42 +440,53 @@ public class DiscoverCustomResultsFragment extends Fragment implements
         }, coolDownInMilliSecs);
     }
 
+    private boolean canLaunchDetailFragmentAlongside() {
+        if (getActivity() == null) return false;
+        boolean isTabletLandscape = ((MasterActivity) getActivity()).isTabletLandscape();
+
+        boolean isAdapterEmpty;
+        if (mMediaType == MEDIA_TYPE_PEOPLE) {
+            isAdapterEmpty = ((PeopleDataAdapter) mDataAdapter).getAdapterData().size() > 0;
+
+        } else {
+            isAdapterEmpty = ((MediaDataAdapter) mDataAdapter).getAdapterData().size() > 0;
+        }
+
+        return isAdapterEmpty && isTabletLandscape;
+    }
+
     //loads detail fragment:
     //if tablet is landscape
     // && detail fragment container has no fragment
     //&& this is currently selected tab
     // && stack is not currently waiting for more pages to load
     // && is containing fragment on top in fragment detail container
-    private void loadDetailFragment() {
+    private void loadDetailFragmentIfCapable() {
+        if (getParentFragment() == null) return;
         MasterActivity masterActivity = ((MasterActivity) getParentFragment().getActivity());
 
         if (masterActivity == null) return;
-
         Fragment activeFragment =
                 masterActivity.getSupportFragmentManager().findFragmentById(R.id.master_fragments_container);
+
+        if (activeFragment == null) return;
         String activeClassName = activeFragment.getClass().getName();
         String parentClassName = getParentFragment().getClass().getName();
 
         boolean isParentActive = activeClassName.equals(parentClassName);
-
-        if (masterActivity.isTabletLandscape()
-                && !masterActivity.hasFragment(R.id.detail_fragments_container)
+        if (!masterActivity.hasFragment(R.id.detail_fragments_container)
                 && isCurrentTab()
                 && mStack.isIdle()
                 //TODO consider detaching fragments to disable background updates instead of "isParentActive"
                 && isParentActive) {
 
-            MediaData firstMediaData;
-
             if (mMediaType == MEDIA_TYPE_PEOPLE) {
-                ((PeopleDataAdapter) mDataAdapter).getAdapterData().get(0);
+                PersonData firstPeopleData = ((PeopleDataAdapter) mDataAdapter).getAdapterData().get(0);
+                masterActivity.launchPeopleDetailsFragment(firstPeopleData);
 
             } else {
-                if (((MediaDataAdapter) mDataAdapter).getAdapterData().size() > 0) {
-                    firstMediaData = ((MediaDataAdapter) mDataAdapter).getAdapterData().get(0);
-
-                    ((MasterActivity) getActivity()).launchDetailsFragment(firstMediaData, null);
-                }
+                MediaData firstMediaData = ((MediaDataAdapter) mDataAdapter).getAdapterData().get(0);
+                masterActivity.launchDetailsFragment(firstMediaData, null);
             }
         }
     }
@@ -475,6 +495,7 @@ public class DiscoverCustomResultsFragment extends Fragment implements
     //if the corresponding url = this fragment's url(mSearchUrl), returns true
     //compares the url list of each tab to checks if this fragment is the currently selected tab
     public boolean isCurrentTab() {
+        if (getParentFragment() == null || getParentFragment().getActivity() == null) return false;
         //if this is a manual search
         if (mSearchType.equals(DiscoverParentFragment.SEARCH_MODE_MANUAL)) {
             //get the list of manual search urls and compare to this fragment's mSearchUrl

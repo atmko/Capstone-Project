@@ -99,6 +99,9 @@ public class HomeListDisplayFragment extends Fragment
     }
 
     private void defineViews() {
+        if (getView() == null) return;
+        if (getActivity() == null) return;
+
         mRecyclerView = getView().findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(configureLayoutManager());
 

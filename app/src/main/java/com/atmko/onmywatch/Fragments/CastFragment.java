@@ -103,6 +103,7 @@ public class CastFragment extends Fragment
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        if (getParentFragment() == null) return;
 
         viewModel = ((DetailsFragment) getParentFragment()).getViewModel();
         defineViews();
@@ -136,6 +137,11 @@ public class CastFragment extends Fragment
     }
 
     private void defineViews() {
+        if (getActivity() == null) return;
+        if (getView() == null) return;
+        if (getParentFragment() == null) return;
+        if (getParentFragment().getView() == null) return;
+
         RecyclerView recyclerView = getView().findViewById(R.id.cast_recycler_view);
         recyclerView.setLayoutManager(configureLayoutManager());
 
@@ -154,6 +160,7 @@ public class CastFragment extends Fragment
     }
 
     private void executeSearch() {
+        if (getParentFragment() ==null) return;
         if (getParentFragment().getActivity() == null) return;
 
         //build AN request
@@ -179,6 +186,7 @@ public class CastFragment extends Fragment
                     return;
                 }
 
+                if (getActivity() == null) return;
                 //notify user of error
                 Snackbar.make(getActivity().findViewById(R.id.top_layout),
                         getString(R.string.cast_fetch_error_message),

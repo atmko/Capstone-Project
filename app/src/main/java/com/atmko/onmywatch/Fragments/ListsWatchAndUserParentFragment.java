@@ -94,6 +94,9 @@ public class ListsWatchAndUserParentFragment extends Fragment
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        if (getView() == null) return;
+        if (getActivity() == null) return;
+
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
         Toolbar toolbar = getView().findViewById(R.id.toolbar);
@@ -164,6 +167,8 @@ public class ListsWatchAndUserParentFragment extends Fragment
     }
 
     private void defineViews() {
+        if (getView() == null) return;
+
         final TextView titleText = getView().findViewById(R.id.title_text_view);
         titleText.setText(getString(R.string.lists_text_literal));
 
@@ -171,7 +176,9 @@ public class ListsWatchAndUserParentFragment extends Fragment
         searchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                ((MasterActivity) getActivity()).hideSoftKeyboard(searchEditText);
+                if (getView() == null) return true;
+
+                MasterActivity.hideSoftKeyboard(searchEditText);
 
                 //set focus to top layout(away from search box)
                 getView().findViewById(R.id.top_layout).requestFocus();
@@ -234,6 +241,7 @@ public class ListsWatchAndUserParentFragment extends Fragment
 
     @Override
     public void onKeyBoardDismiss() {
+        if (getView() == null) return;
         //set focus to top layout when keyboard dismissed
         getView().findViewById(R.id.top_layout).requestFocus();
 

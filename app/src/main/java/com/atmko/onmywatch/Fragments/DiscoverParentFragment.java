@@ -199,7 +199,7 @@ public class DiscoverParentFragment extends Fragment
         mSearchImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MasterActivity) getActivity()).onSearchButtonPressed(mSearchImageButton,
+                MasterActivity.onSearchButtonPressed(mSearchImageButton,
                         searchEditText, titleText);
 
                 if (mSearchMode.equals(SEARCH_MODE_PRESET)) {
@@ -237,7 +237,7 @@ public class DiscoverParentFragment extends Fragment
                     return true;
                 }
 
-                ((MasterActivity) getActivity()).hideSoftKeyboard(mSearchEditTextView);
+                MasterActivity.hideSoftKeyboard(mSearchEditTextView);
 
                 //set focus to top layout(away from search box)
                 getView().findViewById(R.id.top_layout).requestFocus();

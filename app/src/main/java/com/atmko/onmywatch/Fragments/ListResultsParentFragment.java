@@ -80,6 +80,9 @@ public class ListResultsParentFragment extends Fragment
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        if (getView() == null) return;
+        if (getActivity() == null) return;
+
         setHasOptionsMenu(true);
         Toolbar toolbar = getView().findViewById(R.id.toolbar);
 
@@ -101,9 +104,8 @@ public class ListResultsParentFragment extends Fragment
     @Override
     public void onResume() {
         super.onResume();
-
+        if (getActivity() == null) return;
         ((MasterActivity) getActivity()).onResumeMasterContainerFragment(this);
-
     }
 
     @Nullable
@@ -123,6 +125,7 @@ public class ListResultsParentFragment extends Fragment
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
+                    if (getActivity() == null) return;
                     //run code after entry animation is complete
                     defineViews();
 
@@ -152,6 +155,9 @@ public class ListResultsParentFragment extends Fragment
     }
 
     private void defineViews() {
+        if (getView() == null) return;
+        if (getContext() == null) return;
+
         final TextView titleText = getView().findViewById(R.id.title_text_view);
         titleText.setText(GeneralUtils.convertToDisplayText(mListName));
 
@@ -159,8 +165,9 @@ public class ListResultsParentFragment extends Fragment
         getView().findViewById(R.id.search_list_fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DiscoverParentFragment discoverParentFragment = DiscoverParentFragment.newInstance();
+                if (getActivity() == null) return;
 
+                DiscoverParentFragment discoverParentFragment = DiscoverParentFragment.newInstance();
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.slide_down_entry, android.R.animator.fade_out)
                         .add(R.id.master_fragments_container, discoverParentFragment,
@@ -173,7 +180,9 @@ public class ListResultsParentFragment extends Fragment
         searchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                ((MasterActivity) getActivity()).hideSoftKeyboard(searchEditText);
+                if (getView() == null) return true;
+
+                MasterActivity.hideSoftKeyboard(searchEditText);
 
                 //set focus to top layout(away from search box)
                 getView().findViewById(R.id.top_layout).requestFocus();
@@ -186,7 +195,7 @@ public class ListResultsParentFragment extends Fragment
         searchImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MasterActivity) getActivity()).onSearchButtonPressed(searchImageButton,
+                MasterActivity.onSearchButtonPressed(searchImageButton,
                         searchEditText, titleText);            }
         });
 
@@ -236,6 +245,7 @@ public class ListResultsParentFragment extends Fragment
 
     @Override
     public void onKeyBoardDismiss() {
+        if (getView() == null) return;
         //set focus to top layout when keyboard dismissed
         getView().findViewById(R.id.top_layout).requestFocus();
 

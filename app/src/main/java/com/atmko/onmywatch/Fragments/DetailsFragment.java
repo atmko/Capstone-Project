@@ -628,6 +628,7 @@ public class DetailsFragment extends Fragment {
                     return;
                 }
 
+                if (getActivity() == null) return;
                 //notify user of error
                 Snackbar.make(getActivity().findViewById(R.id.top_layout),
                         getString(R.string.details_error_message), Snackbar.LENGTH_LONG).show();
@@ -669,6 +670,7 @@ public class DetailsFragment extends Fragment {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
+                if (getActivity() == null) return;
                 AppDatabase database = AppDatabase.getInstance(getContext());
                 final MediaData mOfflineMediaData;
                 if (mMediaData instanceof MovieData) {
