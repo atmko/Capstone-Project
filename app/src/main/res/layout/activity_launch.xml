@@ -50,16 +50,28 @@
         android:gravity="center">
 
         <TextView
-            android:id="@+id/no_streaming_text_view"
+            android:id="@+id/no_streaming_prefix_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/text_margin"
             android:layout_marginEnd="@dimen/text_margin"
             android:layout_marginBottom="@dimen/x1_layout_margin"
             android:gravity="center"
-            android:text="@string/streaming_disclaimer"
+            android:text="@string/streaming_disclaimer_prefix"
             android:textColor="@android:color/white"
             android:textSize="@dimen/headline_3_text_size"/>
+
+        <TextView
+            android:id="@+id/no_streaming_suffix_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/text_margin"
+            android:layout_marginEnd="@dimen/text_margin"
+            android:layout_marginBottom="@dimen/x1_layout_margin"
+            android:gravity="center"
+            android:text="@string/streaming_disclaimer_suffix"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/headline_2_text_size"/>
 
         <LinearLayout
             android:id="@+id/i_understand_linear_layout"

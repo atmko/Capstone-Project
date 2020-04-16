@@ -3,7 +3,8 @@
 
     <!--LAUNCH ACTIVITY TEXT-->
     <string name="app_description">Manage And Track What You Watch</string>
-    <string name="streaming_disclaimer">On My Watch can NOT stream movies or series</string>
+    <string name="streaming_disclaimer_prefix">Majik can NOT</string>
+    <string name="streaming_disclaimer_suffix">stream movies or series</string>
     <string name="streaming_confirmation_text">I understand</string>
     <string name="agreement_error_text">You must accept this condition to continue</string>
     <string name="google_continue_text_literal">continue with google</string>

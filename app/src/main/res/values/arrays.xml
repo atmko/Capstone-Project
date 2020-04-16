@@ -331,4 +331,9 @@
         <item>77</item>
     </array>
 
+    <array name="disclaimer_suffix_clickable_spans">
+        <item>10</item>
+        <item>13</item>
+    </array>
+
 </resources>
