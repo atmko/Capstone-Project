@@ -1,6 +1,7 @@
 package com.atmko.onmywatch;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,7 +27,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.security.ProviderInstaller;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -35,15 +39,20 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 
-public class LaunchActivity extends AppCompatActivity {
+public class LaunchActivity extends AppCompatActivity
+        implements ProviderInstaller.ProviderInstallListener {
+
     public static final String AGREEMENT_KEY = "agreement";
 
     private static final int REQUEST_GOOGLE_SIGN_IN = 0;
+    private static final int ERROR_DIALOG_REQUEST_CODE = 1;
 
     private AppCompatCheckBox checkBox;
     private TextView agreementErrorTextView;
 
     SharedPreferences sharedPreferences;
+    private boolean isProviderUpdated;
+    private boolean requireRetryProviderInstall;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,10 +62,51 @@ public class LaunchActivity extends AppCompatActivity {
 
         defineViews();
         defineValues();
+        retryProviderInstall();
+    }
 
+    private void retryProviderInstall() {
+        ProviderInstaller.installIfNeededAsync(this, this);
+    }
+
+    @Override
+    public void onProviderInstalled() {
+        isProviderUpdated = true;
         if (MasterActivity.getCurrentUser() != null) {
             startMasterActivity(false);
         }
+    }
+
+    /**
+     * This method is called if updating fails; the error code indicates
+     * whether the error is recoverable.
+     */
+    @Override
+    public void onProviderInstallFailed(int errorCode, Intent recoveryIntent) {
+        GoogleApiAvailability availability = GoogleApiAvailability.getInstance();
+        if (availability.isUserResolvableError(errorCode)) {
+            // Recoverable error. Show a dialog prompting the user to
+            // install/update/enable Google Play services.
+            availability.showErrorDialogFragment(
+                    this,
+                    errorCode,
+                    ERROR_DIALOG_REQUEST_CODE,
+                    new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            // The user chose not to take the recovery action
+                            onProviderInstallerNotAvailable();
+                        }
+                    });
+        } else {
+            // Google Play services is not available.
+            onProviderInstallerNotAvailable();
+        }
+    }
+
+    private void onProviderInstallerNotAvailable() {
+        Toast.makeText(this, "Couldn't Update Google Play Services",
+                Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -70,7 +120,28 @@ public class LaunchActivity extends AppCompatActivity {
             } else {
                 showSnackBarMessage(getString(R.string.log_in_failed_message));
             }
+        } else if (requestCode == ERROR_DIALOG_REQUEST_CODE) {
+            // Adding a fragment via GoogleApiAvailability.showErrorDialogFragment
+            // before the instance state is restored throws an error. So instead,
+            // set a flag here, which will cause the fragment to delay until
+            // onPostResume.
+            requireRetryProviderInstall = true;
         }
+    }
+
+    /**
+     * On resume, check to see if we flagged that we need to reinstall the
+     * provider.
+     */
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        if (requireRetryProviderInstall) {
+            // We can now safely retry installation.
+            retryProviderInstall();
+        }
+
+        requireRetryProviderInstall = false;
     }
 
     private void defineViews() {
@@ -152,14 +223,18 @@ public class LaunchActivity extends AppCompatActivity {
     }
 
     private void continueWithGoogle() {
-        GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
+        if (isProviderUpdated) {
+            GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(getString(R.string.default_web_client_id))
+                    .requestEmail()
+                    .build();
 
-        GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, options);
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, REQUEST_GOOGLE_SIGN_IN);
+            GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, options);
+            Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+            startActivityForResult(signInIntent, REQUEST_GOOGLE_SIGN_IN);
+        } else {
+            retryProviderInstall();
+        }
     }
 
     private void handleSignInResult(Task<GoogleSignInAccount> task) {
@@ -200,19 +275,23 @@ public class LaunchActivity extends AppCompatActivity {
     }
 
     private void continueAsGuest() {
-        FirebaseAuth.getInstance().signInAnonymously()
-                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                    @Override
-                    public void onSuccess(AuthResult authResult) {
-                        updateAgreementPreference();
-                        startMasterActivity(true);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                showSnackBarMessage(getString(R.string.log_in_failed_message));
-            }
-        });
+        if (isProviderUpdated) {
+            FirebaseAuth.getInstance().signInAnonymously()
+                    .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                        @Override
+                        public void onSuccess(AuthResult authResult) {
+                            updateAgreementPreference();
+                            startMasterActivity(true);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    showSnackBarMessage(getString(R.string.log_in_failed_message));
+                }
+            });
+        } else {
+            retryProviderInstall();
+        }
     }
 
     private void defineValues() {
