@@ -530,7 +530,13 @@ public class MasterActivity extends AppCompatActivity implements
             fragment = getSupportFragmentManager().findFragmentById(R.id.detail_fragments_container);
 
         } else {
-            fragment = fragments.get(fragments.size() - 1);
+            if (fragments.size() > 0) {
+                fragment = fragments.get(fragments.size() - 1);
+
+            } else {
+                finish();
+                return;
+            }
         }
 
         //if in tablet landscape and there are only 2 fragments left, finish
