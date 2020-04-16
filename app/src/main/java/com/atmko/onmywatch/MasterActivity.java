@@ -537,7 +537,6 @@ public class MasterActivity extends AppCompatActivity implements
 
         } else {
             return super.onOptionsItemSelected(item);
-
         }
     }
 
@@ -545,7 +544,7 @@ public class MasterActivity extends AppCompatActivity implements
     public void onBackPressed() {
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
         boolean hasDetailFragment = getSupportFragmentManager()
-                        .findFragmentById(R.id.detail_fragments_container) != null;
+                .findFragmentById(R.id.detail_fragments_container) != null;
         Fragment fragment;
         if (!isTabletLandscape() && hasDetailFragment) {
             fragment = getSupportFragmentManager().findFragmentById(R.id.detail_fragments_container);
@@ -786,7 +785,7 @@ public class MasterActivity extends AppCompatActivity implements
     public static void launchConfirmationActivity(final Activity activity,
                                                   final int requestId,
                                                   final String action) {
-            AppExecutors.getInstance().diskIO().execute(new Runnable() {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
                 Intent confirmationActivityIntent =
@@ -898,7 +897,7 @@ public class MasterActivity extends AppCompatActivity implements
     }
 
     public static void onSearchButtonPressed(ImageButton searchButton,
-                                      SuperEditText searchEditText, TextView toolbarTitle) {
+                                             SuperEditText searchEditText, TextView toolbarTitle) {
         if (searchEditText.getVisibility() == View.VISIBLE) {
             searchEditText.setText("");
             searchButton.setImageResource(R.drawable.ic_manual_search);
@@ -1202,9 +1201,9 @@ public class MasterActivity extends AppCompatActivity implements
                 .build();
 
         OneTimeWorkRequest proUpdateForNotifications = new OneTimeWorkRequest.Builder(
-                    UpdateMediaWorker.class)
-                    .setConstraints(constraints)
-                    .build();
+                UpdateMediaWorker.class)
+                .setConstraints(constraints)
+                .build();
 
         WorkManager.getInstance(activity).enqueue(proUpdateForNotifications);
     }
