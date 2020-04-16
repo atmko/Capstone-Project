@@ -6,6 +6,7 @@
     <string name="streaming_disclaimer">On My Watch can NOT stream movies or series</string>
     <string name="streaming_confirmation_text">I understand</string>
     <string name="agreement_error_text">You must accept this condition to continue</string>
+    <string name="google_continue_text_literal">continue with google</string>
     <string name="continue_text_literal">continue</string>
     <string name="accept_terms_text">By clicking continue, you are agreeing to our Terms of Use and Privacy Policy</string>
     <string name="terms_url">https://majik.flycricket.io/terms.html</string>
@@ -191,6 +192,7 @@
     <string name="restore_completed_message">Restore Completed.</string>
     <string name="restore_failed_message">Restore Failed.</string>
     <string name="no_browser_error_message">No browser to launch page</string>
+    <string name="log_in_failed_message">Log In Failed</string>
 
     <string name="pro_mode_list_limit_message">More lists available in pro mode.</string>
     <!--SNACK BAR MESSAGES-->

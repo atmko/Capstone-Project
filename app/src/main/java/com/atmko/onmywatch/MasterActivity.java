@@ -18,7 +18,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -65,14 +64,12 @@ import com.atmko.onmywatch.models.MovieLog;
 import com.atmko.onmywatch.models.PersonData;
 import com.atmko.onmywatch.models.SimpleIdlingResource;
 import com.atmko.onmywatch.models.WatchListModel;
-import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
 import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.utils.network_utils.BackupService;
 import com.atmko.onmywatch.utils.network_utils.work_manager_workers.BackupWorker;
 import com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker;
 import com.atmko.onmywatch.view_models.MasterActivityViewModel;
-import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -90,7 +87,6 @@ import com.google.firebase.functions.HttpsCallableResult;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -114,6 +110,7 @@ public class MasterActivity extends AppCompatActivity implements
     public static final int MEDIA_TYPE_MOVIE = 1;
     public static final int MEDIA_TYPE_PEOPLE = 2;
 
+    public static final String IS_LOGGING_IN_KEY = "is_logging_in";
     private static final String INITIAL_PRO_CHECK_KEY = "initial_pro_check";
     private static final String KEYBOARD_VISIBILITY_KEY = "keyboard_visibility";
 
@@ -127,8 +124,9 @@ public class MasterActivity extends AppCompatActivity implements
     private static final int INITIAL_DELAY = 15;
 
     private static final String USER_COLLECTION_PATH = "users";
-    private final int SIGN_IN_REQUEST_CODE = 10;
+
     private static final int REQUEST_LOG_OUT = 20;
+
     private static final int PENDING_PURCHASE_ID = 1;
 
     //for restoring keyboard visibility upon configuration change
@@ -144,7 +142,6 @@ public class MasterActivity extends AppCompatActivity implements
     @Nullable
     public static SimpleIdlingResource sIdlingResource;
 
-    public static boolean sIsAuthUiActive;
     public static boolean sIsProMode;
     public static boolean sAllowCloudBackup;
 
@@ -173,14 +170,13 @@ public class MasterActivity extends AppCompatActivity implements
 
         //if current user is null start login
         if (getCurrentUser() == null) {
-            if (!sIsAuthUiActive) {
-                sIsAuthUiActive = true;
-                startSignInActivity();
-            }
+            startLaunchActivity();
 
         } else {
+            boolean isLoggingIn = getIntent().getBooleanExtra(IS_LOGGING_IN_KEY, false);
+            getIntent().removeExtra(IS_LOGGING_IN_KEY);
             //observe user data via view model
-            observeData(false);
+            observeData(isLoggingIn);
         }
     }
 
@@ -313,19 +309,10 @@ public class MasterActivity extends AppCompatActivity implements
         }
     }
 
-    private void startSignInActivity() {
-        // Choose authentication providers
-        List<AuthUI.IdpConfig> providers = Arrays.asList(
-                new AuthUI.IdpConfig.GoogleBuilder().build()
-        );
-
-        // Create and launch sign-in intent
-        startActivityForResult(
-                AuthUI.getInstance()
-                        .createSignInIntentBuilder()
-                        .setAvailableProviders(providers)
-                        .build(),
-                SIGN_IN_REQUEST_CODE);
+    private void startLaunchActivity() {
+        Intent launchIntent = new Intent(getApplicationContext(), LaunchActivity.class);
+        finish();
+        startActivity(launchIntent);
     }
 
     public static void startLogOutBackupService(Activity activity) {
@@ -354,10 +341,7 @@ public class MasterActivity extends AppCompatActivity implements
                 .putBoolean(getString(R.string.is_pro_mode_key), false)
                 .apply();
 
-        //restart activity
-        Intent intent = new Intent(getApplicationContext(), MasterActivity.class);
-        finish();
-        startActivity(intent);
+        startLaunchActivity();
     }
 
     @Override
@@ -389,38 +373,14 @@ public class MasterActivity extends AppCompatActivity implements
     }
 
     @Override
-    protected void onActivityResult(final int requestCode, final int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(final int requestCode, final int resultCode, @Nullable final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
                 //if returning from firebase sign in activity, configure database and observe data
-                if (requestCode == SIGN_IN_REQUEST_CODE) {
-                    sIsAuthUiActive = false;
-
-                    if (resultCode == RESULT_OK) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                //observe user data via view model
-                                observeData(true);
-                            }
-                        });
-                    } else {
-                        if (!NetworkFunctions.isOnline()) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(MasterActivity.this,
-                                            "No Connection Established",
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-                        finish();
-                    }
-                } else if (requestCode == REQUEST_LOG_OUT) {
+                if (requestCode == REQUEST_LOG_OUT) {
                     if (resultCode == RESULT_OK) {
                         logOut();
                     }
@@ -554,7 +514,7 @@ public class MasterActivity extends AppCompatActivity implements
 
             return true;
 
-        }else {
+        } else {
             return super.onOptionsItemSelected(item);
 
         }
@@ -1202,6 +1162,6 @@ public class MasterActivity extends AppCompatActivity implements
                     .setConstraints(constraints)
                     .build();
 
-            WorkManager.getInstance(activity).enqueue(proUpdateForNotifications);
+        WorkManager.getInstance(activity).enqueue(proUpdateForNotifications);
     }
 }
