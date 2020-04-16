@@ -299,7 +299,7 @@ public class MasterActivity extends AppCompatActivity implements
 
             if (action != null && action.equals(DetailsFragment.ACTION_LAUNCH_DETAILS)) {
                 Bundle extras = intent.getExtras();
-                launchDetailsFromIntent(intent, extras);
+                launchDetailsFromIntent(intent);
             }
         }
 
@@ -418,7 +418,7 @@ public class MasterActivity extends AppCompatActivity implements
 
         if (intent.getAction() != null
                 && intent.getAction().equals(DetailsFragment.ACTION_LAUNCH_DETAILS)) {
-            launchDetailsFromIntent(intent, extras);
+            launchDetailsFromIntent(intent);
         }
     }
 
@@ -466,6 +466,7 @@ public class MasterActivity extends AppCompatActivity implements
         //if not tablet landscape (not two pane)
         //&& there's a fragment in details container
         //hide fragment
+        if (fragment.getView() == null) return;
         if (!mIsTabletLandscape && hasFragment(R.id.detail_fragments_container)) {
             //hide background fragment to reserve keyboard focus for newly loaded fragment
             fragment.getView().findViewById(R.id.top_layout).setVisibility(View.GONE);
@@ -475,10 +476,14 @@ public class MasterActivity extends AppCompatActivity implements
         //condition 2
         //compare master fragment name and resumed fragment name
         //if no match, hide fragment
-        String masterContainerFragmentName =
+
+        if (fragment.getView() == null) return;
+        Fragment masterContainerFragment =
                 getSupportFragmentManager()
-                        .findFragmentById(R.id.master_fragments_container)
-                        .getClass().getSimpleName();
+                        .findFragmentById(R.id.master_fragments_container);
+
+        if (masterContainerFragment == null) return;
+        String masterContainerFragmentName = masterContainerFragment.getClass().getSimpleName();
 
         String resumedFragmentName = fragment.getClass().getSimpleName();
 
@@ -718,7 +723,7 @@ public class MasterActivity extends AppCompatActivity implements
                 .commit();
     }
 
-    private void launchDetailsFromIntent(final Intent intent, Bundle extras) {
+    private void launchDetailsFromIntent(final Intent intent) {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -860,37 +865,40 @@ public class MasterActivity extends AppCompatActivity implements
     }
 
     public void hideBackgroundFragment(Fragment fragment) {
-        if (fragment.getView() != null) {
-            List<Fragment> fragments = getSupportFragmentManager().getFragments();
+        if (fragment.getView() == null) return;
+        List<Fragment> fragments = getSupportFragmentManager().getFragments();
 
-            //TODO: check if fragment is always last index(size -1), if so, no need to use indexOf() for fragment index,...
-            // instead use size - 1
-            int fragmentIndex = fragments.indexOf(fragment);
-            int backgroundFragmentIndex = fragmentIndex - 1;
+        //TODO: check if fragment is always last index(size -1), if so, no need to use indexOf() for fragment index,...
+        // instead use size - 1
+        int fragmentIndex = fragments.indexOf(fragment);
+        int backgroundFragmentIndex = fragmentIndex - 1;
 
-            if (backgroundFragmentIndex < 0 || backgroundFragmentIndex >= fragments.size()) return;
-            Fragment backgroundFragment = fragments.get(backgroundFragmentIndex);
+        if (backgroundFragmentIndex < 0 || backgroundFragmentIndex >= fragments.size()) return;
+        Fragment backgroundFragment = fragments.get(backgroundFragmentIndex);
 
-            if (backgroundFragment instanceof DetailsFragment) {
-                backgroundFragmentIndex = backgroundFragmentIndex - 1;
-                backgroundFragment = fragments.get(backgroundFragmentIndex);
-            }
+        if (backgroundFragment == null) return;
+        if (backgroundFragment instanceof DetailsFragment) {
+            backgroundFragmentIndex = backgroundFragmentIndex - 1;
+            backgroundFragment = fragments.get(backgroundFragmentIndex);
+        }
 
-            hideFragment(backgroundFragment);
+        if (backgroundFragment == null) return;
+        if (backgroundFragment.getView() == null) return;
+        hideFragment(backgroundFragment);
 
-            //hide search bar and dismiss keyboard
-            //exclude fragments that don't have search bar
-            if (!(backgroundFragment instanceof HomeFragment)
-                    && !(backgroundFragment instanceof DetailsFragment)
-                    && !(backgroundFragment instanceof PeopleDetailsFragment)) {
-                SuperEditText searchTextView =
-                        backgroundFragment.getView().findViewById(R.id.search_edit_text_view);
-                hideSearchBar(searchTextView);
-            }
+        //hide search bar and dismiss keyboard
+        //exclude fragments that don't have search bar
+        if (!(backgroundFragment instanceof HomeFragment)
+                && !(backgroundFragment instanceof DetailsFragment)
+                && !(backgroundFragment instanceof PeopleDetailsFragment)) {
+            SuperEditText searchTextView =
+                    backgroundFragment.getView().findViewById(R.id.search_edit_text_view);
+            hideSearchBar(searchTextView);
         }
     }
 
     private void hideFragment(Fragment fragment) {
+        if (fragment.getView() == null) return;
         View backgroundFragmentParentView =
                 fragment.getView().findViewById(R.id.top_layout);
 
@@ -915,6 +923,9 @@ public class MasterActivity extends AppCompatActivity implements
     }
 
     public static void restoreSearchIfAvailable(Fragment fragment, Bundle savedInstanceState) {
+        if (fragment.getParentFragment() == null) return;
+        if (fragment.getParentFragment().getView() == null) return;
+
         if (savedInstanceState == null) return;
         String savedSearch = savedInstanceState.getString(SEARCH_TEXT_KEY);
         if (savedSearch == null || savedSearch.equals("")) return;
@@ -1065,8 +1076,9 @@ public class MasterActivity extends AppCompatActivity implements
             }
         }
 
+        if (childFragment.getParentFragment() == null) return;
+        if (childFragment.getParentFragment().getActivity() == null) return;
         Fragment fragment = ListResultsParentFragment.newInstance(listType, listModel.getName());
-
         childFragment.getParentFragment().getActivity().getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
                 .add(R.id.master_fragments_container, fragment, ListResultsParentFragment.FRAGMENT_KEY)
