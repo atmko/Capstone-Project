@@ -310,6 +310,7 @@ public class DetailsFragment extends Fragment {
         getView().findViewById(R.id.trailer_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (mMediaData.getVideos().size() <= 0) return;
                 Map<String, String> videoData = mMediaData.getVideos().get(0);
                 String path = videoData.get(ApiConstants.VIDEO_PATH_KEY);
 
@@ -318,7 +319,6 @@ public class DetailsFragment extends Fragment {
                 Intent videoIntent = new Intent(Intent.ACTION_VIEW, fullVideoPath);
                 if (videoIntent.resolveActivity(getContext().getPackageManager()) != null) {
                     startActivity(videoIntent);
-
                 }
             }
         });
