@@ -868,6 +868,7 @@ public class MasterActivity extends AppCompatActivity implements
             int fragmentIndex = fragments.indexOf(fragment);
             int backgroundFragmentIndex = fragmentIndex - 1;
 
+            if (backgroundFragmentIndex < 0 || backgroundFragmentIndex >= fragments.size()) return;
             Fragment backgroundFragment = fragments.get(backgroundFragmentIndex);
 
             if (backgroundFragment instanceof DetailsFragment) {
