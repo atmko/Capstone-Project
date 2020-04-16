@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <receiver android:name=".widget.ListWidgetProvider">
+        <receiver android:name=".widget.ListWidgetProvider" android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -26,13 +26,14 @@
         </receiver>
         <receiver
             android:name=".utils.NotificationHandler$BootReceiver"
-            android:enabled="false">
+            android:enabled="false"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".utils.NotificationHandler$AlarmReceiver" />
-        <receiver android:name=".utils.NotificationHandler$TimeChangedReceiver">
+        <receiver android:name=".utils.NotificationHandler$AlarmReceiver" android:exported="false" />
+        <receiver android:name=".utils.NotificationHandler$TimeChangedReceiver"  android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.TIME_SET" />
             </intent-filter>
@@ -62,58 +63,69 @@
 
         <activity
             android:name=".MasterActivity"
-            android:launchMode="singleTop" />
+            android:launchMode="singleTop"
+            android:exported="false"/>
 
         <activity
             android:name=".widget.ListWidgetProviderConfigureActivity"
             android:autoRemoveFromRecents="true"
             android:launchMode="singleInstance"
-            android:taskAffinity=".widget_setup">
+            android:taskAffinity=".widget_setup"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
         <activity
             android:name=".ReviewActivity"
-            android:launchMode="singleTop" />
+            android:launchMode="singleTop"
+            android:exported="false"/>
         <activity
             android:name=".CreateListActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.PopupDialog" />
+            android:theme="@style/Theme.PopupDialog"
+            android:exported="false"/>
         <activity
             android:name=".RateActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.PopupDialog" />
+            android:theme="@style/Theme.PopupDialog"
+            android:exported="false"/>
         <activity
             android:name=".AddToListActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.PopupDialog" />
+            android:theme="@style/Theme.PopupDialog"
+            android:exported="false"/>
         <activity
             android:name=".ConfirmationActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.PopupDialog" />
+            android:theme="@style/Theme.PopupDialog"
+            android:exported="false"/>
         <activity
             android:name=".RestoreActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.PopupDialog" />
+            android:theme="@style/Theme.PopupDialog"
+            android:exported="false"/>
         <activity
             android:name=".SettingsActivity"
             android:label="@string/options_settings_title"
             android:launchMode="singleTop"
-            android:theme="@style/preferences_theme" />
+            android:theme="@style/preferences_theme"
+            android:exported="false"/>
         <activity
             android:name=".BillingActivity"
             android:label="@string/purchases_title"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:exported="false"/>
 
         <service
             android:name=".widget.ListRemoteViewFactoryService"
-            android:permission="android.permission.BIND_REMOTEVIEWS" />
+            android:permission="android.permission.BIND_REMOTEVIEWS"
+            android:exported="false"/>
         <service
             android:name=".widget.ListWidgetService"
             android:exported="false"
