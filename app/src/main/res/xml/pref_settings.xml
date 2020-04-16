@@ -10,6 +10,14 @@
         app:allowDividerBelow="true"/>
 
     <Preference
+        android:title="@string/settings_link_title"
+        android:summary="@string/settings_link_summary"
+        android:key="@string/settings_key_link"
+        app:iconSpaceReserved="false"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="true"/>
+
+    <Preference
         android:title="@string/settings_restore_title"
         android:summary="@string/settings_restore_summary"
         android:key="@string/settings_key_restore"

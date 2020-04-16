@@ -24,6 +24,7 @@
     <!--options menu titles-->
 
     <!--preference keys-->
+    <string name="settings_key_link">link</string>
     <string name="settings_key_restore">restore</string>
     <string name="settings_key_create_backup">create_backup</string>
     <string name="settings_key_privacy">privacy</string>
@@ -36,6 +37,7 @@
     <!--shared preference keys-->
 
     <!--settings titles-->
+    <string name="settings_link_title">Link Google Account</string>
     <string name="settings_review_title">Review this app</string>
     <string name="settings_contact_developer_title">Contact Developer</string>
     <string name="settings_default_media_title">Default media</string>
@@ -51,6 +53,7 @@
     <!--settings titles-->
 
     <!--settings summary-->
+    <string name="settings_link_summary">Become a permanent user. Access your data on any device</string>
     <string name="settings_review_summary">This app is developed by a single individual. Please consider leaving a 5 star review if you like the app. It does more than you know and means a whole lot. Thanks!"</string>
     <string name="settings_contact_developer_summary">I would like to know what you think about the app</string>
     <string name="settings_default_media_summary">Change the default media type to be opened on all screens."</string>
