@@ -15,6 +15,7 @@ import org.parceler.Parcels;
 public class ConfirmationActivity extends AppCompatActivity {
     public static final String ACTION_DELETE = "delete";
     public static final String ACTION_LOG_OUT = "log_out";
+    public static final String ACTION_GUEST_LOG_OUT = "guest_log_out";
     public static final String ACTION_RESTORE = "restore";
     public static final String ACTION_CREATE_BACKUP = "create_backup";
     public static final String ACTION_PENDING_PURCHASE = "pending_purchase";
@@ -22,6 +23,7 @@ public class ConfirmationActivity extends AppCompatActivity {
     public static final String ACTION_KEY = "action";
     public static final String CONFIRMATION_MESSAGE_KEY = "confirmation_message";
     public static final String SELECTED_DATA_KEY = "selected_data";
+    public static final String COUNTER_LIMIT_KEY = "counter_limit";
 
     //post initialization parameters
     private String action;
@@ -31,6 +33,9 @@ public class ConfirmationActivity extends AppCompatActivity {
     private TextView confirmationTextView;
     private Button confirmationButton;
     private Button cancelButton;
+
+    private int confirmationCounter;
+    private int counterLimit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +63,7 @@ public class ConfirmationActivity extends AppCompatActivity {
         outState.putString(ACTION_KEY, action);
         outState.putParcelable(SELECTED_DATA_KEY, Parcels.wrap(selectedData));
         outState.putString(CONFIRMATION_MESSAGE_KEY, confirmationMessage);
+        outState.putInt(COUNTER_LIMIT_KEY, counterLimit);
     }
 
     private void defineViews() {
@@ -66,7 +72,10 @@ public class ConfirmationActivity extends AppCompatActivity {
         confirmationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                returnConfirmationResult();
+                confirmationCounter += 1;
+                if (confirmationCounter == counterLimit) {
+                    returnConfirmationResult();
+                }
             }
         });
         cancelButton = findViewById(R.id.cancel_button);
@@ -85,6 +94,7 @@ public class ConfirmationActivity extends AppCompatActivity {
             if (intent != null) {
                 action = intent.getAction();
                 selectedData = Parcels.unwrap(intent.getParcelableExtra(SELECTED_DATA_KEY));
+                counterLimit = intent.getIntExtra(COUNTER_LIMIT_KEY, 1);
             } else {
                 returnCancelResult();
             }
@@ -92,6 +102,7 @@ public class ConfirmationActivity extends AppCompatActivity {
         } else {
             action = savedInstanceState.getString(ACTION_KEY);
             selectedData = Parcels.unwrap(savedInstanceState.getParcelable(SELECTED_DATA_KEY));
+            counterLimit = savedInstanceState.getInt(COUNTER_LIMIT_KEY);
         }
 
         //set confirmation message if action and selected data exists, otherwise return cancel result
@@ -103,6 +114,10 @@ public class ConfirmationActivity extends AppCompatActivity {
 
                 case ACTION_LOG_OUT:
                     confirmationMessage = getString(R.string.log_out_confirmation_message);
+                    break;
+
+                case ACTION_GUEST_LOG_OUT:
+                    confirmationMessage = getString(R.string.guest_log_out_confirmation_message);
                     break;
 
                 case ACTION_RESTORE:

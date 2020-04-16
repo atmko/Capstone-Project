@@ -29,6 +29,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.atmko.onmywatch.BillingActivity;
+import com.atmko.onmywatch.ConfirmationActivity;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.SettingsActivity;
@@ -40,6 +41,8 @@ import com.google.android.gms.ads.AdView;
 
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
+import static com.atmko.onmywatch.MasterActivity.REQUEST_GUEST_LOG_OUT;
+import static com.atmko.onmywatch.MasterActivity.getCurrentUser;
 
 public class HomeFragment extends Fragment {
     public static final String FRAGMENT_KEY = "home_fragment";
@@ -359,7 +362,13 @@ public class HomeFragment extends Fragment {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 //launch settings activity
-                if (getActivity() != null) {
+                if (getCurrentUser().isAnonymous()) {
+                    if (getActivity() != null) {
+                        MasterActivity.launchConfirmationActivity(getActivity(),
+                                REQUEST_GUEST_LOG_OUT,
+                                ConfirmationActivity.ACTION_GUEST_LOG_OUT, 3);
+                    }
+                } else {
                     MasterActivity.startLogOutBackupService(getActivity());
                 }
 

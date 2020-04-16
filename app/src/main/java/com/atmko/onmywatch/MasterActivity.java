@@ -126,6 +126,7 @@ public class MasterActivity extends AppCompatActivity implements
     private static final String USER_COLLECTION_PATH = "users";
 
     private static final int REQUEST_LOG_OUT = 20;
+    public static final int REQUEST_GUEST_LOG_OUT = 30;
 
     private static final int PENDING_PURCHASE_ID = 1;
 
@@ -383,6 +384,26 @@ public class MasterActivity extends AppCompatActivity implements
                 if (requestCode == REQUEST_LOG_OUT) {
                     if (resultCode == RESULT_OK) {
                         logOut();
+                    }
+
+                } else if (requestCode == REQUEST_GUEST_LOG_OUT) {
+                    if (resultCode == RESULT_OK) {
+                        getCurrentUser().delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        logOut();
+                                    }
+                                });
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                showSnackBarMessage("Log out failed", MasterActivity.this);
+                            }
+                        });
                     }
                 }
             }
@@ -771,6 +792,23 @@ public class MasterActivity extends AppCompatActivity implements
                 Intent confirmationActivityIntent =
                         new Intent(activity, ConfirmationActivity.class);
                 confirmationActivityIntent.setAction(action);
+                activity.startActivityForResult(confirmationActivityIntent, requestId);
+            }
+        });
+    }
+
+    public static void launchConfirmationActivity(final Activity activity,
+                                                  final int requestId,
+                                                  final String action,
+                                                  final int confirmationLimit) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                Intent confirmationActivityIntent =
+                        new Intent(activity, ConfirmationActivity.class);
+                confirmationActivityIntent.setAction(action);
+                confirmationActivityIntent.putExtra(ConfirmationActivity.COUNTER_LIMIT_KEY,
+                        confirmationLimit);
                 activity.startActivityForResult(confirmationActivityIntent, requestId);
             }
         });
