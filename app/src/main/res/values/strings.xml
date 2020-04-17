@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">On My Watch</string>
+    <string name="app_name">Majik</string>
 
     <!--LAUNCH ACTIVITY TEXT-->
     <string name="app_description">Manage And Track What You Watch</string>
@@ -61,7 +61,7 @@
     <string name="settings_backdrop_size_summary">Higher image qualities may use more data, and require longer load times."</string>
     <string name="settings_auto_sync_summary">Create automatic backups</string>
     <string name="settings_manual_backup_summary">Create a manual backup</string>
-    <string name="settings_about_app_summary">On My Watch Version 1.0.0</string>
+    <string name="settings_about_app_summary">Majik Version 1.0.0</string>
     <string name="settings_restore_summary">Restore files to a previous state</string>
     <string name="settings_create_backup_summary">Create a manual backup of current files</string>
     <!--settings summary-->
