@@ -5,7 +5,6 @@
 package com.atmko.onmywatch.database.daos;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 
 import com.atmko.onmywatch.MasterActivity;
@@ -16,20 +15,24 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.ListResult;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 /*
- * MovieData firebase Dao
+ * User data firebase Dao
  */
 
 public class FirebaseUserDataDao {
@@ -73,35 +76,61 @@ public class FirebaseUserDataDao {
     public static MutableLiveData<List<Backup>> getBackups() {
         final MutableLiveData<List<Backup>> liveData = new MutableLiveData<>();
 
-        Query query = MasterActivity.getUserDbHomeReference()
-                .collection(BACKUPS_PATH)
-                .orderBy(Backup.TIMESTAMP_KEY, Query.Direction.DESCENDING);
+        StorageReference reference = FirebaseStorage.getInstance()
+                .getReference()
+                .child("users")
+                .child(MasterActivity.getCurrentUser().getUid())
+                .child("backups");
+        reference.listAll()
+                .addOnSuccessListener(new OnSuccessListener<ListResult>() {
+                    @Override
+                    public void onSuccess(ListResult listResult) {
+                        final List<StorageReference> storageReferences = listResult.getItems();
 
-        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
-                final List<Backup> backups = new ArrayList<>();
-
-                if (snapshots != null) {
-                    List<DocumentSnapshot> documents = snapshots.getDocuments();
-
-                    for (DocumentSnapshot document: documents) {
-                        if (document.getData() == null) continue;
-
-                        Backup backup = parseDataMapToBackup(document);
-
-                        backups.add(backup);
+                        final List<Backup> backups = new ArrayList<>();
+                        for (int i = 0; i < storageReferences.size(); i++) {
+                            final StorageReference prefix = storageReferences.get(i);
+                            final int finalI = i;
+                            prefix.getMetadata().addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
+                                @Override
+                                public void onSuccess(StorageMetadata storageMetadata) {
+                                    backups.add(new Backup(prefix.getName(), storageMetadata.getUpdatedTimeMillis()));
+                                    if (finalI == storageReferences.size() -1) {
+                                        sortBackUps(backups);
+                                        liveData.setValue(backups);
+                                    }
+                                }
+                            });
+                        }
                     }
-
-                    liveData.setValue(backups);
-
-                } else {
-                    liveData.setValue(backups);
-                }
-            }
-        });
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Uh-oh, an error occurred!
+                        liveData.setValue(new ArrayList<Backup>());
+                    }
+                });
 
         return liveData;
+    }
+
+    private static void sortBackUps(final List<Backup> backups) {
+        Comparator<Backup> comparator = new Comparator<Backup>() {
+            @Override
+            public int compare(Backup backup1, Backup backup2) {
+                //noinspection UseCompareMethod
+                if (backup1.mTimestamp < backup2.mTimestamp) {
+
+                    return 1;
+                } else if (backup1.mTimestamp > backup2.mTimestamp) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            }
+        };
+        Collections.sort(backups, comparator);
     }
 
     private static List<Backup> getBackupsAlt() {
@@ -135,13 +164,6 @@ public class FirebaseUserDataDao {
         } else {
             return null;
         }
-    }
-
-
-    public static void addBackupAlt(Backup backup) {
-        MasterActivity.getUserDbHomeReference()
-                .collection(BACKUPS_PATH).document(backup.getFileName())
-                .set(backup.parseBackupToDataMap());
     }
 
     public static void setBackupCounter(int backupCounter) {

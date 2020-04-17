@@ -11,7 +11,6 @@ import android.util.Log;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.database.daos.FirebaseUserDataDao;
-import com.atmko.onmywatch.models.Backup;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.MovieDataRecord;
 import com.atmko.onmywatch.models.MovieNotifier;
@@ -96,7 +95,7 @@ public class BackupLogic {
         }
     }
 
-    public String getErrorMessage() {
+    String getErrorMessage() {
         return mErrorMessage;
     }
 
@@ -116,7 +115,7 @@ public class BackupLogic {
                 }
             }
 
-            public BackupValidationException Build() {
+            BackupValidationException Build() {
                 return new BackupValidationException(message);
             }
         }
@@ -172,7 +171,6 @@ public class BackupLogic {
                 throw exception;
             }
 
-            Backup backup = new Backup(mFileName, new Date().getTime());
             //other methods run one after the other starting with pushMovieData
             pushMovieData();
             pushSeriesData();
@@ -185,7 +183,6 @@ public class BackupLogic {
             pushSeriesLogs();
             onPushComplete();
 
-            FirebaseUserDataDao.addBackupAlt(backup);
             updateBackupPreferences(new Date().getTime());
             return true;
         } catch (Exception e) {

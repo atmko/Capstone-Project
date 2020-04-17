@@ -76,7 +76,6 @@ public class RestoreService extends JobIntentService {
     public static final String BACKUP_FOLDER_NAME = "backups";
 
     public static final String USERS_PATH = "users";
-    public static final String BACKUP_EXTENSION = ".json";
 
     public static final String MOVIES_KEY = "movies";
     public static final String SERIES_KEY = "series";
@@ -127,11 +126,14 @@ public class RestoreService extends JobIntentService {
 
         boolean isFolderExists = folder != null && !folder.equals("");
         boolean isFileNameExists = mFileName != null && !mFileName.equals("");
+        Log.d(TAG, isFolderExists+"");
+        Log.d(TAG, isFileNameExists+"");
         if (isFolderExists && isFileNameExists) {
             mBackupRef = FirebaseStorage.getInstance().getReference()
                     .child(USERS_PATH + "/" + MasterActivity.getCurrentUser().getUid()
-                            + "/" + folder + "/" + mFileName + BACKUP_EXTENSION);
+                            + "/" + folder + "/" + mFileName);
             restoreBackup();
+            Log.d(TAG, mBackupRef.getPath());
 
         } else {
             Log.d(TAG, "folder and or file name does't exist");
