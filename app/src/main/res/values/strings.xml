@@ -27,6 +27,7 @@
     <string name="settings_key_link">link</string>
     <string name="settings_key_restore">restore</string>
     <string name="settings_key_create_backup">create_backup</string>
+    <string name="settings_key_contact">contact</string>
     <string name="settings_key_privacy">privacy</string>
     <string name="settings_key_terms">terms</string>
     <!--preference keys-->
@@ -37,6 +38,10 @@
     <!--shared preference keys-->
 
     <!--settings titles-->
+    <string name="contact_email_address">contact@majik.tv</string>
+    <!--settings titles-->
+
+    <!--settings titles-->
     <string name="settings_link_title">Link Google Account</string>
     <string name="settings_review_title">Review this app</string>
     <string name="settings_contact_developer_title">Contact Developer</string>
@@ -45,6 +50,7 @@
     <string name="settings_backdrop_size_title">Backdrop quality</string>
     <string name="settings_auto_sync_title">Automatic sync</string>
     <string name="settings_manual_backup_title">Backup</string>
+    <string name="settings_contact_title">Contact Us</string>
     <string name="settings_about_app_title">About App</string>
     <string name="settings_restore_title">Restore Data</string>
     <string name="settings_create_backup_title">Create Backup</string>
@@ -61,6 +67,7 @@
     <string name="settings_backdrop_size_summary">Higher image qualities may use more data, and require longer load times."</string>
     <string name="settings_auto_sync_summary">Create automatic backups</string>
     <string name="settings_manual_backup_summary">Create a manual backup</string>
+    <string name="settings_contact_summary">We\'d love to hear your feedback</string>
     <string name="settings_about_app_summary">Majik Version 1.0.0</string>
     <string name="settings_restore_summary">Restore files to a previous state</string>
     <string name="settings_create_backup_summary">Create a manual backup of current files</string>

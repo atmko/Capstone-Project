@@ -105,6 +105,31 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             });
         }
 
+        Preference contactPreference = findPreference(getString(R.string.settings_key_contact));
+        if (contactPreference != null) {
+            contactPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(final Preference preference) {
+                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            String[] sentTo = new String[1];
+                            sentTo[0] = getString(R.string.contact_email_address);
+
+                            Intent intent = new Intent(Intent.ACTION_SENDTO);
+                            intent.setData(Uri.parse("mailto:")); // only email apps should handle this
+                            intent.putExtra(Intent.EXTRA_EMAIL, sentTo);
+                            if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                                startActivity(intent);
+                            }
+                        }
+                    });
+
+                    return true;
+                }
+            });
+        }
+
         Preference privacyPreference = findPreference(getString(R.string.settings_key_privacy));
         if (privacyPreference != null) {
             privacyPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
