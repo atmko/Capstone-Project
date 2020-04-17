@@ -1071,7 +1071,6 @@ public class MasterActivity extends AppCompatActivity implements
         if (adapter.inPlaceholderMode()) {
             if (childFragment.getParentFragment() != null) {
                 launchCreateListActivity(this);
-
                 return;
             }
         }
@@ -1130,11 +1129,6 @@ public class MasterActivity extends AppCompatActivity implements
             for (Purchase purchase : inAppPurchases) {
                 if (purchase.getSku().equals("pro_mode") && !MasterActivity.sIsProMode) {
                     Log.d(TAG, "handling pro_mode");
-                    handlePurchase(purchase, activity);
-
-                } else if (purchase.getSku().equals("android.test.purchased")
-                        && (!MasterActivity.sIsProMode)) {
-                    Log.d(TAG, "handling android.test.purchased");
                     handlePurchase(purchase, activity);
                 }
             }

@@ -15,23 +15,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:orientation="vertical"
-        android:layout_weight="10"/>
-
-    <Button
-        android:id="@+id/inappButton"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:text="reset inapp"/>
-
-
-    <Button
-        android:id="@+id/subsButton"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:text="reset subs"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical"/>
 
 </LinearLayout>

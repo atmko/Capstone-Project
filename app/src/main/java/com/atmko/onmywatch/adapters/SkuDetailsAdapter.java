@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.SkuDetails;
 import com.atmko.onmywatch.R;
-import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,8 +17,6 @@ import com.android.billingclient.api.BillingClient.FeatureType;
 import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.BillingResult;
-import com.android.billingclient.api.ConsumeParams;
-import com.android.billingclient.api.ConsumeResponseListener;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.android.billingclient.api.SkuDetails;
@@ -40,7 +37,6 @@ public class BillingActivity extends AppCompatActivity implements
 
     private BillingClient mBillingClient;
     private SkuDetailsAdapter mAdapter;
-    private Button inAppButton;
     private List<String> purchasedSkus;
 
     @Override
@@ -97,39 +93,6 @@ public class BillingActivity extends AppCompatActivity implements
         recyclerView.setLayoutManager(configureLayoutManager());
         mAdapter = new SkuDetailsAdapter(this, this);
         recyclerView.setAdapter(mAdapter);
-        inAppButton = findViewById(R.id.inappButton);
-        inAppButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //get in app purchases to check for unverified, unacknowledged and pending transactions
-                Purchase.PurchasesResult inAppResult = mBillingClient.queryPurchases(BillingClient.SkuType.INAPP);
-                List<Purchase> inAppPurchases = inAppResult.getPurchasesList();
-
-                if (inAppResult.getResponseCode() == BillingClient.BillingResponseCode.OK
-                        && inAppPurchases != null) {
-                    if (inAppPurchases.size() == 0) showSnackBarMessage("no purchases");
-
-                    for (Purchase purchase : inAppPurchases) {
-                        ConsumeParams.Builder builder = ConsumeParams.newBuilder();
-                        builder.setPurchaseToken(purchase.getPurchaseToken());
-                        mBillingClient.consumeAsync(builder.build(), new ConsumeResponseListener() {
-                            @Override
-                            public void onConsumeResponse(BillingResult billingResult, String s) {
-                                if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
-                                    showSnackBarMessage("inapp cleared");
-
-                                } else {
-                                    showSnackBarMessage(billingResult.getDebugMessage());
-                                }
-                            }
-                        });
-                    }
-
-                } else {
-                    showSnackBarMessage(inAppResult.getBillingResult().getDebugMessage());
-                }
-            }
-        });
     }
 
     private LinearLayoutManager configureLayoutManager() {
