@@ -76,8 +76,7 @@ dependencies {
 
     //firebase analytics
     implementation 'com.google.firebase:firebase-analytics:17.3.0'
-    //firebase ads
-    implementation 'com.google.firebase:firebase-ads:19.0.1'
+
     //firestore
     implementation 'com.google.firebase:firebase-firestore:21.4.2'
     //firebase cloud functions

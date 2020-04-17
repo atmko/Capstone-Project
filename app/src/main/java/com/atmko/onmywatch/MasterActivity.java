@@ -70,7 +70,6 @@ import com.atmko.onmywatch.utils.network_utils.BackupService;
 import com.atmko.onmywatch.utils.network_utils.work_manager_workers.BackupWorker;
 import com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker;
 import com.atmko.onmywatch.view_models.MasterActivityViewModel;
-import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -257,10 +256,6 @@ public class MasterActivity extends AppCompatActivity implements
                         .putBoolean(getString(R.string.is_pro_mode_key), isProMode)
                         .apply();
 
-                if (!sIsProMode) {
-                    initializeAdMob();
-                }
-
                 //activate billing client here only if mInitialProCheck
                 //subsequent billing client calls handled in on resume
                 //this is necessary to avoid unneeded purchase verifications because sIsProMode...
@@ -430,23 +425,6 @@ public class MasterActivity extends AppCompatActivity implements
         outState.putBoolean(INITIAL_PRO_CHECK_KEY, mInitialProCheck);
         //save keyboard visibility value
         outState.putBoolean(KEYBOARD_VISIBILITY_KEY, sIsKeyboardVisible);
-    }
-
-    private void initializeAdMob() {
-        try {
-            String adMobIdKey = getString(R.string.ad_mob_application_id_key);
-
-            ApplicationInfo applicationInfo = getPackageManager().getApplicationInfo(getPackageName(),
-                    PackageManager.GET_META_DATA);
-            Bundle applicationMetaData = applicationInfo.metaData;
-
-            String adMobId = applicationMetaData.getString(adMobIdKey);
-
-            MobileAds.initialize(this, adMobId);
-
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
     }
 
     private void setValues() {

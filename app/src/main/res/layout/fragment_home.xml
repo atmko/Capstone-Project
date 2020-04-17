@@ -3,7 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:id="@+id/top_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -21,14 +20,27 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.google.android.gms.ads.AdView
-                style="@style/style_home_list_display_container"
+            <FrameLayout
                 android:id="@+id/banner_ad"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                ads:adSize="BANNER"
-                ads:adUnitId="@string/ad_test_id" />
+                android:layout_marginTop="@dimen/x1_layout_margin"
+                android:layout_marginStart="@dimen/x5_layout_margin"
+                android:layout_marginEnd="@dimen/x5_layout_margin"
+                android:background="@android:color/white"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <TextView
+                    android:padding="@dimen/x2_layout_margin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Unlock Notifications and more with Pro"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/body_text_size"/>
+
+            </FrameLayout>
 
             <TextView
                 style="@style/home_list_display_heading_style"

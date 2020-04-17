@@ -36,8 +36,6 @@ import com.atmko.onmywatch.SettingsActivity;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
 import com.atmko.onmywatch.view_models.MasterActivityViewModel;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
@@ -171,18 +169,20 @@ public class HomeFragment extends Fragment {
 
     private void configureAds() {
         @SuppressWarnings("ConstantConditions")
-        AdView mAdView = getView().findViewById(R.id.banner_ad);
+        FrameLayout mAdView = getView().findViewById(R.id.banner_ad);
 
         if (MasterActivity.sIsProMode) {
             mAdView.setVisibility(View.GONE);
-            mAdView.destroy();
 
         } else {
             mAdView.setVisibility(View.VISIBLE);
-            AdRequest adRequest = new AdRequest.Builder()
-                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                    .build();
-            mAdView.loadAd(adRequest);
+            mAdView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent billingActivityIntent = new Intent(getContext(), BillingActivity.class);
+                    startActivity(billingActivityIntent);
+                }
+            });
         }
     }
 
