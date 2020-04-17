@@ -1,87 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="@dimen/list_margin"
-    android:layout_marginLeft="@dimen/list_margin"
-    android:layout_marginEnd="@dimen/list_margin"
-    android:layout_marginRight="@dimen/list_margin"
-    android:orientation="vertical">
+    android:layout_marginEnd="@dimen/list_margin">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/x2_layout_margin">
-
-        <FrameLayout
-            android:id="@+id/icon_frame_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:id="@+id/icon_image_view"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:contentDescription="@string/content_description_purchase_item" />
-
-            <CheckBox
-                android:id="@+id/checkbox_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end|bottom"
-                android:visibility="gone"
-                tools:visibility="visible"
-                android:clickable="false"
-                android:checked="true"/>
-
-        </FrameLayout>
+        android:layout_marginTop="@dimen/x2_layout_margin"
+        android:layout_marginBottom="@dimen/x2_layout_margin">
 
         <TextView
             android:id="@+id/title_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/x1_layout_margin"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="pro mode"
-            android:textSize="@dimen/body_text_size"
-            app:layout_constraintStart_toEndOf="@+id/icon_frame_view"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:textSize="@dimen/body_text_size" />
 
         <TextView
             android:id="@+id/price_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/x1_layout_margin"
-            android:layout_marginStart="@dimen/x1_layout_margin"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1"
             tools:text="19.99"
-            android:textSize="@dimen/body_text_size"
-            app:layout_constraintStart_toEndOf="@+id/icon_frame_view"
-            app:layout_constraintTop_toBottomOf="@+id/title_text_view" />
+            android:textSize="@dimen/body_text_size"/>
 
         <TextView
             android:id="@+id/description_text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/x2_layout_margin"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/checkbox_view"
+            app:layout_constraintTop_toBottomOf="@id/title_text_view"
+            tools:text="Remove ads, unlock notifications, widget,  and unlimited custom lists."
+            android:textSize="@dimen/body_text_size" />
+
+        <CheckBox
+            android:id="@+id/checkbox_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/x1_layout_margin"
-            tools:text="Remove ads, unlock notifications, widget,  and unlimited custom lists."
-            android:textSize="@dimen/body_text_size"
+            app:layout_constraintStart_toEndOf="@id/description_text_view"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/icon_frame_view" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:clickable="false"
+            android:checked="true"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="@dimen/divider"
-        app:layout_constraintTop_toBottomOf="@id/description_text_view"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:background="@color/background"/>
+        android:layout_height="1dp"
+        android:layout_gravity="bottom"
+        android:background="@color/list_divider_color" />
 
-</LinearLayout>
+</FrameLayout>
+

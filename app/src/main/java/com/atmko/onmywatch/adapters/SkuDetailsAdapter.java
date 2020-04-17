@@ -67,7 +67,6 @@ public class SkuDetailsAdapter
             titleTextView = itemView.findViewById(R.id.title_text_view);
             priceTextView = itemView.findViewById(R.id.price_text_view);
             descriptionTextView = itemView.findViewById(R.id.description_text_view);
-            iconImageView = itemView.findViewById(R.id.icon_image_view);
             checkBox = itemView.findViewById(R.id.checkbox_view);
 
             itemView.setOnClickListener(this);
@@ -111,12 +110,6 @@ public class SkuDetailsAdapter
         adapterViewHolder.descriptionTextView.setText(currentSkuDetails.getDescription());
         mOnCheckPurchaseStateListener
                 .onPurchaseStateCheck(currentSkuDetails.getSku(), adapterViewHolder.checkBox);
-
-        //load image with glide
-        NetworkFunctions.loadImage(
-                mContext,
-                currentSkuDetails.getIconUrl(),
-                adapterViewHolder.iconImageView);
     }
 
     @Override
