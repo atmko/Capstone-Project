@@ -24,7 +24,7 @@
             <include layout="@layout/toolbar_general" />
         </FrameLayout>
 
-        <include layout="@layout/tab_layout_1_degree"/>
+        <include layout="@layout/tab_layout_no_line"/>
 
         <include layout="@layout/tab_layout_2_degree"/>
 
