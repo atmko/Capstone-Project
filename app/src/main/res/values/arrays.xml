@@ -244,26 +244,26 @@
 
     <array name="network_keys">
         <item>none</item>
-        <item>"213"</item>
+        <item>"2"</item>
+        <item>"1024"</item>
         <item>"174"</item>
+        <item>"16"</item>
+        <item>"19"</item>
         <item>"49"</item>
         <item>"6"</item>
-        <item>"19"</item>
-        <item>"1024"</item>
-        <item>"2"</item>
-        <item>"16"</item>
+        <item>"213"</item>
     </array>
 
     <array name="network_values">
         <item>none</item>
-        <item>Netflix</item>
+        <item>ABC</item>
+        <item>Amazon</item>
         <item>AMC</item>
+        <item>CBS</item>
+        <item>FOX</item>
         <item>HBO</item>
         <item>NBC</item>
-        <item>FOX</item>
-        <item>Amazon</item>
-        <item>ABC</item>
-        <item>CBS</item>
+        <item>Netflix</item>
     </array>
 
     <array name="sort_keys">
