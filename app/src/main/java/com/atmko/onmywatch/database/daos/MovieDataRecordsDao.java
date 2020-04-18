@@ -10,6 +10,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.RoomWarnings;
 
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.MovieDataRecord;
@@ -30,15 +31,18 @@ public interface MovieDataRecordsDao {
     @Query("SELECT * FROM movie_data_records")
     List<MovieDataRecord> getAllRecordsAlt();
 
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query("SELECT * FROM movies INNER JOIN movie_data_records ON movies.id = media_id "
             +"WHERE movie_data_records.list_id = :listId")
     LiveData<List<MovieData>> getAllMoviesInList(String listId);
 
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     //alternate method without live data
     @Query("SELECT * FROM movies INNER JOIN movie_data_records ON movies.id = media_id "
             +"WHERE movie_data_records.list_id = :listId")
     List<MovieData> getAllMoviesInListAlt(String listId);
 
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query("SELECT * FROM movies INNER JOIN movie_data_records ON movies.id = media_id "
             +"WHERE movie_data_records.list_id = :listId "
             + "AND movies.tags LIKE :tag1 " + "AND movies.tags LIKE :tag2 "
@@ -56,10 +60,12 @@ public interface MovieDataRecordsDao {
     @Query("SELECT list_id FROM movie_data_records WHERE media_id = :movieId")
     LiveData<List<String>> getAllListNamesContainingMedia(String movieId);
 
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query("SELECT * FROM user_lists INNER JOIN movie_data_records ON user_lists.id = movie_data_records.list_id "
             +"WHERE media_id = :movieId")
     LiveData<List<UserListModel>> getAllListsContainingMedia(String movieId);
 
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     //alternate method without live data
     @Query("SELECT * FROM user_lists INNER JOIN movie_data_records ON user_lists.id = movie_data_records.list_id "
             +"WHERE media_id = :movieId")

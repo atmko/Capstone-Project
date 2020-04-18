@@ -7,7 +7,7 @@ import java.util.Date;
 @Parcel
 public class Backup {
     public static final String TIMESTAMP_KEY = "timestamp";
-    private String mFileName;
+    String mFileName;
     public long mTimestamp;
 
     //constructor for parceler

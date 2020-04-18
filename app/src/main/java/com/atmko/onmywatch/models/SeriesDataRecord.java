@@ -7,6 +7,7 @@ package com.atmko.onmywatch.models;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Index;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +19,8 @@ import static com.atmko.onmywatch.utils.api_utils.ApiConstants.ID_KEY;
         foreignKeys =
                 {@ForeignKey(entity = SeriesData.class, parentColumns = "id", childColumns = "media_id"),
                         @ForeignKey(entity = UserListModel.class, parentColumns = "id",
-                                childColumns = "list_id", onDelete = ForeignKey.CASCADE)}
+                                childColumns = "list_id", onDelete = ForeignKey.CASCADE)},
+        indices = {@Index(name = "list_id_index_series", value = {"list_id"}), @Index(name = "media_id_index_series", value = {"media_id"})}
 )
 
 public class SeriesDataRecord extends MediaRecord {

@@ -10,6 +10,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.RoomWarnings;
 
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesDataRecord;
@@ -30,15 +31,18 @@ public interface SeriesDataRecordsDao {
     @Query("SELECT * FROM series_data_records")
     List<SeriesDataRecord> getAllRecordsAlt();
 
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query("SELECT * FROM series INNER JOIN series_data_records ON series.id = media_id "
             +"WHERE series_data_records.list_id = :listId")
     LiveData<List<SeriesData>> getAllSeriesInList(String listId);
 
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     //alternate method without live data
     @Query("SELECT * FROM series INNER JOIN series_data_records ON series.id = media_id "
             +"WHERE series_data_records.list_id = :listId")
     List<SeriesData> getAllSeriesInListAlt(String listId);
 
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query("SELECT * FROM series INNER JOIN series_data_records ON series.id = media_id "
             +"WHERE series_data_records.list_id = :listId "
             + "AND series.tags LIKE :tag1 " + "AND series.tags LIKE :tag2 "
@@ -53,13 +57,16 @@ public interface SeriesDataRecordsDao {
     @Query("SELECT * FROM series_data_records WHERE list_id = :listId")
     List<SeriesDataRecord> getAllRecordsOfListAlt(String listId);
 
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query("SELECT list_id FROM series_data_records WHERE media_id = :seriesId")
     LiveData<List<String>> getAllListNamesContainingMedia(String seriesId);
 
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query("SELECT * FROM user_lists INNER JOIN series_data_records ON user_lists.id = series_data_records.list_id "
             +"WHERE media_id = :seriesId")
     LiveData<List<UserListModel>> getAllListsContainingMedia(String seriesId);
 
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     //alternate method without live data
     @Query("SELECT * FROM user_lists INNER JOIN series_data_records ON user_lists.id = series_data_records.list_id "
             +"WHERE media_id = :seriesId")

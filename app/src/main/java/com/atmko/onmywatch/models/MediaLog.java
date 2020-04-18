@@ -45,7 +45,7 @@ public abstract class MediaLog {
     @NonNull @ColumnInfo(name = "parent_id") public String parentId;
 
     @Ignore
-    private String mUniqueExternalId;
+    String mUniqueExternalId;
 
     public String getUniqueExternalId() {
         return mUniqueExternalId;

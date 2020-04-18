@@ -69,7 +69,7 @@ abstract public class MediaData {
     @ColumnInfo(name = "watch_status") int mWatchStatus;
     @ColumnInfo(name = "user_rating") int mUserRating;
 
-    @Ignore private String mUniqueExternalId;
+    @Ignore String mUniqueExternalId;
 
     public String getId() {
         return mId;

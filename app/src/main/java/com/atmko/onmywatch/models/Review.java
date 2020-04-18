@@ -4,8 +4,8 @@ import org.parceler.Parcel;
 
 @Parcel
 public class Review {
-    private String mAuthor;
-    private String mContent;
+    String mAuthor;
+    String mContent;
 
     public Review() {
     }
