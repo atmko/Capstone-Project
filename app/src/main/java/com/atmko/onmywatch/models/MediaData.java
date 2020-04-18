@@ -5,6 +5,7 @@
 package com.atmko.onmywatch.models;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -80,7 +81,12 @@ abstract public class MediaData {
     }
 
     public String getVoteAverage() {
-        return mVoteAverage;
+        if (mVoteAverage == null || mVoteAverage.equals("")) {
+            return "0.0";
+
+        } else {
+            return mVoteAverage;
+        }
     }
 
     public String getTitle() {

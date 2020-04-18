@@ -100,10 +100,6 @@ public class SeriesData extends MediaData{
         this.mNetwork = network;
     }
 
-    public String getVoteAverage() {
-        return mVoteAverage;
-    }
-
     public ArrayList<String> getCountryOfOrigin() {
         return mCountryOfOrigin;
     }
