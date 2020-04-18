@@ -92,7 +92,7 @@
             android:name=".RateActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.PopupDialog"
+            android:theme="@style/Theme.PopupDialog.TouchClose"
             android:exported="false"/>
         <activity
             android:name=".AddToListActivity"
@@ -104,13 +104,13 @@
             android:name=".ConfirmationActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.PopupDialog"
+            android:theme="@style/Theme.PopupDialog.TouchClose"
             android:exported="false"/>
         <activity
             android:name=".RestoreActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.PopupDialog"
+            android:theme="@style/Theme.PopupDialog.TouchClose"
             android:exported="false"/>
         <activity
             android:name=".SettingsActivity"

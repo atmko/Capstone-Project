@@ -53,17 +53,6 @@ public class RateActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rate);
 
-        //configure percentage of display dialog activity takes
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-
-        int height = displayMetrics.heightPixels *
-                getResources().getInteger(R.integer.rate_activity_popup_screen_percent) / 100;
-
-        int width = displayMetrics.widthPixels *
-                getResources().getInteger(R.integer.rate_activity_popup_screen_percent) / 100;
-
-        getWindow().setLayout(width, height);
-
         Intent intent = getIntent();
         mMediaType = intent.getIntExtra(MEDIA_TYPE_KEY, 0);
         mMediaId = Parcels.unwrap(intent.getParcelableExtra(MEDIA_ID_KEY));
