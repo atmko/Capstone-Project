@@ -71,21 +71,13 @@
     </style>
 
     <style name="fab_base_style">
-        <item name="android:layout_width">@dimen/fab_size</item>
-        <item name="android:layout_height">@dimen/fab_size</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">@dimen/x1_layout_margin</item>
+        <item name="android:layout_marginEnd">@dimen/x1_layout_margin</item>
         <item name="android:layout_gravity">bottom|end</item>
-        <item name="android:layout_marginBottom">@dimen/x4_layout_margin</item>
-        <item name="android:layout_marginEnd">@dimen/x4_layout_margin</item>
-        <item name="android:layout_marginRight">@dimen/x4_layout_margin</item>
-    </style>
-
-    <style name="fab_general_style" parent="fab_base_style">
-        <item name="fabCustomSize">@dimen/fab_size</item>
-        <item name="maxImageSize">@dimen/fab_max_image_size</item>
-    </style>
-
-    <style name="fab_detail_style" parent="fab_general_style">
-
+        <item name="fabSize">auto</item>
+        <item name="useCompatPadding">true</item>
     </style>
 
     <style name="style_home_list_display_container">

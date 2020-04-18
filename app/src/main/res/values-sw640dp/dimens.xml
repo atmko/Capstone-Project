@@ -46,11 +46,6 @@
     <dimen name="indicator_cross_line_height">1dp</dimen>
     <dimen name="indicator_cross_line_margin_from_bottom">2.9dp</dimen>
     <!--tab indicator dimensions-->
-
-    <!--floating action button dimensions-->
-    <dimen name="fab_size">105dp</dimen>
-    <dimen name="fab_max_image_size">42dp</dimen>
-    <!--floating action button dimensions-->
     <!--VIEW DIMENSIONS-->
 
     <!--TEXT DIMENSIONS-->

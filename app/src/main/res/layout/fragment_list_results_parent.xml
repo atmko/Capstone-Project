@@ -28,7 +28,7 @@
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        style="@style/fab_general_style"
+        style="@style/fab_base_style"
         android:contentDescription="@string/content_description_discover_button"
         android:id="@+id/search_list_fab"
         android:src="@drawable/ic_discover"/>
