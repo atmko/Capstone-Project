@@ -256,6 +256,11 @@ public class DiscoverCustomResultsFragment extends Fragment implements
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //reset recycler view position on each search
+                if (mDataAdapter.getItemCount() > 0) {
+                    recyclerView.scrollToPosition(0);
+                }
+
                 int[] genreIndices = {selectionMap.get(R.id.genre1_search_item),
                         selectionMap.get(R.id.genre2_search_item)};
                 mSearchPreferences.setGenres(getContext(), genreIndices);
