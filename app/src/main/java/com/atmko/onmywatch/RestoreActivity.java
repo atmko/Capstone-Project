@@ -3,8 +3,8 @@ package com.atmko.onmywatch;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import androidx.annotation.Nullable;
@@ -36,7 +36,16 @@ public class RestoreActivity extends AppCompatActivity implements BackupAdapter.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restore);
 
-        getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        //configure percentage of display dialog activity takes
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+
+        int height = displayMetrics.heightPixels *
+                getResources().getInteger(R.integer.add_to_list_activity_popup_screen_percent) / 100;
+
+        int width = displayMetrics.widthPixels *
+                getResources().getInteger(R.integer.add_to_list_activity_popup_screen_percent) / 100;
+
+        getWindow().setLayout(width, height);
 
         defineViews();
         observeData();

@@ -10,9 +10,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RadioGroup;
@@ -112,7 +112,16 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_to_list);
 
-        getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        //configure percentage of display dialog activity takes
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+
+        int height = displayMetrics.heightPixels *
+                getResources().getInteger(R.integer.add_to_list_activity_popup_screen_percent) / 100;
+
+        int width = displayMetrics.widthPixels *
+                getResources().getInteger(R.integer.add_to_list_activity_popup_screen_percent) / 100;
+
+        getWindow().setLayout(width, height);
 
         Intent intent = getIntent();
         mMediaType = intent.getIntExtra(MEDIA_TYPE_KEY, 0);
