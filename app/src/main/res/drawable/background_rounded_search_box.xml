@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/list_view_background_shape">
-    <corners android:topLeftRadius="25dp"
-        android:topRightRadius="25dp"/>
     <solid android:color="@color/background"/>
     <stroke  android:width="@dimen/divider" android:color="@color/colorAccent"/>
 </shape>

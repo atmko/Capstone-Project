@@ -85,7 +85,7 @@
         android:theme="@style/AppTheme.ActionBar"
         app:layout_constraintBottom_toTopOf="@id/save_button"
         app:layout_constraintStart_toStartOf="@id/status_dividing_line"
-        app:layout_constraintTop_toBottomOf="@id/top_frame_layout"
+        app:layout_constraintTop_toTopOf="@id/top_frame_layout"
         app:layout_constraintEnd_toEndOf="parent">
         <!--TODO make button additions programmatically instead-->
         <androidx.appcompat.widget.AppCompatRadioButton

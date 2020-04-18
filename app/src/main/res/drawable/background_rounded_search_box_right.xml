@@ -4,7 +4,6 @@
     android:insetLeft="-2dp">
     <shape android:id="@+id/rectangle">
         <stroke android:width="@dimen/divider" android:color="@color/colorAccent" />
-        <corners android:topRightRadius="25dp"/>
 
         <solid android:color="@color/background"/>
     </shape>
