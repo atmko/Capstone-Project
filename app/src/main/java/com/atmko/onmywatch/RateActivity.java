@@ -6,8 +6,8 @@ package com.atmko.onmywatch;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -53,16 +53,7 @@ public class RateActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rate);
 
-        //configure percentage of display dialog activity takes
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-
-        int height = displayMetrics.heightPixels *
-                getResources().getInteger(R.integer.rate_activity_popup_screen_percent) / 100;
-
-        int width = displayMetrics.widthPixels *
-                getResources().getInteger(R.integer.rate_activity_popup_screen_percent) / 100;
-
-        getWindow().setLayout(width, height);
+        getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
         Intent intent = getIntent();
         mMediaType = intent.getIntExtra(MEDIA_TYPE_KEY, 0);
