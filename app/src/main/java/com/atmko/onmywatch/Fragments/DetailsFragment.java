@@ -974,6 +974,8 @@ public class DetailsFragment extends Fragment {
         }
 
         Intent intent = new Intent(getActivity().getApplicationContext(), RateActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(RateActivity.MEDIA_TYPE_KEY, mMediaType);
         intent.putExtra(RateActivity.MEDIA_ID_KEY, Parcels.wrap(mMediaData.getId()));
 

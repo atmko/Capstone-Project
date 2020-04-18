@@ -786,6 +786,8 @@ public class MasterActivity extends AppCompatActivity implements
             public void run() {
                 Intent confirmationActivityIntent =
                         new Intent(activity, ConfirmationActivity.class);
+                confirmationActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                confirmationActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 confirmationActivityIntent.setAction(action);
                 confirmationActivityIntent.putExtra(ConfirmationActivity.COUNTER_LIMIT_KEY,
                         confirmationLimit);
@@ -802,6 +804,8 @@ public class MasterActivity extends AppCompatActivity implements
             public void run() {
                 Intent confirmationActivityIntent =
                         new Intent(fragment.getContext(), ConfirmationActivity.class);
+                confirmationActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                confirmationActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 confirmationActivityIntent.setAction(action);
                 confirmationActivityIntent.putExtra(ConfirmationActivity.SELECTED_DATA_KEY,
                         Parcels.wrap(selectedData));
@@ -818,6 +822,8 @@ public class MasterActivity extends AppCompatActivity implements
             public void run() {
                 Intent confirmationActivityIntent =
                         new Intent(activity, ConfirmationActivity.class);
+                confirmationActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                confirmationActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 confirmationActivityIntent.setAction(action);
                 confirmationActivityIntent.putExtra(ConfirmationActivity.SELECTED_DATA_KEY,
                         Parcels.wrap(selectedData));
@@ -996,6 +1002,8 @@ public class MasterActivity extends AppCompatActivity implements
         List<Backup> backups = FirebaseUserDataDao.getBackupsAlt();
         if (backups.size() != 0) {
             Intent intent = new Intent(MasterActivity.this, RestoreActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
     }

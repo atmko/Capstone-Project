@@ -104,6 +104,8 @@ public class RestoreActivity extends AppCompatActivity implements BackupAdapter.
 
                         //restore backup
                         Intent intent = new Intent(RestoreActivity.this, RestoreService.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.putExtra(RestoreService.FOLDER_KEY, RestoreService.BACKUP_FOLDER_NAME);
                         intent.putExtra(RestoreService.FILENAME_KEY, backup.getFileName());
                         RestoreService.enqueueWork(RestoreActivity.this, intent);

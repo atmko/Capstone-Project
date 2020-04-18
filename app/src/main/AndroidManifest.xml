@@ -90,6 +90,7 @@
             android:exported="false"/>
         <activity
             android:name=".RateActivity"
+            android:taskAffinity=".RateActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTop"
             android:theme="@style/Theme.PopupDialog.TouchClose"
@@ -102,12 +103,14 @@
             android:exported="false"/>
         <activity
             android:name=".ConfirmationActivity"
+            android:taskAffinity=".ConfirmationActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTop"
             android:theme="@style/Theme.PopupDialog.TouchClose"
             android:exported="false"/>
         <activity
             android:name=".RestoreActivity"
+            android:taskAffinity=".RestoreActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTop"
             android:theme="@style/Theme.PopupDialog.TouchClose"

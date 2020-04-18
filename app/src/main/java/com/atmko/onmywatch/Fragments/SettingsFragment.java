@@ -85,6 +85,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         public void run() {
                             if (getContext() != null) {
                                 Intent intent = new Intent(getContext(), RestoreActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 getContext().startActivity(intent);
                             }
                         }
