@@ -88,7 +88,7 @@ public class HomeSpotlightFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.fragment_discover_results, container, false);
+        return inflater.inflate(R.layout.fragment_recycler_results, container, false);
     }
 
     @Override
@@ -124,7 +124,7 @@ public class HomeSpotlightFragment extends Fragment implements
         if (getView() == null) return;
         if (getActivity() == null) return;
 
-        RecyclerView recyclerView = getView().findViewById(R.id.discover_results_recycler_view);
+        RecyclerView recyclerView = getView().findViewById(R.id.results_recycler_view);
         recyclerView.setLayoutManager(configureLayoutManager());
 
         mDataAdapter = new HomeSpotlightAdapter(this,

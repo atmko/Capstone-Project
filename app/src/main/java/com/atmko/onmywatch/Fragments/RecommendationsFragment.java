@@ -190,7 +190,7 @@ public class RecommendationsFragment extends Fragment
                     }
                 }, ApiConstants.RESULTS_PER_PAGE, getResources().getInteger(R.integer.stack_pages_per_block));
 
-        RecyclerView recyclerView = getView().findViewById(R.id.recommendations_recycler_view);
+        RecyclerView recyclerView = getView().findViewById(R.id.results_recycler_view);
         recyclerView.setLayoutManager(configureLayoutManager());
 
         mDataAdapter = new MediaDataAdapter(this, getActivity().getApplicationContext(),

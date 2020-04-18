@@ -112,7 +112,7 @@ public class DiscoverResultsFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.fragment_discover_results, container, false);
+        return inflater.inflate(R.layout.fragment_recycler_results, container, false);
     }
 
     @Override
@@ -194,7 +194,7 @@ public class DiscoverResultsFragment extends Fragment implements
                     }
                 }, ApiConstants.RESULTS_PER_PAGE, getResources().getInteger(R.integer.stack_pages_per_block));
 
-        RecyclerView recyclerView = getView().findViewById(R.id.discover_results_recycler_view);
+        RecyclerView recyclerView = getView().findViewById(R.id.results_recycler_view);
         recyclerView.setLayoutManager(configureLayoutManager());
 
         if (mMediaType == MEDIA_TYPE_PEOPLE) {

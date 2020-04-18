@@ -93,7 +93,7 @@ public class ListResultsFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_list_results, container, false);
+        return inflater.inflate(R.layout.fragment_recycler_results, container, false);
     }
 
     @Override
@@ -124,7 +124,7 @@ public class ListResultsFragment extends Fragment
         if (getParentFragment().getView() == null) return;
 
         RecyclerView mListResultsRecyclerView =
-                getView().findViewById(R.id.list_results_recycler_view);
+                getView().findViewById(R.id.results_recycler_view);
 
         mListResultsRecyclerView.setLayoutManager(configureLayoutManager());
 

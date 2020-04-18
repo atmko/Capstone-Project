@@ -328,7 +328,7 @@ public class DiscoverParentFragment extends Fragment
             mSearchPresetsTabLayout.addTab(mSearchPresetsTabLayout.newTab().setText(title));
         }
 
-        mSearchResultsViewPager.setOffscreenPageLimit(titleList.length - 1);
+        mSearchResultsViewPager.setOffscreenPageLimit(1);
 
         //configure search preferences
         SearchPreferences searchPreferences = new SearchPreferences();

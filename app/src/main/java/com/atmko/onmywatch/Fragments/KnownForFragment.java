@@ -63,7 +63,7 @@ public class KnownForFragment extends Fragment implements MediaDataAdapter.OnLis
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_known_for, container, false);
+        return inflater.inflate(R.layout.fragment_recycler_results, container, false);
     }
 
     @Override
@@ -86,7 +86,7 @@ public class KnownForFragment extends Fragment implements MediaDataAdapter.OnLis
     @SuppressWarnings("ConstantConditions")
 
     private void defineValues(Bundle savedInstanceState) {
-        RecyclerView recyclerView = getView().findViewById(R.id.known_for_recycler_view);
+        RecyclerView recyclerView = getView().findViewById(R.id.results_recycler_view);
         recyclerView.setLayoutManager(configureLayoutManager());
 
         mAdapter = new MediaDataAdapter(this, getActivity().getApplicationContext(),

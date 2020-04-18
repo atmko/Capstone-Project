@@ -71,7 +71,7 @@ public class ReviewsFragment extends Fragment implements ReviewDataAdapter.OnLis
 
     private void loadSearch() {
         if (getView() == null) return;
-        RecyclerView recyclerView = getView().findViewById(R.id.reviews_recycler_view);
+        RecyclerView recyclerView = getView().findViewById(R.id.results_recycler_view);
         recyclerView.setLayoutManager(configureLayoutManager());
 
         mAdapter = new ReviewDataAdapter(this);

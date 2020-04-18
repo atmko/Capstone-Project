@@ -149,7 +149,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
         mDatabase = AppDatabase.getInstance(this);
 
         //configure recycler view
-        mRecyclerView = findViewById(R.id.lists_recycler_view);
+        mRecyclerView = findViewById(R.id.results_recycler_view);
         mRecyclerView.setLayoutManager(configureLayoutManager());
         mAdapter = new AddToListAdapter(this);
 

@@ -7,10 +7,7 @@
     android:background="@color/background"
     tools:context=".MasterActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/lists_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <include layout="@layout/fragment_recycler_results" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         style="@style/fab_general_style"

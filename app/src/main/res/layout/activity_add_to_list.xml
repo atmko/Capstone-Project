@@ -43,8 +43,7 @@
 
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/lists_recycler_view"
+    <include layout="@layout/fragment_recycler_results"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/divider"
@@ -59,7 +58,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/divider"
         android:background="@color/colorAccent"
-        app:layout_constraintTop_toBottomOf="@id/lists_recycler_view"/>
+        app:layout_constraintTop_toBottomOf="@id/results_recycler_view"/>
 
     <RadioGroup
         android:theme="@style/AppTheme.ActionBar"
@@ -73,7 +72,7 @@
         android:layout_marginRight="@dimen/x1_layout_margin"
         android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/lists_recycler_view"
+        app:layout_constraintTop_toBottomOf="@id/results_recycler_view"
         app:layout_constraintBottom_toTopOf="@id/save_button">
         <!--TODO make button additions programmatically instead-->
         <androidx.appcompat.widget.AppCompatRadioButton

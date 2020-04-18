@@ -152,7 +152,7 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
         if (getParentFragment().getView() == null) return;
 
         mDatabase = AppDatabase.getInstance(getContext());
-        mRecyclerView = getView().findViewById(R.id.lists_recycler_view);
+        mRecyclerView = getView().findViewById(R.id.results_recycler_view);
         mRecyclerView.setLayoutManager(configureLayoutManager());
 
         if (mListType != ListsWatchAndUserParentFragment.LIST_TYPE_USER) {

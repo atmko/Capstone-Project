@@ -213,7 +213,7 @@ public class DiscoverCustomResultsFragment extends Fragment implements
                     }
                 }, ApiConstants.RESULTS_PER_PAGE, getResources().getInteger(R.integer.stack_pages_per_block));
 
-        recyclerView = getView().findViewById(R.id.discover_results_recycler_view);
+        recyclerView = getView().findViewById(R.id.results_recycler_view);
         recyclerView.setLayoutManager(configureLayoutManager());
 
         if (mMediaType == MEDIA_TYPE_PEOPLE) {

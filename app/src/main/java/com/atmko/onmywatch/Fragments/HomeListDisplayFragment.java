@@ -86,7 +86,7 @@ public class HomeListDisplayFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.fragment_home_list_display, container, false);
+        return inflater.inflate(R.layout.fragment_recycler_results, container, false);
     }
 
     @Override
@@ -102,7 +102,7 @@ public class HomeListDisplayFragment extends Fragment
         if (getView() == null) return;
         if (getActivity() == null) return;
 
-        mRecyclerView = getView().findViewById(R.id.recycler_view);
+        mRecyclerView = getView().findViewById(R.id.results_recycler_view);
         mRecyclerView.setLayoutManager(configureLayoutManager());
 
         mMediaLogAdapter = new MediaLogAdapter(this, getActivity().getApplicationContext(),
