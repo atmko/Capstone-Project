@@ -42,17 +42,6 @@ public class ConfirmationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirmation);
 
-        //configure percentage of display dialog activity takes
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-
-        int height = displayMetrics.heightPixels *
-                getResources().getInteger(R.integer.rate_activity_popup_screen_percent) / 100;
-
-        int width = displayMetrics.widthPixels *
-                getResources().getInteger(R.integer.rate_activity_popup_screen_percent) / 100;
-
-        getWindow().setLayout(width, height);
-
         defineViews();
         setValues(savedInstanceState);
     }

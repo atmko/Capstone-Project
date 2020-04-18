@@ -47,17 +47,6 @@ public class CreateListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_list);
 
-        //configure percentage of display dialog activity takes
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-
-        int height = displayMetrics.heightPixels *
-                getResources().getInteger(R.integer.create_list_activity_popup_screen_percent) / 100;
-
-        int width = displayMetrics.widthPixels *
-                getResources().getInteger(R.integer.create_list_activity_popup_screen_percent) / 100;
-
-        getWindow().setLayout(width, height);
-
         Intent intent = getIntent();
         mMode = intent.getIntExtra(MODE_KEY, 0);
         if (mMode == MODE_EDIT) {
