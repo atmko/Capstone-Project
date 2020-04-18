@@ -17,11 +17,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -44,7 +42,6 @@ import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.RateActivity;
 import com.atmko.onmywatch.adapters.DetailMovieExtrasAdapter;
 import com.atmko.onmywatch.adapters.DetailSeriesExtrasAdapter;
-import com.atmko.onmywatch.adapters.SpinnerDetailsOptionsAdapter;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.Episode;
 import com.atmko.onmywatch.models.MediaData;
@@ -79,7 +76,6 @@ import static com.atmko.onmywatch.models.MediaData.WATCH_STATUS_DROPPED;
 import static com.atmko.onmywatch.models.MediaData.WATCH_STATUS_WATCHED;
 import static com.atmko.onmywatch.models.MediaData.WATCH_STATUS_WATCHING;
 import static com.atmko.onmywatch.utils.GeneralUtils.MILLISECOND_CONVERSION;
-import static com.atmko.onmywatch.utils.api_utils.SeriesApiConstants.NETWORK_KEY;
 
 public class DetailsFragment extends Fragment {
     public static final String FRAGMENT_KEY = "details_fragment";
@@ -898,31 +894,25 @@ public class DetailsFragment extends Fragment {
 
         //set Genres
         ArrayList<String> genres = mediaData.getGenres();
-
         if (genres != null) {
-            try {
+            if (genres.size() > 0) {
                 ((TextView) getView().findViewById(R.id.genre_0_text_view))
                         .setText(genres.get(0));
 
-            } catch (IndexOutOfBoundsException e) {
-                e.printStackTrace();
-
-                getView().findViewById(R.id.genre_0_text_view).setVisibility(View.GONE);
-
+            } else {
+                getView().findViewById(R.id.genre_0_text_view)
+                        .setVisibility(View.GONE);
             }
 
-            try {
+            if (genres.size() > 1) {
                 ((TextView) getView().findViewById(R.id.genre_1_text_view))
                         .setText(genres.get(1));
 
-            } catch (IndexOutOfBoundsException e) {
-                e.printStackTrace();
-
-                getView().findViewById(R.id.genre_1_text_view).setVisibility(View.GONE);
+            } else {
+                getView().findViewById(R.id.genre_1_text_view)
+                        .setVisibility(View.GONE);
             }
         }
-
-
     }
 
     //limit long text
