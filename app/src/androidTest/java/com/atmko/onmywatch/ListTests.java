@@ -643,7 +643,7 @@ public class ListTests {
             e.printStackTrace();
         }
 
-        onView(allOf(ViewMatchers.withId(R.id.lists_recycler_view), isCompletelyDisplayed()))
+        onView(allOf(ViewMatchers.withId(R.id.results_recycler_view), isCompletelyDisplayed()))
                 .perform(actionOnItem(hasDescendant(withText("test list")), clickChildViewWithId(R.id.options_spinner)));
 
         try {
@@ -719,7 +719,7 @@ public class ListTests {
             e.printStackTrace();
         }
 
-        onView(allOf(ViewMatchers.withId(R.id.lists_recycler_view), isCompletelyDisplayed()))
+        onView(allOf(ViewMatchers.withId(R.id.results_recycler_view), isCompletelyDisplayed()))
                 .perform(actionOnItem(hasDescendant(withText("test list")), clickChildViewWithId(R.id.options_spinner)));
 
         try {
