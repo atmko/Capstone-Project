@@ -145,7 +145,7 @@
         <item name="android:layout_marginBottom">@dimen/x2_layout_margin</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:textSize">@dimen/body_text_size</item>
-        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColor">@color/colorAccent</item>
         <item name="android:foreground">@drawable/ripple_pressed</item>
     </style>
 
