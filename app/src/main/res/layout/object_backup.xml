@@ -14,6 +14,7 @@
         android:layout_marginTop="@dimen/x4_layout_margin"
         android:layout_marginBottom="@dimen/x4_layout_margin"
         tools:text="backup"
+        android:textColor="@android:color/white"
         android:textSize="@dimen/body_text_size"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
