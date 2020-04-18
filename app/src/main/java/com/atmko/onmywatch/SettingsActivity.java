@@ -39,6 +39,10 @@ public class SettingsActivity extends AppCompatActivity implements BackupService
         }
     }
 
+    public void setProgressVisibility(int visibility) {
+        progressLayout.setVisibility(visibility);
+    }
+
     private void showSnackBarMessage(String string) {
         if (string == null || string.equals("")) return;
         Snackbar.make(findViewById(R.id.top_layout), string, Snackbar.LENGTH_LONG).show();

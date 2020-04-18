@@ -19,6 +19,7 @@ import com.atmko.onmywatch.ConfirmationActivity;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.RestoreActivity;
+import com.atmko.onmywatch.SettingsActivity;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.utils.network_utils.BackupService;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -37,6 +38,14 @@ import static android.app.Activity.RESULT_OK;
 public class SettingsFragment extends PreferenceFragmentCompat {
     private static final int REQUEST_CREATE_BACKUP = 1;
     private static final int UPGRADE_TO_PERMANENT_ID = 2;
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (getActivity() != null) {
+            ((SettingsActivity) getActivity()).setProgressVisibility(View.GONE);
+        }
+    }
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {

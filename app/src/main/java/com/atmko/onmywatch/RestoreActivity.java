@@ -51,6 +51,12 @@ public class RestoreActivity extends AppCompatActivity implements BackupAdapter.
         observeData();
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        progressLayout.setVisibility(View.GONE);
+    }
+
     private void defineViews() {
         //configure recycler view
         RecyclerView backupRecyclerView = findViewById(R.id.backups_recycler_view);

@@ -90,6 +90,14 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        if (getActivity() != null) {
+            ((MasterActivity) getActivity()).setProgressVisibility(View.GONE);
+        }
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         if (getActivity() == null) return;
