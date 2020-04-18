@@ -44,7 +44,7 @@
 
     </LinearLayout>
 
-    <include layout="@layout/fragment_recycler_results"
+    <include layout="@layout/fragment_recycler_results_btm_padding"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/divider"

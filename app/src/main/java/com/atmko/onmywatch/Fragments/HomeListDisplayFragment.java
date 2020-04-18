@@ -25,15 +25,11 @@ import com.atmko.onmywatch.adapters.MediaLogAdapter;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MediaLog;
-import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.MovieLog;
-import com.atmko.onmywatch.models.SeriesLog;
-import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.view_models.HomeListDisplayViewModel;
 import com.atmko.onmywatch.view_models.HomeListDisplayViewModelFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;

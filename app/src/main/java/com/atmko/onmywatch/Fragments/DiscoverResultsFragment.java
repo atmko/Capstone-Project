@@ -112,7 +112,7 @@ public class DiscoverResultsFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.fragment_recycler_results, container, false);
+        return inflater.inflate(R.layout.fragment_recycler_results_btm_padding, container, false);
     }
 
     @Override

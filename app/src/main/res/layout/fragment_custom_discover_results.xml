@@ -39,7 +39,7 @@
         android:text="@string/search_text_box_hint"
         style="@style/Confirmation_ButtonStyle_End"/>
 
-    <include layout="@layout/fragment_recycler_results"
+    <include layout="@layout/fragment_recycler_results_btm_padding"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

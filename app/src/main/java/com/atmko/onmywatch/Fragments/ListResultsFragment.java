@@ -93,7 +93,7 @@ public class ListResultsFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_recycler_results, container, false);
+        return inflater.inflate(R.layout.fragment_recycler_results_btm_padding, container, false);
     }
 
     @Override
