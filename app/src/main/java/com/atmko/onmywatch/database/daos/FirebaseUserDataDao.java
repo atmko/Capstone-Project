@@ -15,8 +15,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.ListResult;
@@ -115,6 +113,38 @@ public class FirebaseUserDataDao {
         return liveData;
     }
 
+    public static List<Backup> getBackupsAlt() {
+        final List<Backup> backups = new ArrayList<>();
+
+        StorageReference reference = FirebaseStorage.getInstance()
+                .getReference()
+                .child("users")
+                .child(MasterActivity.getCurrentUser().getUid())
+                .child("backups");
+        try {
+            ListResult listResult = Tasks.await(reference.listAll());
+
+            final List<StorageReference> storageReferences = listResult.getItems();
+
+            for (int i = 0; i < storageReferences.size(); i++) {
+                final StorageReference prefix = storageReferences.get(i);
+
+                StorageMetadata storageMetadata = Tasks.await(prefix.getMetadata());
+
+                backups.add(new Backup(prefix.getName(), storageMetadata.getUpdatedTimeMillis()));
+                if (i == storageReferences.size() -1) {
+                    sortBackUps(backups);
+                }
+            }
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return backups;
+    }
+
     private static void sortBackUps(final List<Backup> backups) {
         Comparator<Backup> comparator = new Comparator<Backup>() {
             @Override
@@ -131,39 +161,6 @@ public class FirebaseUserDataDao {
             }
         };
         Collections.sort(backups, comparator);
-    }
-
-    private static List<Backup> getBackupsAlt() {
-        List<Backup> backups = new ArrayList<>();
-
-        Task<QuerySnapshot> task = MasterActivity.getUserDbHomeReference()
-                .collection(BACKUPS_PATH)
-                .orderBy(Backup.TIMESTAMP_KEY, Query.Direction.DESCENDING)
-                .get();
-
-        try {
-            QuerySnapshot snapshots = Tasks.await(task);
-            for (DocumentSnapshot documentSnapshot: snapshots.getDocuments()) {
-                Backup backup = parseDataMapToBackup(documentSnapshot);
-                backups.add(backup);
-            }
-
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        return backups;
-    }
-
-    public static Backup getLatestBackupAlt() {
-        List<Backup> backups = FirebaseUserDataDao.getBackupsAlt();
-        if (backups.size() != 0) {
-            return backups.get(0);
-        } else {
-            return null;
-        }
     }
 
     public static void setBackupCounter(int backupCounter) {
@@ -205,13 +202,5 @@ public class FirebaseUserDataDao {
             e.printStackTrace();
             return null;
         }
-    }
-
-    private static Backup parseDataMapToBackup(DocumentSnapshot document) {
-        Long timestampLong = (Long) document.get(Backup.TIMESTAMP_KEY);
-        String filename = document.getId();
-        long timestamp = timestampLong != null? timestampLong : 0;
-
-        return new Backup(filename, timestamp);
     }
 }

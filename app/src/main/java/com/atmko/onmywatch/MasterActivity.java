@@ -7,8 +7,6 @@ package com.atmko.onmywatch;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -995,9 +993,9 @@ public class MasterActivity extends AppCompatActivity implements
     }
 
     private void checkForBackups() {
-        Backup latestBackup = FirebaseUserDataDao.getLatestBackupAlt();
-        if (latestBackup != null) {
-            Intent intent = new Intent(this, RestoreActivity.class);
+        List<Backup> backups = FirebaseUserDataDao.getBackupsAlt();
+        if (backups.size() != 0) {
+            Intent intent = new Intent(MasterActivity.this, RestoreActivity.class);
             startActivity(intent);
         }
     }
