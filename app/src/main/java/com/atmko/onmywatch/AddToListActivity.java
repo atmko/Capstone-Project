@@ -14,14 +14,16 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
-import android.widget.RadioGroup;
+import android.widget.RadioButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -100,7 +102,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
 
     private RecyclerView mRecyclerView;
     private SuperEditText mSearchTextView;
-    private RadioGroup mWatchStatusRadioGroup;
+    private ConstraintLayout mWatchStatusRadioGroup;
     private Button mSaveButton;
 
     // The Idling Resource which will be null in production.
@@ -197,12 +199,44 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
 
         //configure watch status selector
         mWatchStatusRadioGroup = findViewById(R.id.watch_status_radio_group);
-        mWatchStatusRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                mSelectedWatchStatus = mWatchStatusRadioGroup.indexOfChild(findViewById(checkedId));
-                mMediaData.setWatchStatus(mSelectedWatchStatus);
+        int choiceSize = getResources().getStringArray(R.array.watch_status_movies_values).length;
 
+        for (int i = 0; i < choiceSize; i++) {
+            final RadioButton radioButton = ((RadioButton) mWatchStatusRadioGroup.getChildAt(i));
+            final int finalI = i;
+            radioButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    //if old selection and new selection are the same, do nothing
+                    if (mSelectedWatchStatus == finalI) return;
+
+                    //remove old selection
+                    RadioButton oldSelection =
+                            ((RadioButton) mWatchStatusRadioGroup.getChildAt(mSelectedWatchStatus));
+                    oldSelection.setChecked(false);
+
+                    //add new selection
+                    if (isChecked) {
+                        mSelectedWatchStatus = finalI;
+                        mMediaData.setWatchStatus(mSelectedWatchStatus);
+                    }
+                }
+            });
+        }
+
+        findViewById(R.id.to_watch_info_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MasterActivity.showSnackBarMessage(getString(R.string.to_watch_status_info),
+                            AddToListActivity.this);
+            }
+        });
+
+        findViewById(R.id.watching_info_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MasterActivity.showSnackBarMessage(getString(R.string.watching_status_info),
+                        AddToListActivity.this);
             }
         });
 
@@ -238,21 +272,18 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
                     //if status exists
                     if (watchStatus != null) {
                         //check status
-                        mWatchStatusRadioGroup.check(mWatchStatusRadioGroup.getChildAt(watchStatus).getId());
+                        ((RadioButton) mWatchStatusRadioGroup.getChildAt(watchStatus)).setChecked(true);
 
                     } else {//if status doesn't exist
                         //check "none" status
-                        mWatchStatusRadioGroup.check(mWatchStatusRadioGroup.getChildAt(0).getId());
-
+                        ((RadioButton) mWatchStatusRadioGroup.getChildAt(0)).setChecked(true);
                     }
 
                 } else {//if mSavedInstanceState exists select saved value
                     mSelectedWatchStatus =
                             mSavedInstanceState.getInt(SELECTED_WATCH_STATUS_KEY, 0);
 
-                    mWatchStatusRadioGroup
-                            .check(mWatchStatusRadioGroup
-                                    .getChildAt(mSelectedWatchStatus).getId());
+                    ((RadioButton) mWatchStatusRadioGroup.getChildAt(mSelectedWatchStatus)).setChecked(true);
                 }
             }
         });

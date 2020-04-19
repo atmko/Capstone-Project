@@ -165,10 +165,12 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (mMediaType == MEDIA_TYPE_MOVIE) {
-                    MasterActivity.showSnackBarMessage(getString(R.string.upcoming_movies_info), getActivity());
+                    MasterActivity.showSnackBarMessage(getString(R.string.upcoming_movies_info),
+                            getActivity());
 
                 } else {
-                    MasterActivity.showSnackBarMessage(getString(R.string.upcoming_episodes_info), getActivity());
+                    MasterActivity.showSnackBarMessage(getString(R.string.upcoming_episodes_info),
+                            getActivity());
                 }
             }
         });
@@ -177,10 +179,12 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (mMediaType == MEDIA_TYPE_MOVIE) {
-                    MasterActivity.showSnackBarMessage(getString(R.string.ended_movies_info), getActivity());
+                    MasterActivity.showSnackBarMessage(getString(R.string.ended_movies_info),
+                            getActivity());
 
                 } else {
-                    MasterActivity.showSnackBarMessage(getString(R.string.ended_episodes_info), getActivity());
+                    MasterActivity.showSnackBarMessage(getString(R.string.ended_episodes_info),
+                            getActivity());
                 }
             }
         });

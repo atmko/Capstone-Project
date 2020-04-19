@@ -213,6 +213,8 @@
 
     <string name="upcoming_movies_info">Displays new movies from \"To Watch\" and \"Watching\" list</string>
     <string name="ended_movies_info">Displays past movies from \"To Watch\" and \"Watching\" list</string>
+    <string name="to_watch_status_info">For first released notifications</string>
+    <string name="watching_status_info">For first released and episodic notifications</string>
     <!--SNACK BAR MESSAGES-->
 
     <!--CONFIRMATION MESSAGES-->
