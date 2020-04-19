@@ -202,9 +202,7 @@ public class DiscoverParentFragment extends Fragment
                 MasterActivity.onSearchButtonPressed(mSearchImageButton,
                         searchEditText, titleText);
 
-                if (mSearchMode.equals(SEARCH_MODE_PRESET)) {
-
-                } else if (mSearchMode.equals(SEARCH_MODE_MANUAL)) {
+                if (mSearchMode.equals(SEARCH_MODE_MANUAL)) {
                     loadPresetSearchUi();
                 }
             }

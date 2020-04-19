@@ -113,6 +113,7 @@ public class PeopleDetailsFragment extends Fragment {
         }
 
 
+        //noinspection StatementWithEmptyBody
         if (savedInstanceState == null) {
             //startup code moved to onCreateAnimator
 

@@ -4,8 +4,6 @@
 
 package com.atmko.onmywatch.utils.api_utils;
 
-import com.androidnetworking.AndroidNetworking;
-import com.androidnetworking.common.ANRequest;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.Review;
 import com.atmko.onmywatch.utils.UpdateNotifierService;

@@ -31,13 +31,14 @@ public class Converters {
 
     @TypeConverter
     public static String countryOriginListToString(ArrayList<String> originCountryList) {
-        String formattedOriginString = "";
+        StringBuilder stringBuilder = new StringBuilder();
 
         for (String originCountry: originCountryList) {
-            formattedOriginString += originCountry + ORIGIN_SEPARATOR;
+            stringBuilder.append(originCountry);
+            stringBuilder.append(ORIGIN_SEPARATOR);
         }
 
-        return formattedOriginString;
+        return stringBuilder.toString();
     }
 
     @TypeConverter

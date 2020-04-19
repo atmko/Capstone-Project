@@ -604,8 +604,10 @@ public class DetailsFragment extends Fragment {
 
                     } else {
                         //parse trakt info
+                        //noinspection ConstantConditions
                         mMediaData =
-                                SeriesDataParser.parseTraktNextEpisodeDetails(returnedJSONString, ((SeriesData) mMediaData));
+                                SeriesDataParser.parseTraktNextEpisodeDetails(returnedJSONString,
+                                        ((SeriesData) mMediaData));
 
                         setSeriesCountDown(((SeriesData) mMediaData));
                     }

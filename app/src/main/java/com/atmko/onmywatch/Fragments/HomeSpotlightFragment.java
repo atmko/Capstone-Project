@@ -189,7 +189,8 @@ public class HomeSpotlightFragment extends Fragment implements
     private void retryAfterCoolDOwn(ANError anError) {
         Log.d(FRAGMENT_KEY, "retrying spotlight fetch");
 
-        int coolDown = Integer.valueOf(anError.getResponse().header(ApiConstants.RETRY_AFTER_KEY));
+        String coolDownString = anError.getResponse().header(ApiConstants.RETRY_AFTER_KEY);
+        int coolDown = coolDownString != null ? Integer.parseInt(coolDownString) : 0;
         int coolDownInMilliSecs = coolDown * MILLISECOND_CONVERSION;
 
         Handler handler = new Handler();
@@ -254,7 +255,9 @@ public class HomeSpotlightFragment extends Fragment implements
         super.onSaveInstanceState(outState);
 
         //update initialized search preferences
-        getArguments().putParcelable(SEARCH_PREFERENCES_KEY, Parcels.wrap(mSearchPreferences));
+        if (getArguments() != null) {
+            getArguments().putParcelable(SEARCH_PREFERENCES_KEY, Parcels.wrap(mSearchPreferences));
+        }
 
         //TODO: can use view model instead
         outState.putParcelable(ADAPTER_DATA_LIST_KEY, Parcels.wrap(mDataAdapter.getAdapterData()));

@@ -60,7 +60,7 @@ public class BackupWorker extends Worker {
             channel.setDescription(description);
 
             NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
+            if (notificationManager != null) notificationManager.createNotificationChannel(channel);
         }
     }
 }

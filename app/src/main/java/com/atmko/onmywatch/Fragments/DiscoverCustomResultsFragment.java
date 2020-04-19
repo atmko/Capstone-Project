@@ -163,7 +163,9 @@ public class DiscoverCustomResultsFragment extends Fragment implements
 
             //get saved paging block map
             int[] pagingBlockRange = savedInstanceState.getIntArray(PAGING_BLOCK_MAP_KEY);
-            mStack.restorePagingBlockStructure(pagingBlockRange, mediaDataList);
+            if (pagingBlockRange != null) {
+                mStack.restorePagingBlockStructure(pagingBlockRange, mediaDataList);
+            }
 
             //set total pages
             mStack.setTotalPages(mSearchPreferences.getTotalPages());
@@ -432,7 +434,8 @@ public class DiscoverCustomResultsFragment extends Fragment implements
                                     final int stackOperation) {
         Log.d(FRAGMENT_KEY, "retry fetching search results");
 
-        int coolDown = Integer.valueOf(anError.getResponse().header(ApiConstants.RETRY_AFTER_KEY));
+        String coolDownString = anError.getResponse().header(ApiConstants.RETRY_AFTER_KEY);
+        int coolDown = coolDownString != null ? Integer.parseInt(coolDownString) : 0;
         int coolDownInMilliSecs = coolDown * MILLISECOND_CONVERSION;
 
         Handler handler = new Handler();
@@ -604,7 +607,9 @@ public class DiscoverCustomResultsFragment extends Fragment implements
         super.onSaveInstanceState(outState);
 
         //update initialized search preferences
-        getArguments().putParcelable(SEARCH_PREFERENCES_KEY, Parcels.wrap(mSearchPreferences));
+        if (getArguments() != null) {
+            getArguments().putParcelable(SEARCH_PREFERENCES_KEY, Parcels.wrap(mSearchPreferences));
+        }
 
         if (mMediaType == MEDIA_TYPE_PEOPLE) {
             outState.putParcelable(ADAPTER_DATA_LIST_KEY,
@@ -639,7 +644,8 @@ public class DiscoverCustomResultsFragment extends Fragment implements
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int newIndex, long l) {
         int spinnerLayoutId = ((ViewGroup) adapterView.getParent()).getId();
-        int oldIndex = selectionMap.get(spinnerLayoutId);
+        Integer oldIndexInteger = selectionMap.get(spinnerLayoutId);
+        int oldIndex = oldIndexInteger != null ? oldIndexInteger : 0;
         if (oldIndex != newIndex) selectionMap.put(spinnerLayoutId, newIndex);
     }
 

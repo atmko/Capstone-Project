@@ -50,6 +50,7 @@ public class CastFragment extends Fragment
     private static final String MEDIA_ID_KEY = "media_id";
     private static final String SEARCH_PREFERENCES_KEY = "search_preferences";
 
+    @SuppressWarnings("FieldCanBeLocal")
     private int mMediaType;
     private String mMediaId;
     private String mCastUrl;
@@ -198,7 +199,8 @@ public class CastFragment extends Fragment
     private void retryAfterCoolDOwn(ANError anError) {
         Log.d(FRAGMENT_KEY, "retry fetching search results");
 
-        int coolDown = Integer.valueOf(anError.getResponse().header(ApiConstants.RETRY_AFTER_KEY));
+        String coolDownString = anError.getResponse().header(ApiConstants.RETRY_AFTER_KEY);
+        int coolDown = coolDownString != null ? Integer.parseInt(coolDownString) : 0;
         int coolDownInMilliSecs = coolDown * MILLISECOND_CONVERSION;
 
         Handler handler = new Handler();

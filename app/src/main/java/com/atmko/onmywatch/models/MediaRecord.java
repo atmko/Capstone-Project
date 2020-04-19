@@ -9,10 +9,6 @@ import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
-import androidx.room.Ignore;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity(primaryKeys = {"media_id", "list_id"},
         foreignKeys =

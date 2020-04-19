@@ -203,7 +203,7 @@ public class ScheduledMedia {
         return convertAirDate(mAirDate).getTime() - new Date().getTime();
     }
 
-    public class DateFormatException extends Exception {
+    public static class DateFormatException extends Exception {
         static final String ERROR_MESSAGE = "Date format does not match: \"" + ISO_DATE_FORMAT + "\" or \"" + ApiConstants.DATE_FORMAT + "\"";
         DateFormatException() {
             super(ERROR_MESSAGE);

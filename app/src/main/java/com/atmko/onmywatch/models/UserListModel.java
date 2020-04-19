@@ -10,8 +10,6 @@ import androidx.room.Ignore;
 
 import org.parceler.Parcel;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 @Parcel

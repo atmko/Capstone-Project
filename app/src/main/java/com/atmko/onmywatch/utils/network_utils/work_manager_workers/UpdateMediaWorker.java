@@ -205,7 +205,8 @@ public class UpdateMediaWorker extends Worker {
                                     final String detailUrl, final SearchPreferences searchPreferences) {
         Log.d(TAG, mediaData.getTitle() + " retrying update");
 
-        int coolDown = Integer.valueOf(anError.getResponse().header(ApiConstants.RETRY_AFTER_KEY));
+        String coolDownString = anError.getResponse().header(ApiConstants.RETRY_AFTER_KEY);
+        int coolDown = coolDownString != null ? Integer.parseInt(coolDownString) : 0;
         int coolDownInMilliSecs = coolDown * MILLISECOND_CONVERSION;
 
         Handler handler = new Handler();

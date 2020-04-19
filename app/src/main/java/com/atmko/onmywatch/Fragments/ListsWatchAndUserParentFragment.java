@@ -107,6 +107,7 @@ public class ListsWatchAndUserParentFragment extends Fragment
         //save saveInstanceState value for onCreateAnimator to check if this is the first instance
         mSavedInstanceState = savedInstanceState;
 
+        //noinspection StatementWithEmptyBody
         if (savedInstanceState == null) {
             //startup code moved to onCreateAnimator
 
