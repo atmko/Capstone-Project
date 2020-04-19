@@ -90,7 +90,7 @@
     <style name="home_list_display_heading_style">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginTop">@dimen/x1_layout_margin</item>"
+        <item name="android:layout_marginTop">@dimen/x2_layout_margin</item>"
         <item name="android:layout_marginLeft">@dimen/x2_layout_margin</item>
         <item name="android:layout_marginStart">@dimen/x2_layout_margin</item>
         <item name="android:textStyle">bold</item>

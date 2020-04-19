@@ -52,20 +52,68 @@
                 android:layout_height="@dimen/spotlight_poster_height"
                 tools:background="@color/color_subtext"/>
 
-            <TextView
-                style="@style/home_list_display_heading_style"
-                android:id="@+id/upcoming_container_heading"
-                tools:text="upcoming" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/upcoming_container_heading"
+                    style="@style/home_list_display_heading_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/upcoming_episodes"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+                <ImageButton
+                    android:id="@+id/upcoming_info_button"
+                    style="@style/home_list_display_heading_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/x2_layout_margin"
+                    android:background="@drawable/background_circle"
+                    android:src="@drawable/ic_info"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:contentDescription="@string/content_description_info_button"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <FrameLayout
                 style="@style/style_home_list_display_container"
                 android:id="@+id/upcoming_media_container"
                 tools:background="@color/color_subtext"/>
 
-            <TextView
-                style="@style/home_list_display_heading_style"
-                android:id="@+id/ended_container_heading"
-                tools:text="ended" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/ended_container_heading"
+                    style="@style/home_list_display_heading_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/upcoming_episodes"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+                <ImageButton
+                    android:id="@+id/ended_info_button"
+                    style="@style/home_list_display_heading_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/x2_layout_margin"
+                    android:background="@drawable/background_circle"
+                    android:src="@drawable/ic_info"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:contentDescription="@string/content_description_info_button"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <FrameLayout
                 style="@style/style_home_list_display_container"

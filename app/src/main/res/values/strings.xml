@@ -93,6 +93,7 @@
     <string name="content_description_add_to_list_button">add to list</string>
     <string name="content_description_person_profile_image">person profile image</string>
     <string name="content_description_purchase_item">purchase item</string>
+    <string name="content_description_info_button">info button</string>
     <!--CONTENT DESCRIPTIONS-->
 
     <!--REVIEW ACTIVITY-->
@@ -206,6 +207,12 @@
     <string name="log_in_failed_message">Log In Failed</string>
 
     <string name="pro_mode_list_limit_message">More lists available in pro mode.</string>
+
+    <string name="upcoming_episodes_info">Displays new episodes from \"Watching\" list</string>
+    <string name="ended_episodes_info">Displays past episodes from \"Watching\" list</string>
+
+    <string name="upcoming_movies_info">Displays new movies from \"To Watch\" and \"Watching\" list</string>
+    <string name="ended_movies_info">Displays past movies from \"To Watch\" and \"Watching\" list</string>
     <!--SNACK BAR MESSAGES-->
 
     <!--CONFIRMATION MESSAGES-->

@@ -1006,7 +1006,7 @@ public class MasterActivity extends AppCompatActivity implements
         progressLayout.setVisibility(visibility);
     }
 
-    private static void showSnackBarMessage(String string, Activity activity) {
+    public static void showSnackBarMessage(String string, Activity activity) {
         if (string == null || string.equals("")) return;
         Snackbar.make(activity.findViewById(R.id.top_layout), string, Snackbar.LENGTH_LONG).show();
     }

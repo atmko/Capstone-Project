@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -157,6 +158,30 @@ public class HomeFragment extends Fragment {
                         .add(R.id.master_fragments_container, discoverParentFragment,
                                 DiscoverParentFragment.FRAGMENT_KEY)
                         .commit();
+            }
+        });
+
+        getView().findViewById(R.id.upcoming_info_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mMediaType == MEDIA_TYPE_MOVIE) {
+                    MasterActivity.showSnackBarMessage(getString(R.string.upcoming_movies_info), getActivity());
+
+                } else {
+                    MasterActivity.showSnackBarMessage(getString(R.string.upcoming_episodes_info), getActivity());
+                }
+            }
+        });
+
+        getView().findViewById(R.id.ended_info_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mMediaType == MEDIA_TYPE_MOVIE) {
+                    MasterActivity.showSnackBarMessage(getString(R.string.ended_movies_info), getActivity());
+
+                } else {
+                    MasterActivity.showSnackBarMessage(getString(R.string.ended_episodes_info), getActivity());
+                }
             }
         });
     }
