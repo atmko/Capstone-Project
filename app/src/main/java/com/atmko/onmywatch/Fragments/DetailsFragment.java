@@ -636,7 +636,7 @@ public class DetailsFragment extends Fragment {
     private void setMovieCountDown(MovieData movieData) {
         //set count down if available
         ScheduledMedia releaseMedia = movieData.getScheduledMedia();
-        String countdown = releaseMedia.getCountdown();
+        String countdown = releaseMedia != null ? releaseMedia.getCountdown() : ScheduledMedia.NO_DATES;
 
         mCountDownTextView.setText(countdown);
         mCountDownTextView.setVisibility(View.VISIBLE);
@@ -645,7 +645,7 @@ public class DetailsFragment extends Fragment {
     private void setSeriesCountDown(SeriesData seriesData) {
         //set count down if available
         Episode nextEpisode = seriesData.getNextEpisodeToAir();
-        String countdown = nextEpisode.getCountdown();
+        String countdown = nextEpisode != null ? nextEpisode.getCountdown() : ScheduledMedia.NO_DATES;
 
         mCountDownTextView.setText(countdown);
         mCountDownTextView.setVisibility(View.VISIBLE);
@@ -790,11 +790,11 @@ public class DetailsFragment extends Fragment {
                 ((ImageView) getView().findViewById(R.id.backdrop_image_view)));
 
         ((TextView) getView().findViewById(R.id.title_text_view))
-                .setText(mMediaData.getFormattedTitle());
+                .setText(mMediaData.getTitle());
 
         //set date text
         ((TextView) getView().findViewById(R.id.date_text_view)).setText(
-                GeneralUtils.parseDateToYear(mMediaData.getReleaseDate()));
+                GeneralUtils.parseDateToYear(mMediaData.getDisplayReleaseDate()));
 
         ((TextView) getView().findViewById(R.id.rating_text_view)).setText(mMediaData.getVoteAverage());
 

@@ -94,10 +94,6 @@ abstract public class MediaData {
         return mTitle;
     }
 
-    public String getFormattedTitle() {
-        return mTitle;
-    }
-
     public double getPopularity() {
         return mPopularity;
     }
@@ -140,6 +136,10 @@ abstract public class MediaData {
     }
 
     public String getReleaseDate() {
+        return mReleaseDate;
+    }
+
+    public String getDisplayReleaseDate() {
         if (mReleaseDate != null && !mReleaseDate.equals("")) {
             return mReleaseDate;
 
