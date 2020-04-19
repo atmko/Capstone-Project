@@ -194,6 +194,10 @@ abstract public class MediaData {
     }
 
     public String getReleaseStatus() {
+        return mReleaseStatus;
+    }
+
+    public String getDisplayReleaseStatus() {
         return mReleaseStatus != null && !mReleaseStatus.equals("")
                 ? mReleaseStatus : NO_STATUS_PLACEHOLDER;
     }

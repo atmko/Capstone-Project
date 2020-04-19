@@ -850,7 +850,7 @@ public class DetailsFragment extends Fragment {
     // TODO: NullPointerException handled in caller
     @SuppressWarnings("ConstantConditions")
     private void setDetailViewValues(MediaData mediaData) throws NullPointerException {
-        mReleaseStatusTextView.setText(mediaData.getReleaseStatus());
+        mReleaseStatusTextView.setText(mediaData.getDisplayReleaseStatus());
         mReleaseStatusTextView.setVisibility(View.VISIBLE);
         if (mediaData instanceof MovieData) {
             setMovieCountDown(((MovieData) mediaData));
