@@ -20,7 +20,7 @@ import com.atmko.onmywatch.R;
  * data adapter for list options in ListWatchAndUserFragment
  */
 
-public class SpinnerDetailsOptionsAdapter implements SpinnerAdapter {
+class SpinnerDetailsOptionsAdapter implements SpinnerAdapter {
     private final String[] mOptionsTitles;
     private final Context mContext;
 

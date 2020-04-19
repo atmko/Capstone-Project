@@ -21,7 +21,7 @@ import com.atmko.onmywatch.models.UserListModel;
  */
 
 public class UserListsAdapter extends ListsAdapter {
-    private OnSpinnerItemClickListener mOnSpinnerItemClickListener;
+    private final OnSpinnerItemClickListener mOnSpinnerItemClickListener;
 
     public UserListsAdapter(OnListItemClickListener listItemClickListener) {
         super(listItemClickListener);

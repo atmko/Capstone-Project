@@ -60,14 +60,14 @@ import static com.atmko.onmywatch.Fragments.ListsWatchAndUserParentFragment.LIST
 public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.OnListItemClickListener,
         UserListsAdapter.OnSpinnerItemClickListener {
 
-    public static String FRAGMENT_KEY = "list_watch_and_user_fragment";
+    private static final String FRAGMENT_KEY = "list_watch_and_user_fragment";
 
 
     private static final int REQUEST_DELETE = 1;
 
     //fragment initialization parameters
     private static final String LIST_TYPE_KEY = "list_type";
-    private static String SHOW_FAB_KEY = "show_fab";
+    private static final String SHOW_FAB_KEY = "show_fab";
     private int mListType;
     private boolean mShowFab;
 

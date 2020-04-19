@@ -40,12 +40,12 @@ public class SeriesDataParser {
         //set total pages available to searchPreferences
         //set current page in searchPreferences
         //note: GSON number format default is double
-        Double totalPages = (double) returnedMap.get(ApiConstants.TOTAL_PAGES_KEY);
+        double totalPages = (double) returnedMap.get(ApiConstants.TOTAL_PAGES_KEY);
 
-        searchPreferences.setTotalPages(totalPages.intValue());
+        searchPreferences.setTotalPages((int) totalPages);
 
         if (stack != null) {
-            stack.setTotalPages(totalPages.intValue());
+            stack.setTotalPages((int) totalPages);
         }
 
         //use RESULTS_KEY to get results as JSONArray

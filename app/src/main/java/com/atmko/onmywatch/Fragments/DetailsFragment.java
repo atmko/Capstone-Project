@@ -99,14 +99,13 @@ public class DetailsFragment extends Fragment {
     private MediaData mMediaData;
     private SearchPreferences mSearchPreferences;
 
-    public static final int REVIEW_CUT_OFF_INDEX = 100;
-
     private Bundle mSavedInstanceState;
     private int mWatchStatus;
 
+    @SuppressWarnings("FieldCanBeLocal")
     private FloatingActionButton mFab;
 
-    DetailsViewModel viewModel;
+    private DetailsViewModel viewModel;
 
     //details views
     private TabLayout mDetailExtrasTabLayout;
@@ -429,7 +428,7 @@ public class DetailsFragment extends Fragment {
         final LiveData<List<String>> containingUserLists = viewModel.getContainingLists();
         final LiveData<List<MediaNotifier>> notifiersLiveData = viewModel.getNotifiers();
 
-        mediaDataLiveData.observe(this, new Observer<Object>() {
+        mediaDataLiveData.observe(getViewLifecycleOwner(), new Observer<Object>() {
             @Override
             public void onChanged(Object mediaData) {
                 MediaData castedMediaData = ((MediaData) mediaData);
@@ -463,7 +462,7 @@ public class DetailsFragment extends Fragment {
             }
         });
 
-        containingUserLists.observe(this, new Observer<List<String>>() {
+        containingUserLists.observe(getViewLifecycleOwner(), new Observer<List<String>>() {
             @Override
             public void onChanged(List<String> listNames) {
                 //get list size
@@ -475,7 +474,7 @@ public class DetailsFragment extends Fragment {
             }
         });
 
-        notifiersLiveData.observe(this, new Observer<List<MediaNotifier>>() {
+        notifiersLiveData.observe(getViewLifecycleOwner(), new Observer<List<MediaNotifier>>() {
             @Override
             public void onChanged(List<MediaNotifier> movieNotifiers) {
                 int visibility;
@@ -839,10 +838,10 @@ public class DetailsFragment extends Fragment {
 
         }
 
-        Long backdropHeight = Math.round(weightedWidth * ApiConstants.BACKDROP_HEIGHT_FACTOR);
+        long backdropHeight = Math.round(weightedWidth * ApiConstants.BACKDROP_HEIGHT_FACTOR);
 
         ConstraintLayout.LayoutParams params =
-                new ConstraintLayout.LayoutParams(weightedWidth, backdropHeight.intValue());
+                new ConstraintLayout.LayoutParams(weightedWidth, (int) backdropHeight);
 
         backdropImageView.setLayoutParams(params);
     }

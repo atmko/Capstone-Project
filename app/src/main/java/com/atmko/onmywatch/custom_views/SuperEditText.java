@@ -9,9 +9,9 @@ import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.widget.AutoCompleteTextView;
 
-public class SuperEditText extends AutoCompleteTextView {
+public class SuperEditText extends androidx.appcompat.widget.AppCompatAutoCompleteTextView {
     private OnKeyBoardDismissListener mKeyBoardDismissListener;
-    int activeTextIndex;
+    private int activeTextIndex;
 
     public SuperEditText(Context context) {
         super(context);

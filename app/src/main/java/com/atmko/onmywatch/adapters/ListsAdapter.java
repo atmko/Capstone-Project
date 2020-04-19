@@ -26,8 +26,8 @@ public abstract class ListsAdapter extends RecyclerView.Adapter<ListsAdapter.Lis
     //layout ids
     final int EMPTY_ADAPTER_ID = -1;
 
-    List<ListModel> mAdapterData;
-    OnListItemClickListener mOnListItemClickListener;
+    final List<ListModel> mAdapterData;
+    private final OnListItemClickListener mOnListItemClickListener;
     private boolean mInPlaceholderMode;
 
     ListsAdapter(OnListItemClickListener listItemClickListener) {

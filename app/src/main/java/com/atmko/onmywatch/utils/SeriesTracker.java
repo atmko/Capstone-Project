@@ -44,14 +44,14 @@ import static com.atmko.onmywatch.utils.GeneralUtils.MILLISECOND_CONVERSION;
 import static com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker.NEW_MEDIA_DATA_KEY;
 
 public class SeriesTracker extends JobIntentService {
-    public static final String ACTION_TESTING = "testing";
+    private static final String ACTION_TESTING = "testing";
     public static final String ACTION_SET = "set";
     public static final String ACTION_DELETE = "delete";
 
-    public static int COOL_DOWN_REQUEST_TRAKT_SEASON = 1;
-    public static int COOL_DOWN_REQUEST_TRAKT_SEASON_EPISODES = 2;
+    private static final int COOL_DOWN_REQUEST_TRAKT_SEASON = 1;
+    private static final int COOL_DOWN_REQUEST_TRAKT_SEASON_EPISODES = 2;
 
-    public static final int JOB_ID = 21;
+    private static final int JOB_ID = 21;
 
     public static String sActionMode = ACTION_SET;
 

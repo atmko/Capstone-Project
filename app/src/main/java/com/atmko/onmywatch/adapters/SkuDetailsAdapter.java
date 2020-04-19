@@ -56,9 +56,11 @@ public class SkuDetailsAdapter
     public class SkuDetailsAdapterViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener{
 
-        TextView titleTextView, priceTextView, descriptionTextView;
+        final TextView titleTextView;
+        final TextView priceTextView;
+        final TextView descriptionTextView;
         ImageView iconImageView;
-        AppCompatCheckBox checkBox;
+        final AppCompatCheckBox checkBox;
 
         private SkuDetailsAdapterViewHolder(@NonNull View itemView, int viewType) {
             super(itemView);

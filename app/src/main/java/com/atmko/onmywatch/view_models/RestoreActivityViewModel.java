@@ -20,7 +20,7 @@ import java.util.List;
 public class RestoreActivityViewModel extends AndroidViewModel {
     private static final String TAG = RestoreActivityViewModel.class.getSimpleName();
 
-    private MutableLiveData<List<Backup>> backupsLiveData;
+    private final MutableLiveData<List<Backup>> backupsLiveData;
 
     public RestoreActivityViewModel(@NonNull Application application) {
         super(application);

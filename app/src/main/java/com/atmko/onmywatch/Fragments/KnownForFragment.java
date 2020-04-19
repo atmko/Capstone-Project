@@ -29,7 +29,7 @@ import org.parceler.Parcels;
 import java.util.List;
 
 public class KnownForFragment extends Fragment implements MediaDataAdapter.OnListItemClickListener {
-    public static final String FRAGMENT_KEY = "known_for_fragment";
+    private static final String FRAGMENT_KEY = "known_for_fragment";
 
     //TODO consider putting media type as an attribute in MediaData Class
     private static final String MEDIA_DATA_LIST_KEY = "media_data_list";

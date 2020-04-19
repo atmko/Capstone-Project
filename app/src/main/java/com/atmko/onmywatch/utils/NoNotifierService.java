@@ -41,12 +41,12 @@ import static com.atmko.onmywatch.utils.network_utils.work_manager_workers.Updat
 public class NoNotifierService extends JobIntentService {
     private static final String TAG = NoNotifierService.class.getSimpleName();
 
-    public static final String ACTION_TESTING = "testing";
-    public static final String ACTION_SET = "set";
+    private static final String ACTION_TESTING = "testing";
+    private static final String ACTION_SET = "set";
 
-    public static final int JOB_ID = 20;
+    private static final int JOB_ID = 20;
 
-    public static String sActionMode = ACTION_SET;
+    private static final String sActionMode = ACTION_SET;
 
     private MediaData newMediaData;
     private int mMediaType;

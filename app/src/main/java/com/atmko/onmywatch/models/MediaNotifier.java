@@ -24,7 +24,7 @@ import org.parceler.Parcels;
 
 public abstract class MediaNotifier {
     //notification channel ids
-    public static final String RELEASE_CHANNEL_ID = "Release Channel";
+    static final String RELEASE_CHANNEL_ID = "Release Channel";
 
     public static final String NOTIFICATIONS_KEY = "notification";
 
@@ -65,7 +65,7 @@ public abstract class MediaNotifier {
         this.mIsActive = isActive;
     }
 
-    public int getNotificationCode() {
+    int getNotificationCode() {
         return Integer.valueOf(getCondition() + mId);
     }
 

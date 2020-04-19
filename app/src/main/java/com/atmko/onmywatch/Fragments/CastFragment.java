@@ -115,9 +115,9 @@ public class CastFragment extends Fragment
 
         } else {
             //get saved adapter data list, if null, start new search, otherwise restore old search
-            List mediaDataList = viewModel.getCast();
-            if (mediaDataList != null) {
-                restoreSearch(savedInstanceState, mediaDataList);
+            List<CastData> castDataListList = viewModel.getCast();
+            if (castDataListList != null) {
+                restoreSearch(savedInstanceState, castDataListList);
 
             } else {
                 startNewSearch();

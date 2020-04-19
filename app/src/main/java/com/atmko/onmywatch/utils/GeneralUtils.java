@@ -21,7 +21,7 @@ public class GeneralUtils {
        return airDateString.replace(OFFSET_SYMBOL, OFFSET_VALUE_UTC);
     }
 
-    public interface DateCustom {
+    interface DateCustom {
         Date currentDate();
     }
 

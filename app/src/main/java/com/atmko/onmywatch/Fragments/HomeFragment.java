@@ -346,21 +346,21 @@ public class HomeFragment extends Fragment {
         int adjustedViewWidth = singleImgPixelWidth - imageSpacing;
 
         //get poster height
-        Long posterHeight = Math.round(adjustedViewWidth * ApiConstants.POSTER_ASPECT_RATIO);
+        long posterHeight = Math.round(adjustedViewWidth * ApiConstants.POSTER_ASPECT_RATIO);
 
         //set layout params
         LinearLayout.LayoutParams parentDictatingParams =
-                new LinearLayout.LayoutParams(weightedWidth, posterHeight.intValue());
+                new LinearLayout.LayoutParams(weightedWidth, (int) posterHeight);
 
         fragmentContainer.setLayoutParams(parentDictatingParams);
 
         //set layout margins
-        Float dimenToPixels = displayDimensions.density *
+        float dimenToPixels = displayDimensions.density *
                 getResources().getInteger(R.integer.x1_standard_layout_margin_unscaled);
         ViewGroup.MarginLayoutParams margins =
                 (ViewGroup.MarginLayoutParams) fragmentContainer.getLayoutParams();
 
-        margins.setMargins(0, dimenToPixels.intValue(), 0, 0);
+        margins.setMargins(0, (int) dimenToPixels, 0, 0);
     }
 
 

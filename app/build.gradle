@@ -18,7 +18,7 @@ android {
     buildToolsVersion "29.0.3"
     defaultConfig {
         applicationId "com.atmko.onmywatch"
-        minSdkVersion 18
+        minSdkVersion 14
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"

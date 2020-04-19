@@ -36,7 +36,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="Unlock Notifications and more with Pro"
+                    android:text="@string/unlock_notifications_ad"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/body_text_size"/>
 
@@ -172,7 +172,8 @@
                     android:textColor="@android:color/white"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="RtlSymmetry" />
 
                 <ImageView
                     android:id="@+id/spinner_arrow_image_button"

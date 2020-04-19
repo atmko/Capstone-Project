@@ -55,7 +55,7 @@ public class ListWidgetProviderConfigureActivity extends AppCompatActivity
 
     private TextView mMediaTypeTextView;
     private int mMediaType;
-    public boolean mIsProMode;
+    private boolean mIsProMode;
     private String[] mListTypeNames;
 
     public ListWidgetProviderConfigureActivity() {

@@ -66,26 +66,26 @@ import static com.atmko.onmywatch.utils.api_utils.ApiConstants.ID_KEY;
 public class RestoreService extends JobIntentService {
     private static final String TAG = RestoreService.class.getSimpleName();
 
-    public static final int JOB_ID = 11;
+    private static final int JOB_ID = 11;
 
-    public static final String BACKUP_CHANNEL_ID = "Backup Channel";
+    private static final String BACKUP_CHANNEL_ID = "Backup Channel";
 
     public static final String FOLDER_KEY = "folder";
     public static final String FILENAME_KEY = "file_name";
 
     public static final String BACKUP_FOLDER_NAME = "backups";
 
-    public static final String USERS_PATH = "users";
+    private static final String USERS_PATH = "users";
 
-    public static final String MOVIES_KEY = "movies";
-    public static final String SERIES_KEY = "series";
-    public static final String WATCH_LISTS_KEY = "watch_lists";
-    public static final String USER_LISTS_KEY = "user_lists";
-    public static final String MOVIE_DATA_RECORDS_KEY = "movie_data_records";
-    public static final String SERIES_DATA_RECORDS_KEY = "series_data_records";
-    public static final String MOVIES_NOTIFIERS_KEY = "movie_notifiers";
-    public static final String SERIES_NOTIFIERS_KEY = "series_notifiers";
-    public static final String SERIES_LOGS_KEY = "series_logs";
+    private static final String MOVIES_KEY = "movies";
+    private static final String SERIES_KEY = "series";
+    private static final String WATCH_LISTS_KEY = "watch_lists";
+    private static final String USER_LISTS_KEY = "user_lists";
+    private static final String MOVIE_DATA_RECORDS_KEY = "movie_data_records";
+    private static final String SERIES_DATA_RECORDS_KEY = "series_data_records";
+    private static final String MOVIES_NOTIFIERS_KEY = "movie_notifiers";
+    private static final String SERIES_NOTIFIERS_KEY = "series_notifiers";
+    private static final String SERIES_LOGS_KEY = "series_logs";
 
     private AppDatabase mLocalDatabase;
     private StorageReference mBackupRef;
@@ -140,7 +140,7 @@ public class RestoreService extends JobIntentService {
         }
     }
 
-    public Notification buildNotification(Context context, String notificationTitle, String notificationContent) {
+    private Notification buildNotification(Context context, String notificationTitle, String notificationContent) {
         //create intent to launch activity on click
         Intent intent = new Intent(context, MasterActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -188,7 +188,7 @@ public class RestoreService extends JobIntentService {
         });
     }
 
-    public String readFullyAsString(InputStream inputStream, String encoding)
+    private String readFullyAsString(InputStream inputStream, String encoding)
             throws IOException {
         return readFully(inputStream).toString(encoding);
     }
@@ -204,43 +204,43 @@ public class RestoreService extends JobIntentService {
         return baos;
     }
 
-    public void onPullMovieDataComplete() {
+    private void onPullMovieDataComplete() {
         pullSeriesData();
     }
 
-    public void onPullSeriesDataComplete() {
+    private void onPullSeriesDataComplete() {
         pullWatchLists();
     }
 
-    public void onPullWatchListsComplete() {
+    private void onPullWatchListsComplete() {
         pullUserLists();
     }
 
-    public void onPullUserListsComplete() {
+    private void onPullUserListsComplete() {
         pullMovieDataRecords();
     }
 
-    public void onPullMovieDataRecordsComplete() {
+    private void onPullMovieDataRecordsComplete() {
         pullSeriesDataRecords();
     }
 
-    public void onPullSeriesDataRecordsComplete() {
+    private void onPullSeriesDataRecordsComplete() {
         pullMovieNotifiers();
     }
 
-    public void onPullMovieNotifiersComplete() {
+    private void onPullMovieNotifiersComplete() {
         pullSeriesNotifiers();
     }
 
-    public void onPullSeriesNotifiersComplete() {
+    private void onPullSeriesNotifiersComplete() {
         restoreNotifications();
     }
 
-    public void onRestoreNotificationsComplete() {
+    private void onRestoreNotificationsComplete() {
         pullSeriesLogs();
     }
 
-    public void onPullSeriesLogsComplete() {
+    private void onPullSeriesLogsComplete() {
         //update success value fail and finish service
         isRestoreSuccessful = true;
         finishService();
@@ -268,7 +268,7 @@ public class RestoreService extends JobIntentService {
     }
 
     @SuppressWarnings({"ConstantConditions", "unchecked"})
-    static MovieData parseDataMapToMovieData(Map map) {
+    private static MovieData parseDataMapToMovieData(Map map) {
         ScheduledMedia scheduledMedia = map.get(SCHEDULED_MEDIA_KEY) == null ? null
                 : Converters.longToScheduledMedia(((Double) map.get(SCHEDULED_MEDIA_KEY)).longValue());
 
@@ -306,7 +306,7 @@ public class RestoreService extends JobIntentService {
     }
 
     @SuppressWarnings({"ConstantConditions", "unchecked"})
-    static SeriesData parseDataMapToSeriesData(Map map) {
+    private static SeriesData parseDataMapToSeriesData(Map map) {
         Episode episode = map.get(NEXT_EPISODE_KEY) == null ? null
                 : Converters.stringToEpisode((String) map.get(NEXT_EPISODE_KEY));
 
@@ -353,7 +353,7 @@ public class RestoreService extends JobIntentService {
     }
 
     @SuppressWarnings("ConstantConditions")
-    public static UserListModel parseUserListModel(Map map) {
+    private static UserListModel parseUserListModel(Map map) {
         String listName = ((String) map.get(LIST_NAME_KEY));
         int listCount = ((Double) map.get(ITEM_COUNT_KEY)).intValue();
 

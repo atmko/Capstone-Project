@@ -91,9 +91,14 @@
     <string name="content_description_options_button">options button</string>
     <string name="content_description_widget_settings_button">widget settings button</string>
     <string name="content_description_add_to_list_button">add to list</string>
+    <string name="content_description_create_list_button">create list</string>
     <string name="content_description_person_profile_image">person profile image</string>
     <string name="content_description_purchase_item">purchase item</string>
     <string name="content_description_info_button">info button</string>
+    <!--CONTENT DESCRIPTIONS-->
+
+    <!--AD TEXT-->
+    <string name="unlock_notifications_ad">Unlock Notifications and more with Pro</string>
     <!--CONTENT DESCRIPTIONS-->
 
     <!--REVIEW ACTIVITY-->

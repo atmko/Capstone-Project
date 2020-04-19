@@ -66,11 +66,11 @@ public class BackupLogic {
     private static final String SERIES_NOTIFIERS_KEY = "series_notifiers";
     private static final String SERIES_LOGS_KEY = "series_logs";
 
-    private Context mContext;
-    private AppDatabase mLocalDatabase;
-    private Map mDatabaseMap;
-    private String mFileName;
-    private StorageReference mBackupRef;
+    private final Context mContext;
+    private final AppDatabase mLocalDatabase;
+    private final Map mDatabaseMap;
+    private final String mFileName;
+    private final StorageReference mBackupRef;
     private String mErrorMessage;
 
     public BackupLogic(Context context, String folder, String fileName) {
@@ -356,7 +356,7 @@ public class BackupLogic {
         outputStreamWriter.close();
     }
 
-    public static class BackupException extends Exception {
+    static class BackupException extends Exception {
         static final String ERROR_MESSAGE = "Failed to upload backup to database";
         BackupException() {
             super(ERROR_MESSAGE);

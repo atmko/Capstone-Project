@@ -29,7 +29,7 @@ abstract public class MediaRecord {
     }
 
     @NonNull
-    public String getListName() {
+    String getListName() {
         return mListName;
     }
 

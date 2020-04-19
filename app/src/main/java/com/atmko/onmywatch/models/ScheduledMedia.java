@@ -174,7 +174,7 @@ public class ScheduledMedia {
     }
 
     //returns time in millis till nex air date. Uses air date if air date iso not available else returns Long.MAX_VALUE
-    long getBestTimeDifference() {
+    private long getBestTimeDifference() {
         if (mAirDateIso != null) {
             try {
                 return getTimeDifferenceViaUtcTime();

@@ -119,7 +119,7 @@ public class HomeListDisplayFragment extends Fragment
         //noinspection unchecked
         final LiveData<List> displayListLiveData = listsViewModel.getHomeDisplayList();
 
-        displayListLiveData.observe(this, new Observer<List>() {
+        displayListLiveData.observe(getViewLifecycleOwner(), new Observer<List>() {
             @Override
             public void onChanged(List mediaDataList) {
                 populateAndNotifyAdapter(mediaDataList);

@@ -88,7 +88,7 @@ public class MediaLogAdapter
         TextView posterReplacementTextView;
         ImageButton addButton;
         TextView typeTextView;
-        TextView countDownTextView;
+        final TextView countDownTextView;
 
         private MediaLogAdapterViewHolder(@NonNull View itemView, int viewType) {
             super(itemView);

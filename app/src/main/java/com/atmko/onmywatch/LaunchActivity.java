@@ -42,7 +42,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 public class LaunchActivity extends AppCompatActivity
         implements ProviderInstaller.ProviderInstallListener {
 
-    public static final String AGREEMENT_KEY = "agreement";
+    private static final String AGREEMENT_KEY = "agreement";
 
     private static final int REQUEST_GOOGLE_SIGN_IN = 0;
     private static final int ERROR_DIALOG_REQUEST_CODE = 1;
@@ -50,7 +50,7 @@ public class LaunchActivity extends AppCompatActivity
     private AppCompatCheckBox checkBox;
     private TextView agreementErrorTextView;
 
-    SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPreferences;
     private boolean isProviderUpdated;
     private boolean requireRetryProviderInstall;
 

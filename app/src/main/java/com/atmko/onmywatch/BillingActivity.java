@@ -163,7 +163,7 @@ public class BillingActivity extends AppCompatActivity implements
 
     //get purchases made by user
     //ensures app values match purchases
-    public void queryPurchases() {
+    private void queryPurchases() {
         Log.d(TAG, "fetch user's purchases");
         //get in app purchases to check for unverified, unacknowledged and pending transactions
         Purchase.PurchasesResult inAppResult = mBillingClient.queryPurchases(BillingClient.SkuType.INAPP);
@@ -215,7 +215,7 @@ public class BillingActivity extends AppCompatActivity implements
         });
     }
 
-    public SkuDetailsParams getInappSkuDetailsParams() {
+    private SkuDetailsParams getInappSkuDetailsParams() {
         List<String> skuList = Arrays.asList(getResources().getStringArray(R.array.inapp_skus));
         SkuDetailsParams.Builder skuDetailsParamsBuilder = SkuDetailsParams.newBuilder();
         skuDetailsParamsBuilder.setSkusList(skuList);
@@ -223,7 +223,7 @@ public class BillingActivity extends AppCompatActivity implements
         return skuDetailsParamsBuilder.build();
     }
 
-    public SkuDetailsParams getTestSkuDetailsParams() {
+    private SkuDetailsParams getTestSkuDetailsParams() {
         List<String> skuList = Arrays.asList(getResources().getStringArray(R.array.test_purchase_skus));
         SkuDetailsParams.Builder skuDetailsParamsBuilder = SkuDetailsParams.newBuilder();
         skuDetailsParamsBuilder.setSkusList(skuList);

@@ -3,12 +3,12 @@ package com.atmko.onmywatch.models;
 import java.util.List;
 
 public class Season extends ScheduledMedia{
-    String parentMediaId;
-    public int seasonNumber;
+    final String parentMediaId;
+    public final int seasonNumber;
     private List<Episode> episodes;
     private boolean hasEnded;
     public int episodesAired;
-    public long timestamp;
+    public final long timestamp;
     public boolean isBundled;
 
     public Season(String parentMediaId, int seasonNumber, String airDate) {

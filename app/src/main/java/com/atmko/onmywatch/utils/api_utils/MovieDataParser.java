@@ -35,12 +35,12 @@ public class MovieDataParser {
         //set total pages available to searchPreferences
         //set current page in searchPreferences
         //note: GSON number format default is double
-        Double totalPages = (double) returnedMap.get(ApiConstants.TOTAL_PAGES_KEY);
+        double totalPages = (double) returnedMap.get(ApiConstants.TOTAL_PAGES_KEY);
 
-        searchPreferences.setTotalPages(totalPages.intValue());
+        searchPreferences.setTotalPages((int) totalPages);
 
         if (stack != null) {
-            stack.setTotalPages(totalPages.intValue());
+            stack.setTotalPages((int) totalPages);
         }
 
         //use RESULTS_KEY to get results as JSONArray
@@ -60,7 +60,7 @@ public class MovieDataParser {
         return movieDataList;
     }
 
-    static MovieData parseMovieMap(Map movieDataMap) {
+    static MovieData parseMovieMap(Map<String, Object> movieDataMap) {
         Boolean isVideo = (Boolean) movieDataMap.get(MovieApiConstants.VIDEO_KEY);
         Double popularity = (Double) movieDataMap.get(ApiConstants.POPULARITY_KEY);
         Boolean isAdult = (Boolean) movieDataMap.get(MovieApiConstants.ADULT_KEY);

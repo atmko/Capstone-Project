@@ -59,9 +59,9 @@ public class CastDataAdapter extends RecyclerView.Adapter<CastDataAdapter.CastDa
 
         final FrameLayout topFrameLayout;
         ImageView castPosterImageView;
-        TextView nameTextView;
-        TextView roleTextView;
-        ImageButton addToListButton;
+        final TextView nameTextView;
+        final TextView roleTextView;
+        final ImageButton addToListButton;
 
         private CastDataAdapterViewHolder(@NonNull View itemView, int viewType) {
             super(itemView);

@@ -18,9 +18,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TagAdapter extends ArrayAdapter<String> {
-    Context context;
-    private int resource, textViewResourceId;
-    private List<String> items, tempItems, suggestions;
+    final Context context;
+    private final int resource;
+    private final int textViewResourceId;
+    private final List<String> items;
+    private final List<String> tempItems;
+    private final List<String> suggestions;
 
     public TagAdapter(Context context, int resource, int textViewResourceId, List<String> items) {
         super(context, resource, textViewResourceId, items);
@@ -58,7 +61,7 @@ public class TagAdapter extends ArrayAdapter<String> {
     /**
      * Custom Filter implementation for custom suggestions we provide.
      */
-    private Filter nameFilter = new Filter() {
+    private final Filter nameFilter = new Filter() {
         @Override
         public CharSequence convertResultToString(Object resultValue) {
             return ((String) resultValue);
@@ -84,6 +87,7 @@ public class TagAdapter extends ArrayAdapter<String> {
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
+            @SuppressWarnings("unchecked")
             List<String> filterList = (ArrayList<String>) results.values;
             if (results.count > 0) {
                 clear();

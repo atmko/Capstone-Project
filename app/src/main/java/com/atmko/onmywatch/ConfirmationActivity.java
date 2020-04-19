@@ -19,8 +19,8 @@ public class ConfirmationActivity extends AppCompatActivity {
     public static final String ACTION_CREATE_BACKUP = "create_backup";
     public static final String ACTION_PENDING_PURCHASE = "pending_purchase";
 
-    public static final String ACTION_KEY = "action";
-    public static final String CONFIRMATION_MESSAGE_KEY = "confirmation_message";
+    private static final String ACTION_KEY = "action";
+    private static final String CONFIRMATION_MESSAGE_KEY = "confirmation_message";
     public static final String SELECTED_DATA_KEY = "selected_data";
     public static final String COUNTER_LIMIT_KEY = "counter_limit";
 

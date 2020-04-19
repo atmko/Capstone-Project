@@ -34,7 +34,7 @@ public class MediaDataAdapter
     private final Fragment mFragment;
     private final List<MediaData> mAdapterData;
     private final OnListItemClickListener mOnListItemClickListener;
-    private int mPlaceHolderCapacity;
+    private final int mPlaceHolderCapacity;
     private int mPlaceHolderCount;
     private final Context mContext;
     private final int[] mParams;

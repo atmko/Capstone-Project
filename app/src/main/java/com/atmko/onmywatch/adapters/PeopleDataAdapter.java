@@ -61,9 +61,9 @@ public class PeopleDataAdapter
 
         final FrameLayout topFrameLayout;
         ImageView peoplePosterImageView;
-        TextView nameTextView;
-        TextView roleTextView;
-        ImageButton addToListButton;
+        final TextView nameTextView;
+        final TextView roleTextView;
+        final ImageButton addToListButton;
 
         private PeopleDataAdapterViewHolder(@NonNull View itemView, int viewType) {
             super(itemView);
@@ -87,13 +87,13 @@ public class PeopleDataAdapter
             DisplayMetrics displayDimensions = Resources.getSystem().getDisplayMetrics();
 
             //set layout margins to nameTextView bottom
-            Float dimenToPixels =
+            float dimenToPixels =
                     displayDimensions.density * mContext.getResources()
                             .getInteger(R.integer.x1_standard_layout_margin_unscaled);
             ViewGroup.MarginLayoutParams margins =
                     (ViewGroup.MarginLayoutParams) nameTextView.getLayoutParams();
 
-            margins.setMargins(0, 0, 0, dimenToPixels.intValue());
+            margins.setMargins(0, 0, 0, (int) dimenToPixels);
 
             itemView.setOnClickListener(this);
 
@@ -140,11 +140,11 @@ public class PeopleDataAdapter
         int adjustedViewWidth = singleImgPixelWidth - imageSpacing;
 
         //get poster height
-        Long posterHeight = Math.round(adjustedViewWidth * ApiConstants.POSTER_ASPECT_RATIO);
+        long posterHeight = Math.round(adjustedViewWidth * ApiConstants.POSTER_ASPECT_RATIO);
 
         //set layout params
         params.width = adjustedViewWidth;
-        params.height = posterHeight.intValue();
+        params.height = (int) posterHeight;
 
         return params;
     }

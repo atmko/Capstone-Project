@@ -62,7 +62,7 @@ import static org.junit.Assert.fail;
 public class NotificationTests {
     private NotificationIdlingResource notificationIdlingResource;
     private IdlingResource addToListIdlingResource;
-    private Context context = ApplicationProvider.getApplicationContext();
+    private final Context context = ApplicationProvider.getApplicationContext();
 
     private AppDatabase db;
 
@@ -70,7 +70,7 @@ public class NotificationTests {
     public ActivityTestRule<MasterActivity> masterActivityTestRule =
             new ActivityTestRule<>(MasterActivity.class);
     @Rule
-    public ActivityTestRule<AddToListActivity> addToListActivityTestRule =
+    public final ActivityTestRule<AddToListActivity> addToListActivityTestRule =
             new ActivityTestRule<>(AddToListActivity.class, true, false);
 
     @Before

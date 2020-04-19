@@ -27,9 +27,9 @@ public class MasterActivityViewModel extends AndroidViewModel {
     private static final String PRO_MODE_KEY = "pro_mode";
     private static final String ALLOW_CLOUD_BACKUP_KEY = "allow_cloud_backup";
 
-    private MutableLiveData<Boolean> isProModeLiveData = new MutableLiveData<>();
-    private MutableLiveData<Boolean> allowCloudBackupLiveData  = new MutableLiveData<>();
-    private MutableLiveData<String> migrationLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isProModeLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> allowCloudBackupLiveData  = new MutableLiveData<>();
+    private final MutableLiveData<String> migrationLiveData = new MutableLiveData<>();
 
     public MasterActivityViewModel(@NonNull Application application) {
         super(application);

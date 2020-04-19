@@ -271,7 +271,7 @@ public class MasterActivity extends AppCompatActivity implements
         });
     }
 
-    public void loadUi() {
+    private void loadUi() {
         startReviewsLibrary();
 
         //remove all fragments
@@ -595,6 +595,7 @@ public class MasterActivity extends AppCompatActivity implements
         if (backgroundFragment != null) showBackgroundFragment(backgroundFragment);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void removeFragment(Fragment fragment, int entry, int exit) {
         getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(entry, exit)
@@ -759,9 +760,9 @@ public class MasterActivity extends AppCompatActivity implements
         });
     }
 
-    public static void launchConfirmationActivity(final Activity activity,
-                                                  final int requestId,
-                                                  final String action) {
+    private static void launchConfirmationActivity(final Activity activity,
+                                                   final int requestId,
+                                                   final String action) {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -1094,7 +1095,7 @@ public class MasterActivity extends AppCompatActivity implements
 
     //get purchases made by user
     //ensures app values match purchases
-    public static void queryPurchases(Activity activity) {
+    private static void queryPurchases(Activity activity) {
         Log.d(TAG, "fetch user's purchases");
         //get in app purchases to check for unverified, unacknowledged and pending transactions
         Purchase.PurchasesResult inAppResult = mBillingClient.queryPurchases(BillingClient.SkuType.INAPP);

@@ -49,11 +49,11 @@ public class UpdateNotifierService extends JobIntentService {
     private static final String TAG = UpdateNotifierService.class.getSimpleName();
 
     public static final String ACTION_TESTING = "testing";
-    public static final String ACTION_SET = "set";
+    private static final String ACTION_SET = "set";
 
     public static boolean ASSUME_TRAKT_NEXT_EPISODE_NULL;
 
-    public static final int JOB_ID = 20;
+    private static final int JOB_ID = 20;
 
     public static String sActionMode = ACTION_SET;
 

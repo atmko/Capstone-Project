@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 public final class ReviewDataAdapter
         extends RecyclerView.Adapter<ReviewDataAdapter.ReviewDataAdapterViewHolder> {
+    public static final int REVIEW_CUT_OFF_INDEX = 100;
 
     private final ArrayList<Review> mAdapterData;
     private final OnListItemClickListener mOnListItemClickListener;
@@ -92,7 +93,7 @@ public final class ReviewDataAdapter
         adapterViewHolder.authorTextVIew.setText(author);
         adapterViewHolder.contentTextView.setTag(content);
         adapterViewHolder.contentTextView
-                .setText(limitText(content, DetailsFragment.REVIEW_CUT_OFF_INDEX));
+                .setText(limitText(content));
 
     }
 
@@ -132,9 +133,9 @@ public final class ReviewDataAdapter
     }
 
     //truncates long text (reviews)
-    private String limitText(String fullText, int cutOffIndex) {
-        if (fullText.length() > cutOffIndex) {
-            return fullText.substring(0, cutOffIndex) + "...";
+    private String limitText(String fullText) {
+        if (fullText.length() > REVIEW_CUT_OFF_INDEX) {
+            return fullText.substring(0, REVIEW_CUT_OFF_INDEX) + "...";
 
         } else {
             return fullText;

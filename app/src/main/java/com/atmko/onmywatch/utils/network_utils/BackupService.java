@@ -22,7 +22,7 @@ import com.atmko.onmywatch.utils.network_utils.work_manager_workers.BackupWorker
 public class BackupService extends JobIntentService {
     private static final String TAG = BackupService.class.getSimpleName();
 
-    public static final int JOB_ID = 11;
+    private static final int JOB_ID = 11;
 
     private static final String BACKUP_CHANNEL_ID = "Backup Channel";
 
@@ -71,7 +71,7 @@ public class BackupService extends JobIntentService {
         }
     }
 
-    public Notification buildNotification(Context context, String notificationTitle, String notificationContent) {
+    private Notification buildNotification(Context context, String notificationTitle, String notificationContent) {
         //create intent to launch activity on click
         Intent intent = new Intent(context, MasterActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
