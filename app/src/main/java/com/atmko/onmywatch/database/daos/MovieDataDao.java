@@ -62,7 +62,7 @@ public interface MovieDataDao {
     @Query("SELECT * FROM movies WHERE (watch_status = 1 OR watch_status = 2) AND (scheduled_media > 0 AND release_status != 'Released') ORDER BY scheduled_media ASC LIMIT 10")
     List<MovieData> getUserUpcomingMoviesAlt();
 
-    @Query("SELECT * FROM movies WHERE watch_status IN (1, 2) AND release_status = 'Released' ORDER BY scheduled_media ASC LIMIT 10")
+    @Query("SELECT * FROM movies WHERE watch_status IN (1, 2) AND release_status = 'Released' ORDER BY scheduled_media DESC LIMIT 10")
     LiveData<List<MovieData>> getReleasedMovies();
 
     @Query("SELECT * FROM movies WHERE watch_status IN (1, 2) AND (scheduled_media = 0 AND release_status != 'Released') LIMIT 10")
