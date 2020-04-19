@@ -37,13 +37,8 @@ public class FirebaseUserDataDao {
     private static final String ADMIN_COLLECTION_TITLE = "admin";
     public static final String FEATURE_PERMISSIONS_TITLE = "feature_permissions";
 
-    private static final String BACKUPS_PATH = "backups";
     private static final String BACKUP_COUNTER_KEY = "backup_counter";
     public static final String MIGRATION_KEY = "migration";
-    public static final String MIGRATION_TO_LOCAL = "to_local";
-    public static final String MIGRATION_LOCAL = "local";
-    public static final String MIGRATION_TO_CLOUD = "to_cloud";
-    public static final String MIGRATION_CLOUD = "cloud";
 
     public static DocumentReference getFeaturePermissions() {
         return MasterActivity.getUserDbHomeReference()

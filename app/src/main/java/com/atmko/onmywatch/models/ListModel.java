@@ -29,24 +29,12 @@ abstract public class ListModel {
         return mName;
     }
 
-    public void setName(@NonNull String mName) {
-        this.mName = mName;
-    }
-
     public int getItemCount() {
         return mItemCount;
     }
 
     public void setItemCount(int mItemCount) {
         this.mItemCount = mItemCount;
-    }
-
-    public String getUniqueExternalId() {
-        return mUniqueExternalId;
-    }
-
-    public void setUniqueExternalId(String mDocumentId) {
-        this.mUniqueExternalId = mDocumentId;
     }
 
     Map<String, Object> getFirebaseListModelMap(ListModel listModel) {

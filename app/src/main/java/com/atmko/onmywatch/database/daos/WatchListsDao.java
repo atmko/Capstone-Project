@@ -32,9 +32,6 @@ public interface WatchListsDao {
     @Query("SELECT * FROM watch_lists WHERE id = :name")
     WatchListModel getListByNameAlt(String name);
 
-    @Query("SELECT * FROM watch_lists WHERE id LIKE :name")
-    LiveData<List<WatchListModel>> getListsWithNameLike(String name);
-
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateListConfiguration(WatchListModel watchListModel);
 

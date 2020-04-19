@@ -44,7 +44,6 @@ import static com.atmko.onmywatch.MasterActivity.SEARCH_TEXT_KEY;
 
 public class ListResultsFragment extends Fragment
         implements MediaDataAdapter.OnListItemClickListener{
-    public static final String FRAGMENT_KEY = "list_results_fragment";
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -60,7 +59,6 @@ public class ListResultsFragment extends Fragment
 
     private AppDatabase database;
     private MediaDataAdapter mDataAdapter;
-    private SearchPreferences mSearchPreferences;
     private SuperEditText mSearchTextView;
     private TagAdapter tagAdapter;
 
@@ -131,7 +129,6 @@ public class ListResultsFragment extends Fragment
         mDataAdapter = new MediaDataAdapter(this, getActivity().getApplicationContext(),
                 CustomParams.getSearchParams(this));
         mListResultsRecyclerView.setAdapter(mDataAdapter);
-        mSearchPreferences = new SearchPreferences();
 
         //get search bar from parent fragment
         mSearchTextView =

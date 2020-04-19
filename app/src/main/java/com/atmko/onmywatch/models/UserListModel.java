@@ -33,22 +33,8 @@ public class UserListModel extends ListModel {
         this.mName = name;
     }
 
-    public static List<String> getContainingListsNames(List<UserListModel> newContainingLists) {
-        List<String> newContainingListNames = new ArrayList<>();
-
-        for (UserListModel userListModel: newContainingLists) {
-            newContainingListNames.add(userListModel.getName());
-
-        }
-
-        return newContainingListNames;
-    }
-
     public Map<String, Object> parseListModelToDataMap() {
         return getFirebaseListModelMap(this);
     }
 
-    public static UserListModel parseUserListModel(String listName) {
-        return new UserListModel(listName);
-    }
 }

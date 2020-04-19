@@ -6,10 +6,8 @@ package com.atmko.onmywatch.utils.api_utils;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.ANRequest;
-import com.atmko.onmywatch.models.CastData;
 import com.atmko.onmywatch.models.Episode;
 import com.atmko.onmywatch.models.Review;
-import com.atmko.onmywatch.models.ScheduledMedia;
 import com.atmko.onmywatch.models.Season;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.utils.UpdateNotifierService;

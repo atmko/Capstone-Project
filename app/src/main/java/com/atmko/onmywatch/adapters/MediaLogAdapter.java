@@ -63,10 +63,6 @@ public class MediaLogAdapter
         return position >= getPlaceholdersStartingIndex();
     }
 
-    public int getPlaceHolderCapacity() {
-        return mPlaceHolderCapacity;
-    }
-
     public void setPlaceHolderCapacity(int placeholderCount) {
         this.mPlaceHolderCapacity = placeholderCount;
     }

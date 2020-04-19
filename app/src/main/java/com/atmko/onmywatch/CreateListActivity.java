@@ -7,7 +7,6 @@ package com.atmko.onmywatch;
 import android.content.Intent;
 import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,7 +27,6 @@ import org.parceler.Parcels;
 import java.util.List;
 
 public class CreateListActivity extends AppCompatActivity {
-    public static String FRAGMENT_KEY = "create_list_fragment";
 
     public static final String MODE_KEY = "mode";
     public static final String USER_LIST_KEY = "user_list";

@@ -179,12 +179,4 @@ public class CastDataAdapter extends RecyclerView.Adapter<CastDataAdapter.CastDa
         notifyDataSetChanged();
     }
 
-    public void setInPlaceholderMode(boolean inPlaceholderMode) {
-        mInPlaceholderMode = inPlaceholderMode;
-
-        if (mInPlaceholderMode) {
-            mAdapterData.clear();
-            notifyDataSetChanged();
-        }
-    }
 }

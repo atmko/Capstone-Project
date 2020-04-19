@@ -53,7 +53,6 @@ public class HomeSpotlightFragment extends Fragment implements
     private String mSearchUrl;
 
     private static final String ADAPTER_DATA_LIST_KEY = "adapter_data_list";
-    private static final String PAGING_BLOCK_MAP_KEY = "paging_block_map";
 
     private HomeSpotlightAdapter mDataAdapter;
     private SearchPreferences mSearchPreferences;
@@ -257,6 +256,7 @@ public class HomeSpotlightFragment extends Fragment implements
         //update initialized search preferences
         getArguments().putParcelable(SEARCH_PREFERENCES_KEY, Parcels.wrap(mSearchPreferences));
 
+        //TODO: can use view model instead
         outState.putParcelable(ADAPTER_DATA_LIST_KEY, Parcels.wrap(mDataAdapter.getAdapterData()));
     }
 }

@@ -47,21 +47,6 @@ public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase sInstance;
 
-    public static AppDatabase getInstance(Context context, RoomDatabase.Callback callback) {
-        if (sInstance != null) {
-            return sInstance;
-        }
-
-        synchronized (LOCK) {
-            sInstance = Room.databaseBuilder(context, AppDatabase.class, DATABASE_NAME)
-                    //TODO remove allowance of main thread queries
-                    .addCallback(callback)
-                    .build();
-
-            return sInstance;
-        }
-    }
-
     public static AppDatabase getInstance(Context context) {
         if (sInstance != null) {
             return sInstance;

@@ -77,10 +77,6 @@ abstract public class MediaData {
         return mId;
     }
 
-    public String getVoteCount() {
-        return mVoteCount;
-    }
-
     public String getVoteAverage() {
         if (mVoteAverage == null || mVoteAverage.equals("")) {
             return "0.0";
@@ -104,10 +100,6 @@ abstract public class MediaData {
 
     public String getSpotlightPosterPath() {
         return mSpotlightPosterPath;
-    }
-
-    public void setSpotlightPosterPath(String spotlightPosterPath) {
-        this.mSpotlightPosterPath = spotlightPosterPath;
     }
 
     public String getOriginalLanguage() {

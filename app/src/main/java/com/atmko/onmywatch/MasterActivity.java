@@ -291,7 +291,6 @@ public class MasterActivity extends AppCompatActivity implements
             String action = intent.getAction();
 
             if (action != null && action.equals(DetailsFragment.ACTION_LAUNCH_DETAILS)) {
-                Bundle extras = intent.getExtras();
                 launchDetailsFromIntent(intent);
             }
         }
@@ -406,9 +405,6 @@ public class MasterActivity extends AppCompatActivity implements
     @Override
     protected void onNewIntent(final Intent intent) {
         super.onNewIntent(intent);
-
-        Bundle extras = intent.getExtras();
-
         if (intent.getAction() != null
                 && intent.getAction().equals(DetailsFragment.ACTION_LAUNCH_DETAILS)) {
             launchDetailsFromIntent(intent);

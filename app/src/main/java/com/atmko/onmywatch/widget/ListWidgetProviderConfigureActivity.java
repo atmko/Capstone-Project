@@ -18,7 +18,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.atmko.onmywatch.Fragments.ListResultsParentFragment;
 import com.atmko.onmywatch.Fragments.ListWatchAndUserFragment;
 import com.atmko.onmywatch.Fragments.ListsWatchAndUserParentFragment;
 import com.atmko.onmywatch.MasterActivity;
@@ -44,7 +43,6 @@ public class ListWidgetProviderConfigureActivity extends AppCompatActivity
         implements ListsWatchAndUserParentFragment.ListFragmentImplementation,
         ListWatchAndUserAdapter.LogicImplementation,
         ListWatchAndUserFragment.OnListModelClickListener {
-    private static final String TAG = "NewAppWidgetConfigureActivity";
 
     private static final String PREFS_NAME = "com.atmko.onmywatch.widget.NewAppWidget";
 

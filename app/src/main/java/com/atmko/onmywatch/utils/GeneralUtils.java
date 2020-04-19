@@ -113,15 +113,4 @@ public class GeneralUtils {
         return dateString.split(ApiConstants.DATE_SEPARATOR);
     }
 
-    static int[] separateDateToIntegers(String dateString) {
-        String[] separatedArray = dateString.split(ApiConstants.DATE_SEPARATOR);
-
-        int[] finalArray = new int[separatedArray.length];
-
-        for (int i = 0; i< separatedArray.length; i++) {
-            finalArray[i] = Integer.parseInt(separatedArray[i]);
-        }
-
-        return finalArray;
-    }
 }

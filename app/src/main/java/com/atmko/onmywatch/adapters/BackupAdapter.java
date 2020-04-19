@@ -34,13 +34,11 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.BackupAdap
     public class BackupAdapterViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener{
 
-        final FrameLayout topFrameLayout;
         final TextView timeStringTextView;
 
         private BackupAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            topFrameLayout = itemView.findViewById(R.id.top_frame_layout);
             timeStringTextView = itemView.findViewById(R.id.time_string_text_view);
 
             itemView.setOnClickListener(this);

@@ -127,10 +127,6 @@ public class MovieData extends MediaData{
         return mScheduledMedia;
     }
 
-    public void setScheduledMedia(ScheduledMedia scheduledMedia) {
-        this.mScheduledMedia = scheduledMedia;
-    }
-
     @Override
     public String getMediaUrl(Context context, String mediaId) {
         return context.getString(R.string.movie_base_url) + "/" + mediaId;

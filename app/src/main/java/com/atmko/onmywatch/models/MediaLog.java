@@ -47,14 +47,6 @@ public abstract class MediaLog {
     @Ignore
     String mUniqueExternalId;
 
-    public String getUniqueExternalId() {
-        return mUniqueExternalId;
-    }
-
-    public void setUniqueExternalId(String mDocumentId) {
-        this.mUniqueExternalId = mDocumentId;
-    }
-
     //gets the time till next air date in days, hours, or minutes
     public String getCountdown() {
         long timeDifference = timestamp - new Date().getTime();

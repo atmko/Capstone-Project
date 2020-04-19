@@ -69,7 +69,6 @@ public class BackupLogic {
     private Context mContext;
     private AppDatabase mLocalDatabase;
     private Map mDatabaseMap;
-    private String mFolder;
     private String mFileName;
     private StorageReference mBackupRef;
     private String mErrorMessage;
@@ -78,7 +77,6 @@ public class BackupLogic {
         mContext = context;
         mLocalDatabase = AppDatabase.getInstance(mContext);
         mDatabaseMap = new HashMap();
-        mFolder = folder;
         mFileName = fileName;
         mBackupRef = FirebaseStorage.getInstance().getReference()
                 .child(USERS_PATH + "/" + MasterActivity.getCurrentUser().getUid()

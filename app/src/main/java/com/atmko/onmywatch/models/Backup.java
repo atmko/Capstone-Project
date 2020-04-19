@@ -6,7 +6,6 @@ import java.util.Date;
 
 @Parcel
 public class Backup {
-    public static final String TIMESTAMP_KEY = "timestamp";
     String mFileName;
     public long mTimestamp;
 

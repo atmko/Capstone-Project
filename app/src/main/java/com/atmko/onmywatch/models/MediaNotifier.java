@@ -69,14 +69,6 @@ public abstract class MediaNotifier {
         return Integer.valueOf(getCondition() + mId);
     }
 
-    public String getUniqueExternalId() {
-        return mUniqueExternalId;
-    }
-
-    public void setUniqueExternalId(String mDocumentId) {
-        this.mUniqueExternalId = mDocumentId;
-    }
-
     public static void createReleaseNotificationChannel(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             String name = context.getString(R.string.notification_channel_releases);

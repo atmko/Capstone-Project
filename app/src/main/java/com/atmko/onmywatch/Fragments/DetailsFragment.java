@@ -86,8 +86,6 @@ public class DetailsFragment extends Fragment {
     public static final String MEDIA_DATA_PARCELABLE_KEY = "media_data";
     private static final String SEARCH_PREFERENCES_KEY = "search_preferences";
 
-    private String COUNTDOWN_KEY = "countdown";
-
     public static final String ACTION_LAUNCH_DETAILS = "launch_details";
     public static final String QUICK_ACTION_KEY = "quick_action";
     public static final String QUICK_ACTION_SHARE = "qa_share";

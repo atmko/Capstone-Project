@@ -6,7 +6,6 @@ package com.atmko.onmywatch.utils.api_utils;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.ANRequest;
-import com.atmko.onmywatch.models.CastData;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.Review;
 import com.atmko.onmywatch.utils.UpdateNotifierService;
@@ -296,13 +295,4 @@ public class MovieDataParser {
         return videos;
     }
 
-    public static String createVideoImagePath(String videoPath) {
-
-        ANRequest request = AndroidNetworking.get(ApiConstants.VIDEO_IMAGE_URL_FORMAT)
-                .addPathParameter(ApiConstants.VIDEO_IMG_KEY, videoPath)
-                .build();
-
-        return request.getUrl();
-
-    }
 }

@@ -23,7 +23,7 @@ public class ListsResultsViewModel extends ViewModel {
     private LiveData<List<MovieData>> allMoviesInWatchList, allMoviesInUserList;
     private LiveData<List<SeriesData>> allSeriesInWatchList, allSeriesInUserList;
 
-    ListsResultsViewModel(@NonNull AppDatabase database, int listType, int mediaType,
+    ListsResultsViewModel(@NonNull AppDatabase database, int listType,
                           List<String> watchStatusTitleList, String listName) {
 
         if (listType == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {

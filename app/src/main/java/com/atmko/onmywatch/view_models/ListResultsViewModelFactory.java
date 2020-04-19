@@ -35,6 +35,6 @@ public class ListResultsViewModelFactory extends ViewModelProvider.NewInstanceFa
     <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         //noinspection unchecked
         return (T) new ListsResultsViewModel(
-                mDatabase, mListType, mMediaType, mWatchStatusTitleList, mListName);
+                mDatabase, mListType, mWatchStatusTitleList, mListName);
     }
 }

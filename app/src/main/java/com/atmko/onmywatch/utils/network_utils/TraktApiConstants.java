@@ -14,7 +14,6 @@ public class TraktApiConstants {
     //api key
     public static final String API_KEY = BuildConfig.traktApiKey;
 
-    public static final String MEDIA_TYPE_MOVIE = "movie";
     public static final String MEDIA_TYPE_SHOW = "show";
 
     public static final String TRAKT_ID_KEY = "trakt_id";
@@ -24,18 +23,9 @@ public class TraktApiConstants {
     public static final String API_VERSION_KEY = "trakt-api-version";
     public static final String API_VERSION = "2";
 
-    //EPISODE VALUES
-    public static final String FIRST_AIRED_KEY = "first_aired";
-
     //TRAKT EXTERNAL KEYS
     public static final String TRAKT_KEY = "trakt";
     public static final String IDS_KEY = "ids";
-
-    //TRAKT SCHEDULING KEYS
-    public static final String AIRS_KEY = "airs";
-    public static final String DAY_KEY = "day";
-    public static final String TIME_KEY = "time";
-    public static final String TIMEZONE_KEY = "timezone";
 
     //ERROR CODES
     public static final int TOO_MANY_REQUESTS = 429;

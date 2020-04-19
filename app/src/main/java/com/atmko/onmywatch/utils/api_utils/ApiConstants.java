@@ -22,10 +22,7 @@ public class ApiConstants {
     public static final String VIDEO_IMAGE_URL_FORMAT = "https://img.youtube.com/vi/{video_id}/sddefault.jpg";
     public static final String YOUTUBE_INTENT_BASE_URL = "https://www.youtube.com/watch?v=";
 
-    //PLACEHOLDER KEYS
-    static final String API_KEY_KEY = "api_key";
     public static final String VIDEO_IMG_KEY = "video_id";
-    public static final String VIDEO_IMG_SIZE = "img_size";
 
     //IMAGE VALUES
     public static final String POSTER_IMAGE_SIZE = "/w185";
@@ -70,7 +67,6 @@ public class ApiConstants {
     //DETAILS KEYS
     public static final String RELEASE_STATUS_KEY = "status";
     public static final String GENRES_KEY = "genres";
-    public static final String GENRE_ID_KEY = "id";
     public static final String GENRE_NAME = "name";
 
     //DATE VALUES
