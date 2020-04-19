@@ -439,8 +439,8 @@ public class DetailsFragment extends Fragment {
                 mWatchStatus = mediaData != null ? castedMediaData.getWatchStatus() : 0;
 
                 //get array of watch status title shorthand
-                String[] watchStatusShorthandList =
-                        getContext().getResources().getStringArray(R.array.watch_status_shorthand_titles);
+                String[] watchStatusShorthandList = getContext().getResources()
+                                .getStringArray(R.array.watch_status_shorthand_titles);
 
                 //get shorthand using watch status as index
                 String shorthand = mediaData != null
@@ -456,7 +456,8 @@ public class DetailsFragment extends Fragment {
                 int userRating = mediaData != null ? castedMediaData.getUserRating() : 0;
                 if (userRating != 0) {
                     userRatingTextView.setVisibility(View.VISIBLE);
-                    userRatingTextView.setText(userRating + ".0");
+                    String userRatingString = userRating + ".0";
+                    userRatingTextView.setText(userRatingString);
 
                 } else {
                     userRatingTextView.setText(getString(R.string.rate_text_literal));
@@ -635,13 +636,7 @@ public class DetailsFragment extends Fragment {
     private void setMovieCountDown(MovieData movieData) {
         //set count down if available
         ScheduledMedia releaseMedia = movieData.getScheduledMedia();
-        String countdown;
-        if (releaseMedia != null && releaseMedia.getCountdown() != null) {
-            countdown = releaseMedia.getCountdown();
-
-        } else {
-            countdown = ScheduledMedia.NO_DATES;
-        }
+        String countdown = releaseMedia.getCountdown();
 
         mCountDownTextView.setText(countdown);
         mCountDownTextView.setVisibility(View.VISIBLE);
@@ -650,13 +645,7 @@ public class DetailsFragment extends Fragment {
     private void setSeriesCountDown(SeriesData seriesData) {
         //set count down if available
         Episode nextEpisode = seriesData.getNextEpisodeToAir();
-        String countdown;
-        if (nextEpisode != null && nextEpisode.getCountdown() != null) {
-            countdown = nextEpisode.getCountdown();
-
-        } else {
-            countdown = ScheduledMedia.NO_DATES;
-        }
+        String countdown = nextEpisode.getCountdown();
 
         mCountDownTextView.setText(countdown);
         mCountDownTextView.setVisibility(View.VISIBLE);
@@ -803,25 +792,15 @@ public class DetailsFragment extends Fragment {
         ((TextView) getView().findViewById(R.id.title_text_view))
                 .setText(mMediaData.getFormattedTitle());
 
-        if (!mMediaData.getReleaseDate().equals("")) {
-            ((TextView) getView().findViewById(R.id.date_text_view)).setText(
-                    GeneralUtils.parseDateToYear(mMediaData.getReleaseDate()));
-
-        } else {
-            ((TextView) getView().findViewById(R.id.date_text_view)).setText(
-                    getString(R.string.release_date_placeholder));
-        }
+        //set date text
+        ((TextView) getView().findViewById(R.id.date_text_view)).setText(
+                GeneralUtils.parseDateToYear(mMediaData.getReleaseDate()));
 
         ((TextView) getView().findViewById(R.id.rating_text_view)).setText(mMediaData.getVoteAverage());
 
-        try {
-            //set overview text
-            ((TextView) getView().findViewById(R.id.overView_text_view)).setText(
-                    limitText(mMediaData.getOverview(), mOverviewCutoffIndex));
-
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
+        //set overview text
+        ((TextView) getView().findViewById(R.id.overView_text_view)).setText(
+                limitText(mMediaData.getOverview(), mOverviewCutoffIndex));
     }
 
     // TODO: NullPointerException handled in caller
@@ -900,8 +879,7 @@ public class DetailsFragment extends Fragment {
                         .setText(genres.get(0));
 
             } else {
-                getView().findViewById(R.id.genre_0_text_view)
-                        .setVisibility(View.GONE);
+                getView().findViewById(R.id.genre_0_text_view).setVisibility(View.GONE);
             }
 
             if (genres.size() > 1) {
@@ -909,8 +887,7 @@ public class DetailsFragment extends Fragment {
                         .setText(genres.get(1));
 
             } else {
-                getView().findViewById(R.id.genre_1_text_view)
-                        .setVisibility(View.GONE);
+                getView().findViewById(R.id.genre_1_text_view).setVisibility(View.GONE);
             }
         }
     }

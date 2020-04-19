@@ -5,7 +5,6 @@
 package com.atmko.onmywatch.models;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,6 +38,8 @@ abstract public class MediaData {
     public static final String TAGS_KEY = "tags";
 
     private static final String MATURITY_RATING_PLACEHOLDER = "____";
+    private static final String RELEASE_DATE_PLACEHOLDER = "____";
+    private static final String NO_STATUS_PLACEHOLDER = "No Status";
 
     //primary attributes
     @PrimaryKey
@@ -130,11 +131,21 @@ abstract public class MediaData {
     }
 
     public String getOverview() {
-        return mOverview;
+        if (mOverview != null && !mOverview.equals("")) {
+            return mOverview;
+
+        } else {
+            return "";
+        }
     }
 
     public String getReleaseDate() {
-        return mReleaseDate;
+        if (mReleaseDate != null && !mReleaseDate.equals("")) {
+            return mReleaseDate;
+
+        } else {
+            return RELEASE_DATE_PLACEHOLDER;
+        }
     }
 
     public void createTags() {
@@ -183,7 +194,8 @@ abstract public class MediaData {
     }
 
     public String getReleaseStatus() {
-        return mReleaseStatus;
+        return mReleaseStatus != null && !mReleaseStatus.equals("")
+                ? mReleaseStatus : NO_STATUS_PLACEHOLDER;
     }
 
     public void setReleaseStatus(String releaseStatus) {
