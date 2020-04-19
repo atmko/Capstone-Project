@@ -139,6 +139,8 @@ public class SeriesTracker extends JobIntentService {
                                 EpisodeParser.parseTraktEpisodes(newMediaData.getId(), returnedJSONString);
                         lastSeason.setEpisodes(episodes);
 
+                        //TODO:when trakt info unavailable show tmdb episode log
+
                         //make data congruent by...
                         //setting episodes aired using series next episode property
                         //replacing corresponding episode with series next episode only if net episode's source is trakt
