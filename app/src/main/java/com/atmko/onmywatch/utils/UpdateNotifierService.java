@@ -97,9 +97,25 @@ public class UpdateNotifierService extends JobIntentService {
         if (newWatchStatus == MediaData.WATCH_STATUS_TO_WATCH
                 || newWatchStatus == MediaData.WATCH_STATUS_WATCHING) {
 
+            String releaseDate;
+            if (mMediaType == MEDIA_TYPE_MOVIE) {
+                releaseDate = newMediaData.getReleaseDate();
+
+            } else {
+                //define release date by next episode (already checked if release pending to ensure its the first episode)
+                Episode nextEpisode = ((SeriesData) newMediaData).getNextEpisodeToAir();
+                if (nextEpisode != null && nextEpisode.hasNonEmptyDate()) {
+                    releaseDate = nextEpisode.getBestAvailableDateString();
+
+                } else {
+                    //fallback for series release date
+                    releaseDate = newMediaData.getReleaseDate();
+                }
+            }
+
             //if release date exists set release notifier through date caparison
             //otherwise create a notifier via release status without creating an alarm
-            if (!newMediaData.getReleaseDate().equals("") && newMediaData.getReleaseDate() != null) {
+            if (releaseDate != null && !releaseDate.equals("")) {
                 setReleaseNotifierThroughDateComparision();
 
             } else {
@@ -118,11 +134,17 @@ public class UpdateNotifierService extends JobIntentService {
     //compares release date and current date and sets release notifier if release date is in the future
     //then schedules alarm notification for future
     private void setReleaseNotifierThroughDateComparision() {
-        ScheduledMedia scheduledMedia = new ScheduledMedia();
-        try {
-            scheduledMedia.setAirDate(newMediaData.getReleaseDate());
-        } catch (ScheduledMedia.DateFormatException e) {
-            e.printStackTrace();
+        ScheduledMedia scheduledMedia;
+        if (mMediaType == MEDIA_TYPE_MOVIE) {
+            scheduledMedia = new ScheduledMedia();
+            try {
+                scheduledMedia.setAirDate(newMediaData.getReleaseDate());
+            } catch (ScheduledMedia.DateFormatException e) {
+                e.printStackTrace();
+            }
+
+        } else {
+            scheduledMedia = ((SeriesData) newMediaData).getNextEpisodeToAir();
         }
 
         //if release date has passed, return
@@ -150,12 +172,7 @@ public class UpdateNotifierService extends JobIntentService {
         String releaseStatus = newMediaData.getReleaseStatus();
 
         //create notifier if media release still pending
-        if (!releaseStatus.equals(MovieApiConstants.RELEASE_STATUS_RELEASED)
-                && !releaseStatus.equals(ApiConstants.TextReplacement.REPLACEMENT_RETURNING_SERIES)
-                && !releaseStatus.equals(SeriesApiConstants.RELEASE_STATUS_PILOT)
-                && !releaseStatus.equals(SeriesApiConstants.RELEASE_STATUS_ENDED)
-                && !releaseStatus.equals(ApiConstants.RELEASE_STATUS_CANCELED)) {
-
+        if (isPendingRelease(releaseStatus)) {
             createReleaseNotifier(newMediaData, false);
 
             //set idle state to true
@@ -163,6 +180,14 @@ public class UpdateNotifierService extends JobIntentService {
                 NotificationIdlingResource.getNotificationIdlingResource().setIdleState(true);
             }
         }
+    }
+
+    private boolean isPendingRelease(String releaseStatus) {
+        return !releaseStatus.equals(MovieApiConstants.RELEASE_STATUS_RELEASED)
+                && !releaseStatus.equals(ApiConstants.TextReplacement.REPLACEMENT_RETURNING_SERIES)
+                && !releaseStatus.equals(SeriesApiConstants.RELEASE_STATUS_PILOT)
+                && !releaseStatus.equals(SeriesApiConstants.RELEASE_STATUS_ENDED)
+                && !releaseStatus.equals(ApiConstants.RELEASE_STATUS_CANCELED);
     }
 
     //if saved notifier exists and active status has changed, update notifier status and return notifier
@@ -196,22 +221,22 @@ public class UpdateNotifierService extends JobIntentService {
     private void updateNewEpisodeNotifier() {
         int newWatchStatus = newMediaData.getWatchStatus();
 
+        //delete old logs
         if (newWatchStatus != MediaData.WATCH_STATUS_WATCHING) {
             trackMedia(SeriesTracker.ACTION_DELETE);
         }
 
-        if (newWatchStatus == MediaData.WATCH_STATUS_TO_WATCH) {
-            cancelMediaAlarmIfExists(CONDITION_NEW_EPISODE);
-            //TODO: series release notifier current does't use trakt api but uses tmdb. Make release notifier uses trakt for better accuracy
-            updateReleaseNotifier();
+        //cancel old alarms
+        cancelMediaAlarmIfExists(CONDITION_ON_RELEASE);
+        cancelMediaAlarmIfExists(CONDITION_NEW_EPISODE);
 
-        } else if (newWatchStatus == MediaData.WATCH_STATUS_WATCHING) {
+        //if (to watch and is pending release) OR if watching
+        if ((newWatchStatus == MediaData.WATCH_STATUS_TO_WATCH
+                && isPendingRelease(newMediaData.getReleaseStatus()))
+                || newWatchStatus == MediaData.WATCH_STATUS_WATCHING) {
             getTraktNextEpisodeDetails();
 
         } else {
-            cancelMediaAlarmIfExists(CONDITION_ON_RELEASE);
-            cancelMediaAlarmIfExists(CONDITION_NEW_EPISODE);
-
             //set idle state to true
             if (NotificationIdlingResource.getNotificationIdlingResource() != null) {
                 NotificationIdlingResource.getNotificationIdlingResource().setIdleState(true);
@@ -273,6 +298,7 @@ public class UpdateNotifierService extends JobIntentService {
 
                             } else {
                                 //parse trakt info
+                                //noinspection ConstantConditions
                                 newMediaData =
                                         SeriesDataParser.parseTraktNextEpisodeDetails(returnedJSONString, ((SeriesData) newMediaData));
 
@@ -285,7 +311,14 @@ public class UpdateNotifierService extends JobIntentService {
                                     if (nextEpisode != null && nextEpisode.getBestAvailableDateString() != null) {
                                         //save next episode
                                         updateMedia(newMediaData);
-                                        setNewEpisodeNotifierThroughDateComparison();
+
+                                        //set notifier type depending on watch status
+                                        if (newMediaData.getWatchStatus() == MediaData.WATCH_STATUS_TO_WATCH) {
+                                            updateReleaseNotifier();
+
+                                        } else if (newMediaData.getWatchStatus() == MediaData.WATCH_STATUS_WATCHING) {
+                                            setNewEpisodeNotifierThroughDateComparison();
+                                        }
 
                                     } else {
                                         getTmdbNextEpisodeDetails();
@@ -425,6 +458,7 @@ public class UpdateNotifierService extends JobIntentService {
     }
 
     //retry method if api returns too may requests error
+    @SuppressWarnings("SameParameterValue")
     private void retryAfterCoolDOwn(ANError anError, final int coolDownRequestId) {
         Log.d(TAG, "retrying details fetch");
 
