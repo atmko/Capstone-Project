@@ -47,6 +47,10 @@ public class ScheduledMedia {
     public ScheduledMedia() {
     }
 
+    public boolean hasNonEmptyDate() {
+        return getBestAvailableDateString() != null && !getBestAvailableDateString().equals("");
+    }
+
     //returns the local date of episode. Uses iso date if available, otherwise regular date, otherwise null
     public Date getBestLocalAirDate() {
         if (mAirDateIso != null) {

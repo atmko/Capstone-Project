@@ -150,16 +150,13 @@ public class SeriesDataParser {
         Map nextEpisodeToAirMap = ((Map) returnedMap.get(SeriesApiConstants.NEXT_EPISODE_TO_AIR_KEY));
 
         if (nextEpisodeToAirMap != null) {
-            String nextEpisodeAirDate = ((String) nextEpisodeToAirMap.get(TraktApiConstants.FIRST_AIRED_KEY));
-
-            if (nextEpisodeAirDate != null) {
-                Episode nextEpisode = EpisodeParser.parseTraktEpisode(seriesData.getId(), returnedMap);
-                nextEpisode.source = Episode.SOURCE_TMDB;
-                try {
-                    nextEpisode.setAirDate(nextEpisodeAirDate);
+            Episode nextEpisode = EpisodeParser.parseTmdbEpisode(seriesData.getId(), nextEpisodeToAirMap);
+            //todo refactor other instances to use less verbose hasNonEmptyDate() rather than checking not null and not ""
+            if (nextEpisode.hasNonEmptyDate()) {
+                if (EpisodeParser.shouldReplaceEpisode(seriesData.getNextEpisodeToAir(), nextEpisode)) {
                     detailsSeriesData.setNextEpisodeToAir(nextEpisode);
-                } catch (ScheduledMedia.DateFormatException e) {
-                    e.printStackTrace();
+                } else {
+                    detailsSeriesData.setNextEpisodeToAir(seriesData.getNextEpisodeToAir());
                 }
             }
         } else {
@@ -251,18 +248,13 @@ public class SeriesDataParser {
         Gson gson = new Gson();
         Map returnedMap = gson.fromJson(returnedJSONString, Map.class);
 
-        if (returnedMap != null) {
-            String nextEpisodeAirDate = ((String) returnedMap.get(TraktApiConstants.FIRST_AIRED_KEY));
+        if (returnedMap == null) return seriesData;
 
-            if (nextEpisodeAirDate != null) {
-                Episode nextEpisode = EpisodeParser.parseTraktEpisode(seriesData.getId(), returnedMap);
-                if (nextEpisode != null) nextEpisode.source = Episode.SOURCE_TRAKT;
-                try {
-                    nextEpisode.setAirDate(nextEpisodeAirDate);
-                    seriesData.setNextEpisodeToAir(nextEpisode);
-                } catch (ScheduledMedia.DateFormatException e) {
-                    e.printStackTrace();
-                }
+        Episode nextEpisode = EpisodeParser.parseTraktEpisode(seriesData.getId(), returnedMap);
+        //todo refactor other instances to use less verbose hasNonEmptyDate() rather than checking not null and not ""
+        if (nextEpisode.hasNonEmptyDate()) {
+            if (EpisodeParser.shouldReplaceEpisode(seriesData.getNextEpisodeToAir(), nextEpisode)) {
+                seriesData.setNextEpisodeToAir(nextEpisode);
             }
         }
 
@@ -394,6 +386,14 @@ public class SeriesDataParser {
     }
 
     public static class EpisodeParser {
+        //determines if existing episode is older than new episode to be set
+        static boolean shouldReplaceEpisode(Episode existingEpisode, Episode newEpisode) {
+            if (existingEpisode == null) return true;
+
+            return existingEpisode.getBestLocalAirDate().getTime()
+                    < newEpisode.getBestLocalAirDate().getTime();
+        }
+
         public static List<Episode> parseTraktEpisodes(String mediaId, String returnedJSONString) {
             List<Episode> episodes = new ArrayList<>();
 
@@ -420,6 +420,24 @@ public class SeriesDataParser {
             int episodeNumber = episodeNumberDouble != null ? episodeNumberDouble.intValue() : 0;
             int source = Episode.SOURCE_TRAKT;
             String firstAired = ((String) episodeMap.get("first_aired"));
+
+            return new Episode(
+                    mediaId,
+                    seasonNumber,
+                    episodeNumber,
+                    source,
+                    firstAired
+            );
+        }
+
+        static Episode parseTmdbEpisode(String mediaId, Map episodeMap) {
+            //TODO: REMOVE HARDCODED STRINGS
+            Double seasonNumberDouble = ((Double) episodeMap.get("season_number"));
+            Double episodeNumberDouble = ((Double) episodeMap.get("episode_number"));
+            int seasonNumber = seasonNumberDouble != null ? seasonNumberDouble.intValue() : 0;
+            int episodeNumber = episodeNumberDouble != null ? episodeNumberDouble.intValue() : 0;
+            int source = Episode.SOURCE_TMDB;
+            String firstAired = ((String) episodeMap.get("air_date"));
 
             return new Episode(
                     mediaId,
