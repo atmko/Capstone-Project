@@ -77,7 +77,8 @@
             android:textSize="@dimen/body_text_size"
             android:textColor="@android:color/white"
             app:layout_constraintBottom_toBottomOf="@+id/backdrop_image_view"
-            app:layout_constraintStart_toStartOf="@+id/backdrop_image_view" />
+            app:layout_constraintStart_toStartOf="@+id/backdrop_image_view"
+            tools:ignore="UnusedAttribute" />
 
         <HorizontalScrollView
             android:id="@+id/title_scroll_view"
@@ -189,7 +190,8 @@
                         android:foreground="@drawable/ripple_pressed"
                         android:background="@null"
                         android:src="@drawable/ic_notify_white"
-                        android:contentDescription="@string/content_description_notify_button"/>
+                        android:contentDescription="@string/content_description_notify_button"
+                        tools:ignore="UnusedAttribute" />
 
                     <TextView
                         android:id="@+id/watch_status_shorthand_text"
@@ -313,7 +315,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:contentDescription="@string/content_description_show_more_button"/>
+            android:contentDescription="@string/content_description_show_more_button"
+            tools:ignore="UnusedAttribute" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

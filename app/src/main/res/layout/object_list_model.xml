@@ -11,7 +11,8 @@
     android:layout_marginEnd="@dimen/list_margin"
     android:orientation="vertical"
     android:foreground="@drawable/ripple_pressed"
-    android:background="@color/background">
+    android:background="@color/background"
+    tools:ignore="UnusedAttribute">
 
     <TextView
         android:id="@+id/list_name_text_view"

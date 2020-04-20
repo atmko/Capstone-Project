@@ -4,6 +4,7 @@
 
 package com.atmko.onmywatch.Fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -98,6 +99,7 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
                               ListModel listModel);
     }
 
+    @SuppressLint("LongLogTag")
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);

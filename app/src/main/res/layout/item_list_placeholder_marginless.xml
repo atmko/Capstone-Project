@@ -2,11 +2,13 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/list_height"
     android:orientation="vertical"
     android:foreground="@drawable/ripple_pressed"
-    android:background="@color/background">
+    android:background="@color/background"
+    tools:ignore="UnusedAttribute">
 
     <TextView
         android:id="@+id/list_name_text_view"

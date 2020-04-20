@@ -12,7 +12,8 @@
         android:layout_height="@dimen/x6_layout_margin"
         android:orientation="horizontal"
         android:elevation="@dimen/app_bar_elevation"
-        android:background="@color/colorAccent">
+        android:background="@color/colorAccent"
+        tools:targetApi="lollipop">
 
         <FrameLayout
             android:layout_width="0dp"

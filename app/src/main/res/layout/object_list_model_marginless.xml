@@ -7,7 +7,8 @@
     android:layout_height="@dimen/list_height"
     android:orientation="vertical"
     android:foreground="@drawable/ripple_pressed"
-    android:background="@color/background">
+    android:background="@color/background"
+    tools:ignore="UnusedAttribute">
 
     <TextView
         android:id="@+id/list_name_text_view"

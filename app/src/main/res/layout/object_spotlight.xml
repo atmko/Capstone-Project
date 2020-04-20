@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/top_frame_layout"
     android:layout_width="@dimen/spotlight_poster_width"
     android:layout_height="@dimen/spotlight_poster_height"
@@ -31,6 +32,7 @@
         android:nextFocusUp="@id/top_frame_layout"
         android:nextFocusLeft="@id/add_to_list_button"
         android:nextFocusRight="@id/add_to_list_button"
-        android:contentDescription="@string/content_description_add_to_list_button"/>
+        android:contentDescription="@string/content_description_add_to_list_button"
+        tools:ignore="UnusedAttribute" />
 
 </FrameLayout>

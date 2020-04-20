@@ -4,6 +4,7 @@
 
 package com.atmko.onmywatch.Fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -304,6 +305,7 @@ public class DiscoverResultsFragment extends Fragment implements
         });
     }
 
+    @SuppressLint("LongLogTag")
     private void retryAfterCoolDOwn(ANError anError, final int blockNumber, final int targetPage,
                                     final int stackOperation) {
         Log.d(FRAGMENT_KEY, "retry fetching search results");
