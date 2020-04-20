@@ -2,7 +2,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -11,7 +12,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/search_button">
+        app:layout_constraintBottom_toTopOf="@id/search_button_layout">
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -28,15 +29,24 @@
 
     </ScrollView>
 
-    <Button
-        android:id="@+id/search_button"
-        android:layout_width="wrap_content"
+    <FrameLayout
+        android:id="@+id/search_button_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:text="@string/search_text_box_hint"
-        style="@style/Confirmation_ButtonStyle_End"/>
+        android:background="@color/background">
+
+        <Button
+            android:id="@+id/search_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/search_text_box_hint"
+            style="@style/Confirmation_ButtonStyle"/>
+
+    </FrameLayout>
 
     <include layout="@layout/fragment_recycler_results_btm_padding"
         app:layout_constraintTop_toTopOf="parent"
