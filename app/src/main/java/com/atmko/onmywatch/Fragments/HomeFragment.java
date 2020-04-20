@@ -138,7 +138,7 @@ public class HomeFragment extends Fragment {
                         ListsWatchAndUserParentFragment.newInstance(listTypeNames, true);
 
                 getActivity().getSupportFragmentManager().beginTransaction()
-                        .setCustomAnimations(R.anim.slide_down_entry, android.R.animator.fade_out)
+                        .setCustomAnimations(R.animator.slide_down_entry, android.R.animator.fade_out)
                         .add(R.id.master_fragments_container, listsParentFragment,
                                 ListsWatchAndUserParentFragment.FRAGMENT_KEY)
                         .commit();
@@ -153,7 +153,7 @@ public class HomeFragment extends Fragment {
                 DiscoverParentFragment discoverParentFragment = DiscoverParentFragment.newInstance();
 
                 getActivity().getSupportFragmentManager().beginTransaction()
-                        .setCustomAnimations(R.anim.slide_down_entry, android.R.animator.fade_out)
+                        .setCustomAnimations(R.animator.slide_down_entry, android.R.animator.fade_out)
                         .add(R.id.master_fragments_container, discoverParentFragment,
                                 DiscoverParentFragment.FRAGMENT_KEY)
                         .commit();

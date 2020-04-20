@@ -162,7 +162,7 @@ public class RestoreService extends JobIntentService {
             public void doInBackground(@NonNull StreamDownloadTask.TaskSnapshot taskSnapshot,
                                        @NonNull InputStream inputStream) {
                 try {
-                    mJsonString = readFullyAsString(inputStream, "UTF-8");
+                    mJsonString = readFullyAsString(inputStream);
                     if (mJsonString.equals("")) return;
                     AppDatabase.deleteLocallySavedData(getApplicationContext());
 
@@ -188,20 +188,20 @@ public class RestoreService extends JobIntentService {
         });
     }
 
-    private String readFullyAsString(InputStream inputStream, String encoding)
+    private String readFullyAsString(InputStream inputStream)
             throws IOException {
-        return readFully(inputStream).toString(encoding);
+        return readFully(inputStream).toString("UTF-8");
     }
 
     private ByteArrayOutputStream readFully(InputStream inputStream)
             throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
-        int length = 0;
+        int length;
         while ((length = inputStream.read(buffer)) != -1) {
-            baos.write(buffer, 0, length);
+            stream.write(buffer, 0, length);
         }
-        return baos;
+        return stream;
     }
 
     private void onPullMovieDataComplete() {

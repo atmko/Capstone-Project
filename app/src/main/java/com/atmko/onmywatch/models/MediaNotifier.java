@@ -37,16 +37,12 @@ public abstract class MediaNotifier {
     public final static String NOTIFIER_ID_KEY = "notifier_id";
 
     @NonNull
-    @ColumnInfo(name = "media_id") public String mId;
+    @ColumnInfo(name = "media_id") public String mId = "";
     //condition under which notifications should be triggered
-    @NonNull
     @ColumnInfo(name = "condition") int mCondition;
     //tells whether there is an active alarm accompanying
     //useful when no release data available and notification alarm cant be yet set
-    @NonNull
     @ColumnInfo(name = "is_active") boolean mIsActive;
-
-    @Ignore private String mUniqueExternalId;
 
     //TODO consider using a LinkedHashSet seeing as titles are used as though they are unique
     public int getCondition() {
@@ -66,7 +62,7 @@ public abstract class MediaNotifier {
     }
 
     int getNotificationCode() {
-        return Integer.valueOf(getCondition() + mId);
+        return Integer.parseInt(getCondition() + mId);
     }
 
     public static void createReleaseNotificationChannel(Context context) {
@@ -77,8 +73,11 @@ public abstract class MediaNotifier {
             NotificationChannel channel = new NotificationChannel(RELEASE_CHANNEL_ID, name, importance);
             channel.setDescription(description);
 
-            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
+            NotificationManager notificationManager =
+                    context.getSystemService(NotificationManager.class);
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(channel);
+            }
         }
     }
 

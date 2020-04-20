@@ -6,7 +6,8 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginEnd="@dimen/half_layout_margin"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:layout_marginRight="@dimen/half_layout_margin">
 
     <FrameLayout
         android:id="@+id/top_frame_layout"

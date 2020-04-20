@@ -124,6 +124,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     AppExecutors.getInstance().diskIO().execute(new Runnable() {
                         @Override
                         public void run() {
+                            if (getActivity() == null) return;
+
                             String[] sentTo = new String[1];
                             sentTo[0] = getString(R.string.contact_email_address);
 

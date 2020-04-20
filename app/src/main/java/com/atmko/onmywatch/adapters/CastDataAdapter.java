@@ -37,7 +37,6 @@ public class CastDataAdapter extends RecyclerView.Adapter<CastDataAdapter.CastDa
     private final int[] mParams;
 
     //layout ids
-    @SuppressWarnings("FieldCanBeLocal")
     private final int EMPTY_ADAPTER_ID = -1;
     private final int STANDARD_LAYOUT_ID = 1;
     private final int NO_POSTER_LAYOUT = 2;

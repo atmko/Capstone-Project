@@ -424,6 +424,7 @@ public class DetailsFragment extends Fragment {
                 new DetailsViewModelFactory(database, mMediaType, mMediaData.getId());
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(DetailsViewModel.class);
+        @SuppressWarnings("unchecked")
         final LiveData<MediaData> mediaDataLiveData = viewModel.getMediaData();
         final LiveData<List<String>> containingUserLists = viewModel.getContainingLists();
         final LiveData<List<MediaNotifier>> notifiersLiveData = viewModel.getNotifiers();
@@ -742,8 +743,6 @@ public class DetailsFragment extends Fragment {
         }
     }
 
-    // TODO: NullPointerException handled in caller
-    @SuppressWarnings("ConstantConditions")
     private void populateDetailExtrasAdapter() throws NullPointerException {
         FragmentStatePagerAdapter extrasAdapter = null;
 

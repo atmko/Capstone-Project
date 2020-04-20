@@ -176,7 +176,7 @@ public class ListResultsFragment extends Fragment
         List<String> titleList = Arrays.asList(watchStatusMoviesTitles);
 
         ListResultsViewModelFactory resultsViewModelFactory =
-                new ListResultsViewModelFactory(database, mListType, mMediaType, titleList, mListName);
+                new ListResultsViewModelFactory(database, mListType, titleList, mListName);
 
         final ListsResultsViewModel viewModel = ViewModelProviders.of(this, resultsViewModelFactory)
                 .get(ListsResultsViewModel.class);
@@ -372,6 +372,7 @@ public class ListResultsFragment extends Fragment
         return layoutManager;
     }
 
+    @SuppressWarnings("unchecked")
     private void populateAndNotifyAdapter(List mediaDataList) {
         mDataAdapter.getAdapterData().clear();
         mDataAdapter.addAdapterData(mediaDataList);
@@ -427,7 +428,8 @@ public class ListResultsFragment extends Fragment
             DiscoverParentFragment discoverParentFragment = DiscoverParentFragment.newInstance();
 
             getActivity().getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.slide_down_entry, android.R.animator.fade_out)
+                    .setCustomAnimations(R.animator.slide_down_entry, android.R.animator.fade_out)
+                    .setCustomAnimations(R.animator.slide_down_entry, android.R.animator.fade_out)
                     .add(R.id.master_fragments_container, discoverParentFragment,
                             DiscoverParentFragment.FRAGMENT_KEY)
                     .commit();

@@ -36,13 +36,13 @@ public abstract class MediaLog {
 
     private static final String PAST_SUFFIX = " ago";
 
-    @NonNull public String type;
+    @NonNull public String type = "";
     public int condition;
     public long timestamp;
     public String title;
     public String posterPath;
     public String backdropPath;
-    @NonNull @ColumnInfo(name = "parent_id") public String parentId;
+    @NonNull @ColumnInfo(name = "parent_id") public String parentId = "";
 
     @Ignore
     String mUniqueExternalId;
@@ -76,7 +76,7 @@ public abstract class MediaLog {
             if (daysValue <= -1) return Math.abs(daysValue) + TIME_SUFFIX_DAYS + PAST_SUFFIX;
             if (hoursValue <= -1) return Math.abs(hoursValue) + TIME_SUFFIX_HOURS + PAST_SUFFIX;
             if (minutesValue <= -1) return Math.abs(minutesValue) + TIME_SUFFIX_MINUTES + PAST_SUFFIX;
-            else return secondsValue + TIME_SUFFIX_SECONDS + PAST_SUFFIX;
+            else return Math.abs(secondsValue) + TIME_SUFFIX_SECONDS + PAST_SUFFIX;
         }
     }
 }

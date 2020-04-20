@@ -67,6 +67,7 @@ public class NoNotifierService extends JobIntentService {
         mMediaType = newMediaData instanceof MovieData ? MEDIA_TYPE_MOVIE : MEDIA_TYPE_SERIES;
         mDatabase = AppDatabase.getInstance(getApplicationContext());
 
+        //noinspection ConstantConditions
         if (sActionMode.equals(ACTION_SET) || sActionMode.equals(ACTION_TESTING)) {
             setNotifiers();
         }
@@ -138,6 +139,7 @@ public class NoNotifierService extends JobIntentService {
 
                             } else {
                                 //parse trakt info
+                                //noinspection ConstantConditions
                                 newMediaData =
                                         SeriesDataParser.parseTraktNextEpisodeDetails(returnedJSONString, ((SeriesData) newMediaData));
 
@@ -208,6 +210,7 @@ public class NoNotifierService extends JobIntentService {
     }
 
     //retry method if api returns too may requests error
+    @SuppressWarnings("SameParameterValue")
     private void retryAfterCoolDOwn(ANError anError, final int coolDownRequestId) {
         Log.d(TAG, "retrying details fetch");
 

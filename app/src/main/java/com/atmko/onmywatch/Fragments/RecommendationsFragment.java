@@ -124,7 +124,7 @@ public class RecommendationsFragment extends Fragment
 
         } else {
             //get saved adapter data list, if null, start new search, otherwise restore old search
-            List mediaDataList = viewModel.getRecommendations();
+            List<MediaData> mediaDataList = viewModel.getRecommendations();
             if (mediaDataList != null) {
                 restoreSearch(savedInstanceState, mediaDataList);
 
@@ -139,7 +139,7 @@ public class RecommendationsFragment extends Fragment
         loadSearch();
     }
 
-    private void restoreSearch(Bundle savedInstanceState, List mediaDataList) {
+    private void restoreSearch(Bundle savedInstanceState, List<MediaData> mediaDataList) {
         mSearchPreferences = Parcels.unwrap(savedInstanceState.getParcelable(SEARCH_PREFERENCES_KEY));
         mDataAdapter.addAdapterData(mediaDataList);
 

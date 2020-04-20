@@ -30,8 +30,6 @@ public class ConfirmationActivity extends AppCompatActivity {
     private String confirmationMessage;
 
     private TextView confirmationTextView;
-    private Button confirmationButton;
-    private Button cancelButton;
 
     private int confirmationCounter;
     private int counterLimit;
@@ -56,7 +54,7 @@ public class ConfirmationActivity extends AppCompatActivity {
 
     private void defineViews() {
         confirmationTextView = findViewById(R.id.confirmation_text_view);
-        confirmationButton = findViewById(R.id.confirmation_button);
+        Button confirmationButton = findViewById(R.id.confirmation_button);
         confirmationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -66,7 +64,7 @@ public class ConfirmationActivity extends AppCompatActivity {
                 }
             }
         });
-        cancelButton = findViewById(R.id.cancel_button);
+        Button cancelButton = findViewById(R.id.cancel_button);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

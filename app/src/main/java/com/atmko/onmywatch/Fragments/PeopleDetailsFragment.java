@@ -351,6 +351,7 @@ public class PeopleDetailsFragment extends Fragment {
         });
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void retryAfterCoolDOwn(ANError anError, final int coolDownRequestId) {
         Log.d(FRAGMENT_KEY, "retrying details fetch");
 
@@ -400,8 +401,6 @@ public class PeopleDetailsFragment extends Fragment {
         }
     }
 
-    // TODO: NullPointerException handled in caller
-    @SuppressWarnings("ConstantConditions")
     private void populateDetailExtrasAdapter() throws NullPointerException {
         FragmentStatePagerAdapter extrasAdapter = new DetailPeopleExtrasAdapter(getChildFragmentManager(),
                 FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, mPersonData);

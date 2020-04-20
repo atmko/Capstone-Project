@@ -36,7 +36,8 @@
             app:layout_constraintEnd_toStartOf="@id/confirmation_button"
             app:layout_constraintBottom_toBottomOf="parent"
             android:text="@string/no_button_text"
-            style="@style/Confirmation_ButtonStyle_Start" />
+            style="@style/Confirmation_ButtonStyle_Start"
+            android:layout_marginRight="@dimen/x4_layout_margin" />
 
         <Button
             android:id="@+id/confirmation_button"
@@ -50,6 +51,7 @@
             app:layout_constraintStart_toEndOf="@id/cancel_button"
             app:layout_constraintBottom_toBottomOf="parent"
             android:text="@string/yes_button_text"
-            style="@style/Confirmation_ButtonStyle_End" />
+            style="@style/Confirmation_ButtonStyle_End"
+            android:layout_marginLeft="@dimen/x4_layout_margin" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

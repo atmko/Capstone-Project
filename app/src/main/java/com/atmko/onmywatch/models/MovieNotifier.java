@@ -15,7 +15,7 @@ import java.util.Map;
 )
 
 public class MovieNotifier extends MediaNotifier {
-    public MovieNotifier(@NonNull String id, @NonNull int condition, boolean isActive) {
+    public MovieNotifier(@NonNull String id, int condition, boolean isActive) {
         this.mId = id;
         this.mCondition = condition;
         this.mIsActive = isActive;

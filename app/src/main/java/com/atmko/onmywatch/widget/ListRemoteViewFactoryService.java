@@ -68,8 +68,6 @@ public class ListRemoteViewFactoryService extends RemoteViewsService {
 }
 
 class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
-    private static final String TAG = "ListRemoteViewsFactory";
-
     private static final int WIDGET_BACKDROP_WIDTH = 780;
     private static final int WIDGET_BACKDROP_HEIGHT = 439;
 

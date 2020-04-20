@@ -8,7 +8,7 @@ import androidx.room.Entity;
 @Entity(primaryKeys = {"tag"})
 public abstract class SearchTag {
     @NonNull
-    @ColumnInfo(name = "tag")  public String mTag;
+    @ColumnInfo(name = "tag")  public String mTag = "";
 
     @Override
     public boolean equals(@Nullable Object obj) {

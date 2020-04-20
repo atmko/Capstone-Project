@@ -38,7 +38,6 @@ public class CreateListActivity extends AppCompatActivity {
     private UserListModel mEditListModel;
 
     private EditText nameEditTextView;
-    private Button mSaveButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +64,7 @@ public class CreateListActivity extends AppCompatActivity {
     private void defineViews() {
         nameEditTextView = findViewById(R.id.name_edit_text_view);
 
-        mSaveButton = findViewById(R.id.save_button);
+        Button mSaveButton = findViewById(R.id.save_button);
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

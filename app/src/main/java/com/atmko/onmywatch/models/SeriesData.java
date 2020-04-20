@@ -104,10 +104,6 @@ public class SeriesData extends MediaData{
         return mCountryOfOrigin;
     }
 
-    public void setCountryOfOrigin(ArrayList<String> countryOfOrigin) {
-        this.mCountryOfOrigin = countryOfOrigin;
-    }
-
     public String getReleaseDate() {
         return mReleaseDate;
     }

@@ -141,6 +141,7 @@ public class DiscoverResultsFragment extends Fragment implements
                 mediaDataList = Parcels.unwrap(
                         savedInstanceState.getParcelable(ADAPTER_DATA_LIST_KEY));
 
+                //noinspection unchecked
                 ((MediaDataAdapter) mDataAdapter).addAdapterData(mediaDataList);
             }
 
@@ -455,7 +456,9 @@ public class DiscoverResultsFragment extends Fragment implements
         super.onSaveInstanceState(outState);
 
         //update initialized search preferences
-        getArguments().putParcelable(SEARCH_PREFERENCES_KEY, Parcels.wrap(mSearchPreferences));
+        if (getArguments() != null) {
+            getArguments().putParcelable(SEARCH_PREFERENCES_KEY, Parcels.wrap(mSearchPreferences));
+        }
 
         if (mMediaType == MEDIA_TYPE_PEOPLE) {
             outState.putParcelable(ADAPTER_DATA_LIST_KEY,

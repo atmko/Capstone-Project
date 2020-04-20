@@ -17,6 +17,7 @@ import java.util.List;
 
 import static com.atmko.stack.NetworkFunctions.isOnline;
 
+@SuppressWarnings("unchecked")
 public class Stack extends RecyclerView.OnScrollListener {
     //stack operation identifiers
     public static final int GO_DOWN_ONE_BLOCK = 1;
@@ -109,27 +110,20 @@ public class Stack extends RecyclerView.OnScrollListener {
                     new PagingBlock(getFirstPage(), blockIndex,
                             mPagingBlockTemplate.getBlockPageCapacity());
 
-            pagingBlock = restorePagingBlockPages(pagingBlock, fullDataList);
+            restorePagingBlockPages(pagingBlock, fullDataList);
 
             mPagingBlockMap.put(blockIndex, pagingBlock);
         }
     }
 
-    private PagingBlock restorePagingBlockPages(PagingBlock pagingBlock, List fullDataList) {
+    private void restorePagingBlockPages(PagingBlock pagingBlock, List fullDataList) {
         int firstPageInBlock = pagingBlock.getFirstPageInBlock();
 
         //iterate through pageCapacity size
         for (int i = 0; i < pagingBlock.getBlockPageCapacity(); i++) {
             int pageNumber = firstPageInBlock + i;
 
-            int iterationSize;
-
-            if (fullDataList.size() >= mPagingBlockTemplate.pageCapacity) {
-                iterationSize =  mPagingBlockTemplate.pageCapacity;
-
-            } else {
-                iterationSize = fullDataList.size();
-            }
+            int iterationSize = Math.min(fullDataList.size(), mPagingBlockTemplate.pageCapacity);
 
             List dataList = new ArrayList();
 
@@ -143,7 +137,6 @@ public class Stack extends RecyclerView.OnScrollListener {
             pagingBlock.setDataListByPage(pageNumber, dataList);
         }
 
-        return pagingBlock;
     }
 
     private int getTotalPages() {
@@ -201,9 +194,8 @@ public class Stack extends RecyclerView.OnScrollListener {
             //set data lists
             pagingBlock.setDataListByPage(pageNumber, dataList);
 
-        }else {
+        } else {
             return;
-
         }
 
         //if we're moving down a block
@@ -316,7 +308,7 @@ public class Stack extends RecyclerView.OnScrollListener {
         //stack is not idle
         mIsIdle = false;
 
-        mIsIdle = false;int firstKey = mPagingBlockMap.keyAt(0);
+        int firstKey = mPagingBlockMap.keyAt(0);
         int newKey = firstKey - 1;
 
         loadPreviousBlock(newKey);

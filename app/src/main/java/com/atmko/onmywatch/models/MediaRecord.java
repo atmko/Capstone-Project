@@ -19,9 +19,9 @@ import androidx.room.ForeignKey;
 
 abstract public class MediaRecord {
     @NonNull
-    @ColumnInfo(name = "media_id") String mId;
+    @ColumnInfo(name = "media_id") String mId = "";
     @NonNull
-    @ColumnInfo(name = "list_id") String mListName;
+    @ColumnInfo(name = "list_id") String mListName = "";
 
     @NonNull
     public String getId() {
@@ -29,7 +29,7 @@ abstract public class MediaRecord {
     }
 
     @NonNull
-    String getListName() {
+    public String getListName() {
         return mListName;
     }
 

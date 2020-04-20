@@ -144,7 +144,7 @@ public class DiscoverCustomResultsFragment extends Fragment implements
 
             MasterActivity.restoreSearchIfAvailable(DiscoverCustomResultsFragment.this, savedInstanceState);
 
-            List mediaDataList;
+            List<MediaData> mediaDataList;
 
             if (mMediaType == MEDIA_TYPE_PEOPLE) {
                 //get saved adapter data list
@@ -258,21 +258,31 @@ public class DiscoverCustomResultsFragment extends Fragment implements
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (getContext() == null) return;
                 //reset recycler view position on each search
                 if (mDataAdapter.getItemCount() > 0) {
                     recyclerView.scrollToPosition(0);
                 }
 
-                int[] genreIndices = {selectionMap.get(R.id.genre1_search_item),
-                        selectionMap.get(R.id.genre2_search_item)};
+                Integer genre1Integer = selectionMap.get(R.id.genre1_search_item);
+                int genre1Index = genre1Integer != null ? genre1Integer : 0;
+                Integer genre2Integer = selectionMap.get(R.id.genre2_search_item);
+                int genre2Index = genre2Integer != null ? genre2Integer : 0;
+
+                int[] genreIndices = {genre1Index, genre2Index};
                 mSearchPreferences.setGenres(getContext(), genreIndices);
 
                 if (mMediaType == MEDIA_TYPE_SERIES) {
-                    int[] indices = {selectionMap.get(R.id.network_search_item)};
+                    Integer networkInteger = selectionMap.get(R.id.network_search_item);
+                    int networkIndex = networkInteger != null ? networkInteger : 0;
+
+                    int[] indices = {networkIndex};
                     mSearchPreferences.setNetworks(getContext(), indices);
                 }
 
-                int sortByIndex = selectionMap.get(R.id.sort_by_search_item);
+                Integer sortInteger = selectionMap.get(R.id.sort_by_search_item);
+                int sortByIndex = sortInteger != null ? sortInteger : 0;
+
                 mSearchPreferences.setSortBy(getContext(), sortByIndex);
 
                 activateSearch();
@@ -352,7 +362,11 @@ public class DiscoverCustomResultsFragment extends Fragment implements
             spinner.post(new Runnable() {
                 public void run() {
                     spinner.setOnItemSelectedListener(DiscoverCustomResultsFragment.this);
-                    spinner.setSelection(selectionMap.get(key));
+
+                    Integer indexObj = selectionMap.get(key);
+                    int index = indexObj != null ? indexObj : 0;
+
+                    spinner.setSelection(index);
                 }
             });
         }

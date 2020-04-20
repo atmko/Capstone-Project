@@ -43,7 +43,7 @@ public class MasterActivityViewModel extends AndroidViewModel {
                     if (e != null) throw e;
                     //throw exception if snapshot is null or if doesn't exist
                     if (documentSnapshot == null || !documentSnapshot.exists()) {
-                        throw new DataBaseIntegrityException(TAG,
+                        throw new DataBaseIntegrityException(
                                 DataBaseIntegrityException.FEATURE_PERMISSIONS_NONEXISTENT);
                     }
 
@@ -52,13 +52,13 @@ public class MasterActivityViewModel extends AndroidViewModel {
 
                     //throw exception if user tier is null
                     if (isProMode == null) {
-                        throw new DataBaseIntegrityException(TAG,
+                        throw new DataBaseIntegrityException(
                                 DataBaseIntegrityException.PRO_MODE_KEY_NONEXISTENT);
                     }
 
                     //throw exception if user tier is null
                     if (allowCloudBackup == null) {
-                        throw new DataBaseIntegrityException(TAG,
+                        throw new DataBaseIntegrityException(
                                 DataBaseIntegrityException.ALLOW_CLOUD_BACKUP_KEY_NONEXISTENT);
                     }
 
@@ -82,7 +82,7 @@ public class MasterActivityViewModel extends AndroidViewModel {
                     if (e != null) throw e;
                     //throw exception if snapshot is null or if doesn't exist
                     if (documentSnapshot == null || !documentSnapshot.exists()) {
-                        throw new DataBaseIntegrityException(TAG,
+                        throw new DataBaseIntegrityException(
                                 DataBaseIntegrityException.USER_DATA_NONEXISTENT);
                     }
 
@@ -90,7 +90,7 @@ public class MasterActivityViewModel extends AndroidViewModel {
 
                     //throw exception if user tier is null
                     if (migration == null) {
-                        throw new DataBaseIntegrityException(TAG,
+                        throw new DataBaseIntegrityException(
                                 DataBaseIntegrityException.MIGRATION_KEY_NONEXISTENT);
                     }
 
@@ -118,7 +118,7 @@ public class MasterActivityViewModel extends AndroidViewModel {
         final static Integer USER_DATA_NONEXISTENT = 3;
         final static Integer MIGRATION_KEY_NONEXISTENT = 4;
 
-        DataBaseIntegrityException(String TAG, int errorCondition) {
+        DataBaseIntegrityException(int errorCondition) {
             if (errorCondition == FEATURE_PERMISSIONS_NONEXISTENT) {
                 Log.d(TAG, FEATURE_PERMISSIONS_TITLE + " key does not exist in database");
 

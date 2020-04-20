@@ -145,7 +145,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
             android:src="@drawable/ic_info"
-            android:layout_marginRight="@dimen/x2_layout_margin" />
+            android:layout_marginRight="@dimen/x2_layout_margin"
+            android:contentDescription="@string/content_description_info_button"/>
 
         <ImageButton
             android:id="@+id/watching_info_button"
@@ -158,7 +159,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
             android:src="@drawable/ic_info"
-            android:layout_marginRight="@dimen/x2_layout_margin" />
+            android:layout_marginRight="@dimen/x2_layout_margin"
+            android:contentDescription="@string/content_description_info_button"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

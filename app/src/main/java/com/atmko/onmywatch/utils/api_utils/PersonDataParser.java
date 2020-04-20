@@ -49,11 +49,13 @@ public class PersonDataParser {
         List<PersonData> personDataList = new ArrayList<>();
 
         //iterate through each people in results
-        for (int index = 0; index < results.size() ; index++) {
-            Map currentObject = (Map) results.get(index);//get current people
+        if (results != null) {
+            for (int index = 0; index < results.size(); index++) {
+                Map currentObject = (Map) results.get(index);//get current people
 
-            //create new PeopleData from currentObject
-            personDataList.add(parsePeopleSearchMap(currentObject));
+                //create new PeopleData from currentObject
+                personDataList.add(parsePeopleSearchMap(currentObject));
+            }
         }
 
         return personDataList;
@@ -61,6 +63,7 @@ public class PersonDataParser {
 
     private static PersonData parsePeopleMap(Map peopleDataMap) {
         //create new PeopleData from peopleDataMap
+        //noinspection ConstantConditions
         return new PersonData(
                 //get by keys
                 checkAndConvertInteger(peopleDataMap.get(ApiConstants.ID_KEY)),
@@ -75,11 +78,13 @@ public class PersonDataParser {
         );
     }
 
+    @SuppressWarnings("unchecked")
     private static PersonData parsePeopleSearchMap(Map peopleDataMap) {
         List<List> knownForList =
                 parseKnownForObjects((List<Map>) peopleDataMap.get(PeopleApiConstants.KNOWN_FOR_KEY));
 
         //create new PeopleData from peopleDataMap
+        //noinspection ConstantConditions
         return new PersonData(
                 //get by keys
                 checkAndConvertInteger(peopleDataMap.get(ApiConstants.ID_KEY)),
@@ -107,12 +112,15 @@ public class PersonDataParser {
         return parseCastList(creditsMap);
     }
 
+    @SuppressWarnings("unchecked")
     private static ArrayList<CastData> parseCastList(Map creditsMap) {
         //parse cast data list
         ArrayList<CastData> castList = new ArrayList<>();
         ArrayList<Map> castMapList = (ArrayList<Map>) creditsMap.get(PeopleApiConstants.CAST_KEY);
-        for (Map castMap: castMapList) {
-            castList.add(parseCastData(castMap));
+        if (castMapList != null) {
+            for (Map castMap: castMapList) {
+                castList.add(parseCastData(castMap));
+            }
         }
 
         return castList;
@@ -177,6 +185,7 @@ public class PersonDataParser {
                 String mediaType = ((String) media.get(PeopleApiConstants.MEDIA_TYPE_KEY));
                 if (mediaType == null) continue;
                 if (mediaType.equals(ApiConstants.MEDIA_TYPE_MOVIE)) {
+                    @SuppressWarnings("unchecked")
                     MovieData movieData = MovieDataParser.parseMovieMap(media);
                     knownForMovies.add(movieData);
 

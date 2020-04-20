@@ -115,10 +115,6 @@ public class MovieData extends MediaData{
         }
     }
 
-    public boolean isVideo() {
-        return mVideo;
-    }
-
     public boolean isAdult() {
         return mAdult;
     }

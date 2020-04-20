@@ -27,8 +27,6 @@ import org.parceler.Parcels;
 import java.util.ArrayList;
 
 public class ReviewsFragment extends Fragment implements ReviewDataAdapter.OnListItemClickListener {
-    public static String FRAGMENT_KEY = "reviews_fragment";
-
     private static final String REVIEWS_PARCELABLE_KEY = "reviews_parcelable";
 
     private ArrayList<Review> mReviewList;

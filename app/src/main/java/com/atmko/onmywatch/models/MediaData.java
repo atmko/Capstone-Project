@@ -44,7 +44,7 @@ abstract public class MediaData {
     //primary attributes
     @PrimaryKey
     @NonNull
-    @ColumnInfo(name = "id") String mId;
+    @ColumnInfo(name = "id") String mId = "";
     @Ignore String mVoteCount;
     @ColumnInfo(name = "vote_average") String mVoteAverage;
     @ColumnInfo(name = "title") String mTitle;

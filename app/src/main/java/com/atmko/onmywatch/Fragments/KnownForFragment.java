@@ -96,6 +96,7 @@ public class KnownForFragment extends Fragment implements MediaDataAdapter.OnLis
             mAdapter.addAdapterData(mMediaDataList);
 
         } else {
+            //noinspection unchecked
             mAdapter.addAdapterData((List) Parcels.unwrap(savedInstanceState.getParcelable(MEDIA_DATA_LIST_KEY)));
         }
 

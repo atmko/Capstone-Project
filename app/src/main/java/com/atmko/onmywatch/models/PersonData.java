@@ -151,12 +151,4 @@ public class PersonData {
     public String getName() {
         return mName;
     }
-
-    public double getPopularity() {
-        return mPopularity;
-    }
-
-    public boolean isAdult() {
-        return mAdult;
-    }
 }

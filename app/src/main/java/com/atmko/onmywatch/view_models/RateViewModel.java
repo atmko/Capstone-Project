@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.database.AppDatabase;
+import com.atmko.onmywatch.models.MediaData;
 
 public class RateViewModel extends ViewModel {
     private static final String TAG = RateViewModel.class.getSimpleName();
@@ -31,7 +32,8 @@ public class RateViewModel extends ViewModel {
         }
     }
 
-    public LiveData getMediaData () {
+    @SuppressWarnings("unchecked")
+    public LiveData<MediaData> getMediaData () {
         return mMediaData;
     }
 }

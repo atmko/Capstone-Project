@@ -32,10 +32,12 @@ public class ListWidgetService extends JobIntentService {
         String action = intent.getAction();
         Bundle extras = intent.getExtras();
 
-        if (action.equals(ACTION_SWITCH_MEDIA_TYPE)) {
-            int currentMediaType = extras.getInt(MEDIA_TYPE_KEY, 0);
-            int appWidgetId = extras.getInt(APP_WIDGET_ID_KEY, 0);
-            switchMediaType(currentMediaType, appWidgetId);
+        if (action != null && action.equals(ACTION_SWITCH_MEDIA_TYPE)) {
+            if (extras != null) {
+                int currentMediaType = extras.getInt(MEDIA_TYPE_KEY, 0);
+                int appWidgetId = extras.getInt(APP_WIDGET_ID_KEY, 0);
+                switchMediaType(currentMediaType, appWidgetId);
+            }
         }
     }
 

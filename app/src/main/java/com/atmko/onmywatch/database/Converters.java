@@ -76,9 +76,9 @@ public class Converters {
             String parentMediaId = strings[0].split(":")[1];
             parentMediaId = !parentMediaId.equals(NULL_STRING)? parentMediaId: null;
 
-            int seasonNumber = Integer.valueOf(strings[1].split(":")[1]);
-            int episodeNumber = Integer.valueOf(strings[2].split(":")[1]);
-            int source = Integer.valueOf(strings[3].split(":")[1]);
+            int seasonNumber = Integer.parseInt(strings[1].split(":")[1]);
+            int episodeNumber = Integer.parseInt(strings[2].split(":")[1]);
+            int source = Integer.parseInt(strings[3].split(":")[1]);
 
             String airDate = strings[4].split(":", 2)[1];
             airDate = !airDate.equals(NULL_STRING)? airDate: null;

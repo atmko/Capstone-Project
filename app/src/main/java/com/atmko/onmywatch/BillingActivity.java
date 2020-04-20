@@ -89,7 +89,7 @@ public class BillingActivity extends AppCompatActivity implements
     }
 
     private void defineViews() {
-        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = findViewById(R.id.results_recycler_view);
         recyclerView.setLayoutManager(configureLayoutManager());
         mAdapter = new SkuDetailsAdapter(this, this);
         recyclerView.setAdapter(mAdapter);

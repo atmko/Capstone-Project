@@ -45,7 +45,6 @@ public class RateActivity extends AppCompatActivity {
     private MediaData databaseMediaData;
     private SeekBar mRatingSeekBar;
     private TextView mRatingText;
-    private Button mSaveButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +102,7 @@ public class RateActivity extends AppCompatActivity {
         });
 
         //configure save button action
-        mSaveButton = findViewById(R.id.save_button);
+        Button mSaveButton = findViewById(R.id.save_button);
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,16 +128,16 @@ public class RateActivity extends AppCompatActivity {
         RateViewModel viewModel =
                 ViewModelProviders.of(this,
                         viewModelFactory).get(RateViewModel.class);
-        final LiveData mediaDataLiveData = viewModel.getMediaData();
+        final LiveData<MediaData> mediaDataLiveData = viewModel.getMediaData();
 
-        mediaDataLiveData.observe(this, new Observer() {
+        mediaDataLiveData.observe(this, new Observer<MediaData>() {
             @Override
-            public void onChanged(Object mediaData) {
+            public void onChanged(MediaData mediaData) {
                 //if media exists
                 //media data is a/ways not null because rating only possible...
                 //with saved data(watching, watched or dropped)
                 if (mediaData != null) {
-                    databaseMediaData = ((MediaData) mediaData);
+                    databaseMediaData = mediaData;
 
                 }
 
@@ -150,13 +149,15 @@ public class RateActivity extends AppCompatActivity {
                 }
 
                 //setup original seekBar value in first initialization(mSavedInstanceState == null)
-                int userRating = ((MediaData) mediaData).getUserRating();
-                if (userRating == 0) {
-                    mRatingSeekBar.setProgress(MAX_RATING / 2);
+                if (mediaData != null) {
+                    int userRating = mediaData.getUserRating();
+                    if (userRating == 0) {
+                        mRatingSeekBar.setProgress(MAX_RATING / 2);
 
-                } else {
-                    mRatingSeekBar.setProgress(userRating);
+                    } else {
+                        mRatingSeekBar.setProgress(userRating);
 
+                    }
                 }
             }
         });

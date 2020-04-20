@@ -78,7 +78,8 @@
                     android:src="@drawable/ic_info"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:contentDescription="@string/content_description_info_button"/>
+                    android:contentDescription="@string/content_description_info_button"
+                    android:layout_marginRight="@dimen/x2_layout_margin" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -112,7 +113,8 @@
                     android:src="@drawable/ic_info"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:contentDescription="@string/content_description_info_button"/>
+                    android:contentDescription="@string/content_description_info_button"
+                    android:layout_marginRight="@dimen/x2_layout_margin" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

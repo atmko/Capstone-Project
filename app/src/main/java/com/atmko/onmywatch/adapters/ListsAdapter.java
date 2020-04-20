@@ -83,11 +83,7 @@ public abstract class ListsAdapter extends RecyclerView.Adapter<ListsAdapter.Lis
 
     @Override
     public int getItemCount() {
-        if (mAdapterData == null) {
-            return 0;
-        } else {
-            return mAdapterData.size();
-        }
+        return mAdapterData.size();
     }
 
     @Override
@@ -101,6 +97,7 @@ public abstract class ListsAdapter extends RecyclerView.Adapter<ListsAdapter.Lis
         return mAdapterData;
     }
 
+    @SuppressWarnings("unchecked")
     public void addAdapterData(List listDataList) {
         mAdapterData.addAll(listDataList);
         notifyDataSetChanged();

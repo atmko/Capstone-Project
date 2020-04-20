@@ -78,8 +78,10 @@ public class HomeSpotlightAdapter
             addButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((MasterActivity) mFragment.getActivity())
-                            .launchAddToListActivity(mAdapterData.get(getAdapterPosition()));
+                    if (mFragment.getActivity() != null) {
+                        ((MasterActivity) mFragment.getActivity())
+                                .launchAddToListActivity(mAdapterData.get(getAdapterPosition()));
+                    }
                 }
             });
         }
@@ -163,7 +165,7 @@ public class HomeSpotlightAdapter
         return mAdapterData;
     }
 
-    public void addAdapterData(List mediaDataList) {
+    public void addAdapterData(List<MediaData> mediaDataList) {
         mAdapterData.addAll(mediaDataList);
         notifyDataSetChanged();
     }

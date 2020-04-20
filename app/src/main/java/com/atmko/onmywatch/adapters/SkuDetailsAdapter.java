@@ -8,7 +8,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -59,10 +58,9 @@ public class SkuDetailsAdapter
         final TextView titleTextView;
         final TextView priceTextView;
         final TextView descriptionTextView;
-        ImageView iconImageView;
         final AppCompatCheckBox checkBox;
 
-        private SkuDetailsAdapterViewHolder(@NonNull View itemView, int viewType) {
+        private SkuDetailsAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
 
             titleTextView = itemView.findViewById(R.id.title_text_view);
@@ -97,7 +95,7 @@ public class SkuDetailsAdapter
 
         View view = layoutInflater.inflate(resourceId, viewGroup, false);
 
-        return new SkuDetailsAdapterViewHolder(view, viewType);
+        return new SkuDetailsAdapterViewHolder(view);
     }
 
     @Override

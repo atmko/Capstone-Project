@@ -19,7 +19,7 @@ abstract public class ListModel {
 
     @NonNull
     @PrimaryKey
-    @ColumnInfo(name = "id") String mName;
+    @ColumnInfo(name = "id") String mName = "";
     @ColumnInfo(name = "item_count") int mItemCount;
 
     @Ignore String mUniqueExternalId;

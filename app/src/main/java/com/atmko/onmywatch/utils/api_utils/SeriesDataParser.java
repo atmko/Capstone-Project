@@ -4,8 +4,6 @@
 
 package com.atmko.onmywatch.utils.api_utils;
 
-import com.androidnetworking.AndroidNetworking;
-import com.androidnetworking.common.ANRequest;
 import com.atmko.onmywatch.models.Episode;
 import com.atmko.onmywatch.models.Review;
 import com.atmko.onmywatch.models.Season;
@@ -55,11 +53,13 @@ public class SeriesDataParser {
         List<SeriesData> seriesDataList = new ArrayList<>();
 
         //iterate through each tv series in results
-        for (int index = 0; index < results.size() ; index++) {
-            Map currentObject = (Map) results.get(index);//get current tv series
+        if (results != null) {
+            for (int index = 0; index < results.size(); index++) {
+                Map currentObject = (Map) results.get(index);//get current tv series
 
-            //create new TvData from currentObject
-            if (currentObject != null) seriesDataList.add(parseTvMap(currentObject));
+                //create new TvData from currentObject
+                if (currentObject != null) seriesDataList.add(parseTvMap(currentObject));
+            }
         }
 
         return seriesDataList;
@@ -100,6 +100,7 @@ public class SeriesDataParser {
         );
     }
 
+    @SuppressWarnings("unchecked")
     public static SeriesData parseDetails(String returnedJSONString, SeriesData seriesData) {
         if (UpdateNotifierService.sActionMode.equals(UpdateNotifierService.ACTION_TESTING)) return seriesData;
 
@@ -110,7 +111,7 @@ public class SeriesDataParser {
         }
 
         Gson gson = new Gson();
-        Map returnedMap = gson.fromJson(returnedJSONString, Map.class);
+        Map<String, Object> returnedMap = gson.fromJson(returnedJSONString, Map.class);
 
         //create new series data
         SeriesData detailsSeriesData = parseTvMap(returnedMap);
@@ -172,7 +173,7 @@ public class SeriesDataParser {
     }
 
     //TODO: release dates map contains varying object types
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "SameParameterValue"})
     private static String getContentRating(Map<String, Object> detailsMap, String userLocale,
                                            String countryOfOrigin) {
         String contentRating = null;
@@ -302,7 +303,6 @@ public class SeriesDataParser {
         return reviews;
     }
 
-    @SuppressWarnings("ConstantConditions")
     private static ArrayList<Map<String, String>> parseVideos(Map videoMap) {
         //video data will be stored as Map<String, ArrayList<String>>
         ArrayList<Map<String, String>> videos = new ArrayList<>();
@@ -338,15 +338,6 @@ public class SeriesDataParser {
         }
 
         return videos;
-    }
-
-    public static String createVideoImagePath(String videoPath) {
-
-        ANRequest request = AndroidNetworking.get(ApiConstants.VIDEO_IMAGE_URL_FORMAT)
-                .addPathParameter(ApiConstants.VIDEO_IMG_KEY, videoPath)
-                .build();
-
-        return request.getUrl();
     }
 
     public static class SeasonParser {
@@ -430,12 +421,12 @@ public class SeriesDataParser {
 
         static Episode parseTmdbEpisode(String mediaId, Map episodeMap) {
             //TODO: REMOVE HARDCODED STRINGS
-            Double seasonNumberDouble = ((Double) episodeMap.get("season_number"));
+            Double seasonNumberDouble = ((Double) episodeMap.get(SeriesApiConstants.SEASON_NUMBER_KEY));
             Double episodeNumberDouble = ((Double) episodeMap.get("episode_number"));
             int seasonNumber = seasonNumberDouble != null ? seasonNumberDouble.intValue() : 0;
             int episodeNumber = episodeNumberDouble != null ? episodeNumberDouble.intValue() : 0;
             int source = Episode.SOURCE_TMDB;
-            String firstAired = ((String) episodeMap.get("air_date"));
+            String firstAired = ((String) episodeMap.get(SeriesApiConstants.AIR_DATE_KEY));
 
             return new Episode(
                     mediaId,

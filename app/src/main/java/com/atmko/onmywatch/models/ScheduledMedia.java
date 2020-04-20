@@ -35,7 +35,6 @@ public class ScheduledMedia {
     public static final String TIME_SUFFIX_MINUTES = " minute(s)";
     private static final String TIME_SUFFIX_SECONDS = " second(s)";
     public static final String NO_DATES = "No Dates";
-    private static final String DATE_ERROR = "Date Error";
 
     private static final int YEARS_CONVERSION = 365;
     private static final int MONTHS_CONVERSION = 30;

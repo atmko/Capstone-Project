@@ -18,9 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TagAdapter extends ArrayAdapter<String> {
-    final Context context;
-    private final int resource;
-    private final int textViewResourceId;
+    private final Context context;
     private final List<String> items;
     private final List<String> tempItems;
     private final List<String> suggestions;
@@ -28,8 +26,6 @@ public class TagAdapter extends ArrayAdapter<String> {
     public TagAdapter(Context context, int resource, int textViewResourceId, List<String> items) {
         super(context, resource, textViewResourceId, items);
         this.context = context;
-        this.resource = resource;
-        this.textViewResourceId = textViewResourceId;
         this.items = items;
         tempItems = new ArrayList<>(items); // this makes the difference.
         suggestions = new ArrayList<>();
@@ -41,7 +37,9 @@ public class TagAdapter extends ArrayAdapter<String> {
         View view = convertView;
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.autocomplete_item, parent, false);
+            if (inflater != null) {
+                view = inflater.inflate(R.layout.autocomplete_item, parent, false);
+            }
         }
         String names = items.get(position);
         if (names != null) {

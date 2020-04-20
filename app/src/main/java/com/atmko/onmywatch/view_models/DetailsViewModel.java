@@ -63,6 +63,7 @@ public class DetailsViewModel extends ViewModel {
         return containingUserLists;
     }
 
+    @SuppressWarnings("unchecked")
     public LiveData<List<MediaNotifier>> getNotifiers() {
         return notifiers;
     }

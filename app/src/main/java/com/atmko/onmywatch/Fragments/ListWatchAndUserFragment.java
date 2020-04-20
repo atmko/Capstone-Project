@@ -76,9 +76,7 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
     //check for restoring state
     private AppDatabase mDatabase;
     private ListsAdapter mAdapter;
-    private RecyclerView mRecyclerView;
 
-    private FloatingActionButton mFab;
     private SuperEditText mSearchTextView;
     private TagAdapter tagAdapter;
 
@@ -152,7 +150,7 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
         if (getParentFragment().getView() == null) return;
 
         mDatabase = AppDatabase.getInstance(getContext());
-        mRecyclerView = getView().findViewById(R.id.results_recycler_view);
+        RecyclerView mRecyclerView = getView().findViewById(R.id.results_recycler_view);
         mRecyclerView.setLayoutManager(configureLayoutManager());
 
         if (mListType != ListsWatchAndUserParentFragment.LIST_TYPE_USER) {
@@ -164,7 +162,7 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
 
         mRecyclerView.setAdapter(mAdapter);
 
-        mFab = getView().findViewById(R.id.new_list_fab);
+        FloatingActionButton mFab = getView().findViewById(R.id.new_list_fab);
         if (mShowFab) {
             mFab.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -378,23 +376,28 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
                         return;
                     }
 
+                    mDatabase = AppDatabase.getInstance(getContext());
+
                     UserListModel userListModel = Parcels.unwrap(
                             data.getParcelableExtra(ConfirmationActivity.SELECTED_DATA_KEY));
 
-                    mDatabase = AppDatabase.getInstance(getContext());
-                    List<MovieData> moviesInList = mDatabase.movieDataRecordsDao()
-                            .getAllMoviesInListAlt(userListModel.getName());
+                    if (userListModel != null) {
+                        List<MovieData> moviesInList = mDatabase.movieDataRecordsDao()
+                                .getAllMoviesInListAlt(userListModel.getName());
 
-                    List<SeriesData> seriesInList = mDatabase.seriesDataRecordsDao()
-                            .getAllSeriesInListAlt(userListModel.getName());
+                        if (moviesInList != null) {
+                            maintainMoviesWatchListCountIntegrity(moviesInList);
+                        }
 
-                    mDatabase.userListsDao().deleteList(userListModel);
+                        List<SeriesData> seriesInList = mDatabase.seriesDataRecordsDao()
+                                .getAllSeriesInListAlt(userListModel.getName());
 
-                    maintainMoviesWatchListCountIntegrity(moviesInList);
+                        mDatabase.userListsDao().deleteList(userListModel);
 
-                    maintainSeriesWatchListCountIntegrity(seriesInList);
+                        maintainSeriesWatchListCountIntegrity(seriesInList);
 
-                    deleteListTag(userListModel.getName());
+                        deleteListTag(userListModel.getName());
+                    }
 
                     if (getIdlingResource() != null) {
                         getIdlingResource().setIdleState(true);

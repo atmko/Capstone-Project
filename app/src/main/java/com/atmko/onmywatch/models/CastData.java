@@ -19,7 +19,7 @@ public class CastData extends PersonData{
 
     //constructor for parceler
     @Ignore
-    public CastData() {
+    CastData() {
 
     }
 

@@ -50,7 +50,9 @@ public class NotificationHandler {
                     NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
                     //and media id and condition as unique ids
                     //show notification
-                    notificationManager.notify(mediaId, condition, notification);
+                    if (notification != null) {
+                        notificationManager.notify(mediaId, condition, notification);
+                    }
 
                     //if notifier condition is new episode, update notifier
                     if (condition == SeriesNotifier.CONDITION_NEW_EPISODE) {
@@ -190,8 +192,8 @@ public class NotificationHandler {
         }
     }
 
-    public static void scheduleReleaseNotification(Context context, MediaData mediaData,
-                                                   MediaNotifier notifier) {
+    static void scheduleReleaseNotification(Context context, MediaData mediaData,
+                                            MediaNotifier notifier) {
         int mediaType;
 
         Notification notification = notifier.createReleaseNotification(context, mediaData);
@@ -221,8 +223,8 @@ public class NotificationHandler {
         setNotificationAlarm(context, releasePendingIntent, releaseTimestamp);
     }
 
-    public static void scheduleNewEpisodeNotification(Context context, SeriesData mediaData,
-                                                      SeriesNotifier notifier) {
+    static void scheduleNewEpisodeNotification(Context context, SeriesData mediaData,
+                                               SeriesNotifier notifier) {
         Notification notification = notifier.createNewEpisodeNotification(context, mediaData);
 
         //create pending intent to house notification for when alarm is triggered
@@ -238,18 +240,20 @@ public class NotificationHandler {
                                              long timestamp) {
 
         AlarmManager alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        alarmMgr.set(AlarmManager.RTC_WAKEUP, timestamp, releasePendingIntent);
+        if (alarmMgr != null) {
+            alarmMgr.set(AlarmManager.RTC_WAKEUP, timestamp, releasePendingIntent);
+        }
 
         enableBootReceiver(context);
     }
 
     //deletes notifiers and cancel alarm notifications
-    public static void cancelAlarm(Context context, MediaNotifier notifier) {
+    static void cancelAlarm(Context context, MediaNotifier notifier) {
         AppDatabase database = AppDatabase.getInstance(context);
 
         AlarmManager alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         PendingIntent intent = notifier.createPendingIntent(context);
-        alarmMgr.cancel(intent);
+        if (alarmMgr != null) alarmMgr.cancel(intent);
 
         if (notifier instanceof MovieNotifier) {
             database.movieNotifierDao().deleteNotifier(((MovieNotifier) notifier));
@@ -286,16 +290,6 @@ public class NotificationHandler {
 
         pm.setComponentEnabledSetting(receiver,
                 PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                PackageManager.DONT_KILL_APP);
-    }
-
-    //disables boot receiver
-    private static void disableBootReceiver(Context context) {
-        ComponentName receiver = new ComponentName(context, BootReceiver.class);
-        PackageManager pm = context.getPackageManager();
-
-        pm.setComponentEnabledSetting(receiver,
-                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
                 PackageManager.DONT_KILL_APP);
     }
 }

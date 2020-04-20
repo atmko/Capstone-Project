@@ -9,6 +9,7 @@ import android.animation.AnimatorInflater;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -57,7 +58,7 @@ public class ListResultsParentFragment extends Fragment
         return fragment;
     }
 
-    public int getCurrentTabPosition() {
+    int getCurrentTabPosition() {
         return mCurrentTabPosition;
     }
 
@@ -87,7 +88,10 @@ public class ListResultsParentFragment extends Fragment
         Toolbar toolbar = getView().findViewById(R.id.toolbar);
 
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         //save save instanceState value for onCreateAnimator to check if this is the first instance
         mSavedInstanceState = savedInstanceState;
@@ -170,7 +174,7 @@ public class ListResultsParentFragment extends Fragment
 
                 DiscoverParentFragment discoverParentFragment = DiscoverParentFragment.newInstance();
                 getActivity().getSupportFragmentManager().beginTransaction()
-                        .setCustomAnimations(R.anim.slide_down_entry, android.R.animator.fade_out)
+                        .setCustomAnimations(R.animator.slide_down_entry, android.R.animator.fade_out)
                         .add(R.id.master_fragments_container, discoverParentFragment,
                                 DiscoverParentFragment.FRAGMENT_KEY)
                         .commit();

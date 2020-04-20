@@ -41,7 +41,6 @@ public class PeopleDataAdapter
     private final Context mContext;
 
     //layout ids
-    @SuppressWarnings("FieldCanBeLocal")
     private final int STANDARD_LAYOUT_ID = 1;
     private final int NO_POSTER_LAYOUT = 2;
 
@@ -198,11 +197,7 @@ public class PeopleDataAdapter
 
     @Override
     public int getItemCount() {
-        if (mAdapterData == null) {
-            return 0;
-        } else {
-            return mAdapterData.size();
-        }
+        return mAdapterData.size();
     }
 
     @Override
@@ -222,7 +217,8 @@ public class PeopleDataAdapter
         return mAdapterData;
     }
 
-    public void addAdapterData(List<PersonData> mediaDataList) {
+    @SuppressWarnings("unchecked")
+    public void addAdapterData(List mediaDataList) {
         mAdapterData.addAll(mediaDataList);
         notifyDataSetChanged();
     }

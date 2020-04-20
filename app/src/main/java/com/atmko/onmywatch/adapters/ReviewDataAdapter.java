@@ -13,7 +13,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.atmko.onmywatch.Fragments.DetailsFragment;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.models.Review;
 
@@ -25,7 +24,7 @@ import java.util.ArrayList;
 
 public final class ReviewDataAdapter
         extends RecyclerView.Adapter<ReviewDataAdapter.ReviewDataAdapterViewHolder> {
-    public static final int REVIEW_CUT_OFF_INDEX = 100;
+    private static final int REVIEW_CUT_OFF_INDEX = 100;
 
     private final ArrayList<Review> mAdapterData;
     private final OnListItemClickListener mOnListItemClickListener;
@@ -109,10 +108,6 @@ public final class ReviewDataAdapter
         return STANDARD_LAYOUT_ID;
     }
 
-    public boolean isEmpty() {
-        return getItemCount() == 0;
-    }
-
     public ArrayList<Review> getAdapterData() {
         return mAdapterData;
     }
@@ -124,12 +119,6 @@ public final class ReviewDataAdapter
 
     public Review getReviewData(int index) {
         return mAdapterData.get(index);
-    }
-
-    //clears and updates adapterData
-    public void clearData() {
-        mAdapterData.clear();
-        notifyDataSetChanged();
     }
 
     //truncates long text (reviews)

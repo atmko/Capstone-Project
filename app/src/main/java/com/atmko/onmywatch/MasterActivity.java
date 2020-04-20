@@ -130,6 +130,7 @@ public class MasterActivity extends AppCompatActivity implements
     //for restoring keyboard visibility upon configuration change
     public static boolean sIsKeyboardVisible;
     private boolean mIsTabletLandscape;
+    @SuppressWarnings("FieldCanBeLocal")
     private FirebaseAnalytics mFirebaseAnalytics;
 
     private Bundle mSavedInstanceState;
@@ -141,7 +142,6 @@ public class MasterActivity extends AppCompatActivity implements
     public static SimpleIdlingResource sIdlingResource;
 
     public static boolean sIsProMode;
-    public static boolean sAllowCloudBackup;
 
     //checks if sIsProMode value has be observed from view model
     private boolean mInitialProCheck = true;
@@ -548,14 +548,14 @@ public class MasterActivity extends AppCompatActivity implements
         // (via frame layout) in non tablet landscape
         if (fragment instanceof DetailsFragment || fragment instanceof PeopleDetailsFragment) {
             getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
+                    .setCustomAnimations(R.animator.slide_right_entry, R.animator.slide_left_exit)
                     .remove(fragment).commit();
 
         } else {
             //condition for exit animation transition
             if (fragment instanceof ListResultsParentFragment) {
                 getSupportFragmentManager().beginTransaction()
-                        .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
+                        .setCustomAnimations(R.animator.slide_right_entry, R.animator.slide_left_exit)
                         .remove(fragment).commit();
 
             } else if (fragment instanceof DiscoverParentFragment) {
@@ -570,13 +570,13 @@ public class MasterActivity extends AppCompatActivity implements
                         customResultsFragment.setSearchActive(false);
 
                     } else {
-                        removeFragment(fragment, R.anim.slide_down_entry, R.anim.slide_up_exit);
+                        removeFragment(fragment, R.animator.slide_down_entry, R.animator.slide_up_exit);
                     }
                 } else {
-                    removeFragment(fragment, R.anim.slide_down_entry, R.anim.slide_up_exit);
+                    removeFragment(fragment, R.animator.slide_down_entry, R.animator.slide_up_exit);
                 }
             } else {
-                removeFragment(fragment, R.anim.slide_down_entry, R.anim.slide_up_exit);
+                removeFragment(fragment, R.animator.slide_down_entry, R.animator.slide_up_exit);
             }
         }
 
@@ -651,12 +651,12 @@ public class MasterActivity extends AppCompatActivity implements
         int mediaType = selectedData instanceof MovieData ? MEDIA_TYPE_MOVIE : MEDIA_TYPE_SERIES;
 
         String[] detailUrls = getResources().getStringArray(R.array.details_urls);
-        String detailUrl = null;
+        String detailUrl;
 
         if (mediaType == MEDIA_TYPE_MOVIE) {
             detailUrl = detailUrls[MEDIA_TYPE_MOVIE];
 
-        } else if (mediaType == MEDIA_TYPE_SERIES) {
+        } else {
             detailUrl = detailUrls[MEDIA_TYPE_SERIES];
         }
 
@@ -672,7 +672,7 @@ public class MasterActivity extends AppCompatActivity implements
         }
 
         getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
+                .setCustomAnimations(R.animator.slide_right_entry, R.animator.slide_left_exit)
                 .add(R.id.detail_fragments_container, detailsFragment, DetailsFragment.FRAGMENT_KEY)
                 .commit();
     }
@@ -691,7 +691,7 @@ public class MasterActivity extends AppCompatActivity implements
                 PeopleDetailsFragment.newInstance(selectedData, searchPreferences);
 
         getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
+                .setCustomAnimations(R.animator.slide_right_entry, R.animator.slide_left_exit)
                 .add(R.id.detail_fragments_container, detailsFragment, PeopleDetailsFragment.FRAGMENT_KEY)
                 .commit();
     }
@@ -702,7 +702,8 @@ public class MasterActivity extends AppCompatActivity implements
             public void run() {
                 Bundle extras = intent.getExtras();
 
-                String quickAction = extras.getString(DetailsFragment.QUICK_ACTION_KEY);
+                String quickAction =
+                        extras != null ? extras.getString(DetailsFragment.QUICK_ACTION_KEY) : null;
 
                 Object object =
                         Parcels.unwrap(intent.getParcelableExtra(DetailsFragment.MEDIA_DATA_PARCELABLE_KEY));
@@ -940,7 +941,7 @@ public class MasterActivity extends AppCompatActivity implements
         if (view.requestFocus()) {
             InputMethodManager imm = (InputMethodManager)
                     view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
             sIsKeyboardVisible = false;
         }
@@ -951,7 +952,7 @@ public class MasterActivity extends AppCompatActivity implements
         if (view.requestFocus()) {
             InputMethodManager imm = (InputMethodManager)
                     view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+            if (imm != null) imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
 
             sIsKeyboardVisible = true;
         }
@@ -1058,7 +1059,7 @@ public class MasterActivity extends AppCompatActivity implements
         if (childFragment.getParentFragment().getActivity() == null) return;
         Fragment fragment = ListResultsParentFragment.newInstance(listType, listModel.getName());
         childFragment.getParentFragment().getActivity().getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.slide_right_entry, R.anim.slide_left_exit)
+                .setCustomAnimations(R.animator.slide_right_entry, R.animator.slide_left_exit)
                 .add(R.id.master_fragments_container, fragment, ListResultsParentFragment.FRAGMENT_KEY)
                 .commit();
     }
@@ -1159,20 +1160,23 @@ public class MasterActivity extends AppCompatActivity implements
                 .addOnSuccessListener(new OnSuccessListener<HttpsCallableResult>() {
                     @Override
                     public void onSuccess(HttpsCallableResult httpsCallableResult) {
+                        @SuppressWarnings("unchecked")
                         Map<String, String> results = ((Map<String, String>) httpsCallableResult.getData());
-                        if (results.get("error") != null) {
-                            showSnackBarMessage(results.get("error"), activity);
+                        if (results != null) {
+                            if (results.get("error") != null) {
+                                showSnackBarMessage(results.get("error"), activity);
 
-                        } else if (results.get("status") != null) {
-                            //query purchases to update check marks on purchases
-                            showSnackBarMessage("Purchase Verified", activity);
-                            justTurnedPro(activity);
+                            } else if (results.get("status") != null) {
+                                //query purchases to update check marks on purchases
+                                showSnackBarMessage("Purchase Verified", activity);
+                                justTurnedPro(activity);
+                            }
                         }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Log.d(TAG, e.getMessage());
+                if (e.getMessage() != null) Log.d(TAG, e.getMessage());
                 Log.d(TAG, "Purchase Verification Failed");
                 showSnackBarMessage("sever down, purchase will complete when server available", activity);
             }

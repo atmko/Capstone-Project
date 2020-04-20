@@ -22,17 +22,17 @@ public class SeriesApiConstants {
     public static final String RELEASE_STATUS_PILOT = "Pilot";
 
     //maturity rating
-    public static final String CONTENT_RATINGS_KEY = "content_ratings";
+    static final String CONTENT_RATINGS_KEY = "content_ratings";
     public static final String RATING_KEY = "rating";
 
     //for seasons
     public static final String SEASONS_KEY = "seasons";
-    public static final String AIR_DATE_KEY = "air_date";
+    static final String AIR_DATE_KEY = "air_date";
     public static final String EPISODE_COUNT_KEY = "episode_count";
-    public static final String SEASON_NUMBER_KEY = "season_number";
+    static final String SEASON_NUMBER_KEY = "season_number";
 
     //EPISODE VALUES
-    public static final String NEXT_EPISODE_TO_AIR_KEY = "next_episode_to_air";
+    static final String NEXT_EPISODE_TO_AIR_KEY = "next_episode_to_air";
 
     //release status values
     public static final String NETWORK_KEY = "network";

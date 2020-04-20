@@ -50,22 +50,6 @@ public class FirebaseUserDataDao {
         return MasterActivity.getUserDbHomeReference();
     }
 
-    public static void setMigrationValue(String migrationValue) {
-        MasterActivity.getUserDbHomeReference()
-                .update(MIGRATION_KEY, migrationValue)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-
-                    }
-                });
-    }
-
     public static MutableLiveData<List<Backup>> getBackups() {
         final MutableLiveData<List<Backup>> liveData = new MutableLiveData<>();
 

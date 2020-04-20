@@ -37,10 +37,6 @@ public class Season extends ScheduledMedia{
         setIsBundled();
     }
 
-    public void setEpisodesAired(int episodesAired) {
-        this.episodesAired = episodesAired;
-    }
-
     public boolean hasEnded() {
         return episodesAired >= episodes.size();
     }

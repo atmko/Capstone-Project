@@ -38,7 +38,8 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@id/profession_text_view"
-            android:text="@string/department_text_literal" />
+            android:text="@string/department_text_literal"
+            android:layout_marginRight="@dimen/x2_layout_margin" />
 
         <TextView
             android:id="@+id/profession_text_view"
@@ -61,7 +62,8 @@
             app:layout_constraintBottom_toTopOf="@id/date_of_birth_text_view"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            android:text="@string/date_of_birth_text_literal" />
+            android:text="@string/date_of_birth_text_literal"
+            android:layout_marginRight="@dimen/x2_layout_margin" />
 
         <TextView
             android:id="@+id/date_of_birth_text_view"
@@ -87,7 +89,8 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/profile_image_view"
-        tools:text="Alita Battle Angel" />
+        tools:text="Alita Battle Angel"
+        android:layout_marginRight="@dimen/x2_layout_margin" />
 
     <!--______________________________________________-->
 

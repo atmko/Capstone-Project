@@ -33,7 +33,7 @@ import static org.hamcrest.Matchers.is;
 
 @RunWith(AndroidJUnit4.class)
 public class UpdateMediaWorkerTests {
-    final Context mContext = ApplicationProvider.getApplicationContext();
+    private final Context mContext = ApplicationProvider.getApplicationContext();
     private Executor mExecutor;
     private AppDatabase mDb;
 

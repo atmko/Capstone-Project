@@ -139,6 +139,7 @@ public class BackupLogic {
     }
 
     //compares time since last backup with cool down time
+    @SuppressWarnings("CharsetObjectCanBeUsed")
     private boolean isFileTooLarge() {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         try {

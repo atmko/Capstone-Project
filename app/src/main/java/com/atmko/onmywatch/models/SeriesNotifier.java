@@ -30,7 +30,7 @@ import java.util.Map;
 public class SeriesNotifier extends MediaNotifier {
     public static final int CONDITION_NEW_EPISODE = 1;
 
-    public SeriesNotifier(@NonNull String id, @NonNull int condition, boolean isActive) {
+    public SeriesNotifier(@NonNull String id, int condition, boolean isActive) {
         this.mId = id;
         this.mCondition = condition;
         this.mIsActive = isActive;

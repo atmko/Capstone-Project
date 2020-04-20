@@ -108,16 +108,10 @@ public class ListWidgetProviderConfigureActivity extends AppCompatActivity
     // If there is no preference saved, get the default from a resource
     static int loadMediaTypePref(Context context, int appWidgetId) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
-        Integer mediaTypeValue = prefs.getInt(
+
+        return prefs.getInt(
                 PREF_PREFIX_KEY + appWidgetId + PREF_MEDIA_TYPE_PREFIX_KEY,
                 MasterActivity.MEDIA_TYPE_SERIES);
-
-        if (mediaTypeValue != null) {
-            return mediaTypeValue;
-        } else {
-            //TODO return default media type
-            return MasterActivity.MEDIA_TYPE_SERIES;
-        }
     }
 
     static void deleteTitlePref(Context context, int appWidgetId) {
@@ -183,7 +177,7 @@ public class ListWidgetProviderConfigureActivity extends AppCompatActivity
                     ListsWatchAndUserParentFragment.newInstance(mListTypeNames, false);
 
             getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.slide_down_entry, android.R.animator.fade_out)
+                    .setCustomAnimations(R.animator.slide_down_entry, android.R.animator.fade_out)
                     .add(R.id.master_fragments_container, listsParentFragment,
                             ListsWatchAndUserParentFragment.FRAGMENT_KEY)
                     .commit();

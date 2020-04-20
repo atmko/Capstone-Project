@@ -25,14 +25,6 @@ class PagingBlock {
         return mBlockPageCapacity;
     }
 
-    List getDataListByPage(int page) {
-        return mPageList.get(page);
-    }
-
-    SparseArray<List> getPageList() {
-        return mPageList;
-    }
-
     void setDataListByPage(int page, List dataList) {
         mPageList.put(page, dataList);
     }

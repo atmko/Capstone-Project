@@ -755,7 +755,7 @@ public class ListTests {
     }
 
     private void registerMasterSimpleIdleResource() {
-        masterIdlingResource = masterActivityTestRule.getActivity().getIdlingResource();
+        masterIdlingResource = MasterActivity.getIdlingResource();
         IdlingRegistry.getInstance().register(masterIdlingResource);
     }
 

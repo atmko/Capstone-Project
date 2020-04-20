@@ -204,11 +204,7 @@ public class MediaDataAdapter
 
     @Override
     public int getItemCount() {
-        if (mAdapterData == null) {
-            return 0;
-        } else {
-            return mAdapterData.size();
-        }
+        return mAdapterData.size();
     }
 
     @Override
@@ -230,7 +226,7 @@ public class MediaDataAdapter
         return mAdapterData;
     }
 
-    public void addAdapterData(List mediaDataList) {
+    public void addAdapterData(List<MediaData> mediaDataList) {
         mAdapterData.addAll(mediaDataList);
         notifyDataSetChanged();
     }

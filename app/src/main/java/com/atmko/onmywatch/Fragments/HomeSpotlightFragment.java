@@ -165,6 +165,7 @@ public class HomeSpotlightFragment extends Fragment implements
 
                 //refresh adapter data
                 mDataAdapter.getAdapterData().clear();
+                //noinspection unchecked
                 mDataAdapter.addAdapterData(dataList);
 
                 if (canLaunchDetailFragmentAlongside()) loadDetailFragmentIfCapable();

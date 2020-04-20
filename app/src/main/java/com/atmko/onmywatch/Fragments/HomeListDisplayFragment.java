@@ -53,8 +53,6 @@ public class HomeListDisplayFragment extends Fragment
     private String mListName;
     private int mMediaType;
 
-    //post instantiation values
-    private RecyclerView mRecyclerView;
     private MediaLogAdapter mMediaLogAdapter;
 
     public HomeListDisplayFragment() {
@@ -98,7 +96,8 @@ public class HomeListDisplayFragment extends Fragment
         if (getView() == null) return;
         if (getActivity() == null) return;
 
-        mRecyclerView = getView().findViewById(R.id.results_recycler_view);
+        //post instantiation values
+        RecyclerView mRecyclerView = getView().findViewById(R.id.results_recycler_view);
         mRecyclerView.setLayoutManager(configureLayoutManager());
 
         mMediaLogAdapter = new MediaLogAdapter(this, getActivity().getApplicationContext(),
@@ -135,8 +134,14 @@ public class HomeListDisplayFragment extends Fragment
 
     private void populateAndNotifyAdapter(List mediaList) {
         mMediaLogAdapter.getAdapterData().clear();
-        if (mMediaType == MEDIA_TYPE_MOVIE) mediaList = MovieLog.convertMediaToLogs(mediaList, mListName);
 
+        //if media type is movie, convert movie data to movie logs
+        if (mMediaType == MEDIA_TYPE_MOVIE) {
+            //noinspection unchecked
+            mediaList = MovieLog.convertMediaToLogs(mediaList, mListName);
+        }
+
+        //noinspection unchecked
         mMediaLogAdapter.addAdapterData(mediaList);
         mMediaLogAdapter.setPlaceholders();
     }
@@ -151,7 +156,7 @@ public class HomeListDisplayFragment extends Fragment
                     DiscoverParentFragment discoverParentFragment = DiscoverParentFragment.newInstance();
 
                     getActivity().getSupportFragmentManager().beginTransaction()
-                            .setCustomAnimations(R.anim.slide_down_entry, android.R.animator.fade_out)
+                            .setCustomAnimations(R.animator.slide_down_entry, android.R.animator.fade_out)
                             .add(R.id.master_fragments_container, discoverParentFragment,
                                     DiscoverParentFragment.FRAGMENT_KEY)
                             .commit();

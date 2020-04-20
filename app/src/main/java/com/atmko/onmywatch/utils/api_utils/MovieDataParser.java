@@ -68,6 +68,7 @@ public class MovieDataParser {
         popularity = popularity == null ? 0 : popularity;
         isAdult = isAdult == null ? false : isAdult;
 
+        //noinspection unchecked
         return new MovieData(
                 //get by keys
                 checkAndConvertInteger(movieDataMap.get(ApiConstants.ID_KEY)),
@@ -89,7 +90,7 @@ public class MovieDataParser {
 
                 (String) movieDataMap.get(MovieApiConstants.ORIG_TITLE_KEY),
 
-                convertToGenres(((ArrayList<Map>) movieDataMap.get(ApiConstants.GENRES_KEY))),
+                convertToGenres((ArrayList<Map>) movieDataMap.get(ApiConstants.GENRES_KEY)),
 
                 (String) movieDataMap.get(ApiConstants.BACKDROP_PATH_KEY),
 
@@ -111,7 +112,8 @@ public class MovieDataParser {
         }
 
         Gson gson = new Gson();
-        Map returnedMap = gson.fromJson(returnedJSONString, Map.class);
+        @SuppressWarnings("unchecked")
+        Map<String, Object> returnedMap = gson.fromJson(returnedJSONString, Map.class);
 
         //create new movie data
         MovieData detailsMovieData = parseMovieMap(returnedMap);
@@ -164,7 +166,7 @@ public class MovieDataParser {
     }
 
     //TODO: release dates map contains varying object types
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "SameParameterValue"})
     private static String[] getDateOfReleaseTypeAndCertification(Map<String, Object> detailsMap,
                                                                  int requestedReleaseType,
                                                                  String userLocale, String fallbackLocale) {
@@ -255,7 +257,6 @@ public class MovieDataParser {
         return reviews;
     }
 
-    @SuppressWarnings("ConstantConditions")
     private static ArrayList<Map<String, String>> parseVideos(Map videoMap) {
         //video data will be stored as Map<String, ArrayList<String>>
         ArrayList<Map<String, String>> videos = new ArrayList<>();

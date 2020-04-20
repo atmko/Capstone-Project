@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         app:layout_constraintHorizontal_bias="0"
-        android:text="Genre 1"
+        tools:text="Genre 1"
         android:textSize="@dimen/body_text_size"
         android:textStyle="bold"/>
 
@@ -27,6 +27,7 @@
         android:paddingBottom="@dimen/half_layout_margin"
         android:paddingStart="@dimen/x2_layout_margin"
         android:paddingEnd="@dimen/x2_layout_margin"
-        tools:entries="@array/genre_id_value"/>
+        tools:entries="@array/genre_id_value"
+        android:layout_marginLeft="@dimen/x2_layout_margin" />
 
 </LinearLayout>

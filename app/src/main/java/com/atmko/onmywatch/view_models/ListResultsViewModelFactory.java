@@ -16,16 +16,14 @@ import java.util.List;
 public class ListResultsViewModelFactory extends ViewModelProvider.NewInstanceFactory {
     private final AppDatabase mDatabase;
     private final int mListType;
-    private final int mMediaType;
     private final List<String> mWatchStatusTitleList;
     private final String mListName;
 
-    public ListResultsViewModelFactory(AppDatabase database, int listType, int mediaType,
+    public ListResultsViewModelFactory(AppDatabase database, int listType,
                                        List<String> watchStatusTitleList, String listName) {
 
         this.mDatabase = database;
         this.mListType = listType;
-        this.mMediaType = mediaType;
         this.mWatchStatusTitleList = watchStatusTitleList;
         this.mListName = listName;
     }
