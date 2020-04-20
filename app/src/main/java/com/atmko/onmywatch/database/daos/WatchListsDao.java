@@ -6,7 +6,6 @@ package com.atmko.onmywatch.database.daos;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
-import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -34,7 +33,4 @@ public interface WatchListsDao {
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateListConfiguration(WatchListModel watchListModel);
-
-    @Delete
-    void deleteList(WatchListModel watchListModel);
 }

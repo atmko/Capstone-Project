@@ -8,7 +8,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -55,16 +54,12 @@ public class HomeSpotlightAdapter
     public class HomeSpotlightAdapterViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener{
 
-        final FrameLayout topFrameLayout;
         ImageView moviePosterImageView;
         TextView posterReplacementTextView;
         final ImageButton addButton;
 
         private HomeSpotlightAdapterViewHolder(@NonNull View itemView, int viewType) {
             super(itemView);
-
-            topFrameLayout = itemView.findViewById(R.id.top_frame_layout);
-
             itemView.setOnClickListener(this);
 
             if (viewType == NO_POSTER_LAYOUT) {
@@ -91,16 +86,6 @@ public class HomeSpotlightAdapter
             int position = getAdapterPosition();
             mOnListItemClickListener.onItemClick(position);
         }
-    }
-
-    private ViewGroup.MarginLayoutParams getPosterMargins(View view) {
-        ViewGroup.MarginLayoutParams margins =
-                (ViewGroup.MarginLayoutParams) view.getLayoutParams();
-
-        int searchImageSpacing = (int) mFragment.getResources().getDimension(R.dimen.search_image_spacing);
-
-        margins.setMargins(searchImageSpacing/2, 0, 0, searchImageSpacing);
-        return margins;
     }
 
     @NonNull

@@ -342,7 +342,7 @@ public class SeriesDataParser {
     }
 
     public static class SeasonParser {
-        public static List<Season> parseTraktSeasons(String mediaId, String returnedJSONString) {
+        public static List<Season> parseTraktSeasons(String returnedJSONString) {
             List<Season> seasons = new ArrayList<>();
 
             //skips code below if returnedJSONString null or empty
@@ -354,19 +354,19 @@ public class SeriesDataParser {
             List returnedList = gson.fromJson(returnedJSONString, List.class);
 
             for (Object seasonMapObject : returnedList) {
-                seasons.add(parseTraktSeason(mediaId, (Map) seasonMapObject));
+                seasons.add(parseTraktSeason((Map) seasonMapObject));
             }
 
             return seasons;
         }
 
-        static Season parseTraktSeason(String mediaId, Map seasonMap) {
+        static Season parseTraktSeason(Map seasonMap) {
             //TODO: REMOVE HARDCODED STRINGS
             Double episodeNumberDouble = ((Double) seasonMap.get("number"));
             int seasonNumber = episodeNumberDouble != null ? episodeNumberDouble.intValue() : 0;
             String firstAired = ((String) seasonMap.get("first_aired"));
 
-            Season season = new Season(mediaId, seasonNumber, firstAired);
+            Season season = new Season(seasonNumber, firstAired);
 
             Double airedEpisodesDouble = ((Double) seasonMap.get("aired_episodes"));
             season.episodesAired = airedEpisodesDouble != null ? airedEpisodesDouble.intValue() : 0;

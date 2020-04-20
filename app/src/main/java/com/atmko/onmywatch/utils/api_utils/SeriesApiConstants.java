@@ -25,10 +25,7 @@ public class SeriesApiConstants {
     static final String CONTENT_RATINGS_KEY = "content_ratings";
     public static final String RATING_KEY = "rating";
 
-    //for seasons
-    public static final String SEASONS_KEY = "seasons";
     static final String AIR_DATE_KEY = "air_date";
-    public static final String EPISODE_COUNT_KEY = "episode_count";
     static final String SEASON_NUMBER_KEY = "season_number";
 
     //EPISODE VALUES

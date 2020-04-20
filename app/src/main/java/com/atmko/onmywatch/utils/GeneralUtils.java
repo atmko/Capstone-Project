@@ -21,6 +21,7 @@ public class GeneralUtils {
        return airDateString.replace(OFFSET_SYMBOL, OFFSET_VALUE_UTC);
     }
 
+    @SuppressWarnings("unused")
     interface DateCustom {
         Date currentDate();
     }

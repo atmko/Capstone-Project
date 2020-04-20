@@ -130,7 +130,7 @@ public class MasterActivity extends AppCompatActivity implements
     //for restoring keyboard visibility upon configuration change
     public static boolean sIsKeyboardVisible;
     private boolean mIsTabletLandscape;
-    @SuppressWarnings("FieldCanBeLocal")
+    @SuppressWarnings({"FieldCanBeLocal", "unused"})
     private FirebaseAnalytics mFirebaseAnalytics;
 
     private Bundle mSavedInstanceState;

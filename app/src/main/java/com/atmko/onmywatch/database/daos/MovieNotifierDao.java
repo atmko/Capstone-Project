@@ -26,19 +26,11 @@ public interface MovieNotifierDao {
     List<MovieNotifier> getActiveNotifiersAlt();
 
     //alternate method without live data
-    @Query("SELECT media_id FROM movie_notifiers")
-    List<String> getAllMediaIdsAlt();
-
-    //alternate method without live data
     @Query("SELECT * FROM movie_notifiers WHERE media_id = :mediaId AND condition = :condition")
     MovieNotifier getNotifierByIdAlt(String mediaId, int condition);
 
     @Query("SELECT * FROM movie_notifiers WHERE media_id = :mediaId")
     LiveData<List<MovieNotifier>> getNotifiersWithMediaId(String mediaId);
-
-    //alternate method without live data
-    @Query("SELECT * FROM movie_notifiers WHERE media_id = :mediaId")
-    List<MovieNotifier> getNotifiersWithMediaIdAlt(String mediaId);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateNotifier(MovieNotifier movieNotifier);

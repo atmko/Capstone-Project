@@ -14,11 +14,9 @@ import org.parceler.Parcel;
 @SuppressWarnings("WeakerAccess")
 @Parcel
 public final class SearchPreferences {
-    //urls & paths
-    private static String mQueryUrlString;//final url used by MovieLoader
 
     //language parameters
-    String mLanguageParamVal;
+    final String mLanguageParamVal;
     private static final String ENG_US = "en-US";
 
     //query parameter
@@ -30,10 +28,10 @@ public final class SearchPreferences {
     int mTotalPages = 1;
 
     //include adult parameter
-    boolean mIncludeAdult = false;
+    final boolean mIncludeAdult = false;
 
     //region parameter
-    String mRegion;
+    final String mRegion;
 
     //year parameter
     String mYear;
@@ -94,14 +92,6 @@ public final class SearchPreferences {
         this.mTargetPage = page;
     }
 
-    public int getCurrentPage() {
-        return mCurrentPage;
-    }
-
-    public void setCurrentPage(int pageNum) {
-        mCurrentPage = pageNum;
-    }
-
     public String getQuery() {
         return mQuery;
     }
@@ -114,56 +104,24 @@ public final class SearchPreferences {
         return mLanguageParamVal;
     }
 
-    public void setLanguageParamVal(String languageParamVal) {
-        this.mLanguageParamVal = languageParamVal;
-    }
-
     public String getRegion() {
         return mRegion;
-    }
-
-    public void setRegion(String region) {
-        this.mRegion = region;
     }
 
     public String getYear() {
         return mYear;
     }
 
-    public void setYear(String year) {
-        this.mYear = year;
-    }
-
     public String getPrimaryReleaseYear() {
         return mPrimaryReleaseYear;
-    }
-
-    public void setPrimaryReleaseYear(String primaryReleaseYear) {
-        this.mPrimaryReleaseYear = primaryReleaseYear;
     }
 
     public String getFirstAirDateYear() {
         return mFirstAirDateYear;
     }
 
-    public void setFirstAirDateYear(String firstAirDateYear) {
-        this.mFirstAirDateYear = firstAirDateYear;
-    }
-
     public boolean getIncludeAdult() {
         return mIncludeAdult;
-    }
-
-    public void setIncludeAdult(boolean includeAdult) {
-        this.mIncludeAdult = includeAdult;
-    }
-
-    public String getQueryUrlString() {
-        return mQueryUrlString;
-    }
-
-    public void setQueryUrlString(String urlString) {
-        mQueryUrlString = urlString;
     }
 
     public void setGenres(Context context, int[] genresIndices) {

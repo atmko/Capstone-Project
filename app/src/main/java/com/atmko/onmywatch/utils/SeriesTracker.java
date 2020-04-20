@@ -100,7 +100,7 @@ public class SeriesTracker extends JobIntentService {
                     @Override
                     public void run() {
                         List<Season> seasons =
-                                SeasonParser.parseTraktSeasons(newMediaData.getId(), returnedJSONString);
+                                SeasonParser.parseTraktSeasons(returnedJSONString);
                         lastSeason = seasons.get(seasons.size() - 1);
                         getEpisodesInSeason(traktId, String.valueOf(lastSeason.seasonNumber));
                     }
@@ -167,8 +167,7 @@ public class SeriesTracker extends JobIntentService {
                                     lastEpisodeInSeason.timestamp, lastSeason.isBundled);
 
                             //set next season without air date();
-                            Season nextSeason = new Season(newMediaData.getId(),
-                                    lastSeason.seasonNumber + 1, "");
+                            Season nextSeason = new Season(lastSeason.seasonNumber + 1, "");
                             insertSeason(nextSeason.seasonNumber, CONDITION_UNDATED,
                                     nextSeason.timestamp, lastSeason.isBundled);
 
