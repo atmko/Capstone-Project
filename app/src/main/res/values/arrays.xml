@@ -134,7 +134,7 @@
         <item>dropped</item>
     </array>
 
-    <array name="watch_status_movies_values">
+    <array name="watch_status_values">
         <item>0</item>    <!--NONE-->
         <item>1</item>    <!--TO WATCH-->
         <item>2</item>    <!--WATCHING-->
@@ -150,14 +150,6 @@
         <item>dropped</item>
     </array>
 
-    <array name="watch_status_series_values">
-        <item>0</item>    <!--NONE-->
-        <item>1</item>    <!--TO WATCH-->
-        <item>2</item>    <!--WATCHING-->
-        <item>3</item>    <!--WATCHED-->
-        <item>4</item>    <!--DROPPED-->
-    </array>
-
     <array name="watch_status_shorthand_titles">
         <item>No</item>
         <item>Tw</item>
@@ -170,11 +162,6 @@
     <array name="options_spinner_titles">
         <item>edit list</item>
         <item>@string/delete_button_text</item>
-        <item>null</item>
-    </array>
-
-    <array name="detail_options">
-        <item>Share</item>
         <item>null</item>
     </array>
 
@@ -290,32 +277,8 @@
         <item>Title.asc</item>
     </array>
 
-    <array name="notifier_movies_keys">
-        <item>on_release</item>
-        <item>new_trailer</item>
-    </array>
-
-    <array name="notifier_movies_condition_titles">
-        <item>On Release</item>
-        <item>New Trailer</item>
-    </array>
-
-    <array name="notifier_series_keys">
-        <item>on_release</item>
-        <item>new_trailer</item>
-    </array>
-
-    <array name="notifier_series_condition_titles">
-        <item>On Release</item>
-        <item>New Trailer</item>
-    </array>
-
     <array name="inapp_skus">
         <item>pro_mode</item>
-    </array>
-
-    <array name="subs_skus">
-        <item>cloud_backup</item>
     </array>
 
     <array name="test_purchase_skus">

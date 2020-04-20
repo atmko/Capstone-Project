@@ -86,16 +86,21 @@ class SpinnerListOptionsAdapter implements SpinnerAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup viewGroup) {
-        LayoutInflater layoutInflater = LayoutInflater.from(mContext);
+        if (convertView == null) {
+            LayoutInflater layoutInflater = LayoutInflater.from(mContext);
 
-        int resourceId = R.layout.spinner_empty_object;
-        View view = layoutInflater.inflate(resourceId, viewGroup, false);
+            int resourceId = R.layout.spinner_empty_object;
+            View view = layoutInflater.inflate(resourceId, viewGroup, false);
 
-        TextView ingredientHeadingTextView = view.findViewById(R.id.option_text_view);
+            TextView optionTextView = view.findViewById(R.id.option_text_view);
 
-        ingredientHeadingTextView.setVisibility(View.GONE);
+            optionTextView.setVisibility(View.GONE);
 
-        return view;
+            return view;
+
+        } else {
+            return convertView;
+        }
     }
 
     @Override

@@ -9,15 +9,17 @@
     android:background="@color/background"
     android:focusableInTouchMode="true"
     android:focusable="true"
-    android:nextFocusDown="@id/tab_layout_1">
+    android:nextFocusDown="@id/tab_layout_1"
+    tools:ignore="Overdraw">
 
+<!--parent layout isn't useless, its used for focus functionality-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:ignore="UselessParent">
 
         <FrameLayout
-            android:id="@+id/discover_frame_layout"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize">
 

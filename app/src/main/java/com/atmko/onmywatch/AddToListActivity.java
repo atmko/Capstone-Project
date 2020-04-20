@@ -199,7 +199,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
 
         //configure watch status selector
         mWatchStatusRadioGroup = findViewById(R.id.watch_status_radio_group);
-        int choiceSize = getResources().getStringArray(R.array.watch_status_movies_values).length;
+        int choiceSize = getResources().getStringArray(R.array.watch_status_values).length;
 
         for (int i = 0; i < choiceSize; i++) {
             final RadioButton radioButton = ((RadioButton) mWatchStatusRadioGroup.getChildAt(i));

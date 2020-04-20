@@ -18,11 +18,9 @@
 
             <include
                 layout="@layout/people_details_main"
-                android:id="@+id/include_details_main"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <FrameLayout
-                android:id="@+id/detail_extras_parent_frame_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 

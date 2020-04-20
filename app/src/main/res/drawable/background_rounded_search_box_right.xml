@@ -2,7 +2,7 @@
 <!-- inset is used to remove border from top, it can remove border from any other side-->
 <inset xmlns:android="http://schemas.android.com/apk/res/android"
     android:insetLeft="-2dp">
-    <shape android:id="@+id/rectangle">
+    <shape>
         <stroke android:width="@dimen/divider" android:color="@color/colorAccent" />
 
         <solid android:color="@color/background"/>

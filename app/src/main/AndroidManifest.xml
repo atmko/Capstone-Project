@@ -58,7 +58,8 @@
         <activity android:name=".LaunchActivity"
             android:launchMode="singleTop"
             android:theme="@style/splashScreenTheme"
-            android:screenOrientation="sensorPortrait">
+            android:screenOrientation="sensorPortrait"
+            tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

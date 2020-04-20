@@ -7,7 +7,5 @@
 
     <!--POPUP PERCENTAGES-->
     <integer name="add_to_list_activity_popup_screen_percent">50</integer>
-    <integer name="create_list_activity_popup_screen_percent">50</integer>
-    <integer name="rate_activity_popup_screen_percent">50</integer>
     <!--POPUP PERCENTAGES-->
 </resources>

@@ -301,68 +301,6 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    //configures width, height and margins of home list display container
-    private void configureListContainerParams(int containerId) {
-        if (getView() == null) return;
-        if (getActivity() == null) return;
-        final FrameLayout fragmentContainer = getView().findViewById(containerId);
-
-        DisplayMetrics displayDimensions = Resources.getSystem().getDisplayMetrics();
-
-        int masterRatio;
-        int detailRatio;
-
-        int imageColumnSpan = getResources().getInteger(R.integer.search_column_span);
-
-        //get layout weights
-        masterRatio = getResources().getInteger(R.integer.master_fragment_layout_weight);
-        detailRatio = getResources().getInteger(R.integer.detail_fragment_layout_weight);
-
-        //get weight total
-        int weightTotal = masterRatio + detailRatio;
-
-        int weightedWidth;
-
-        //get total weightedWidth
-        if (((MasterActivity) getActivity()).isTabletLandscape()) {
-            weightedWidth = displayDimensions.widthPixels * masterRatio/weightTotal;
-
-        } else {
-            weightedWidth = displayDimensions.widthPixels;
-
-        }
-
-        //get single image pixel width: (searchFragmentPixelWidth/num of columns)
-        int singleImgPixelWidth =
-                weightedWidth / imageColumnSpan;
-
-        //convert spacing between images to pixels
-        int imageSpacing = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                getResources().getInteger(R.integer.search_image_spacing),
-                getResources().getDisplayMetrics());
-
-        //new image width now that spacing is applied
-        int adjustedViewWidth = singleImgPixelWidth - imageSpacing;
-
-        //get poster height
-        long posterHeight = Math.round(adjustedViewWidth * ApiConstants.POSTER_ASPECT_RATIO);
-
-        //set layout params
-        LinearLayout.LayoutParams parentDictatingParams =
-                new LinearLayout.LayoutParams(weightedWidth, (int) posterHeight);
-
-        fragmentContainer.setLayoutParams(parentDictatingParams);
-
-        //set layout margins
-        float dimenToPixels = displayDimensions.density *
-                getResources().getInteger(R.integer.x1_standard_layout_margin_unscaled);
-        ViewGroup.MarginLayoutParams margins =
-                (ViewGroup.MarginLayoutParams) fragmentContainer.getLayoutParams();
-
-        margins.setMargins(0, (int) dimenToPixels, 0, 0);
-    }
-
 
     @Override
     public void onCreateOptionsMenu(@NonNull final Menu menu, @NonNull MenuInflater inflater) {

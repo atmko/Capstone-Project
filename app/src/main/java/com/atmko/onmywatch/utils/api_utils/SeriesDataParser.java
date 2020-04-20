@@ -65,6 +65,7 @@ public class SeriesDataParser {
         return seriesDataList;
     }
 
+    @SuppressWarnings("unchecked")
     static SeriesData parseTvMap(Map seriesDataMap) {
         Double popularity = (Double) seriesDataMap.get(ApiConstants.POPULARITY_KEY);
         popularity = popularity == null ? 0 : popularity;

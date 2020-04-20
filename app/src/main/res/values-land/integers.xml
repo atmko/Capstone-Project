@@ -11,9 +11,6 @@
     <integer name="details_main_layout_weight">1</integer>
     <integer name="details_extras_layout_weight">1</integer>
 
-    <integer name="search_main_layout_weight">1</integer>
-    <integer name="search_results_layout_weight">0</integer>
-
     <!--TABLET_FRAGMENT LAYOUT WEIGHTS-->
     <integer name="master_fragment_layout_weight">1</integer>
     <integer name="detail_fragment_layout_weight">0</integer>

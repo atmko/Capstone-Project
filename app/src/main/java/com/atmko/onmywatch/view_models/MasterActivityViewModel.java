@@ -65,11 +65,9 @@ public class MasterActivityViewModel extends AndroidViewModel {
                     isProModeLiveData.setValue(isProMode);
                     allowCloudBackupLiveData.setValue(allowCloudBackup);
 
-                } catch (FirebaseFirestoreException ex) {
+                } catch (FirebaseFirestoreException | DataBaseIntegrityException ex) {
                     ex.printStackTrace();
 
-                } catch (DataBaseIntegrityException ex) {
-                    ex.printStackTrace();
                 }
             }
         });
@@ -96,11 +94,9 @@ public class MasterActivityViewModel extends AndroidViewModel {
 
                     migrationLiveData.setValue(migration);
 
-                } catch (FirebaseFirestoreException ex) {
+                } catch (FirebaseFirestoreException | DataBaseIntegrityException ex) {
                     ex.printStackTrace();
 
-                } catch (DataBaseIntegrityException ex) {
-                    ex.printStackTrace();
                 }
             }
         });

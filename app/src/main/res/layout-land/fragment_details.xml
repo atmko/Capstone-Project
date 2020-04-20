@@ -30,7 +30,6 @@
             android:background="@color/colorAccent" />
 
         <FrameLayout
-            android:id="@+id/detail_extras_parent_frame_layout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="@integer/details_extras_layout_weight">

@@ -17,7 +17,6 @@
     <dimen name="x9_layout_margin">108dp</dimen>
     <dimen name="x10_layout_margin">120dp</dimen>
     <dimen name="x11_layout_margin">132dp</dimen>
-    <dimen name="x17_layout_margin">204dp</dimen>
     <dimen name="x18_layout_margin">216dp</dimen>
     <dimen name="x19_layout_margin">228dp</dimen>
     <dimen name="x21_layout_margin">252dp</dimen>

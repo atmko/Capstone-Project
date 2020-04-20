@@ -7,7 +7,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    tools:context=".LaunchActivity">
+    tools:context=".LaunchActivity"
+    tools:ignore="Overdraw">
 
     <TextView
         android:id="@+id/logo_text_view"
@@ -62,7 +63,6 @@
             android:textSize="@dimen/headline_3_text_size"/>
 
         <TextView
-            android:id="@+id/no_streaming_suffix_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/text_margin"
@@ -83,7 +83,6 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/i_understand_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/x1_layout_margin"

@@ -1,13 +1,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/widget_list_provider"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@android:color/white">
 
     <LinearLayout
-        android:id="@+id/widget_heading_linear_layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/x6_layout_margin"
         android:orientation="horizontal"

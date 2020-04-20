@@ -72,7 +72,8 @@
                 android:layout_weight="1"
                 android:src="@drawable/ic_rate_black"
                 android:background="@color/colorAccent"
-                android:contentDescription="@string/content_description_share_button"/>
+                android:contentDescription="@string/content_description_share_button"
+                tools:ignore="NestedWeights" />
 
             <FrameLayout
                 android:layout_width="match_parent"

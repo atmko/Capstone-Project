@@ -115,9 +115,7 @@ public class FirebaseUserDataDao {
                     sortBackUps(backups);
                 }
             }
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
 
@@ -174,10 +172,7 @@ public class FirebaseUserDataDao {
             } else {
                 return null;
             }
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            return null;
-        } catch (InterruptedException e) {
+        } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
             return null;
         }

@@ -224,10 +224,12 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
         return layoutManager;
     }
 
+    @SuppressWarnings("unchecked")
     private void observeData(final Bundle savedInstanceState) {
         if (getParentFragment() == null) return;
 
-        ListsWatchAndUserViewModel viewModel = ViewModelProviders.of(getParentFragment()).get(ListsWatchAndUserViewModel.class);
+        ListsWatchAndUserViewModel viewModel = ViewModelProviders.of(getParentFragment())
+                .get(ListsWatchAndUserViewModel.class);
         LiveData listsLiveData;
 
         if (!(mAdapter instanceof UserListsAdapter)) {
@@ -238,7 +240,7 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
                 listsLiveData = viewModel.getWatchLists();
             }
 
-            listsLiveData.observe(getParentFragment(), new Observer<List<WatchListModel>>() {
+            listsLiveData.observe(getViewLifecycleOwner(), new Observer<List<WatchListModel>>() {
                 @Override
                 public void onChanged(List<WatchListModel> watchListModels) {
                     mAdapter.getAdapterData().clear();
@@ -252,7 +254,7 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
 
         } else {
             listsLiveData = viewModel.getUserLists();
-            listsLiveData.observe(getParentFragment(), new Observer<List<UserListModel>>() {
+            listsLiveData.observe(getViewLifecycleOwner(), new Observer<List<UserListModel>>() {
                 @Override
                 public void onChanged(List<UserListModel> userListModels) {
                     populateAndNotifyAdapter(userListModels);

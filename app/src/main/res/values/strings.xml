@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Majik</string>
 
     <!--LAUNCH ACTIVITY TEXT-->
@@ -14,8 +14,7 @@
     <string name="privacy_url">https://majik.flycricket.io/privacy.html</string>
     <!--LAUNCH ACTIVITY TEXT-->
 
-    <string name="ad_mob_application_id_key" translatable="false">com.google.android.gms.ads.APPLICATION_ID</string>
-    <string name="ad_test_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="ad_test_id" translatable="false" tools:keep="@string/ad_test_id">ca-app-pub-3940256099942544/6300978111</string>
 
     <!--options menu titles-->
     <string name="options_settings_title">Settings</string>
@@ -43,13 +42,6 @@
 
     <!--settings titles-->
     <string name="settings_link_title">Link Google Account</string>
-    <string name="settings_review_title">Review this app</string>
-    <string name="settings_contact_developer_title">Contact Developer</string>
-    <string name="settings_default_media_title">Default media</string>
-    <string name="settings_poster_size_title">Poster quality</string>
-    <string name="settings_backdrop_size_title">Backdrop quality</string>
-    <string name="settings_auto_sync_title">Automatic sync</string>
-    <string name="settings_manual_backup_title">Backup</string>
     <string name="settings_contact_title">Contact Us</string>
     <string name="settings_about_app_title">About App</string>
     <string name="settings_restore_title">Restore Data</string>
@@ -60,13 +52,6 @@
 
     <!--settings summary-->
     <string name="settings_link_summary">Become a permanent user. Access your data on any device</string>
-    <string name="settings_review_summary">This app is developed by a single individual. Please consider leaving a 5 star review if you like the app. It does more than you know and means a whole lot. Thanks!"</string>
-    <string name="settings_contact_developer_summary">I would like to know what you think about the app</string>
-    <string name="settings_default_media_summary">Change the default media type to be opened on all screens."</string>
-    <string name="settings_poster_size_summary">Higher image qualities may use more data, and require longer load times."</string>
-    <string name="settings_backdrop_size_summary">Higher image qualities may use more data, and require longer load times."</string>
-    <string name="settings_auto_sync_summary">Create automatic backups</string>
-    <string name="settings_manual_backup_summary">Create a manual backup</string>
     <string name="settings_contact_summary">We\'d love to hear your feedback</string>
     <string name="settings_about_app_summary">Majik Version 1.0.0</string>
     <string name="settings_restore_summary">Restore files to a previous state</string>
@@ -77,23 +62,19 @@
     <string name="poster_description">poster image</string>
     <string name="appwidget_text">!#error#!</string>
     <string name="configure">Configure</string>
-    <string name="add_widget">Add widget</string>
     <string name="content_description_backdrop_image">backdrop image</string>
     <string name="content_description_notify_button">notify button</string>
     <string name="content_description_share_button">share button</string>
-    <string name="content_description_rate_button">rate button</string>
     <string name="content_description_show_more_button">show more button</string>
     <string name="content_description_media_type_button">media type button</string>
     <string name="content_description_lists_button">lists button</string>
     <string name="content_description_search_button">search button</string>
     <string name="content_description_discover_button">discover button</string>
     <string name="content_description_back_button">back button</string>
-    <string name="content_description_options_button">options button</string>
     <string name="content_description_widget_settings_button">widget settings button</string>
     <string name="content_description_add_to_list_button">add to list</string>
     <string name="content_description_create_list_button">create list</string>
     <string name="content_description_person_profile_image">person profile image</string>
-    <string name="content_description_purchase_item">purchase item</string>
     <string name="content_description_info_button">info button</string>
     <!--CONTENT DESCRIPTIONS-->
 
@@ -114,7 +95,6 @@
     <string name="search_text_box_hint">Search</string>
     <string name="name_text_box_hint">Name</string>
     <string name="save_button_text">Save</string>
-    <string name="cancel_button_text">Cancel</string>
     <string name="delete_button_text">Delete</string>
     <string name="yes_button_text">Yes</string>
     <string name="no_button_text">No</string>
@@ -143,8 +123,6 @@
 
     <!--lists text-->
     <string name="lists_text_literal">Lists</string>
-    <string name="user_lists_literal">User Lists</string>
-    <string name="watch_lists_literal">Watch Lists</string>
     <!--lists text-->
 
     <!--discover text-->
@@ -157,9 +135,6 @@
 
     <!--details text-->
     <string name="detail_trailer_text_title">Trailer</string>
-    <string name="detail_notify_text_title">Notify</string>
-    <string name="detail_share_text_title">Share</string>
-    <string name="detail_rate_text_title">Rate</string>
 
     <string name="detail_extra_cast_text_literal">Cast</string>
     <string name="detail_extra_recommended_text_literal">Recommended</string>
@@ -183,7 +158,6 @@
     <string name="watch_status_watching_title">Watching</string>
     <string name="watch_status_watched_title">Watched</string>
     <string name="watch_status_dropped_title">Dropped</string>
-    <string name="watch_status_other_title">Other</string>
     <!--add to list text-->
     <!--VIEW TEXT-->
 
@@ -197,9 +171,6 @@
     <string name="list_updated_message">List Configuration Updated</string>
     <string name="details_error_message">Error fetching media details</string>
     <string name="list_already_exists_error_message">A list with that name already exists</string>
-    <string name="list_deleted_message">List Deleted</string>
-    <string name="list_delete_error_message">Error deleting list</string>
-    <string name="list_delete_record_error_message">Error: media has NOT been removed from list</string>
     <string name="rating_disallowed_message">Rating only allowed if item has \"Watching\", \"Watched\" or \"Dropped\" watch status.</string>
     <string name="confirmation_error_message">An error occurred in confirmation</string>
     <string name="checking_for_backups_message">Checking For Backups.</string>
@@ -232,7 +203,6 @@
     <!--CONFIRMATION MESSAGES-->
 
     <!--PLACEHOLDER TEXT-->
-    <string name="release_date_placeholder">TBD</string>
     <string name="date_of_birth_placeholder">unavailable</string>
     <string name="professions_placeholder">unavailable</string>
     <string name="create_new_list_placeholder">Create New List</string>
@@ -243,16 +213,9 @@
 
     <!--NOTIFICATION TEXT-->
     <!--foreground service descriptions-->
-    <string name="pro_migration_service_description">moving locally stored data to the cloud</string>
-    <string name="free_migration_service_description">moving cloud stored data to your device</string>
 
-    <string name="notification_migration_title">Migrating</string>
-    <string name="notification_pro_migration_content">Migrating to pro mode</string>
-    <string name="notification_free_migration_content">Migrating to free mode</string>
     <string name="notification_channel_backup">Backup</string>
-    <string name="notification_channel_migration">Migration</string>
     <string name="notification_channel_backup_description">Backup data to server</string>
-    <string name="notification_channel_migration_description">Notifications for videos</string>
 
     <string name="notification_new_release_title">New Release</string>
     <string name="notification_new_release_content_suffix">has been released</string>
@@ -263,11 +226,6 @@
 
     <string name="notification_channel_releases">Releases</string>
     <string name="notification_channel_releases_description">Notifications for new releases</string>
-
-    <string name="notification_new_trailer_title">New Trailer</string>
-    <string name="notification_new_trailer_content_suffix">A {replace} trailer has been released</string>
-    <string name="notification_channel_videos">Videos</string>
-    <string name="notification_channel_videos_description">Notifications for videos</string>
 
     <string name="notification_restore_title">Restoring</string>
     <string name="notification_restore_content">Restoring files</string>
@@ -296,34 +254,5 @@
     <!--URLS-->
 
     <!--text purchases-->
-    <string name="test_successful_purchase_string">
-        {\"productId\": \"android.test.purchased\",
-        \"type\": \"inapp\",
-        \"price\": 24,
-        \"price_amount_micros\": 24000000,
-        \"price_currency_code\": \"USD\",
-        \"title\": \"test.purchased\",
-        \"description\": \"test successful purchase\"}
-    </string>
-
-    <string name="test_canceled_purchase_string">
-        {\"productId\": \"android.test.canceled\",
-        \"type\": \"inapp\",
-        \"price\": 24,
-        \"price_amount_micros\": 24000000,
-        \"price_currency_code\": \"USD\",
-        \"title\": \"test.canceled\",
-        \"description\": \"test canceled purchase\"}
-    </string>
-
-    <string name="test_item_unavailable_purchase_string">
-        {\"productId\": \"android.test.item_unavailable\",
-        \"type\": \"inapp\",
-        \"price\": 24,
-        \"price_amount_micros\": 24000000,
-        \"price_currency_code\": \"USD\",
-        \"title\": \"test.item_unavailable\",
-        \"description\": \"test item_unavailable purchase\"}
-    </string>
 
 </resources>

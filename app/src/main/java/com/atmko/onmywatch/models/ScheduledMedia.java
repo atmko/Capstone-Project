@@ -145,6 +145,7 @@ public class ScheduledMedia {
     }
 
     //gets the time till next air date in days, hours, or minutes
+    @SuppressWarnings("IntegerDivisionInFloatingPointContext")
     public String getCountdown() {
         if (mAirDate == null && mAirDateIso == null) return NO_DATES;
 

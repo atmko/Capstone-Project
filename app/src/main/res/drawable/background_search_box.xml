@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/list_view_background_shape">
-    <corners android:radius="2dp" />
-    <!--<solid android:color="#9C9C9C"/>-->
-    <stroke  android:width="@dimen/divider" android:color="@color/colorAccent"/>
-</shape>

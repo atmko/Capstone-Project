@@ -45,7 +45,6 @@ import com.google.firebase.storage.StreamDownloadTask;
 import com.google.gson.Gson;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -168,12 +167,6 @@ public class RestoreService extends JobIntentService {
 
                     pullMovieData();
 
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                    respondWithFailure();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    respondWithFailure();
                 } catch (Exception e) {
                     e.printStackTrace();
                     respondWithFailure();
