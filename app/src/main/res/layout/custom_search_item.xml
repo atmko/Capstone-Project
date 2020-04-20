@@ -27,7 +27,6 @@
         android:paddingBottom="@dimen/half_layout_margin"
         android:paddingStart="@dimen/x2_layout_margin"
         android:paddingEnd="@dimen/x2_layout_margin"
-        tools:entries="@array/genre_id_value"
-        android:layout_marginLeft="@dimen/x2_layout_margin" />
+        tools:entries="@array/genre_id_value" />
 
 </LinearLayout>

@@ -41,9 +41,7 @@
             android:layout_gravity="center"
             android:src="@drawable/ic_fab_add_to_list_white"
             android:background="@drawable/background_rounded_search_box_right"
-            android:contentDescription="@string/content_description_add_to_list_button"
-            android:paddingLeft="@dimen/x1_layout_margin"
-            android:paddingRight="@dimen/x3_layout_margin" />
+            android:contentDescription="@string/content_description_add_to_list_button" />
 
     </LinearLayout>
 
@@ -145,8 +143,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
             android:src="@drawable/ic_info"
-            android:contentDescription="@string/content_description_info_button"
-            android:layout_marginRight="@dimen/x2_layout_margin" />
+            android:contentDescription="@string/content_description_info_button" />
 
         <ImageButton
             android:id="@+id/watching_info_button"
@@ -159,8 +156,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
             android:src="@drawable/ic_info"
-            android:contentDescription="@string/content_description_info_button"
-            android:layout_marginRight="@dimen/x2_layout_margin" />
+            android:contentDescription="@string/content_description_info_button" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

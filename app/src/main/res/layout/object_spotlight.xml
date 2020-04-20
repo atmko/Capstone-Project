@@ -4,7 +4,6 @@
     android:id="@+id/top_frame_layout"
     android:layout_width="@dimen/spotlight_poster_width"
     android:layout_height="@dimen/spotlight_poster_height"
-    android:layout_marginRight="@dimen/x1_layout_margin"
     android:layout_marginEnd="@dimen/x1_layout_margin"
     android:foreground="@drawable/ripple_pressed"
     android:nextFocusDown="@id/add_to_list_button">
@@ -22,9 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/x3_layout_margin"
-        android:paddingLeft="@dimen/x3_layout_margin"
         android:paddingStart="@dimen/x3_layout_margin"
-        android:paddingRight="@dimen/x2_layout_margin"
         android:paddingEnd="@dimen/x2_layout_margin"
         android:paddingBottom="@dimen/x2_layout_margin"
         android:src="@drawable/ic_fab_add_to_list_poster"

@@ -78,8 +78,7 @@
                     android:src="@drawable/ic_info"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:contentDescription="@string/content_description_info_button"
-                    android:layout_marginRight="@dimen/x2_layout_margin" />
+                    android:contentDescription="@string/content_description_info_button" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -113,8 +112,7 @@
                     android:src="@drawable/ic_info"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:contentDescription="@string/content_description_info_button"
-                    android:layout_marginRight="@dimen/x2_layout_margin" />
+                    android:contentDescription="@string/content_description_info_button" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -160,7 +158,6 @@
                     android:layout_marginTop="@dimen/x1_layout_margin"
                     android:layout_marginBottom="@dimen/x1_layout_margin"
                     android:paddingTop="@dimen/x1_layout_margin"
-                    android:paddingRight="@dimen/x1_layout_margin"
                     android:paddingEnd="@dimen/x1_layout_margin"
                     android:paddingBottom="@dimen/x1_layout_margin"
                     android:background="@null"
@@ -183,7 +180,6 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="@dimen/x1_layout_margin"
-                    android:layout_marginLeft="@dimen/x1_layout_margin"
                     android:layout_marginBottom="@dimen/x1_layout_margin"
                     android:background="@null"
                     android:src="@drawable/ic_spinner_arrow_white"
@@ -197,7 +193,6 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="@dimen/x4_layout_margin"
-                    android:layout_marginLeft="@dimen/x4_layout_margin"
                     android:layout_marginTop="@dimen/x1_layout_margin"
                     android:padding="@dimen/x1_layout_margin"
                     android:layout_marginBottom="@dimen/x1_layout_margin"
@@ -221,7 +216,6 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginTop="@dimen/x1_layout_margin"
                     android:layout_marginEnd="@dimen/x1_layout_margin"
-                    android:layout_marginRight="@dimen/x1_layout_margin"
                     android:layout_marginBottom="@dimen/x1_layout_margin"
                     android:background="@null"
                     android:padding="@dimen/x2_layout_margin"

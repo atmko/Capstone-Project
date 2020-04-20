@@ -89,15 +89,13 @@
                 android:layout_marginEnd="@dimen/x1_layout_margin"
                 android:paddingBottom="@dimen/x1_layout_margin"
                 android:text="@string/streaming_confirmation_text"
-                android:textSize="@dimen/body_text_size"
-                android:layout_marginRight="@dimen/x1_layout_margin" />
+                android:textSize="@dimen/body_text_size" />
 
             <androidx.appcompat.widget.AppCompatCheckBox
                 android:id="@+id/i_understand_checkbox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/x1_layout_margin"
-                android:layout_marginLeft="@dimen/x1_layout_margin" />
+                android:layout_marginStart="@dimen/x1_layout_margin" />
 
         </LinearLayout>
 
