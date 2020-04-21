@@ -22,7 +22,6 @@ import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.CustomParams;
 import com.atmko.onmywatch.adapters.MediaDataAdapter;
 import com.atmko.onmywatch.models.MediaData;
-import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 
 import org.parceler.Parcels;
 
@@ -113,26 +112,23 @@ public class KnownForFragment extends Fragment implements MediaDataAdapter.OnLis
 
     @Override
     public void onItemClick(int position) {
-        MediaData selectedData = mAdapter.getAdapterData().get(position);
-        //do nothing if selecting stack placeholder
-        if (selectedData.getId() == null) return;
+        if (getActivity() == null) return;
 
-        if (getParentFragment() != null && getParentFragment().getActivity() != null) {
-            ((MasterActivity) getParentFragment().getActivity()).launchDetailsFragment(selectedData, null);
-        }
+        MediaData mediaData = mAdapter.getAdapterData().get(position);
+        //do nothing if selecting placeholder
+        if (mediaData == null || mediaData.getId() == null || mediaData.getId().equals("")) return;
+        ((MasterActivity) getActivity()).launchDetailsFragment(mediaData, null);
     }
 
     @Override
     public void onAddButtonClick(final int position) {
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                if (getActivity() != null) {
-                    ((MasterActivity) getActivity())
-                            .launchAddToListActivity(mAdapter.getAdapterData().get(position));
-                }
+        if (getActivity() != null) {
+            MediaData selectedData = mAdapter.getAdapterData().get(position);
+            if (selectedData != null && selectedData.getId() != null && !selectedData.getId().equals("")) {
+                ((MasterActivity) getActivity()).launchAddToListActivity(mAdapter
+                                .getAdapterData().get(position));
             }
-        });
+        }
     }
 
     @Override

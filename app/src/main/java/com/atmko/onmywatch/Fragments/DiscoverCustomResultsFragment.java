@@ -30,7 +30,6 @@ import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.CustomParams;
 import com.atmko.onmywatch.adapters.MediaDataAdapter;
-import com.atmko.onmywatch.adapters.PeopleDataAdapter;
 import com.atmko.onmywatch.custom_views.SuperEditText;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
@@ -62,7 +61,6 @@ import static com.atmko.onmywatch.utils.network_utils.work_manager_workers.Updat
 
 public class DiscoverCustomResultsFragment extends Fragment implements
         MediaDataAdapter.OnListItemClickListener,
-        PeopleDataAdapter.OnListItemClickListener,
         AdapterView.OnItemSelectedListener {
 
     private static final String FRAGMENT_KEY = "discover_custom results_fragment";
@@ -84,7 +82,7 @@ public class DiscoverCustomResultsFragment extends Fragment implements
     private static final String SAVED_INDICES_KEY = "saved_indices";
 
     //check for restoring state
-    private RecyclerView.Adapter mDataAdapter;
+    private MediaDataAdapter mDataAdapter;
     private Stack mStack;
     private SearchPreferences mSearchPreferences;
     private SuperEditText mSearchTextView;
@@ -145,22 +143,11 @@ public class DiscoverCustomResultsFragment extends Fragment implements
 
             MasterActivity.restoreSearchIfAvailable(DiscoverCustomResultsFragment.this, savedInstanceState);
 
-            List<MediaData> mediaDataList;
+            //get saved adapter data list
+            List<MediaData> mediaDataList = Parcels.unwrap(
+                    savedInstanceState.getParcelable(ADAPTER_DATA_LIST_KEY));
 
-            if (mMediaType == MEDIA_TYPE_PEOPLE) {
-                //get saved adapter data list
-                mediaDataList = Parcels.unwrap(
-                        savedInstanceState.getParcelable(ADAPTER_DATA_LIST_KEY));
-
-                ((PeopleDataAdapter) mDataAdapter).addAdapterData(mediaDataList);
-
-            } else {
-                //get saved adapter data list
-                mediaDataList = Parcels.unwrap(
-                        savedInstanceState.getParcelable(ADAPTER_DATA_LIST_KEY));
-
-                ((MediaDataAdapter) mDataAdapter).addAdapterData(mediaDataList);
-            }
+            mDataAdapter.addAdapterData(mediaDataList);
 
             //get saved paging block map
             int[] pagingBlockRange = savedInstanceState.getIntArray(PAGING_BLOCK_MAP_KEY);
@@ -219,14 +206,8 @@ public class DiscoverCustomResultsFragment extends Fragment implements
         recyclerView = getView().findViewById(R.id.results_recycler_view);
         recyclerView.setLayoutManager(configureLayoutManager());
 
-        if (mMediaType == MEDIA_TYPE_PEOPLE) {
-            mDataAdapter = new PeopleDataAdapter(this,
-                    getActivity().getApplicationContext());
-
-        } else {
-            mDataAdapter = new MediaDataAdapter(this, getActivity().getApplicationContext(),
-                    CustomParams.getSearchParams(this));
-        }
+        mDataAdapter = new MediaDataAdapter(this, getActivity().getApplicationContext(),
+                CustomParams.getSearchParams(this));
 
         Object preloadObject = null;
         if (mMediaType == MEDIA_TYPE_MOVIE) {
@@ -467,14 +448,7 @@ public class DiscoverCustomResultsFragment extends Fragment implements
     private boolean canLaunchDetailFragmentAlongside() {
         if (getActivity() == null) return false;
         boolean isTabletLandscape = ((MasterActivity) getActivity()).isTabletLandscape();
-
-        boolean isAdapterEmpty;
-        if (mMediaType == MEDIA_TYPE_PEOPLE) {
-            isAdapterEmpty = ((PeopleDataAdapter) mDataAdapter).getAdapterData().size() > 0;
-
-        } else {
-            isAdapterEmpty = ((MediaDataAdapter) mDataAdapter).getAdapterData().size() > 0;
-        }
+        boolean isAdapterEmpty = mDataAdapter.getAdapterData().size() > 0;
 
         return isAdapterEmpty && isTabletLandscape;
     }
@@ -504,14 +478,8 @@ public class DiscoverCustomResultsFragment extends Fragment implements
                 //TODO consider detaching fragments to disable background updates instead of "isParentActive"
                 && isParentActive) {
 
-            if (mMediaType == MEDIA_TYPE_PEOPLE) {
-                PersonData firstPeopleData = ((PeopleDataAdapter) mDataAdapter).getAdapterData().get(0);
-                masterActivity.launchPeopleDetailsFragment(firstPeopleData);
-
-            } else {
-                MediaData firstMediaData = ((MediaDataAdapter) mDataAdapter).getAdapterData().get(0);
-                masterActivity.launchDetailsFragment(firstMediaData, null);
-            }
+            MediaData firstMediaData = mDataAdapter.getAdapterData().get(0);
+            masterActivity.launchDetailsFragment(firstMediaData, null);
         }
     }
 
@@ -586,22 +554,12 @@ public class DiscoverCustomResultsFragment extends Fragment implements
 
     @Override
     public void onItemClick(int position) {
-        Object selectedData;
-
         if (getActivity() == null) return;
 
-        if (mDataAdapter instanceof MediaDataAdapter) {
-            selectedData = ((MediaDataAdapter) mDataAdapter).getAdapterData().get(position);
-            //do nothing if selecting stack placeholder
-            if (((MediaData) selectedData).getId() == null) return;
-            ((MasterActivity) getActivity()).launchDetailsFragment(((MediaData) selectedData), null);
-
-        } else {
-            selectedData = ((PeopleDataAdapter) mDataAdapter).getAdapterData().get(position);
-            //do nothing if selecting stack placeholder
-            if (((PersonData) selectedData).getId() == null) return;
-            ((MasterActivity) getActivity()).launchPeopleDetailsFragment(((PersonData) selectedData));
-        }
+        MediaData mediaData = mDataAdapter.getAdapterData().get(position);
+        //do nothing if selecting placeholder
+        if (mediaData == null || mediaData.getId() == null || mediaData.getId().equals("")) return;
+        ((MasterActivity) getActivity()).launchDetailsFragment(mediaData, null);
     }
 
     @Override
@@ -610,9 +568,12 @@ public class DiscoverCustomResultsFragment extends Fragment implements
             @Override
             public void run() {
                 if (getActivity() != null) {
-                    ((MasterActivity) getActivity())
-                            .launchAddToListActivity(((MediaDataAdapter) mDataAdapter)
-                                    .getAdapterData().get(position));
+                    MediaData selectedData = mDataAdapter.getAdapterData().get(position);
+                    if (selectedData != null && selectedData.getId() != null && !selectedData.getId().equals("")) {
+                        ((MasterActivity) getActivity())
+                                .launchAddToListActivity(((MediaDataAdapter) mDataAdapter)
+                                        .getAdapterData().get(position));
+                    }
                 }
             }
         });
@@ -627,14 +588,7 @@ public class DiscoverCustomResultsFragment extends Fragment implements
             getArguments().putParcelable(SEARCH_PREFERENCES_KEY, Parcels.wrap(mSearchPreferences));
         }
 
-        if (mMediaType == MEDIA_TYPE_PEOPLE) {
-            outState.putParcelable(ADAPTER_DATA_LIST_KEY,
-                    Parcels.wrap(((PeopleDataAdapter)mDataAdapter).getAdapterData()));
-
-        } else {
-            outState.putParcelable(ADAPTER_DATA_LIST_KEY,
-                    Parcels.wrap(((MediaDataAdapter)mDataAdapter).getAdapterData()));
-        }
+        outState.putParcelable(ADAPTER_DATA_LIST_KEY, Parcels.wrap(mDataAdapter.getAdapterData()));
 
         outState.putIntArray(PAGING_BLOCK_MAP_KEY, mStack.saveBlockStructure());
 

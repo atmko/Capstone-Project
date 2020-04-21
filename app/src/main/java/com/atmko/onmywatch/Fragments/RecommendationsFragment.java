@@ -302,13 +302,12 @@ public class RecommendationsFragment extends Fragment
 
     @Override
     public void onItemClick(int position) {
-        MediaData selectedData = mDataAdapter.getAdapterData().get(position);
-        //do nothing if selecting stack placeholder
-        if (selectedData.getId() == null) return;
+        if (getActivity() == null) return;
 
-        if ((getParentFragment() != null) && (getParentFragment().getActivity() != null)) {
-            ((MasterActivity) getParentFragment().getActivity()).launchDetailsFragment(selectedData, null);
-        }
+        MediaData mediaData = mDataAdapter.getAdapterData().get(position);
+        //do nothing if selecting placeholder
+        if (mediaData == null || mediaData.getId() == null || mediaData.getId().equals("")) return;
+        ((MasterActivity) getActivity()).launchDetailsFragment(mediaData, null);
     }
 
     @Override
@@ -317,8 +316,11 @@ public class RecommendationsFragment extends Fragment
             @Override
             public void run() {
                 if (getActivity() != null) {
-                    ((MasterActivity) getActivity())
-                            .launchAddToListActivity(mDataAdapter.getAdapterData().get(position));
+                    MediaData selectedData = mDataAdapter.getAdapterData().get(position);
+                    if (selectedData != null && selectedData.getId() != null && !selectedData.getId().equals("")) {
+                        ((MasterActivity) getActivity()).launchAddToListActivity(mDataAdapter
+                                        .getAdapterData().get(position));
+                    }
                 }
             }
         });

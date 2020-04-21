@@ -54,7 +54,7 @@ import static com.atmko.onmywatch.utils.network_utils.work_manager_workers.Updat
 
 public class DiscoverResultsFragment extends Fragment implements
         MediaDataAdapter.OnListItemClickListener,
-        PeopleDataAdapter.OnListItemClickListener{
+        PeopleDataAdapter.OnListItemClickListener {
 
     private static final String FRAGMENT_KEY = "discover_results_fragment";
 
@@ -421,21 +421,19 @@ public class DiscoverResultsFragment extends Fragment implements
 
     @Override
     public void onItemClick(int position) {
-        Object selectedData;
-
         if (getActivity() == null) return;
 
         if (mDataAdapter instanceof MediaDataAdapter) {
-            selectedData = ((MediaDataAdapter) mDataAdapter).getAdapterData().get(position);
-            //do nothing if selecting stack placeholder
-            if (((MediaData) selectedData).getId() == null) return;
-            ((MasterActivity) getActivity()).launchDetailsFragment(((MediaData) selectedData), null);
+            MediaData mediaData = ((MediaDataAdapter) mDataAdapter).getAdapterData().get(position);
+            //do nothing if selecting placeholder
+            if (mediaData == null || mediaData.getId() == null || mediaData.getId().equals("")) return;
+            ((MasterActivity) getActivity()).launchDetailsFragment(mediaData, null);
 
         } else {
-            selectedData = ((PeopleDataAdapter) mDataAdapter).getAdapterData().get(position);
-            //do nothing if selecting stack placeholder
-            if (((PersonData) selectedData).getId() == null) return;
-            ((MasterActivity) getActivity()).launchPeopleDetailsFragment(((PersonData) selectedData));
+            PersonData person = ((PeopleDataAdapter) mDataAdapter).getAdapterData().get(position);
+            //do nothing if selecting placeholder
+            if (person == null || person.getId() == null || person.getId().equals("")) return;
+            ((MasterActivity) getActivity()).launchPeopleDetailsFragment(person);
         }
     }
 
@@ -445,9 +443,12 @@ public class DiscoverResultsFragment extends Fragment implements
             @Override
             public void run() {
                 if (getActivity() != null) {
-                    ((MasterActivity) getActivity())
-                            .launchAddToListActivity(((MediaDataAdapter) mDataAdapter)
-                                    .getAdapterData().get(position));
+                    MediaData selectedData = ((MediaDataAdapter) mDataAdapter).getAdapterData().get(position);
+                    if (selectedData != null && selectedData.getId() != null && !selectedData.getId().equals("")) {
+                        ((MasterActivity) getActivity())
+                                .launchAddToListActivity(((MediaDataAdapter) mDataAdapter)
+                                        .getAdapterData().get(position));
+                    }
                 }
             }
         });

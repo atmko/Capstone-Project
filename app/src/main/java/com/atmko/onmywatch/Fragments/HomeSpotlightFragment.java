@@ -247,8 +247,11 @@ public class HomeSpotlightFragment extends Fragment implements
     @Override
     public void onItemClick(int position) {
         if (getActivity() == null) return;
-        MediaData selectedData = mDataAdapter.getAdapterData().get(position);
-        ((MasterActivity) getActivity()).launchDetailsFragment(selectedData, null);
+
+        MediaData mediaData = mDataAdapter.getAdapterData().get(position);
+        //do nothing if selecting placeholder
+        if (mediaData == null || mediaData.getId() == null || mediaData.getId().equals("")) return;
+        ((MasterActivity) getActivity()).launchDetailsFragment(mediaData, null);
     }
 
     @Override

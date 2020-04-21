@@ -215,13 +215,11 @@ public class CastFragment extends Fragment
 
     @Override
     public void onItemClick(int position) {
+        if (getActivity() == null) return;
         CastData selectedData = mDataAdapter.getAdapterData().get(position);
-        //do nothing if selecting stack placeholder
-        if (selectedData.getId() == null) return;
-
-        if ((getParentFragment() != null) && (getParentFragment().getActivity() != null)) {
-            ((MasterActivity) getParentFragment().getActivity()).launchPeopleDetailsFragment(selectedData);
-        }
+        //do nothing if selecting placeholder
+        if (selectedData == null || selectedData.getId() == null || selectedData.getId().equals("")) return;
+        ((MasterActivity) getActivity()).launchPeopleDetailsFragment(selectedData);
     }
 
     @Override
