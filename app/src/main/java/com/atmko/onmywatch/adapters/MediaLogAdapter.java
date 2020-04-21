@@ -46,6 +46,8 @@ public class MediaLogAdapter
     private final int NO_POSTER_LAYOUT = 2;
     private final int PLACEHOLDER_ID = -1;
 
+    private static final int UNIQUE_PLACEHOLDER_COUNT = 3;
+
     public MediaLogAdapter(OnListItemClickListener clickListener, Context context, int[] params) {
         mFragment = ((Fragment) clickListener);
         mOnListItemClickListener = clickListener;
@@ -180,7 +182,7 @@ public class MediaLogAdapter
 
             adapterViewHolder.countDownTextView.setVisibility(View.GONE);
 
-            int normalizer = position % mPlaceHolderCapacity;
+            int normalizer = position % UNIQUE_PLACEHOLDER_COUNT;
             if (normalizer == 0) {
                 adapterViewHolder.moviePosterImageView.setBackground(mContext.getResources().getDrawable(R.drawable.placeholder_img_1));
 
