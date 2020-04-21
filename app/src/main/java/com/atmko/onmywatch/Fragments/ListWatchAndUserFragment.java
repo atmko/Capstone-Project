@@ -389,16 +389,14 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
                         List<MovieData> moviesInList = mDatabase.movieDataRecordsDao()
                                 .getAllMoviesInListAlt(userListModel.getName());
 
-                        if (moviesInList != null) {
-                            maintainMoviesWatchListCountIntegrity(moviesInList);
-                        }
-
                         List<SeriesData> seriesInList = mDatabase.seriesDataRecordsDao()
                                 .getAllSeriesInListAlt(userListModel.getName());
 
                         mDatabase.userListsDao().deleteList(userListModel);
 
-                        maintainSeriesWatchListCountIntegrity(seriesInList);
+                        if (moviesInList != null) maintainMoviesWatchListCountIntegrity(moviesInList);
+
+                        if (seriesInList != null) maintainSeriesWatchListCountIntegrity(seriesInList);
 
                         deleteListTag(userListModel.getName());
                     }
