@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingTop="@dimen/x1_layout_margin"
     android:paddingStart="@dimen/text_margin"
     android:paddingLeft="@dimen/text_margin"
     android:paddingEnd="@dimen/text_margin"
