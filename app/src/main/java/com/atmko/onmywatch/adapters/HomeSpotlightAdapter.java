@@ -5,9 +5,11 @@
 package com.atmko.onmywatch.adapters;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -34,17 +36,19 @@ public class HomeSpotlightAdapter
     private final List<MediaData> mAdapterData;
     private final OnListItemClickListener mOnListItemClickListener;
     private final Context mContext;
+    private final int[] mParams;
 
     //layout ids
     @SuppressWarnings("FieldCanBeLocal")
     private final int STANDARD_LAYOUT_ID = 1;
     private final int NO_POSTER_LAYOUT = 2;
 
-    public HomeSpotlightAdapter(OnListItemClickListener clickListener, Context context) {
+    public HomeSpotlightAdapter(OnListItemClickListener clickListener, Context context, int[] params) {
         mFragment = ((Fragment) clickListener);
         mOnListItemClickListener = clickListener;
         mAdapterData = new ArrayList<>();
         mContext = context;
+        mParams = params;
     }
 
     public interface OnListItemClickListener {
@@ -54,6 +58,7 @@ public class HomeSpotlightAdapter
     public class HomeSpotlightAdapterViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener{
 
+        final FrameLayout topFrameLayout;
         ImageView moviePosterImageView;
         TextView posterReplacementTextView;
         final ImageButton addButton;
@@ -61,6 +66,10 @@ public class HomeSpotlightAdapter
         private HomeSpotlightAdapterViewHolder(@NonNull View itemView, int viewType) {
             super(itemView);
             itemView.setOnClickListener(this);
+
+            topFrameLayout = itemView.findViewById(R.id.top_frame_layout);
+            topFrameLayout.setLayoutParams(getPosterDimensions(topFrameLayout));
+            topFrameLayout.setLayoutParams(getPosterMargins(topFrameLayout));
 
             if (viewType == NO_POSTER_LAYOUT) {
                 posterReplacementTextView = itemView.findViewById(R.id.poster_replacement_text_view);
@@ -86,6 +95,28 @@ public class HomeSpotlightAdapter
             int position = getAdapterPosition();
             mOnListItemClickListener.onItemClick(position);
         }
+    }
+
+    private ViewGroup.LayoutParams getPosterDimensions(View view) {
+        ViewGroup.LayoutParams params = view.getLayoutParams();
+
+        //set layout params
+        params.width = mParams[0];
+        params.height = mParams[1];
+
+        return params;
+    }
+
+    private ViewGroup.MarginLayoutParams getPosterMargins(View view) {
+        ViewGroup.MarginLayoutParams margins =
+                (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+
+        //set layout margins
+        float dimenToPixels = Resources.getSystem().getDisplayMetrics().density *
+                mFragment.getResources().getInteger(R.integer.x1_standard_layout_margin_unscaled);
+
+        margins.setMargins(0, (int) dimenToPixels, 0, 0);
+        return margins;
     }
 
     @NonNull

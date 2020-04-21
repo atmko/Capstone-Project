@@ -5,7 +5,10 @@
 package com.atmko.onmywatch.Fragments;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -29,6 +33,7 @@ import com.atmko.onmywatch.ConfirmationActivity;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.SettingsActivity;
+import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
 import com.atmko.onmywatch.view_models.MasterActivityViewModel;
 
@@ -107,6 +112,13 @@ public class HomeFragment extends Fragment {
         Toolbar toolbar = getView().findViewById(R.id.toolbar);
 
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+
+        //configure home list display container layout params
+        configureSpotlightContainerParams();
+
+        //configure home list display container layout params
+        configureListContainerParams(R.id.upcoming_media_container);
+        configureListContainerParams(R.id.ended_media_container);
 
         TextView mediaTypeTextView = getView().findViewById(R.id.media_type_text_view);
         mediaTypeTextView.setOnClickListener(new View.OnClickListener() {
@@ -296,6 +308,122 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    //configures width, height and margins of spotlight container
+    private void configureSpotlightContainerParams() {
+        if (getView() == null) return;
+        if (getActivity() == null) return;
+        final FrameLayout fragmentContainer = getView().findViewById(R.id.spotlight_container);
+
+        DisplayMetrics displayDimensions = Resources.getSystem().getDisplayMetrics();
+
+        int masterRatio;
+        int detailRatio;
+
+        //how much spotlight height is compared to entire screen height
+        double imageHeightFactor = getResources().getFloat(R.dimen.spotlight_height_scale_factor);
+
+        //get layout weights
+        masterRatio = getResources().getInteger(R.integer.master_fragment_layout_weight);
+        detailRatio = getResources().getInteger(R.integer.detail_fragment_layout_weight);
+
+        //get weight total
+        int weightTotal = masterRatio + detailRatio;
+
+        int weightedHeight;
+
+        //get total weightedWidth
+        if (((MasterActivity) getActivity()).isTabletLandscape()) {
+            weightedHeight = displayDimensions.heightPixels * masterRatio/weightTotal;
+
+        } else {
+            weightedHeight = displayDimensions.heightPixels;
+        }
+
+        //get single image pixel width: (searchFragmentPixelWidth * height factor)
+        int singleImgPixelHeight = ((Long) Math.round(weightedHeight * imageHeightFactor)).intValue();
+
+        //set layout params
+        LinearLayout.LayoutParams parentDictatingParams =
+                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, singleImgPixelHeight);
+
+        fragmentContainer.setLayoutParams(parentDictatingParams);
+
+        //set layout margins
+        float dimenToPixels = displayDimensions.density *
+                getResources().getInteger(R.integer.x1_standard_layout_margin_unscaled);
+        ViewGroup.MarginLayoutParams margins =
+                (ViewGroup.MarginLayoutParams) fragmentContainer.getLayoutParams();
+        margins.setMargins(0, (int) dimenToPixels, 0, 0);
+    }
+
+    //configures width, height and margins of home list display container
+    private void configureListContainerParams(int containerId) {
+        if (getView() == null) return;
+        if (getActivity() == null) return;
+        final FrameLayout fragmentContainer = getView().findViewById(containerId);
+
+        DisplayMetrics displayDimensions = Resources.getSystem().getDisplayMetrics();
+
+        int masterRatio;
+        int detailRatio;
+
+        int imageColumnSpan = getResources().getInteger(R.integer.search_column_span);
+
+        //get layout weights
+        masterRatio = getResources().getInteger(R.integer.master_fragment_layout_weight);
+        detailRatio = getResources().getInteger(R.integer.detail_fragment_layout_weight);
+
+        //get weight total
+        int weightTotal = masterRatio + detailRatio;
+
+        int weightedWidth;
+
+        //get total weightedWidth
+        if (((MasterActivity) getActivity()).isTabletLandscape()) {
+            weightedWidth = displayDimensions.widthPixels * masterRatio/weightTotal;
+
+        } else {
+            weightedWidth = displayDimensions.widthPixels;
+
+        }
+
+        //get single image pixel width: (searchFragmentPixelWidth/num of columns)
+        int singleImgPixelWidth =
+                weightedWidth / imageColumnSpan;
+
+        //convert spacing between images to pixels
+        int imageSpacing = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                getResources().getInteger(R.integer.search_image_spacing),
+                getResources().getDisplayMetrics());
+
+        //new image width now that spacing is applied
+        int adjustedViewWidth = singleImgPixelWidth - imageSpacing;
+
+        float textSizeDp = getResources().getDimension(R.dimen.body_text_size);
+        float textPaddingDp = getResources().getDimension(R.dimen.x3_4_layout_margin) * 2;
+        float textSpaceDp = textSizeDp + textPaddingDp;
+        //set layout margins
+        float textSpace = displayDimensions.density * textSpaceDp;
+
+        //get poster height
+        long posterHeight =
+                Math.round((adjustedViewWidth * ApiConstants.POSTER_ASPECT_RATIO) + textSpace);
+
+        //set layout params
+        LinearLayout.LayoutParams parentDictatingParams =
+                new LinearLayout.LayoutParams(weightedWidth, (int) posterHeight);
+
+        fragmentContainer.setLayoutParams(parentDictatingParams);
+
+        //set layout margins
+        float dimenToPixels = displayDimensions.density *
+                getResources().getInteger(R.integer.x1_standard_layout_margin_unscaled);
+        ViewGroup.MarginLayoutParams margins =
+                (ViewGroup.MarginLayoutParams) fragmentContainer.getLayoutParams();
+
+        margins.setMargins(0, (int) dimenToPixels, 0, 0);
+    }
 
     @Override
     public void onCreateOptionsMenu(@NonNull final Menu menu, @NonNull MenuInflater inflater) {

@@ -22,6 +22,7 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
+import com.atmko.onmywatch.adapters.CustomParams;
 import com.atmko.onmywatch.adapters.HomeSpotlightAdapter;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.utils.api_utils.MovieDataParser;
@@ -127,7 +128,8 @@ public class HomeSpotlightFragment extends Fragment implements
         recyclerView.setLayoutManager(configureLayoutManager());
 
         mDataAdapter = new HomeSpotlightAdapter(this,
-                getActivity().getApplicationContext());
+                getActivity().getApplicationContext(),
+                CustomParams.getSpotlightParams(HomeSpotlightFragment.this));
 
         recyclerView.setAdapter(mDataAdapter);
     }

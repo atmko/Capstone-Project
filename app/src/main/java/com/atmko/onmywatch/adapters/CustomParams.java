@@ -6,6 +6,7 @@ import android.util.TypedValue;
 
 import androidx.fragment.app.Fragment;
 
+import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 
@@ -105,6 +106,49 @@ public class CustomParams {
         //set layout params
         params[0] = adjustedViewWidth;
         params[1] = (int) posterHeight;
+
+        return params;
+    }
+
+    //configures width, height and margins of home list display container
+    public static int[] getSpotlightParams(Fragment fragment) {
+        if (fragment.getActivity() == null) return new int[0];
+
+        DisplayMetrics displayDimensions = Resources.getSystem().getDisplayMetrics();
+
+        int masterRatio;
+        int detailRatio;
+
+        //how much spotlight height is compared to entire screen height
+        double imageHeightFactor = fragment.getResources().getFloat(R.dimen.spotlight_height_scale_factor);
+
+        //get layout weights
+        masterRatio = fragment.getResources().getInteger(R.integer.master_fragment_layout_weight);
+        detailRatio = fragment.getResources().getInteger(R.integer.detail_fragment_layout_weight);
+
+        //get weight total
+        int weightTotal = masterRatio + detailRatio;
+
+        int weightedHeight;
+
+        //get total weightedWidth
+        if (((MasterActivity) fragment.getActivity()).isTabletLandscape()) {
+            weightedHeight = displayDimensions.heightPixels * masterRatio/weightTotal;
+
+        } else {
+            weightedHeight = displayDimensions.heightPixels;
+        }
+
+        //get single image pixel width: (searchFragmentPixelWidth * height factor)
+        int singleImgPixelHeight = ((Long) Math.round(weightedHeight * imageHeightFactor)).intValue();
+        int singleImgPixelWidth =
+                ((Long) Math.round(singleImgPixelHeight / ApiConstants.POSTER_ASPECT_RATIO)).intValue();
+
+        int[] params = new int[2];
+
+        //set layout params
+        params[0] = singleImgPixelWidth;
+        params[1] = (int) singleImgPixelHeight;
 
         return params;
     }

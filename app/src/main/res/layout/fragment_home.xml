@@ -85,6 +85,7 @@
             <FrameLayout
                 style="@style/style_home_list_display_container"
                 android:id="@+id/upcoming_media_container"
+                tools:layout_height="@dimen/search_poster_height"
                 tools:background="@color/color_subtext"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -119,6 +120,7 @@
             <FrameLayout
                 style="@style/style_home_list_display_container"
                 android:id="@+id/ended_media_container"
+                tools:layout_height="@dimen/search_poster_height"
                 tools:background="@color/color_subtext"/>
 
             <TextView
@@ -129,6 +131,7 @@
             <FrameLayout
                 style="@style/style_home_list_display_container"
                 android:id="@+id/undated_media_container"
+                tools:layout_height="@dimen/search_poster_height"
                 tools:background="@color/color_subtext"/>
 
         </LinearLayout>
