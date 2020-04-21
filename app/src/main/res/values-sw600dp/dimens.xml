@@ -14,6 +14,8 @@
     <!--detail margins-->
     <!--MARGINS-->
 
+    <dimen name="person_profile_image_dimen">180dp</dimen>
+
     <!--TEXT DIMENSIONS-->
     <dimen name="appbar_headline_text_size">21sp</dimen>
     <dimen name="caption_text_size">14sp</dimen>
