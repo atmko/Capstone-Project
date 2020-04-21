@@ -5,6 +5,7 @@
 package com.atmko.onmywatch.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -157,17 +158,14 @@ public class MediaLogAdapter
 
         int resourceId;
 
-        if (viewType == STANDARD_LAYOUT_ID) {
+        if (viewType == STANDARD_LAYOUT_ID || viewType == PLACEHOLDER_ID) {
             resourceId = R.layout.object_media_log;
 
         } else if (viewType == NO_POSTER_LAYOUT) {
             resourceId = R.layout.object_media_log_no_poster;
 
-        } else if (viewType == PLACEHOLDER_ID) {
-            resourceId = R.layout.item_empty_list;
-
         } else {
-            resourceId = R.layout.object_media_data;
+            resourceId = R.layout.object_media_log;
         }
 
         View view = layoutInflater.inflate(resourceId, viewGroup, false);
@@ -179,6 +177,8 @@ public class MediaLogAdapter
     public void onBindViewHolder(@NonNull MediaLogAdapterViewHolder adapterViewHolder, int position) {
         if (adapterViewHolder.getItemViewType() == PLACEHOLDER_ID
                 && position >= getPlaceholdersStartingIndex()) {
+
+            adapterViewHolder.countDownTextView.setVisibility(View.GONE);
 
             int normalizer = position % mPlaceHolderCapacity;
             if (normalizer == 0) {
