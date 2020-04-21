@@ -160,11 +160,14 @@ public class MediaLogAdapter
 
         int resourceId;
 
-        if (viewType == STANDARD_LAYOUT_ID || viewType == PLACEHOLDER_ID) {
+        if (viewType == STANDARD_LAYOUT_ID) {
             resourceId = R.layout.object_media_log;
 
         } else if (viewType == NO_POSTER_LAYOUT) {
             resourceId = R.layout.object_media_log_no_poster;
+
+        } else if (viewType == PLACEHOLDER_ID) {
+            resourceId = R.layout.object_media_log_placeholder;
 
         } else {
             resourceId = R.layout.object_media_log;
@@ -179,8 +182,6 @@ public class MediaLogAdapter
     public void onBindViewHolder(@NonNull MediaLogAdapterViewHolder adapterViewHolder, int position) {
         if (adapterViewHolder.getItemViewType() == PLACEHOLDER_ID
                 && position >= getPlaceholdersStartingIndex()) {
-
-            adapterViewHolder.countDownTextView.setVisibility(View.GONE);
 
             int normalizer = position % UNIQUE_PLACEHOLDER_COUNT;
             if (normalizer == 0) {
