@@ -6,7 +6,6 @@ import android.util.TypedValue;
 
 import androidx.fragment.app.Fragment;
 
-import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 
@@ -116,31 +115,13 @@ public class CustomParams {
 
         DisplayMetrics displayDimensions = Resources.getSystem().getDisplayMetrics();
 
-        int masterRatio;
-        int detailRatio;
-
         //how much spotlight height is compared to entire screen height
         double imageHeightFactor = fragment.getResources().getFloat(R.dimen.spotlight_height_scale_factor);
 
-        //get layout weights
-        masterRatio = fragment.getResources().getInteger(R.integer.master_fragment_layout_weight);
-        detailRatio = fragment.getResources().getInteger(R.integer.detail_fragment_layout_weight);
-
-        //get weight total
-        int weightTotal = masterRatio + detailRatio;
-
-        int weightedHeight;
-
-        //get total weightedWidth
-        if (((MasterActivity) fragment.getActivity()).isTabletLandscape()) {
-            weightedHeight = displayDimensions.heightPixels * masterRatio/weightTotal;
-
-        } else {
-            weightedHeight = displayDimensions.heightPixels;
-        }
+        int screenHeight = displayDimensions.heightPixels;
 
         //get single image pixel width: (searchFragmentPixelWidth * height factor)
-        int singleImgPixelHeight = ((Long) Math.round(weightedHeight * imageHeightFactor)).intValue();
+        int singleImgPixelHeight = ((Long) Math.round(screenHeight * imageHeightFactor)).intValue();
         int singleImgPixelWidth =
                 ((Long) Math.round(singleImgPixelHeight / ApiConstants.POSTER_ASPECT_RATIO)).intValue();
 

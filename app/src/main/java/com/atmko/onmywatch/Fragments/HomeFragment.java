@@ -314,33 +314,16 @@ public class HomeFragment extends Fragment {
         if (getActivity() == null) return;
         final FrameLayout fragmentContainer = getView().findViewById(R.id.spotlight_container);
 
-        DisplayMetrics displayDimensions = Resources.getSystem().getDisplayMetrics();
 
-        int masterRatio;
-        int detailRatio;
+        DisplayMetrics displayDimensions = Resources.getSystem().getDisplayMetrics();
 
         //how much spotlight height is compared to entire screen height
         double imageHeightFactor = getResources().getFloat(R.dimen.spotlight_height_scale_factor);
 
-        //get layout weights
-        masterRatio = getResources().getInteger(R.integer.master_fragment_layout_weight);
-        detailRatio = getResources().getInteger(R.integer.detail_fragment_layout_weight);
-
-        //get weight total
-        int weightTotal = masterRatio + detailRatio;
-
-        int weightedHeight;
-
-        //get total weightedWidth
-        if (((MasterActivity) getActivity()).isTabletLandscape()) {
-            weightedHeight = displayDimensions.heightPixels * masterRatio/weightTotal;
-
-        } else {
-            weightedHeight = displayDimensions.heightPixels;
-        }
+        int screenHeight = displayDimensions.heightPixels;
 
         //get single image pixel width: (searchFragmentPixelWidth * height factor)
-        int singleImgPixelHeight = ((Long) Math.round(weightedHeight * imageHeightFactor)).intValue();
+        int singleImgPixelHeight = ((Long) Math.round(screenHeight * imageHeightFactor)).intValue();
 
         //set layout params
         LinearLayout.LayoutParams parentDictatingParams =
