@@ -15,9 +15,6 @@
     <!--MARGINS-->
 
     <!--VIEW DIMENSIONS-->
-    <!--image_dimensions-->
-    <dimen name="spotlight_poster_height">225dp</dimen>
-    <dimen name="spotlight_poster_width">150dp</dimen>
-    <!--image_dimensions-->
+    <item name="spotlight_height_scale_factor" type="dimen" format="float">0.446</item>
     <!--VIEW DIMENSIONS-->
 </resources>
