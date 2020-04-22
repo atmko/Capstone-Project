@@ -6,6 +6,7 @@ package com.atmko.onmywatch.Fragments;
 
 import android.content.Intent;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -318,7 +319,16 @@ public class HomeFragment extends Fragment {
         DisplayMetrics displayDimensions = Resources.getSystem().getDisplayMetrics();
 
         //how much spotlight height is compared to entire screen height
-        double imageHeightFactor = getResources().getFloat(R.dimen.spotlight_height_scale_factor);
+        double imageHeightFactor;
+
+        if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+            imageHeightFactor = getResources().getFloat(R.dimen.spotlight_height_scale_factor);
+
+        } else {
+            TypedValue outValue = new TypedValue();
+            getResources().getValue(R.dimen.spotlight_height_scale_factor, outValue, true);
+            imageHeightFactor = outValue.getFloat();
+        }
 
         int screenHeight = displayDimensions.heightPixels;
 

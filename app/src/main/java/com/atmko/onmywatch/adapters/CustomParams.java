@@ -1,6 +1,7 @@
 package com.atmko.onmywatch.adapters;
 
 import android.content.res.Resources;
+import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
@@ -116,7 +117,16 @@ public class CustomParams {
         DisplayMetrics displayDimensions = Resources.getSystem().getDisplayMetrics();
 
         //how much spotlight height is compared to entire screen height
-        double imageHeightFactor = fragment.getResources().getFloat(R.dimen.spotlight_height_scale_factor);
+        double imageHeightFactor;
+
+        if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+            imageHeightFactor = fragment.getResources().getFloat(R.dimen.spotlight_height_scale_factor);
+
+        } else {
+            TypedValue outValue = new TypedValue();
+            fragment.getResources().getValue(R.dimen.spotlight_height_scale_factor, outValue, true);
+            imageHeightFactor = outValue.getFloat();
+        }
 
         int screenHeight = displayDimensions.heightPixels;
 
