@@ -85,7 +85,9 @@ public class UpdateMediaWorker extends Worker {
         for (MovieData movieData: movieDataList) {
             SystemClock.sleep(REQUEST_COOL_DOWN);
 
-            updateSavedMedia(movieData, detailUrl, searchPreferences);
+            if (movieData.supportsNotifiers()) {
+                updateSavedMedia(movieData, detailUrl, searchPreferences);
+            }
         }
     }
 
@@ -105,7 +107,9 @@ public class UpdateMediaWorker extends Worker {
         for (SeriesData seriesData: seriesDataList) {
             SystemClock.sleep(REQUEST_COOL_DOWN);
 
-            updateSavedMedia(seriesData, detailUrl, searchPreferences);
+            if (seriesData.supportsNotifiers()) {
+                updateSavedMedia(seriesData, detailUrl, searchPreferences);
+            }
         }
     }
 
@@ -174,28 +178,22 @@ public class UpdateMediaWorker extends Worker {
             mDatabase.seriesDataDao().updateSeriesData(((SeriesData) newMediaData));
         }
 
-        boolean supportsNotifiers = oldMediaData.getWatchStatus() == MediaData.WATCH_STATUS_TO_WATCH
-                || oldMediaData.getWatchStatus() == MediaData.WATCH_STATUS_WATCHING;
-        boolean requiresUpdates = !oldMediaData.getReleaseStatus().equals(SeriesApiConstants.RELEASE_STATUS_ENDED)
-                && !oldMediaData.getReleaseStatus().equals(MovieApiConstants.RELEASE_STATUS_RELEASED);
         boolean isProMode =
                 mContext
                 .getSharedPreferences(mContext.getString(R.string.application_shared_prefs_key),
                         Context.MODE_PRIVATE)
                         .getBoolean(mContext.getString(R.string.is_pro_mode_key),false);
         //if watch status supports notifiers and requires updates, launch update notifier service
-        if (supportsNotifiers && requiresUpdates) {
-            Intent intent;
-            if (isProMode) {
-                intent = new Intent(getApplicationContext(), UpdateNotifierService.class);
-                intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(newMediaData));
-                UpdateNotifierService.enqueueWork(mContext, intent);
+        Intent intent;
+        if (isProMode) {
+            intent = new Intent(getApplicationContext(), UpdateNotifierService.class);
+            intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(newMediaData));
+            UpdateNotifierService.enqueueWork(mContext, intent);
 
-            } else {
-                intent = new Intent(getApplicationContext(), NoNotifierService.class);
-                intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(newMediaData));
-                NoNotifierService.enqueueWork(mContext, intent);
-            }
+        } else {
+            intent = new Intent(getApplicationContext(), NoNotifierService.class);
+            intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(newMediaData));
+            NoNotifierService.enqueueWork(mContext, intent);
         }
 
         Log.d(TAG, newMediaData.getTitle() + " data updated");
