@@ -640,13 +640,12 @@ public class MasterActivity extends AppCompatActivity implements
     }
 
     public void launchDetailsFragment(MediaData selectedData, String quickAction) {
-        //catch error from restoring fragments after configuration change
-        try {
-            getSupportFragmentManager().executePendingTransactions();
-
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getSupportFragmentManager().executePendingTransactions();
+            }
+        });
 
         int mediaType = selectedData instanceof MovieData ? MEDIA_TYPE_MOVIE : MEDIA_TYPE_SERIES;
 
