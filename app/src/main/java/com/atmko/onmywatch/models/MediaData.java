@@ -14,6 +14,8 @@ import androidx.room.PrimaryKey;
 
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
+import com.atmko.onmywatch.utils.api_utils.MovieApiConstants;
+import com.atmko.onmywatch.utils.api_utils.SeriesApiConstants;
 import com.atmko.onmywatch.utils.network_utils.TraktApiConstants;
 
 import java.util.ArrayList;
@@ -266,6 +268,16 @@ abstract public class MediaData {
     }
 
     public abstract String getMediaUrl(Context context, String mediaId);
+
+    public boolean isPendingRelease() {
+        return !mReleaseStatus.equals(MovieApiConstants.RELEASE_STATUS_RELEASED)
+                && !mReleaseStatus.equals(ApiConstants.TextReplacement.REPLACEMENT_RETURNING_SERIES)
+                && !mReleaseStatus.equals(SeriesApiConstants.RELEASE_STATUS_PILOT)
+                && !mReleaseStatus.equals(SeriesApiConstants.RELEASE_STATUS_ENDED)
+                && !mReleaseStatus.equals(ApiConstants.RELEASE_STATUS_CANCELED);
+    }
+
+    public abstract boolean supportsNotifiers();
 
     Map<String, Object> getFirebaseMediaDataMap(MediaData mediaData) {
         Map<String, Object> mediaDataMap = new HashMap<>();

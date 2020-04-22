@@ -128,6 +128,22 @@ public class MovieData extends MediaData{
         return context.getString(R.string.movie_base_url) + "/" + mediaId;
     }
 
+    @SuppressWarnings("RedundantIfStatement")
+    @Override
+    public boolean supportsNotifiers()  {
+        //if series isn't yet released, set release notifier, otherwise create notifier if new episodes still running
+        boolean isPendingRelease = isPendingRelease();
+        if (mWatchStatus == MediaData.WATCH_STATUS_TO_WATCH && isPendingRelease) {
+            return true;
+
+        } else if (mWatchStatus == MediaData.WATCH_STATUS_WATCHING && isPendingRelease) {
+            return true;
+
+        } else {
+            return false;
+        }
+    }
+
     public Map<String, Object> parseMediaDataToDataMap() {
         Map<String, Object> firebaseMediaDataMap = getFirebaseMediaDataMap(this);
 
