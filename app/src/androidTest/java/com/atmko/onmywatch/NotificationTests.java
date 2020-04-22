@@ -479,8 +479,15 @@ public class NotificationTests {
 
         SeriesData seriesData = new SeriesData("43435", "", "", "Dead",
                 0, "", "", "",
-                new ArrayList<String>(), new ArrayList<String>(), "", "",
-                parseIsoDateFromCalender(utcCalender));
+                new ArrayList<String>(), new ArrayList<String>(), "", "", "");
+
+        Episode nextEpisode = new Episode(seriesData.getId(), 1, 1,
+                Episode.SOURCE_TRAKT, parseIsoDateFromCalender(utcCalender));
+        seriesData.setNextEpisodeToAir(nextEpisode);
+
+        seriesData.setTraktId("1393");
+
+        seriesData.setReleaseStatus(ApiConstants.RELEASE_STATUS_IN_PRODUCTION);
 
         Intent intent = new Intent(getInstrumentation().getTargetContext(), AddToListActivity.class);
         intent.putExtra(AddToListActivity.MEDIA_DATA_KEY, Parcels.wrap(seriesData));
@@ -564,6 +571,8 @@ public class NotificationTests {
                 0, "", "", "",
                 new ArrayList<String>(), new ArrayList<String>(), "", "", "");
 
+        seriesData.setReleaseStatus("Running");
+        seriesData.setWatchStatus(MediaData.WATCH_STATUS_WATCHING);
         seriesData.setTraktId("1393");
         Episode nextEpisode = new Episode();
 
