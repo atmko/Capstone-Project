@@ -78,6 +78,7 @@
         <item name="android:layout_marginEnd">@dimen/x1_layout_margin</item>
         <item name="android:layout_gravity">bottom|end</item>
         <item name="fabSize">auto</item>
+        <item name="fabCustomSize">@dimen/fabCustomSize</item>
         <item name="useCompatPadding">true</item>
     </style>
 

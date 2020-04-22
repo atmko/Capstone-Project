@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--searchActivity-->
-    <!--COLUMN SPAN-->
-    <integer name="search_column_span">4</integer>
-    <integer name="detail_extras_column_span">4</integer>
-
     <integer name="search_image_spacing">4</integer>
 
     <!--PHONE_FRAGMENT LAYOUT WEIGHTS-->

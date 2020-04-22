@@ -4,5 +4,5 @@
     android:id="@+id/results_recycler_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="104dp"
+    android:paddingBottom="@dimen/fab_list_bottom_padding"
     android:clipToPadding="false" />
