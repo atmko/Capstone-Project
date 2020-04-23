@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.atmko.onmywatch.Fragments.ListsWatchAndUserParentFragment;
+import com.atmko.onmywatch.fragments.ListsWatchAndUserParentFragment;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.SeriesData;

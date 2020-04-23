@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
-import com.atmko.onmywatch.Fragments.KnownForFragment;
+import com.atmko.onmywatch.fragments.KnownForFragment;
 import com.atmko.onmywatch.models.PersonData;
 
 import org.parceler.Parcels;

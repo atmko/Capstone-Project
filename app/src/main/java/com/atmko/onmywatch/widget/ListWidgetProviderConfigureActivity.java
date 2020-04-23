@@ -18,8 +18,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.atmko.onmywatch.Fragments.ListWatchAndUserFragment;
-import com.atmko.onmywatch.Fragments.ListsWatchAndUserParentFragment;
+import com.atmko.onmywatch.fragments.ListWatchAndUserFragment;
+import com.atmko.onmywatch.fragments.ListsWatchAndUserParentFragment;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.ListWatchAndUserAdapter;
@@ -31,7 +31,7 @@ import com.atmko.onmywatch.view_models.MasterActivityViewModel;
 
 import java.util.List;
 
-import static com.atmko.onmywatch.Fragments.ListsWatchAndUserParentFragment.LIST_TYPE_WATCH;
+import static com.atmko.onmywatch.fragments.ListsWatchAndUserParentFragment.LIST_TYPE_WATCH;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
 import static com.atmko.onmywatch.MasterActivity.getCurrentUser;

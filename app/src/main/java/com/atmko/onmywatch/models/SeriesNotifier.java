@@ -11,7 +11,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 
-import com.atmko.onmywatch.Fragments.DetailsFragment;
+import com.atmko.onmywatch.fragments.DetailsFragment;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 

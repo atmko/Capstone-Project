@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
-import com.atmko.onmywatch.Fragments.ListResultsFragment;
+import com.atmko.onmywatch.fragments.ListResultsFragment;
 import com.atmko.onmywatch.R;
 
 /*

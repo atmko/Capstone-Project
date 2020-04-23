@@ -2,7 +2,7 @@
  * Copyright (C) 2019 Aayat Mimiko
  */
 
-package com.atmko.onmywatch.Fragments;
+package com.atmko.onmywatch.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

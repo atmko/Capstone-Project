@@ -35,7 +35,7 @@ import com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaW
 
 import org.parceler.Parcels;
 
-import static com.atmko.onmywatch.Fragments.DetailsFragment.COOL_DOWN_REQUEST_TRAKT_ID;
+import static com.atmko.onmywatch.fragments.DetailsFragment.COOL_DOWN_REQUEST_TRAKT_ID;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
 import static com.atmko.onmywatch.models.MediaNotifier.CONDITION_ON_RELEASE;

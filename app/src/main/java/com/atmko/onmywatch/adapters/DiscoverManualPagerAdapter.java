@@ -9,8 +9,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
-import com.atmko.onmywatch.Fragments.DiscoverParentFragment;
-import com.atmko.onmywatch.Fragments.DiscoverResultsFragment;
+import com.atmko.onmywatch.fragments.DiscoverParentFragment;
+import com.atmko.onmywatch.fragments.DiscoverResultsFragment;
 import com.atmko.onmywatch.utils.api_utils.SearchPreferences;
 
 /*

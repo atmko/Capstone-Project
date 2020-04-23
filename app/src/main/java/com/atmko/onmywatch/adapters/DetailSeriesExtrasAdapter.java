@@ -11,9 +11,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
-import com.atmko.onmywatch.Fragments.CastFragment;
-import com.atmko.onmywatch.Fragments.RecommendationsFragment;
-import com.atmko.onmywatch.Fragments.ReviewsFragment;
+import com.atmko.onmywatch.fragments.CastFragment;
+import com.atmko.onmywatch.fragments.RecommendationsFragment;
+import com.atmko.onmywatch.fragments.ReviewsFragment;
 import com.atmko.onmywatch.models.SeriesData;
 
 import org.parceler.Parcels;

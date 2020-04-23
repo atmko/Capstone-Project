@@ -13,7 +13,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.RemoteViews;
 
-import com.atmko.onmywatch.Fragments.DetailsFragment;
+import com.atmko.onmywatch.fragments.DetailsFragment;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.models.MediaData;

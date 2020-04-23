@@ -2,7 +2,7 @@ package com.atmko.onmywatch.models;
 
 import androidx.room.Ignore;
 
-import com.atmko.onmywatch.Fragments.HomeListDisplayFragment;
+import com.atmko.onmywatch.fragments.HomeListDisplayFragment;
 
 import org.parceler.Parcel;
 

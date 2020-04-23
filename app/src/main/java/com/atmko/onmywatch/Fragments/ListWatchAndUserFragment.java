@@ -2,7 +2,7 @@
  * Copyright (C) 2019 Aayat Mimiko
  */
 
-package com.atmko.onmywatch.Fragments;
+package com.atmko.onmywatch.fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -56,7 +56,7 @@ import org.parceler.Parcels;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.atmko.onmywatch.Fragments.ListsWatchAndUserParentFragment.LIST_TYPE_AUTO;
+import static com.atmko.onmywatch.fragments.ListsWatchAndUserParentFragment.LIST_TYPE_AUTO;
 
 public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.OnListItemClickListener,
         UserListsAdapter.OnSpinnerItemClickListener {

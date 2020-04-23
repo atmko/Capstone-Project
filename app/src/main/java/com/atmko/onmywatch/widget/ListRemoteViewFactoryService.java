@@ -12,7 +12,7 @@ import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
-import com.atmko.onmywatch.Fragments.DetailsFragment;
+import com.atmko.onmywatch.fragments.DetailsFragment;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MediaLog;
 import com.atmko.onmywatch.models.MovieLog;
@@ -32,9 +32,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import static com.atmko.onmywatch.Fragments.ListsWatchAndUserParentFragment.LIST_TYPE_AUTO;
-import static com.atmko.onmywatch.Fragments.ListsWatchAndUserParentFragment.LIST_TYPE_USER;
-import static com.atmko.onmywatch.Fragments.ListsWatchAndUserParentFragment.LIST_TYPE_WATCH;
+import static com.atmko.onmywatch.fragments.ListsWatchAndUserParentFragment.LIST_TYPE_AUTO;
+import static com.atmko.onmywatch.fragments.ListsWatchAndUserParentFragment.LIST_TYPE_USER;
+import static com.atmko.onmywatch.fragments.ListsWatchAndUserParentFragment.LIST_TYPE_WATCH;
 
 public class ListRemoteViewFactoryService extends RemoteViewsService {
     private static final String TAG = "ListRemoteViewFactory";

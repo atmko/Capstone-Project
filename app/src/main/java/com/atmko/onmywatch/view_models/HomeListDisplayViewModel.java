@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.atmko.onmywatch.Fragments.HomeListDisplayFragment;
+import com.atmko.onmywatch.fragments.HomeListDisplayFragment;
 import com.atmko.onmywatch.database.AppDatabase;
 
 public class HomeListDisplayViewModel extends ViewModel {

@@ -2,7 +2,7 @@
  * Copyright (C) 2019 Aayat Mimiko
  */
 
-package com.atmko.onmywatch.Fragments;
+package com.atmko.onmywatch.fragments;
 
 import android.content.Intent;
 import android.content.res.Resources;
