@@ -349,6 +349,7 @@ public class HomeFragment extends Fragment {
         margins.setMargins(0, (int) dimenToPixels, 0, 0);
     }
 
+    private static final int SCALE_FACTOR = 13;
     //configures width, height and margins of home list display container
     private void configureListContainerParams(int containerId) {
         if (getView() == null) return;
@@ -393,11 +394,7 @@ public class HomeFragment extends Fragment {
         //new image width now that spacing is applied
         int adjustedViewWidth = singleImgPixelWidth - imageSpacing;
 
-        float textSizeDp = getResources().getDimension(R.dimen.body_text_size);
-        float textPaddingDp = getResources().getDimension(R.dimen.x3_4_layout_margin) * 2;
-        float textSpaceDp = textSizeDp + textPaddingDp;
-        //set layout margins
-        float textSpace = displayDimensions.density * textSpaceDp;
+        int textSpace = getResources().getDimensionPixelSize(R.dimen.half_layout_margin) * SCALE_FACTOR;
 
         //get poster height
         long posterHeight =
