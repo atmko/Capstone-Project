@@ -14,8 +14,8 @@
     <!--detail margins-->
     <!--MARGINS-->
 
-    <dimen name="fab_list_bottom_padding">176dp</dimen>
-    <dimen name="fabCustomSize">88dp</dimen>
+    <dimen name="fab_list_bottom_padding">144dp</dimen>
+    <dimen name="fabCustomSize">72dp</dimen>
 
     <dimen name="person_profile_image_dimen">180dp</dimen>
 
