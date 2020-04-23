@@ -35,8 +35,8 @@
     <!--MARGINS-->
 
     <!--VIEW DIMENSIONS-->
-    <dimen name="fab_list_bottom_padding">176dp</dimen>
-    <dimen name="fabCustomSize">88dp</dimen>
+    <dimen name="fab_list_bottom_padding">192dp</dimen>
+    <dimen name="fabCustomSize">96dp</dimen>
 
     <!--image_dimensions-->
     <dimen name="spotlight_poster_height">450dp</dimen>
