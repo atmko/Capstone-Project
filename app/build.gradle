@@ -70,7 +70,7 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
 
     //preference fragment
-    implementation "androidx.preference:preference:1.1.0"
+    implementation "androidx.preference:preference:1.1.1"
 
     apply plugin: 'com.google.gms.google-services'  // Google Play services Gradle plugin
 
