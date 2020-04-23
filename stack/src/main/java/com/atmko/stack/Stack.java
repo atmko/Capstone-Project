@@ -56,15 +56,11 @@ public class Stack extends RecyclerView.OnScrollListener {
             Class adapterClass = Class.forName(mAdapter.getClass().getName());
             Method getAdapterData = adapterClass.getMethod("getAdapterData");
             dataList = (List) getAdapterData.invoke(mAdapter);
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
             throw new Error ("method \"getAdapterData()\" not found\n");
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
         }
 
         return dataList;

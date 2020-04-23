@@ -139,7 +139,7 @@ public class CustomParams {
 
         //set layout params
         params[0] = singleImgPixelWidth;
-        params[1] = (int) singleImgPixelHeight;
+        params[1] = singleImgPixelHeight;
 
         return params;
     }

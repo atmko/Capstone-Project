@@ -571,8 +571,7 @@ public class DiscoverCustomResultsFragment extends Fragment implements
                     MediaData selectedData = mDataAdapter.getAdapterData().get(position);
                     if (selectedData != null && selectedData.getId() != null && !selectedData.getId().equals("")) {
                         ((MasterActivity) getActivity())
-                                .launchAddToListActivity(((MediaDataAdapter) mDataAdapter)
-                                        .getAdapterData().get(position));
+                                .launchAddToListActivity(mDataAdapter.getAdapterData().get(position));
                     }
                 }
             }

@@ -76,6 +76,7 @@ public class ApiConstants {
     public static final String DATE_FORMAT = "yyyy-MM-dd";
 
     //RELEASE STATUS VALUES
+    @SuppressWarnings("unused")
     public static final String RELEASE_STATUS_PLANNED = "Planned";
     public static final String RELEASE_STATUS_IN_PRODUCTION = "In Production";
     public static final String RELEASE_STATUS_CANCELED = "Canceled";
