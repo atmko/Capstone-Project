@@ -7,7 +7,6 @@
     <!--MARGINS-->
     <dimen name="search_image_spacing">4dp</dimen>
     <dimen name="half_layout_margin">4dp</dimen>
-    <dimen name="x3_4_layout_margin">6dp</dimen>
     <dimen name="x1_layout_margin">8dp</dimen>
     <dimen name="x2_layout_margin">16dp</dimen>
     <dimen name="x3_layout_margin">24dp</dimen>

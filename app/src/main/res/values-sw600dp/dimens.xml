@@ -17,6 +17,8 @@
     <dimen name="fab_list_bottom_padding">144dp</dimen>
     <dimen name="fabCustomSize">72dp</dimen>
 
+    <item name="spotlight_height_scale_factor" type="dimen" format="float">0.346</item>
+
     <dimen name="person_profile_image_dimen">180dp</dimen>
 
     <!--TEXT DIMENSIONS-->
