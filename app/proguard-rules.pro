@@ -32,3 +32,6 @@
 -keep interface org.parceler.Parcel
 -keep @org.parceler.Parcel class * { *; }
 -keep class **$$Parcelable { *; }
+
+#for SettingsFragment
+-keep class com.atmko.onmywatch.fragments.SettingsFragment
