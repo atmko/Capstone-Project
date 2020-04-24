@@ -20,9 +20,15 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
+#for removing logs
 -assumenosideeffects class android.util.Log {
     public static *** d(...);
     public static *** w(...);
     public static *** v(...);
     public static *** i(...);
 }
+
+# Parceler library
+-keep interface org.parceler.Parcel
+-keep @org.parceler.Parcel class * { *; }
+-keep class **$$Parcelable { *; }
