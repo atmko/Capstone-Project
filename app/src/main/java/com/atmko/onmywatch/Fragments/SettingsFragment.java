@@ -35,6 +35,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 import static android.app.Activity.RESULT_OK;
 
+@SuppressWarnings({"WeakerAccess", "RedundantSuppression"})
 public class SettingsFragment extends PreferenceFragmentCompat {
     private static final int REQUEST_CREATE_BACKUP = 1;
     private static final int UPGRADE_TO_PERMANENT_ID = 2;
