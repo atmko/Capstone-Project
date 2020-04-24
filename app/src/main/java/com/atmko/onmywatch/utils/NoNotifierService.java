@@ -31,11 +31,10 @@ import com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaW
 
 import org.parceler.Parcels;
 
-import static com.atmko.onmywatch.fragments.DetailsFragment.COOL_DOWN_REQUEST_TRAKT_ID;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
+import static com.atmko.onmywatch.fragments.DetailsFragment.COOL_DOWN_REQUEST_TRAKT_ID;
 import static com.atmko.onmywatch.utils.GeneralUtils.MILLISECOND_CONVERSION;
-import static com.atmko.onmywatch.utils.UpdateNotifierService.ASSUME_TRAKT_NEXT_EPISODE_NULL;
 import static com.atmko.onmywatch.utils.network_utils.work_manager_workers.UpdateMediaWorker.NEW_MEDIA_DATA_KEY;
 
 public class NoNotifierService extends JobIntentService {
@@ -85,11 +84,15 @@ public class NoNotifierService extends JobIntentService {
     private void updateNewEpisodeNotifier() {
         int newWatchStatus = newMediaData.getWatchStatus();
 
+        //only delete logs not "watching" because if offline, user loses logs still in use without an update
+        //instead, any deletion of watching logs should be done inside tracker where updates are more likely to occur
+        //delete old logs
         if (newWatchStatus != MediaData.WATCH_STATUS_WATCHING) {
             trackMedia(SeriesTracker.ACTION_DELETE);
         }
 
-        if (newWatchStatus == MediaData.WATCH_STATUS_WATCHING) {
+        //if (to watch and is pending release) OR if watching
+        if (newMediaData.supportsNotifiers()) {
             getTraktNextEpisodeDetails();
         }
     }
@@ -145,20 +148,11 @@ public class NoNotifierService extends JobIntentService {
 
                                 trackMedia(SeriesTracker.ACTION_SET);
 
-                                //if ASSUME_TRAKT_NEXT_EPISODE_NULL is false, use production code
-                                if (!ASSUME_TRAKT_NEXT_EPISODE_NULL) {
-                                    //if there is a next episode and date, create notifier using date, otherwise try using tmdb details
-                                    Episode nextEpisode = ((SeriesData) newMediaData).getNextEpisodeToAir();
-                                    if (nextEpisode != null && nextEpisode.getBestAvailableDateString() != null) {
-                                        //save next episode
-                                        updateMedia(newMediaData);
-
-                                    } else {
-                                        getTmdbNextEpisodeDetails();
-                                    }
-
-                                } else {
-                                    getTmdbNextEpisodeDetails();
+                                //if there is a next episode and date, create notifier using date, otherwise create pending notifier
+                                Episode nextEpisode = ((SeriesData) newMediaData).getNextEpisodeToAir();
+                                if (nextEpisode != null && nextEpisode.hasNonEmptyDate()) {
+                                    //save next episode
+                                    updateMedia(newMediaData);
                                 }
                             }
 
@@ -178,7 +172,12 @@ public class NoNotifierService extends JobIntentService {
                             retryAfterCoolDOwn(anError, COOL_DOWN_REQUEST_TRAKT_ID);
 
                         } else {
-                            getTmdbNextEpisodeDetails();
+                            //if there is a next episode and date, create notifier using date, otherwise create pending notifier
+                            Episode nextEpisode = ((SeriesData) newMediaData).getNextEpisodeToAir();
+                            if (nextEpisode != null && nextEpisode.hasNonEmptyDate()) {
+                                //save next episode
+                                updateMedia(newMediaData);
+                            }
                         }
 
                         //notify user of error
@@ -187,26 +186,6 @@ public class NoNotifierService extends JobIntentService {
                 });
             }
         });
-    }
-
-    //Checks if media has been released
-    //if episode and air date available, create notification alarm using date
-    //if no new episode and or episode date available, save notifier object without creating accompanying alarm notification.
-    private void getTmdbNextEpisodeDetails() {
-        //if release status exists create notifier and return
-        //otherwise fetch release status from media details, then create notifier
-        //NOTE: release status will be null when not accessing this activity via DetailsFragment, because details won't have been fetched
-        try {
-            //if there is a next episode and date, create notifier using date, otherwise create notifier without alarm
-            Episode nextEpisode = ((SeriesData) newMediaData).getNextEpisodeToAir();
-            if (nextEpisode != null && nextEpisode.getBestAvailableDateString() != null) {
-                //save next episode
-                updateMedia(newMediaData);
-            }
-
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
     }
 
     //retry method if api returns too may requests error
