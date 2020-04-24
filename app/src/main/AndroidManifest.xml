@@ -149,10 +149,6 @@
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
         <service
-            android:name=".utils.network_utils.work_manager_workers.BackupWorker"
-            android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-        <service
             android:name=".utils.network_utils.RestoreService"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
