@@ -4,14 +4,12 @@
 
 package com.atmko.stack;
 
+import android.util.SparseArray;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.SparseArray;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,9 +32,13 @@ public class Stack extends RecyclerView.OnScrollListener {
     private final SparseArray<PagingBlock> mPagingBlockMap;
     private boolean mIsIdle;
 
+    private StackMethods mStackMethods;
+
     public Stack(boolean pageZeroStart, int blockLimit, PagingBlockTemplate pagingBlockTemplate,
                  Object preloadObject, RecyclerView recyclerView, RecyclerView.Adapter adapter,
                  boolean usesInternet) {
+
+        if (!(adapter instanceof StackMethods)) throw new Error("Adapter must implement StackMethods");
 
         this.mFirstPage = pageZeroStart ? 0 : 1;
         this.mBlockLimit = blockLimit;
@@ -46,28 +48,19 @@ public class Stack extends RecyclerView.OnScrollListener {
         this.mAdapter = adapter;
         this.mUsesInternet = usesInternet;
         this.mPagingBlockMap = new SparseArray<>();
+
+        mStackMethods = (StackMethods) adapter;
+
         mIsIdle = true;
     }
 
 
-    private List getAdapterData() {
-        List dataList = null;
-        try {
-            Class adapterClass = Class.forName(mAdapter.getClass().getName());
-            Method getAdapterData = adapterClass.getMethod("getAdapterData");
-            dataList = (List) getAdapterData.invoke(mAdapter);
-        } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-            throw new Error ("method \"getAdapterData()\" not found\n");
-        }
-
-        return dataList;
+    public interface StackMethods {
+        List getAdapterData();
     }
 
     private boolean isAdapterEmpty() {
-        return getAdapterData().size() == 0;
+        return mStackMethods.getAdapterData().size() == 0;
     }
 
     private SparseArray<PagingBlock> getPagingBlockMap() {
@@ -150,7 +143,7 @@ public class Stack extends RecyclerView.OnScrollListener {
 
         //clear values
         mPagingBlockMap.clear();
-        getAdapterData().clear();
+        mStackMethods.getAdapterData().clear();
 
         mAdapter.notifyDataSetChanged();
         mTotalPages = 0;
@@ -227,8 +220,8 @@ public class Stack extends RecyclerView.OnScrollListener {
             //cleared during configuration changes
             try {
                 //replace preload object and update adapter
-                getAdapterData().remove(currentInsertPosition);
-                getAdapterData().add(currentInsertPosition, dataList.get(index));
+                mStackMethods.getAdapterData().remove(currentInsertPosition);
+                mStackMethods.getAdapterData().add(currentInsertPosition, dataList.get(index));
 
             } catch (IndexOutOfBoundsException e) {
                 e.printStackTrace();
@@ -244,7 +237,7 @@ public class Stack extends RecyclerView.OnScrollListener {
 
             for (int i = 0; i < correctionDifference; i++) {
                 try {
-                    getAdapterData().remove(getAdapterData().size() - 1);
+                    mStackMethods.getAdapterData().remove(mStackMethods.getAdapterData().size() - 1);
 
                 } catch (IndexOutOfBoundsException e) {
                     e.printStackTrace();
@@ -268,7 +261,7 @@ public class Stack extends RecyclerView.OnScrollListener {
         //loop through length of block
         for (int index = 0; index < listSize; index++) {
             //remove top item in adapter
-            getAdapterData().remove(0);
+            mStackMethods.getAdapterData().remove(0);
             //notify change
             mAdapter.notifyItemRemoved(0);
         }
@@ -289,9 +282,9 @@ public class Stack extends RecyclerView.OnScrollListener {
         //loop through length of block
         for (int index = 0; index < listSize; index++) {
             //remove bottom item in adapter
-            getAdapterData().remove(getAdapterData().size() - 1);
+            mStackMethods.getAdapterData().remove(mStackMethods.getAdapterData().size() - 1);
             //notify change
-            mAdapter.notifyItemRemoved(getAdapterData().size() - 1);
+            mAdapter.notifyItemRemoved(mStackMethods.getAdapterData().size() - 1);
         }
 
         mPagingBlockMap.remove(lastKey);
@@ -339,7 +332,7 @@ public class Stack extends RecyclerView.OnScrollListener {
     private void preStackPageBackWards() {
         for (int i = mPagingBlockTemplate.pageCapacity - 1; i >= 0; i--) {
             //add item to front
-            getAdapterData().add(0, mPreloadObject);
+            mStackMethods.getAdapterData().add(0, mPreloadObject);
 
         }
 
@@ -386,11 +379,11 @@ public class Stack extends RecyclerView.OnScrollListener {
     private void preStackPageForwards() {
         for (int i = 0; i < mPagingBlockTemplate.pageCapacity; i++) {
             //add item to end
-            getAdapterData().add(mPreloadObject);
+            mStackMethods.getAdapterData().add(mPreloadObject);
         }
 
         mAdapter.notifyItemRangeInserted(
-                (getAdapterData().size()-1) - (mPagingBlockTemplate.pageCapacity-1),
+                (mStackMethods.getAdapterData().size()-1) - (mPagingBlockTemplate.pageCapacity-1),
                 mPagingBlockTemplate.pageCapacity);
     }
 

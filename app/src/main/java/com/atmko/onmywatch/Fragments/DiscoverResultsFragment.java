@@ -224,7 +224,8 @@ public class DiscoverResultsFragment extends Fragment implements
         }
 
         recyclerView.setAdapter(mDataAdapter);
-        mStack = new Stack(false,getResources().getInteger(R.integer.stack_block_limit), pagingBlockTemplate,
+        mStack = new Stack(false,
+                getResources().getInteger(R.integer.stack_block_limit), pagingBlockTemplate,
                 preloadObject, recyclerView, mDataAdapter, true);
         recyclerView.addOnScrollListener(mStack);
 

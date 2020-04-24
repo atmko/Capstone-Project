@@ -24,6 +24,7 @@ import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.models.PersonData;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
+import com.atmko.stack.Stack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,8 @@ import java.util.List;
  */
 
 public class PeopleDataAdapter
-        extends RecyclerView.Adapter<PeopleDataAdapter.PeopleDataAdapterViewHolder> {
+        extends RecyclerView.Adapter<PeopleDataAdapter.PeopleDataAdapterViewHolder>
+        implements Stack.StackMethods {
 
     private final Fragment mFragment;
     private final List<PersonData> mAdapterData;
@@ -213,6 +215,7 @@ public class PeopleDataAdapter
         }
     }
 
+    @Override
     public List<PersonData> getAdapterData() {
         return mAdapterData;
     }

@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
+import com.atmko.stack.Stack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,8 @@ import java.util.List;
  */
 
 public class MediaDataAdapter
-        extends RecyclerView.Adapter<MediaDataAdapter.MediaDataAdapterViewHolder> {
+        extends RecyclerView.Adapter<MediaDataAdapter.MediaDataAdapterViewHolder>
+        implements Stack.StackMethods {
 
     private final Fragment mFragment;
     private final List<MediaData> mAdapterData;
@@ -222,6 +224,7 @@ public class MediaDataAdapter
         }
     }
 
+    @Override
     public List<MediaData> getAdapterData() {
         return mAdapterData;
     }
