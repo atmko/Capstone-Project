@@ -24,19 +24,6 @@
             android:src="@drawable/ic_discover_white"
             android:focusable="false"/>
 
-        <TextView
-            android:id="@+id/type_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/x2_layout_margin"
-            android:padding="@dimen/half_layout_margin"
-            android:layout_gravity="bottom|center_horizontal"
-            tools:text="Season"
-            android:textSize="@dimen/body_text_size"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:background="@color/background"/>
-
     </FrameLayout>
 
 </LinearLayout>
