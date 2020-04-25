@@ -7,11 +7,11 @@ package com.atmko.onmywatch;
 import android.content.Context;
 import android.content.Intent;
 
+import androidx.core.app.NotificationManagerCompat;
 import androidx.room.Room;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.IdlingResource;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.ActivityTestRule;
 import androidx.test.uiautomator.UiCollection;
 import androidx.test.uiautomator.UiDevice;
@@ -30,6 +30,7 @@ import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesNotifier;
 import com.atmko.onmywatch.models.WatchListModel;
 import com.atmko.onmywatch.utils.GeneralUtils;
+import com.atmko.onmywatch.utils.NotificationHandler;
 import com.atmko.onmywatch.utils.UpdateNotifierService;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 
@@ -37,7 +38,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -58,7 +58,6 @@ import static org.junit.Assert.fail;
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
-@RunWith(AndroidJUnit4.class)
 public class NotificationTests {
     private NotificationIdlingResource notificationIdlingResource;
     private IdlingResource addToListIdlingResource;
@@ -76,6 +75,7 @@ public class NotificationTests {
     @Before
     public void enableTestMode() {
         UpdateNotifierService.sActionMode = UpdateNotifierService.ACTION_TESTING;
+        NotificationHandler.IS_TESTING = true;
     }
 
     @Before
@@ -229,7 +229,7 @@ public class NotificationTests {
 
         onView(withText("SAVE")).perform(click());
 
-        clickNotification(movieData, MediaNotifier.CONDITION_ON_RELEASE);
+        clickNotification(movieData, MediaNotifier.CONDITION_ON_RELEASE, ScheduledMedia.SOURCE_TMDB);
     }
 
     @Test
@@ -240,19 +240,13 @@ public class NotificationTests {
 
         seriesData.setReleaseStatus("Running");
         seriesData.setTraktId("1393");
-        Episode nextEpisode = new Episode();
 
         TimeZone utcTimeZone = TimeZone.getTimeZone("UTC");
         Calendar utcCalender = Calendar.getInstance(utcTimeZone);
         utcCalender.add(Calendar.SECOND, 7);
 
-        try {
-            nextEpisode.setAirDate(parseIsoDateFromCalender(utcCalender));
-
-        } catch (ScheduledMedia.DateFormatException e) {
-            e.printStackTrace();
-        }
-
+        Episode nextEpisode = new Episode(seriesData.getId(), 1, 1,
+                ScheduledMedia.SOURCE_TRAKT, parseIsoDateFromCalender(utcCalender));
         seriesData.setNextEpisodeToAir(nextEpisode);
 
         Intent intent = new Intent(getInstrumentation().getTargetContext(), AddToListActivity.class);
@@ -267,7 +261,8 @@ public class NotificationTests {
         onView(withText("Watching")).perform(click());
         onView(withText("SAVE")).perform(click());
 
-        clickNotification(seriesData, SeriesNotifier.CONDITION_NEW_EPISODE);
+        clickNotification(seriesData, SeriesNotifier.CONDITION_NEW_EPISODE,
+                ScheduledMedia.SOURCE_TRAKT);
     }
 
     //tests movie release notifications when release date doesn't exist by using release status
@@ -340,7 +335,7 @@ public class NotificationTests {
 
         onView(withText("SAVE")).perform(click());
 
-        checkForNotification(movieData, MediaNotifier.CONDITION_ON_RELEASE);
+        checkForNotification(movieData, MediaNotifier.CONDITION_ON_RELEASE, ScheduledMedia.SOURCE_TMDB);
 
         //ensure notifier is removed after notification
         MovieNotifier movieNotifier =
@@ -359,14 +354,10 @@ public class NotificationTests {
         seriesData.setReleaseStatus("Running");
         seriesData.setTraktId("1393");
 
-        Episode nextEpisode = new Episode();
-
         //set date in past to ensure notification first and second triggered with bypass logic
-        try {
-            nextEpisode.setAirDate("2019-08-08T05:00:00.000Z");
-        } catch (ScheduledMedia.DateFormatException e) {
-            e.printStackTrace();
-        }
+        Episode nextEpisode = new Episode(seriesData.getId(), 1, 1,
+                ScheduledMedia.SOURCE_TMDB, "2019-08-08T05:00:00.000Z");
+        seriesData.setNextEpisodeToAir(nextEpisode);
 
         //bypass logic to allow past air date to be posted as notification
         GeneralUtils.LOGIC_BYPASS = true;
@@ -388,7 +379,8 @@ public class NotificationTests {
         onView(withText("Watching")).perform(click());
         onView(withText("SAVE")).perform(click());
 
-        checkForNotification(seriesData, SeriesNotifier.CONDITION_NEW_EPISODE);
+        checkForNotification(seriesData, SeriesNotifier.CONDITION_NEW_EPISODE,
+                ScheduledMedia.SOURCE_TMDB);
 
         //ensure notifier isn't removed after notification
         SeriesNotifier seriesNotifier =
@@ -477,12 +469,15 @@ public class NotificationTests {
         Calendar utcCalender = Calendar.getInstance(utcTimeZone);
         utcCalender.add(Calendar.SECOND, 7);
 
+        //activate test mode for notification handler
+        NotificationHandler.IS_TESTING = true;
+
         SeriesData seriesData = new SeriesData("43435", "", "", "Dead",
                 0, "", "", "",
                 new ArrayList<String>(), new ArrayList<String>(), "", "", "");
 
         Episode nextEpisode = new Episode(seriesData.getId(), 1, 1,
-                Episode.SOURCE_TRAKT, parseIsoDateFromCalender(utcCalender));
+                ScheduledMedia.SOURCE_TRAKT, parseIsoDateFromCalender(utcCalender));
         seriesData.setNextEpisodeToAir(nextEpisode);
 
         seriesData.setTraktId("1393");
@@ -501,7 +496,7 @@ public class NotificationTests {
         onView(withText("To Watch")).perform(click());
         onView(withText("SAVE")).perform(click());
 
-        checkForNotification(seriesData, MediaNotifier.CONDITION_ON_RELEASE);
+        checkForNotification(seriesData, MediaNotifier.CONDITION_ON_RELEASE, ScheduledMedia.SOURCE_TRAKT);
 
         //ensure release notifier is removed after notification
         SeriesNotifier seriesReleaseNotifier =
@@ -527,18 +522,13 @@ public class NotificationTests {
 
         seriesData.setReleaseStatus("Running");
         seriesData.setTraktId("1393");
-        Episode nextEpisode = new Episode();
 
         TimeZone utcTimeZone = TimeZone.getTimeZone("UTC");
         Calendar utcCalender = Calendar.getInstance(utcTimeZone);
         utcCalender.add(Calendar.SECOND, 7);
 
-        try {
-            nextEpisode.setAirDate(parseIsoDateFromCalender(utcCalender));
-
-        } catch (ScheduledMedia.DateFormatException e) {
-            e.printStackTrace();
-        }
+        Episode nextEpisode = new Episode(seriesData.getId(), 1, 1,
+                ScheduledMedia.SOURCE_TRAKT, parseIsoDateFromCalender(utcCalender));
 
         seriesData.setNextEpisodeToAir(nextEpisode);
 
@@ -554,7 +544,7 @@ public class NotificationTests {
         onView(withText("Watching")).perform(click());
         onView(withText("SAVE")).perform(click());
 
-        checkForNotification(seriesData, SeriesNotifier.CONDITION_NEW_EPISODE);
+        checkForNotification(seriesData, SeriesNotifier.CONDITION_NEW_EPISODE, ScheduledMedia.SOURCE_TRAKT);
 
         //ensure notifier isn't removed after notification
         SeriesNotifier seriesNotifier =
@@ -617,19 +607,13 @@ public class NotificationTests {
 
         seriesData.setReleaseStatus("Running");
         seriesData.setTraktId("1393");
-        Episode nextEpisode = new Episode();
 
         TimeZone utcTimeZone = TimeZone.getTimeZone("UTC");
         Calendar utcCalender = Calendar.getInstance(utcTimeZone);
         utcCalender.add(Calendar.SECOND, 7);
 
-        try {
-            nextEpisode.setAirDate(parseIsoDateFromCalender(utcCalender));
-
-        } catch (ScheduledMedia.DateFormatException e) {
-            e.printStackTrace();
-        }
-
+        Episode nextEpisode = new Episode(seriesData.getId(), 1, 1,
+                ScheduledMedia.SOURCE_TRAKT, parseIsoDateFromCalender(utcCalender));
         seriesData.setNextEpisodeToAir(nextEpisode);
 
         Intent intent = new Intent(getInstrumentation().getTargetContext(), AddToListActivity.class);
@@ -652,19 +636,13 @@ public class NotificationTests {
 
         seriesData2.setReleaseStatus("Running");
         seriesData2.setTraktId("43973");
-        Episode nextEpisode2 = new Episode();
 
         TimeZone utcTimeZone2 = TimeZone.getTimeZone("UTC");
         Calendar utcCalender2 = Calendar.getInstance(utcTimeZone2);
         utcCalender2.add(Calendar.SECOND, 7);
 
-        try {
-            nextEpisode2.setAirDate(parseIsoDateFromCalender(utcCalender2));
-
-        } catch (ScheduledMedia.DateFormatException e) {
-            e.printStackTrace();
-        }
-
+        Episode nextEpisode2 = new Episode(seriesData.getId(), 1, 1,
+                ScheduledMedia.SOURCE_TRAKT, parseIsoDateFromCalender(utcCalender));
         seriesData2.setNextEpisodeToAir(nextEpisode2);
 
         Intent intent2 = new Intent(getInstrumentation().getTargetContext(), AddToListActivity.class);
@@ -676,9 +654,11 @@ public class NotificationTests {
         onView(withText("Watching")).perform(click());
         onView(withText("SAVE")).perform(click());
 
-        clickNotification(seriesData, SeriesNotifier.CONDITION_NEW_EPISODE);
+        clickNotification(seriesData, SeriesNotifier.CONDITION_NEW_EPISODE,
+                ScheduledMedia.SOURCE_TRAKT);
         onView(withId(R.id.title_text_view)).perform().check(matches(withText("Dead")));
-        clickNotification(seriesData2, SeriesNotifier.CONDITION_NEW_EPISODE);
+        clickNotification(seriesData2, SeriesNotifier.CONDITION_NEW_EPISODE,
+                ScheduledMedia.SOURCE_TRAKT);
         onView(withId(R.id.title_text_view)).perform().check(matches(withText("Vikings")));
     }
 
@@ -692,19 +672,13 @@ public class NotificationTests {
         IdlingRegistry.getInstance().register(notificationIdlingResource);
     }
 
-    private void checkForNotification(MediaData mediaData, int condition) {
+    private void checkForNotification(MediaData mediaData, int condition, int source) {
         UiDevice device = UiDevice.getInstance(getInstrumentation());
 
         device.openNotification();
 
-        String containingText = "";
-
-        if (condition == MediaNotifier.CONDITION_ON_RELEASE) {
-            containingText = mediaData.getTitle() + " has been released";
-
-        } else if (condition == SeriesNotifier.CONDITION_NEW_EPISODE){
-            containingText = "A new episode of " + mediaData.getTitle();
-        }
+        String containingText = getContainingText(mediaData.getTitle(), condition, source);
+        if (containingText == null) fail();
 
         UiSelector uiSelector = new UiSelector().textContains(containingText);
         UiCollection uiCollection = new UiCollection(uiSelector);
@@ -722,19 +696,13 @@ public class NotificationTests {
         device.pressBack();
     }
 
-    private void clickNotification(MediaData mediaData, int condition) {
+    private void clickNotification(MediaData mediaData, int condition, int source) {
         UiDevice device = UiDevice.getInstance(getInstrumentation());
 
         device.openNotification();
 
-        String containingText = "";
-
-        if (condition == MediaNotifier.CONDITION_ON_RELEASE) {
-            containingText = mediaData.getTitle() + " has been released";
-
-        } else if (condition == SeriesNotifier.CONDITION_NEW_EPISODE){
-            containingText = "A new episode of " + mediaData.getTitle();
-        }
+        String containingText = getContainingText(mediaData.getTitle(), condition, source);
+        if (containingText == null) fail();
 
         UiSelector uiSelector = new UiSelector().textContains(containingText);
         UiCollection uiCollection = new UiCollection(uiSelector);
@@ -760,5 +728,34 @@ public class NotificationTests {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    private String getContainingText(String mediaTitle, int condition, int source) {
+        if (condition == MediaNotifier.CONDITION_ON_RELEASE) {
+            if (source == ScheduledMedia.SOURCE_TRAKT) {
+                return mediaTitle + " will be released soon";
+
+            } else {
+                return mediaTitle + " is being released today";
+            }
+
+        } else if (condition == SeriesNotifier.CONDITION_NEW_EPISODE){
+            String containingText = "A new episode of " + mediaTitle;
+            if (source == ScheduledMedia.SOURCE_TRAKT) {
+                return containingText + " is airing soon";
+
+            } else {
+                return containingText + " airs today";
+            }
+        } else return null;
+    }
+
+    @After
+    public void reset() {
+        UpdateNotifierService.ASSUME_TRAKT_NEXT_EPISODE_NULL = false;
+        UpdateNotifierService.sActionMode = UpdateNotifierService.ACTION_SET;
+        NotificationHandler.TEST_TIME_DILATION = 0;
+        NotificationHandler.IS_TESTING = false;
+        NotificationManagerCompat.from(context).cancelAll();
     }
 }

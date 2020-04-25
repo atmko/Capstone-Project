@@ -133,7 +133,7 @@ public class ScheduledMediaTest {
         }
     }
 
-    @Test
+//    @Test
     public void setAirDateIncorrectFormatTest() {
         ScheduledMedia releaseSchedule = new ScheduledMedia();
         try {
