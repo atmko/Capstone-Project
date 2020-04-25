@@ -247,7 +247,7 @@ public class NotificationHandler {
     private static long getNotificationTimestamp(long releaseTimestamp) {
         long notificationTimestamp;
         if (IS_TESTING) {
-            notificationTimestamp = releaseTimestamp - TEST_TIME_DILATION;
+            notificationTimestamp = releaseTimestamp + TEST_TIME_DILATION;
 
         } else {
             notificationTimestamp = releaseTimestamp - TIME_DILATION;

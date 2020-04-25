@@ -45,6 +45,7 @@ import org.parceler.Parcels;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -114,7 +115,6 @@ public class NotificationTests {
 
     @After
     public void reset() {
-        UpdateNotifierService.ASSUME_TRAKT_NEXT_EPISODE_NULL = false;
         UpdateNotifierService.sActionMode = UpdateNotifierService.ACTION_SET;
         NotificationHandler.TEST_TIME_DILATION = 0;
         NotificationHandler.IS_TESTING = false;
@@ -367,18 +367,14 @@ public class NotificationTests {
         seriesData.setReleaseStatus("Running");
         seriesData.setTraktId("1393");
 
-        //set date in past to ensure notification first and second triggered with bypass logic
+        //set date in episode as placeholder, bypass production logic, insert TEST_NOTIFICATION_TIMESTAMP
         Episode nextEpisode = new Episode(seriesData.getId(), 1, 1,
                 ScheduledMedia.SOURCE_TMDB, "2019-08-08T05:00:00.000Z");
         seriesData.setNextEpisodeToAir(nextEpisode);
 
         //bypass logic to allow past air date to be posted as notification
         GeneralUtils.LOGIC_BYPASS = true;
-
-        seriesData.setNextEpisodeToAir(nextEpisode);
-
-        //feign trakt next episode NULL
-        UpdateNotifierService.ASSUME_TRAKT_NEXT_EPISODE_NULL = true;
+        NotificationHandler.TEST_TIME_DILATION = TimeUnit.SECONDS.toMillis(7);
 
         Intent intent = new Intent(getInstrumentation().getTargetContext(), AddToListActivity.class);
         intent.putExtra(AddToListActivity.MEDIA_DATA_KEY, Parcels.wrap(seriesData));
@@ -415,9 +411,6 @@ public class NotificationTests {
         //bypass logic to allow past air date to be posted as notification
         GeneralUtils.LOGIC_BYPASS = true;
 
-        //feign trakt next episode NULL
-        UpdateNotifierService.ASSUME_TRAKT_NEXT_EPISODE_NULL = true;
-
         Intent intent = new Intent(getInstrumentation().getTargetContext(), AddToListActivity.class);
         intent.putExtra(AddToListActivity.MEDIA_DATA_KEY, Parcels.wrap(seriesData));
         intent.putExtra(AddToListActivity.MEDIA_TYPE_KEY, MasterActivity.MEDIA_TYPE_SERIES);
@@ -449,9 +442,6 @@ public class NotificationTests {
 
         //bypass logic to allow past air date to be posted as notification
         GeneralUtils.LOGIC_BYPASS = true;
-
-        //feign trakt next episode NULL
-        UpdateNotifierService.ASSUME_TRAKT_NEXT_EPISODE_NULL = true;
 
         Intent intent = new Intent(getInstrumentation().getTargetContext(), AddToListActivity.class);
         intent.putExtra(AddToListActivity.MEDIA_DATA_KEY, Parcels.wrap(seriesData));

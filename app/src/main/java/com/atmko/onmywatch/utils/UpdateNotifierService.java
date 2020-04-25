@@ -49,9 +49,6 @@ public class UpdateNotifierService extends JobIntentService {
     public static final String ACTION_TESTING = "testing";
     public static final String ACTION_SET = "set";
 
-    @SuppressWarnings("unused")
-    public static boolean ASSUME_TRAKT_NEXT_EPISODE_NULL;
-
     private static final int JOB_ID = 20;
 
     public static String sActionMode = ACTION_SET;
