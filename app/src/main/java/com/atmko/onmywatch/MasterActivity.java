@@ -519,6 +519,8 @@ public class MasterActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
+        if (sIsKeyboardVisible) hideSoftKeyboard(findViewById(R.id.top_layout));
+
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
         boolean hasDetailFragment = getSupportFragmentManager()
                 .findFragmentById(R.id.detail_fragments_container) != null;
