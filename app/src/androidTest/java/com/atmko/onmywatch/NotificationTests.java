@@ -12,6 +12,7 @@ import androidx.room.Room;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.IdlingResource;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.ActivityTestRule;
 import androidx.test.uiautomator.UiCollection;
 import androidx.test.uiautomator.UiDevice;
@@ -38,6 +39,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -58,6 +60,7 @@ import static org.junit.Assert.fail;
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
+@RunWith(AndroidJUnit4.class)
 public class NotificationTests {
     private NotificationIdlingResource notificationIdlingResource;
     private IdlingResource addToListIdlingResource;
@@ -106,6 +109,16 @@ public class NotificationTests {
     @After
     public void closeDb() {
         db.close();
+        db = null;
+    }
+
+    @After
+    public void reset() {
+        UpdateNotifierService.ASSUME_TRAKT_NEXT_EPISODE_NULL = false;
+        UpdateNotifierService.sActionMode = UpdateNotifierService.ACTION_SET;
+        NotificationHandler.TEST_TIME_DILATION = 0;
+        NotificationHandler.IS_TESTING = false;
+        NotificationManagerCompat.from(context).cancelAll();
     }
 
     //ensures movie notifiers get canceled when watch status updated to other than "to watch" or "watching"
@@ -748,14 +761,5 @@ public class NotificationTests {
                 return containingText + " airs today";
             }
         } else return null;
-    }
-
-    @After
-    public void reset() {
-        UpdateNotifierService.ASSUME_TRAKT_NEXT_EPISODE_NULL = false;
-        UpdateNotifierService.sActionMode = UpdateNotifierService.ACTION_SET;
-        NotificationHandler.TEST_TIME_DILATION = 0;
-        NotificationHandler.IS_TESTING = false;
-        NotificationManagerCompat.from(context).cancelAll();
     }
 }
