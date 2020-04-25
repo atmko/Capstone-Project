@@ -86,6 +86,7 @@ import org.parceler.Parcels;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import hotchemi.android.rate.AppRate;
@@ -331,6 +332,10 @@ public class MasterActivity extends AppCompatActivity implements
                 Context.MODE_PRIVATE).edit()
                 .putBoolean(getString(R.string.is_pro_mode_key), false)
                 .apply();
+
+        //stop workers
+        WorkManager.getInstance(this).cancelWorkById(UUID.fromString(UPDATE_MEDIA_WORKER_KEY));
+        WorkManager.getInstance(this).cancelWorkById(UUID.fromString(BACKUP_WORKER_KEY));
 
         startLaunchActivity();
     }
