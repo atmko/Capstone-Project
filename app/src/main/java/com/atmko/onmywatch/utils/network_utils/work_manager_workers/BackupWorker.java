@@ -26,6 +26,8 @@ public class BackupWorker extends Worker {
     public static final String BACKUP_FOLDER_NAME = "backups";
     public static final String BACKUP_FILE_NAME = "backup";
 
+    private BackupLogic mBackupLogic;
+
     public BackupWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
@@ -36,9 +38,9 @@ public class BackupWorker extends Worker {
         int backupCounter = BackupLogic.getBackupCounter();
         String fileName = BackupWorker.BACKUP_FILE_NAME + "_" + backupCounter;
 
-        BackupLogic backupLogic = new BackupLogic(getApplicationContext(),
+        mBackupLogic = new BackupLogic(getApplicationContext(),
                 BackupWorker.BACKUP_FOLDER_NAME, fileName);
-        boolean backupSuccess = backupLogic.backupToRemoteDatabase();
+        boolean backupSuccess = mBackupLogic.backupToRemoteDatabase();
         if (backupSuccess) {
             FirebaseUserDataDao.setBackupCounter(backupCounter);
 
@@ -49,6 +51,12 @@ public class BackupWorker extends Worker {
             Log.d(TAG, "backup failure");
             return Result.failure();
         }
+    }
+
+    @Override
+    public void onStopped() {
+        super.onStopped();
+        mBackupLogic.deleteLocalFile();
     }
 
     public static void createBackupNotificationChannel(Context context) {

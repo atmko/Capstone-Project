@@ -378,7 +378,7 @@ public class BackupLogic {
         }
     }
 
-    private void deleteLocalFile() {
+    public void deleteLocalFile() {
         File dir = mContext.getFilesDir();
         File file = new File(dir, mFileName);
         if (file.exists()) {
