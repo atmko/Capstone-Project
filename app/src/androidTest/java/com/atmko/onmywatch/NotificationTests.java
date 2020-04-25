@@ -367,7 +367,7 @@ public class NotificationTests {
         seriesData.setReleaseStatus("Running");
         seriesData.setTraktId("1393");
 
-        //set date in episode as placeholder, bypass production logic, insert TEST_NOTIFICATION_TIMESTAMP
+        //set date in episode as placeholder, bypass production logic, insert TEST_TIME_DILATION
         Episode nextEpisode = new Episode(seriesData.getId(), 1, 1,
                 ScheduledMedia.SOURCE_TMDB, "2019-08-08T05:00:00.000Z");
         seriesData.setNextEpisodeToAir(nextEpisode);
