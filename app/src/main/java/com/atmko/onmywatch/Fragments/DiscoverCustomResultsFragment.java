@@ -91,6 +91,7 @@ public class DiscoverCustomResultsFragment extends Fragment implements
     private ViewGroup customSearchLayout;
     private Button searchButton;
     private Map<Integer, Integer> selectionMap;
+    private boolean mAvoidLoadingDetails;
 
     public DiscoverCustomResultsFragment() {
         // Required empty public constructor
@@ -447,6 +448,7 @@ public class DiscoverCustomResultsFragment extends Fragment implements
     }
 
     private boolean canLaunchDetailFragmentAlongside() {
+        if (mAvoidLoadingDetails) return false;
         if (getActivity() == null) return false;
         boolean isTabletLandscape = ((MasterActivity) getActivity()).isTabletLandscape();
         boolean isAdapterEmpty = mDataAdapter.getAdapterData().size() > 0;
@@ -582,6 +584,7 @@ public class DiscoverCustomResultsFragment extends Fragment implements
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        mAvoidLoadingDetails = true;
 
         //update initialized search preferences
         if (getArguments() != null) {

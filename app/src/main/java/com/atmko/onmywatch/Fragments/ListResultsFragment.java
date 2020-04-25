@@ -55,6 +55,7 @@ public class ListResultsFragment extends Fragment
     private int mListType;
     private int mMediaType;
     private String mListName;
+    private boolean mAvoidLoadingDetails;
 
     private AppDatabase database;
     private MediaDataAdapter mDataAdapter;
@@ -106,6 +107,7 @@ public class ListResultsFragment extends Fragment
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        mAvoidLoadingDetails = true;
 
         //save search bar text
         outState.putString(SEARCH_TEXT_KEY, mSearchTextView.getText().toString());
@@ -383,6 +385,7 @@ public class ListResultsFragment extends Fragment
     }
 
     private boolean canLaunchDetailFragmentAlongside() {
+        if (mAvoidLoadingDetails) return false;
         if (getActivity() == null) return false;
         boolean isAdapterEmpty = mDataAdapter.getAdapterData().size() == 0;
         boolean isTabletLandscape = ((MasterActivity) getActivity()).isTabletLandscape();

@@ -57,6 +57,7 @@ public class HomeSpotlightFragment extends Fragment implements
 
     private HomeSpotlightAdapter mDataAdapter;
     private SearchPreferences mSearchPreferences;
+    private boolean mAvoidLoadingDetails;
 
     public HomeSpotlightFragment() {
         // Required empty public constructor
@@ -207,6 +208,7 @@ public class HomeSpotlightFragment extends Fragment implements
     }
 
     private boolean canLaunchDetailFragmentAlongside() {
+        if (mAvoidLoadingDetails) return false;
         if (getActivity() == null) return false;
         boolean isTabletLandscape = ((MasterActivity) getActivity()).isTabletLandscape();
         boolean isAdapterEmpty = mDataAdapter.getAdapterData().size() > 0;
@@ -259,6 +261,7 @@ public class HomeSpotlightFragment extends Fragment implements
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        mAvoidLoadingDetails = true;
 
         //update initialized search preferences
         if (getArguments() != null) {

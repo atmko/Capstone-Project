@@ -77,6 +77,7 @@ public class DiscoverResultsFragment extends Fragment implements
     private SearchPreferences mSearchPreferences;
     private SuperEditText mSearchTextView;
 
+    private boolean mAvoidLoadingDetails;
 
     public DiscoverResultsFragment() {
         // Required empty public constructor
@@ -326,6 +327,7 @@ public class DiscoverResultsFragment extends Fragment implements
     }
 
     private boolean canLaunchDetailFragmentAlongside() {
+        if (mAvoidLoadingDetails) return false;
         if (getActivity() == null) return false;
         boolean isTabletLandscape = ((MasterActivity) getActivity()).isTabletLandscape();
 
@@ -458,6 +460,7 @@ public class DiscoverResultsFragment extends Fragment implements
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        mAvoidLoadingDetails = true;
 
         //update initialized search preferences
         if (getArguments() != null) {
