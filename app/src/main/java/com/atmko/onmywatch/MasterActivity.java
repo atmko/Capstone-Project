@@ -316,8 +316,6 @@ public class MasterActivity extends AppCompatActivity implements
 
     private void logOut() {
         AppDatabase.deleteLocallySavedData(this);
-        //remove database instance so signing in has proper functionality
-        AppDatabase.closeDatabase();
 
         //log out
         GoogleSignInOptions gso =
