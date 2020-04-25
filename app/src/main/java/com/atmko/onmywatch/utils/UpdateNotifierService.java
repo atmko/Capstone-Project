@@ -47,7 +47,7 @@ public class UpdateNotifierService extends JobIntentService {
     private static final String TAG = UpdateNotifierService.class.getSimpleName();
 
     public static final String ACTION_TESTING = "testing";
-    private static final String ACTION_SET = "set";
+    public static final String ACTION_SET = "set";
 
     @SuppressWarnings("unused")
     public static boolean ASSUME_TRAKT_NEXT_EPISODE_NULL;
@@ -361,8 +361,14 @@ public class UpdateNotifierService extends JobIntentService {
         }
 
         assert seriesNotifier != null;
-        NotificationHandler
-                .scheduleNewEpisodeNotification(this, ((SeriesData) newMediaData), seriesNotifier);
+        if (seriesNotifier.getCondition() == CONDITION_ON_RELEASE) {
+            NotificationHandler
+                    .scheduleReleaseNotification(this, newMediaData, seriesNotifier);
+
+        } else if (seriesNotifier.getCondition() == CONDITION_NEW_EPISODE){
+            NotificationHandler
+                    .scheduleNewEpisodeNotification(this, ((SeriesData) newMediaData), seriesNotifier);
+        }
     }
 
     //create notifier if episodes still pending

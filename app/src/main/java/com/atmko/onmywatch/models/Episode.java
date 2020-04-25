@@ -14,9 +14,6 @@ import java.util.Date;
 
 @Parcel
 public class Episode extends ScheduledMedia {
-    public static final int SOURCE_TMDB = 0;
-    public static final int SOURCE_TRAKT = 1;
-
     public String parentMediaId;
     public int seasonNumber;
     public int episodeNumber;

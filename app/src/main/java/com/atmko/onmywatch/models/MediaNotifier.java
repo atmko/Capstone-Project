@@ -7,23 +7,18 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.room.ColumnInfo;
 
-import com.atmko.onmywatch.fragments.DetailsFragment;
-import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.utils.NotificationHandler;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 
-import org.parceler.Parcels;
-
 public abstract class MediaNotifier {
     //notification channel ids
-    static final String RELEASE_CHANNEL_ID = "Release Channel";
+    private static final String RELEASE_CHANNEL_ID = "Release Channel";
 
     public static final String NOTIFICATIONS_KEY = "notification";
 
@@ -80,23 +75,12 @@ public abstract class MediaNotifier {
         }
     }
 
-    public Notification createReleaseNotification(Context context, MediaData mediaData) {
-        String contentTitle = context.getString(R.string.notification_new_release_title);
-        String contentText = mediaData.getTitle() + " "
-                + context.getString(R.string.notification_new_release_content_suffix);
+    public abstract Notification createReleaseNotification(Context context,
+                                                           MediaData mediaData,
+                                                           int source);
 
-        //create intent to launch activity on click
-        Intent detailsIntent = new Intent(context, MasterActivity.class);
-        detailsIntent.setAction(DetailsFragment.ACTION_LAUNCH_DETAILS);
-        detailsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        detailsIntent.putExtra(DetailsFragment.MEDIA_DATA_PARCELABLE_KEY, Parcels.wrap(mediaData));
-
-        Bundle detailsExtras = new Bundle();
-        detailsIntent.putExtras(detailsExtras);
-
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, getNotificationCode(),
-                detailsIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
+    Notification buildReleaseNotification(Context context, String contentTitle,
+                                          String contentText, PendingIntent pendingIntent) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, RELEASE_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notify_black)
                 .setContentTitle(contentTitle)

@@ -13,6 +13,7 @@ import androidx.core.app.NotificationManagerCompat;
 
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.database.daos.SeriesNotifierDao;
+import com.atmko.onmywatch.models.Episode;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieData;
@@ -26,11 +27,18 @@ import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.widget.ListWidgetProvider;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
 
 public class NotificationHandler {
+    private static final long TIME_DILATION = TimeUnit.MINUTES.toMillis(30);
+    //for testing
+    public static long TEST_TIME_DILATION = 0;
+    @SuppressWarnings("FieldCanBeLocal")
+    public static boolean IS_TESTING = false;
+
     public static class AlarmReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(final Context context, final Intent intent) {
@@ -195,45 +203,57 @@ public class NotificationHandler {
     static void scheduleReleaseNotification(Context context, MediaData mediaData,
                                             MediaNotifier notifier) {
         int mediaType;
-
-        Notification notification = notifier.createReleaseNotification(context, mediaData);
-
+        ScheduledMedia scheduledMedia;
+        int source;
         if (mediaData instanceof MovieData) {
             mediaType = MEDIA_TYPE_MOVIE;
+            scheduledMedia = ((MovieData) mediaData).getScheduledMedia();
+            source = ScheduledMedia.SOURCE_TMDB;
 
         } else {
             mediaType = MEDIA_TYPE_SERIES;
+            scheduledMedia = ((SeriesData) mediaData).getNextEpisodeToAir();
+            source = ((Episode) scheduledMedia).source;
         }
+
+        Notification notification = notifier.createReleaseNotification(context, mediaData, source);
 
         //create pending intent to house notification for when alarm is triggered
         PendingIntent releasePendingIntent =
                 notifier.createPendingIntent(context, mediaType, mediaData.getId(), notification);
 
-        ScheduledMedia scheduledMedia = new ScheduledMedia();
-
-        //TODO: make movie data have scheduled media object like series data to hold release information
-        try {
-            scheduledMedia.setAirDate(mediaData.getReleaseDate());
-        } catch (ScheduledMedia.DateFormatException e) {
-            e.printStackTrace();
-        }
-
         long releaseTimestamp = scheduledMedia.getBestLocalAirDate().getTime();
 
-        setNotificationAlarm(context, releasePendingIntent, releaseTimestamp);
+        setNotificationAlarm(context, releasePendingIntent, getNotificationTimestamp(releaseTimestamp));
     }
 
     static void scheduleNewEpisodeNotification(Context context, SeriesData mediaData,
                                                SeriesNotifier notifier) {
-        Notification notification = notifier.createNewEpisodeNotification(context, mediaData);
+
+        Episode nextEpisode = mediaData.getNextEpisodeToAir();
+        int source = nextEpisode.source;
+
+        Notification notification = notifier.createNewEpisodeNotification(context, mediaData, source);
 
         //create pending intent to house notification for when alarm is triggered
         PendingIntent releasePendingIntent =
                 notifier.createPendingIntent(context, MEDIA_TYPE_SERIES, mediaData.getId(), notification);
 
-        long releaseTimestamp = mediaData.getNextEpisodeToAir().getBestLocalAirDate().getTime();
+        long releaseTimestamp = nextEpisode.getBestLocalAirDate().getTime();
 
-        setNotificationAlarm(context, releasePendingIntent, releaseTimestamp);
+        setNotificationAlarm(context, releasePendingIntent, getNotificationTimestamp(releaseTimestamp));
+    }
+
+    private static long getNotificationTimestamp(long releaseTimestamp) {
+        long notificationTimestamp;
+        if (IS_TESTING) {
+            notificationTimestamp = releaseTimestamp - TEST_TIME_DILATION;
+
+        } else {
+            notificationTimestamp = releaseTimestamp - TIME_DILATION;
+        }
+
+        return notificationTimestamp;
     }
 
     private static void setNotificationAlarm(Context context, PendingIntent releasePendingIntent,

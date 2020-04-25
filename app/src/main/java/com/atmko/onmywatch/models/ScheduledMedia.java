@@ -27,6 +27,9 @@ import static com.atmko.onmywatch.utils.GeneralUtils.ISO_DATE_FORMAT;
 
 @Parcel
 public class ScheduledMedia {
+    public static final int SOURCE_TMDB = 0;
+    public static final int SOURCE_TRAKT = 1;
+
     private static final String TIME_SUFFIX_YEARS = " year(s)";
     private static final String TIME_SUFFIX_MONTHS = " month(s)";
     private static final String TIME_SUFFIX_WEEKS = " week(s)";
