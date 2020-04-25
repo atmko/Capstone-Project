@@ -44,6 +44,10 @@ public class CreateListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_list);
 
+        if (savedInstanceState == null) {
+            MasterActivity.showSoftKeyboard(findViewById(R.id.top_layout));
+        }
+
         Intent intent = getIntent();
         mMode = intent.getIntExtra(MODE_KEY, 0);
         if (mMode == MODE_EDIT) {
