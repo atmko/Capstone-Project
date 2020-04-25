@@ -37,6 +37,7 @@ import com.atmko.onmywatch.models.WatchListModel;
 import com.atmko.onmywatch.utils.NotificationHandler;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 import com.atmko.onmywatch.utils.api_utils.MovieApiConstants;
+import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
 import com.atmko.onmywatch.utils.api_utils.SeriesApiConstants;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.storage.FirebaseStorage;
@@ -101,6 +102,11 @@ public class RestoreService extends JobIntentService {
         void onRestoreFailed();
     }
 
+    public static void enqueueWork(Context appContext, Intent intent) {
+        mOnRestoreCompleteListener = ((OnRestoreCompleteListener) appContext);
+        enqueueWork(appContext, RestoreService.class, JOB_ID, intent);
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -111,11 +117,6 @@ public class RestoreService extends JobIntentService {
                         getString(R.string.notification_restore_content)
                 )
         );
-    }
-
-    public static void enqueueWork(Context appContext, Intent intent) {
-        mOnRestoreCompleteListener = ((OnRestoreCompleteListener) appContext);
-        enqueueWork(appContext, RestoreService.class, JOB_ID, intent);
     }
 
     @Override
@@ -136,6 +137,7 @@ public class RestoreService extends JobIntentService {
 
         } else {
             Log.d(TAG, "folder and or file name does't exist");
+            respondWithFailure();
         }
     }
 
@@ -156,6 +158,12 @@ public class RestoreService extends JobIntentService {
     }
 
     private void restoreBackup() {
+        //if not online, respond with failure
+        if (!NetworkFunctions.isOnline()) {
+            respondWithFailure();
+            return;
+        }
+
         mBackupRef.getStream(new StreamDownloadTask.StreamProcessor() {
             @Override
             public void doInBackground(@NonNull StreamDownloadTask.TaskSnapshot taskSnapshot,
@@ -175,8 +183,7 @@ public class RestoreService extends JobIntentService {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                // Handle failed download
-                // ...
+                respondWithFailure();
             }
         });
     }
