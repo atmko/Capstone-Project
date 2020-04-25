@@ -132,7 +132,8 @@ public class SeriesData extends MediaData{
     @SuppressWarnings("RedundantIfStatement")
     @Override
     public boolean supportsNotifiers()  {
-        //if series isn't yet released, set release notifier, otherwise create notifier if new episodes still running
+        if (mReleaseStatus == null) return false;
+
         boolean isPendingRelease = isPendingRelease();
         if (mWatchStatus == MediaData.WATCH_STATUS_TO_WATCH && isPendingRelease) {
             return true;
