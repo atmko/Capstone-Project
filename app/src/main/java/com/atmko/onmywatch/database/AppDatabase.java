@@ -72,12 +72,6 @@ public abstract class AppDatabase extends RoomDatabase {
         sInstance = database;
     }
 
-    public static void closeDatabase() {
-        if (sInstance != null) {
-            sInstance = null;
-        }
-    }
-
     public static void deleteLocallySavedData(Context context) {
         AppDatabase.getInstance(context).clearAllTables();
 

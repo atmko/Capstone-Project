@@ -125,7 +125,7 @@ public class MasterActivity extends AppCompatActivity implements
 
     private static final int REQUEST_LOG_OUT = 20;
     public static final int REQUEST_GUEST_LOG_OUT = 30;
-    private static int DIFFERENT_ACCOUNT_ID = 40;
+    private static final int DIFFERENT_ACCOUNT_ID = 40;
 
     private static final int PENDING_PURCHASE_ID = 1;
 

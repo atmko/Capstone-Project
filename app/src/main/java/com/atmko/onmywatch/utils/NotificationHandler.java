@@ -36,7 +36,6 @@ public class NotificationHandler {
     private static final long TIME_DILATION = TimeUnit.MINUTES.toMillis(30);
     //for testing
     public static long TEST_TIME_DILATION = 0;
-    @SuppressWarnings("FieldCanBeLocal")
     public static boolean IS_TESTING = false;
 
     public static class AlarmReceiver extends BroadcastReceiver {

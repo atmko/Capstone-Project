@@ -134,6 +134,7 @@ public class ScheduledMediaTest {
     }
 
 //    @Test
+    @SuppressWarnings("unused")
     public void setAirDateIncorrectFormatTest() {
         ScheduledMedia releaseSchedule = new ScheduledMedia();
         try {
