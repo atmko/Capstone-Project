@@ -3,7 +3,7 @@
 
     <!--LAUNCH ACTIVITY TEXT-->
     <string name="app_description">Manage And Track What You Watch</string>
-    <string name="streaming_disclaimer_prefix">Majik can NOT</string>
+    <string name="streaming_disclaimer_prefix">Majik can</string>
     <string name="streaming_disclaimer_suffix">stream movies or series</string>
     <string name="streaming_confirmation_text">I understand</string>
     <string name="agreement_error_text">You must accept this condition to continue</string>
@@ -12,6 +12,7 @@
     <string name="accept_terms_text">By clicking continue, you are agreeing to our\nTerms of Use and Privacy Policy</string>
     <string name="terms_url">https://majik.flycricket.io/terms.html</string>
     <string name="privacy_url">https://majik.flycricket.io/privacy.html</string>
+    <string name="not_text_literal">NOT</string>
     <!--LAUNCH ACTIVITY TEXT-->
 
     <string name="ad_test_id" translatable="false" tools:keep="@string/ad_test_id">ca-app-pub-3940256099942544/6300978111</string>

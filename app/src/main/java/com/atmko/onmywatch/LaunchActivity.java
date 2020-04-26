@@ -48,7 +48,7 @@ public class LaunchActivity extends AppCompatActivity
     private static final int ERROR_DIALOG_REQUEST_CODE = 1;
 
     private AppCompatCheckBox checkBox;
-    private TextView agreementErrorTextView;
+    private TextView iUnderstandTextView;
 
     private SharedPreferences sharedPreferences;
     private boolean isProviderUpdated;
@@ -144,23 +144,7 @@ public class LaunchActivity extends AppCompatActivity
     }
 
     private void defineViews() {
-        TextView disclaimerSuffixTextView = findViewById(R.id.no_streaming_prefix_text_view);
-        SpannableString disclaimerSpannableString = new SpannableString(disclaimerSuffixTextView
-                .getText().toString());
-        ClickableSpan disclaimerSuffixSpan = new ClickableSpan() {
-            @Override
-            public void onClick(@NonNull View view) {
-                launchBrowserIntent(getString(R.string.streaming_disclaimer_suffix));
-            }
-        };
-        int[] disclaimerClickableSpans = getResources().getIntArray(R.array.disclaimer_suffix_clickable_spans);
-        disclaimerSpannableString.setSpan(disclaimerSuffixSpan, disclaimerClickableSpans[0],
-                disclaimerClickableSpans[1], Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        disclaimerSuffixTextView.setText(disclaimerSpannableString);
-        disclaimerSuffixTextView.setMovementMethod(LinkMovementMethod.getInstance());
-        disclaimerSuffixTextView.setHighlightColor(Color.TRANSPARENT);
-
-        agreementErrorTextView = findViewById(R.id.agreement_error_text_view);
+        iUnderstandTextView = findViewById(R.id.i_understand_text_view);
         TextView termsTextView = findViewById(R.id.terms_text_view);
         SpannableString spannableString = new SpannableString(termsTextView.getText().toString());
         ClickableSpan termsClickableSpan = new ClickableSpan() {
@@ -189,7 +173,7 @@ public class LaunchActivity extends AppCompatActivity
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isAgreed) {
                 if (isAgreed) {
-                    agreementErrorTextView.setVisibility(View.GONE);
+                    iUnderstandTextView.setTextColor(getResources().getColor(android.R.color.white));
                 }
             }
         });
@@ -300,7 +284,7 @@ public class LaunchActivity extends AppCompatActivity
         if (isAgreementAcknowledged()) {
             checkBox.setChecked(true);
             findViewById(R.id.i_understand_linear_layout).setVisibility(View.GONE);
-            findViewById(R.id.agreement_error_text_view).setVisibility(View.GONE);
+            findViewById(R.id.i_understand_text_view).setVisibility(View.GONE);
         }
     }
 
@@ -309,7 +293,7 @@ public class LaunchActivity extends AppCompatActivity
     }
 
     private void showMissingAgreements() {
-        agreementErrorTextView.setVisibility(View.VISIBLE);
+        iUnderstandTextView.setTextColor(getResources().getColor(R.color.colorAccent));
     }
 
     private void updateAgreementPreference() {

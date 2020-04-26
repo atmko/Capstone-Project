@@ -67,8 +67,6 @@
 
         <activity android:name=".LaunchActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="sensorPortrait"
-            tools:ignore="LockedOrientationActivity"
             android:exported="false"/>
 
         <activity

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--LAUNCH ACTIVITY TEXT-->
+    <string name="accept_terms_text">By clicking continue, you are agreeing to our Terms of Use and Privacy Policy</string>
+    <!--LAUNCH ACTIVITY TEXT-->
+</resources>
