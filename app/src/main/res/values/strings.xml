@@ -201,6 +201,7 @@
     <string name="log_out_confirmation_message">Failed To Backup Data. Are You Sure You Want To Log Out?</string>
     <string name="pending_purchase_confirmation_message">Your purchase is processing, we\'ll let you know when its done.</string>
     <string name="guest_log_out_confirmation_message">Warning!\n\n Guest data is deleted after log out (Except Purchases).\n\nLink Account In Settings to Keep Account\n\nTap yes 3 times to log out.</string>
+    <string name="different_account_confirmation_message">NOTICE\n\nYour purchases are linked to another account on your device</string>
     <string name="purchase_not_logged_in_error_message">Purchases Unavailable\n\nMake sure your device is signed into at least one Google Play account.</string>
     <!--CONFIRMATION MESSAGES-->
 

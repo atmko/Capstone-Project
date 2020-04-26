@@ -18,6 +18,7 @@ public class ConfirmationActivity extends AppCompatActivity {
     public static final String ACTION_RESTORE = "restore";
     public static final String ACTION_CREATE_BACKUP = "create_backup";
     public static final String ACTION_PENDING_PURCHASE = "pending_purchase";
+    public static final String ACTION_DIFFERENT_ACCOUNT = "different_account";
     public static final String ACTION_GOOGLE_STORE_LOG_IN = "google_store_log_in";
 
     private static final String ACTION_KEY = "action";
@@ -119,6 +120,12 @@ public class ConfirmationActivity extends AppCompatActivity {
 
                 case ACTION_PENDING_PURCHASE:
                     confirmationMessage = getString(R.string.pending_purchase_confirmation_message);
+                    break;
+
+                case ACTION_DIFFERENT_ACCOUNT:
+                    confirmationMessage = getString(R.string.different_account_confirmation_message);
+                    confirmationButton.setText(R.string.ok_button_text);
+                    cancelButton.setVisibility(View.GONE);
                     break;
 
                 case ACTION_GOOGLE_STORE_LOG_IN:

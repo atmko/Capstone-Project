@@ -86,7 +86,6 @@ import org.parceler.Parcels;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import hotchemi.android.rate.AppRate;
@@ -111,6 +110,7 @@ public class MasterActivity extends AppCompatActivity implements
     public static final String IS_LOGGING_IN_KEY = "is_logging_in";
     private static final String INITIAL_PRO_CHECK_KEY = "initial_pro_check";
     private static final String KEYBOARD_VISIBILITY_KEY = "keyboard_visibility";
+    private static final String IS_DIFFERENT_ACCOUNT_KEY = "different_account";
 
     public static final String SEARCH_TEXT_KEY = "search_text";
     public static final String SEARCH_BAR_VISIBILITY_KEY = "visible_search_bar";
@@ -125,6 +125,7 @@ public class MasterActivity extends AppCompatActivity implements
 
     private static final int REQUEST_LOG_OUT = 20;
     public static final int REQUEST_GUEST_LOG_OUT = 30;
+    private static int DIFFERENT_ACCOUNT_ID = 40;
 
     private static final int PENDING_PURCHASE_ID = 1;
 
@@ -148,6 +149,7 @@ public class MasterActivity extends AppCompatActivity implements
     private boolean mInitialProCheck = true;
 
     private static BillingClient mBillingClient;
+    private static boolean sIsDifferentAccount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -193,6 +195,8 @@ public class MasterActivity extends AppCompatActivity implements
     }
 
     private void startBillingClient() {
+        if (sIsDifferentAccount) return;
+
         if (mBillingClient != null) {
             if (mBillingClient.isReady()) {
                 queryPurchases(this);
@@ -427,8 +431,7 @@ public class MasterActivity extends AppCompatActivity implements
     private void setValues() {
         if (mSavedInstanceState != null) {
             //restore keyboard visibility value
-            sIsKeyboardVisible =
-                    mSavedInstanceState.getBoolean(KEYBOARD_VISIBILITY_KEY);
+            sIsKeyboardVisible = mSavedInstanceState.getBoolean(KEYBOARD_VISIBILITY_KEY);
         }
     }
 
@@ -766,7 +769,7 @@ public class MasterActivity extends AppCompatActivity implements
         });
     }
 
-    private static void launchConfirmationActivity(final Activity activity,
+    public static void launchConfirmationActivity(final Activity activity,
                                                    final int requestId,
                                                    final String action) {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
@@ -1167,15 +1170,23 @@ public class MasterActivity extends AppCompatActivity implements
                     public void onSuccess(HttpsCallableResult httpsCallableResult) {
                         @SuppressWarnings("unchecked")
                         Map<String, String> results = ((Map<String, String>) httpsCallableResult.getData());
-                        if (results != null) {
-                            if (results.get("error") != null) {
-                                showSnackBarMessage(results.get("error"), activity);
+                        if (results == null) return;
 
-                            } else if (results.get("status") != null) {
-                                //query purchases to update check marks on purchases
-                                showSnackBarMessage("Purchase Verified", activity);
-                                justTurnedPro(activity);
+                        String error = results.get("error");
+                        if (error != null) {
+                            if (error.equals(IS_DIFFERENT_ACCOUNT_KEY)) {
+                                sIsDifferentAccount = true;
+                                launchConfirmationActivity(activity, DIFFERENT_ACCOUNT_ID,
+                                        ConfirmationActivity.ACTION_DIFFERENT_ACCOUNT);
+
+                            } else {
+                                showSnackBarMessage(error, activity);
                             }
+
+                        } else if (results.get("status") != null) {
+                            //query purchases to update check marks on purchases
+                            showSnackBarMessage("Purchase Verified", activity);
+                            justTurnedPro(activity);
                         }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
