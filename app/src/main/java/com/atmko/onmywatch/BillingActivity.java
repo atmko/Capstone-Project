@@ -136,6 +136,18 @@ public class BillingActivity extends AppCompatActivity implements
         //if connection successful
         if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
             queryPurchases();
+
+        } else {
+            if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.BILLING_UNAVAILABLE) {
+                MasterActivity.launchConfirmationActivity(BillingActivity.this,
+                        BillingClient.BillingResponseCode.BILLING_UNAVAILABLE,
+                        ConfirmationActivity.ACTION_GOOGLE_STORE_LOG_IN);
+
+                finish();
+                return;
+            }
+
+            showSnackBarMessage(billingResult.getDebugMessage());
         }
     }
 

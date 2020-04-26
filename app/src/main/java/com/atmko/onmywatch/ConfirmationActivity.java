@@ -18,6 +18,7 @@ public class ConfirmationActivity extends AppCompatActivity {
     public static final String ACTION_RESTORE = "restore";
     public static final String ACTION_CREATE_BACKUP = "create_backup";
     public static final String ACTION_PENDING_PURCHASE = "pending_purchase";
+    public static final String ACTION_GOOGLE_STORE_LOG_IN = "google_store_log_in";
 
     private static final String ACTION_KEY = "action";
     private static final String CONFIRMATION_MESSAGE_KEY = "confirmation_message";
@@ -30,6 +31,8 @@ public class ConfirmationActivity extends AppCompatActivity {
     private String confirmationMessage;
 
     private TextView confirmationTextView;
+    private Button confirmationButton;
+    private Button cancelButton;
 
     private int confirmationCounter;
     private int counterLimit;
@@ -54,7 +57,7 @@ public class ConfirmationActivity extends AppCompatActivity {
 
     private void defineViews() {
         confirmationTextView = findViewById(R.id.confirmation_text_view);
-        Button confirmationButton = findViewById(R.id.confirmation_button);
+        confirmationButton = findViewById(R.id.confirmation_button);
         confirmationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -64,7 +67,7 @@ public class ConfirmationActivity extends AppCompatActivity {
                 }
             }
         });
-        Button cancelButton = findViewById(R.id.cancel_button);
+        cancelButton = findViewById(R.id.cancel_button);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -116,6 +119,12 @@ public class ConfirmationActivity extends AppCompatActivity {
 
                 case ACTION_PENDING_PURCHASE:
                     confirmationMessage = getString(R.string.pending_purchase_confirmation_message);
+                    break;
+
+                case ACTION_GOOGLE_STORE_LOG_IN:
+                    confirmationMessage = getString(R.string.purchase_not_logged_in_error_message);
+                    confirmationButton.setText(R.string.ok_button_text);
+                    cancelButton.setVisibility(View.GONE);
                     break;
             }
 
