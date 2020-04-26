@@ -52,6 +52,11 @@ public class BackupService extends JobIntentService {
 
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
+        if (MasterActivity.getCurrentUser() == null) {
+            Log.d(TAG, "backup failure");
+            return;
+        }
+
         int backupCounter = BackupLogic.getBackupCounter();
         String fileName = BackupWorker.BACKUP_FILE_NAME + "_" + backupCounter;
 

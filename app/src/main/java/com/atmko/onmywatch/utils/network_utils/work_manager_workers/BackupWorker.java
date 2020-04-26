@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.database.daos.FirebaseUserDataDao;
 import com.atmko.onmywatch.utils.network_utils.BackupLogic;
@@ -35,6 +36,11 @@ public class BackupWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
+        if (MasterActivity.getCurrentUser() == null) {
+            Log.d(TAG, "backup failure");
+            return Result.failure();
+        }
+
         int backupCounter = BackupLogic.getBackupCounter();
         String fileName = BackupWorker.BACKUP_FILE_NAME + "_" + backupCounter;
 

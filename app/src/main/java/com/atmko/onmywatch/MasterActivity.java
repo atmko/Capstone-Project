@@ -334,8 +334,8 @@ public class MasterActivity extends AppCompatActivity implements
                 .apply();
 
         //stop workers
-        WorkManager.getInstance(this).cancelWorkById(UUID.fromString(UPDATE_MEDIA_WORKER_KEY));
-        WorkManager.getInstance(this).cancelWorkById(UUID.fromString(BACKUP_WORKER_KEY));
+        WorkManager.getInstance(this).cancelAllWorkByTag(UPDATE_MEDIA_WORKER_KEY);
+        WorkManager.getInstance(this).cancelAllWorkByTag(BACKUP_WORKER_KEY);
 
         startLaunchActivity();
     }
