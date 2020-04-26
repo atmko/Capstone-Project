@@ -67,19 +67,22 @@
 
         <activity android:name=".LaunchActivity"
             android:launchMode="singleTop"
-            android:theme="@style/splashScreenTheme"
             android:screenOrientation="sensorPortrait"
-            tools:ignore="LockedOrientationActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            tools:ignore="LockedOrientationActivity"
+            android:exported="false"/>
 
         <activity
             android:name=".MasterActivity"
             android:launchMode="singleTop"
-            android:exported="false"/>
+            android:theme="@style/splashScreenTheme"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
 
         <activity
             android:name=".widget.ListWidgetProviderConfigureActivity"
