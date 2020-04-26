@@ -211,32 +211,10 @@ public class BillingActivity extends AppCompatActivity implements
                 }
             }
         });
-
-        mBillingClient.querySkuDetailsAsync(getTestSkuDetailsParams(), new SkuDetailsResponseListener() {
-            @Override
-            public void onSkuDetailsResponse(BillingResult billingResult, List<SkuDetails> skuDetails) {
-                if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK
-                        && skuDetails != null) {
-                    mAdapter.addAdapterData(skuDetails);
-                    mAdapter.notifyDataSetChanged();
-
-                } else {
-                    showSnackBarMessage(billingResult.getDebugMessage());
-                }
-            }
-        });
     }
 
     private SkuDetailsParams getInappSkuDetailsParams() {
         List<String> skuList = Arrays.asList(getResources().getStringArray(R.array.inapp_skus));
-        SkuDetailsParams.Builder skuDetailsParamsBuilder = SkuDetailsParams.newBuilder();
-        skuDetailsParamsBuilder.setSkusList(skuList);
-        skuDetailsParamsBuilder.setType(BillingClient.SkuType.INAPP);
-        return skuDetailsParamsBuilder.build();
-    }
-
-    private SkuDetailsParams getTestSkuDetailsParams() {
-        List<String> skuList = Arrays.asList(getResources().getStringArray(R.array.test_purchase_skus));
         SkuDetailsParams.Builder skuDetailsParamsBuilder = SkuDetailsParams.newBuilder();
         skuDetailsParamsBuilder.setSkusList(skuList);
         skuDetailsParamsBuilder.setType(BillingClient.SkuType.INAPP);

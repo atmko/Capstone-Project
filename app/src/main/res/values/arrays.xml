@@ -281,12 +281,6 @@
         <item>pro_mode</item>
     </array>
 
-    <array name="test_purchase_skus">
-        <item>android.test.purchased</item>
-        <item>android.test.canceled</item>
-        <item>android.test.item_unavailable</item>
-    </array>
-
     <array name="terms_clickable_spans">
         <item>46</item>
         <item>58</item>
