@@ -20,6 +20,7 @@ import com.atmko.onmywatch.utils.network_utils.TraktApiConstants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -270,11 +271,23 @@ abstract public class MediaData {
     public abstract String getMediaUrl(Context context, String mediaId);
 
     public boolean isPendingRelease() {
-        return !mReleaseStatus.equals(MovieApiConstants.RELEASE_STATUS_RELEASED)
-                && !mReleaseStatus.equals(ApiConstants.TextReplacement.REPLACEMENT_RETURNING_SERIES)
-                && !mReleaseStatus.equals(SeriesApiConstants.RELEASE_STATUS_PILOT)
-                && !mReleaseStatus.equals(SeriesApiConstants.RELEASE_STATUS_ENDED)
-                && !mReleaseStatus.equals(ApiConstants.RELEASE_STATUS_CANCELED);
+        boolean isPendingReleasedStatus =
+                !mReleaseStatus.equals(MovieApiConstants.RELEASE_STATUS_RELEASED)
+                        && !mReleaseStatus.equals(ApiConstants.TextReplacement.REPLACEMENT_RETURNING_SERIES)
+                        && !mReleaseStatus.equals(SeriesApiConstants.RELEASE_STATUS_PILOT)
+                        && !mReleaseStatus.equals(SeriesApiConstants.RELEASE_STATUS_ENDED)
+                        && !mReleaseStatus.equals(ApiConstants.RELEASE_STATUS_CANCELED);
+
+        //check if release date in future because release status may be wrong(like when a movie has release status but local country release date is in the future)
+        ScheduledMedia scheduledMedia = new ScheduledMedia();
+        try {
+            scheduledMedia.setAirDate(getReleaseDate());
+        } catch (ScheduledMedia.DateFormatException e) {
+            e.printStackTrace();
+        }
+
+        boolean releaseDateInFuture = !scheduledMedia.getBestLocalAirDate().before(new Date());
+        return releaseDateInFuture || isPendingReleasedStatus;
     }
 
     public abstract boolean supportsNotifiers();
