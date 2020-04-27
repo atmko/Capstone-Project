@@ -255,7 +255,7 @@ abstract public class MediaData {
 
     public static String getWatchStatusTitle(int watchStatus, Context context) {
         String[] watchStatusTitles =
-                context.getResources().getStringArray(R.array.watch_status_series_titles);
+                context.getResources().getStringArray(R.array.watch_status_titles);
 
         return watchStatusTitles[watchStatus];
     }

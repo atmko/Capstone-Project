@@ -990,12 +990,13 @@ public class MasterActivity extends AppCompatActivity implements
     }
 
     private void addWatchLists() {
-        String[] seriesWatchListTitles = getResources()
-                .getStringArray(R.array.watch_status_series_titles);
-        for (String title: seriesWatchListTitles) {
-            WatchListModel watchListModel = new WatchListModel(title);
-            AppDatabase.getInstance(this).watchListsDao()
-                    .addList(watchListModel);
+        String[] watchStatusTitles = getResources()
+                .getStringArray(R.array.watch_status_titles);
+
+        //starting from 1 skips 0(none watch status)
+        for (int i = 1; i < watchStatusTitles.length; i++) {
+            WatchListModel watchListModel = new WatchListModel(watchStatusTitles[i]);
+            AppDatabase.getInstance(this).watchListsDao().addList(watchListModel);
         }
     }
 

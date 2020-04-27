@@ -199,7 +199,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
 
         //configure watch status selector
         mWatchStatusRadioGroup = findViewById(R.id.watch_status_radio_group);
-        int choiceSize = getResources().getStringArray(R.array.watch_status_values).length;
+        int choiceSize = getResources().getStringArray(R.array.watch_status_titles).length;
 
         for (int i = 0; i < choiceSize; i++) {
             final RadioButton radioButton = ((RadioButton) mWatchStatusRadioGroup.getChildAt(i));
@@ -738,7 +738,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
 
         if (String.valueOf(mOldWatchStatus).equals(mNewWatchStatus)) return;
 
-        if (mOldWatchStatus != null) {
+        if (mOldWatchStatus != null && mOldWatchStatus != MediaData.WATCH_STATUS_NONE) {
             String oldWatchStatusName = MediaData.getWatchStatusTitle(mOldWatchStatus,
                     getApplicationContext());
 
@@ -751,7 +751,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
             }
         }
 
-        if (mNewWatchStatus != null) {
+        if (mNewWatchStatus != null && mNewWatchStatus != MediaData.WATCH_STATUS_NONE) {
             String newWatchStatusName = MediaData.getWatchStatusTitle(mNewWatchStatus,
                     getApplicationContext());
 

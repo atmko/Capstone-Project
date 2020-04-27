@@ -33,7 +33,7 @@ import static org.hamcrest.Matchers.is;
 
 @RunWith(AndroidJUnit4.class)
 public class UpdateMediaWorkerTests {
-    private final Context mContext = ApplicationProvider.getApplicationContext();
+    private final Context context = ApplicationProvider.getApplicationContext();
     private Executor mExecutor;
     private AppDatabase mDb;
 
@@ -44,7 +44,7 @@ public class UpdateMediaWorkerTests {
 
     @Before
     public void setupTestDatabase() {
-        mDb = Room.inMemoryDatabaseBuilder(mContext, AppDatabase.class)
+        mDb = Room.inMemoryDatabaseBuilder(context, AppDatabase.class)
                 .build();
 
         AppDatabase.setDatabase(mDb);
@@ -52,12 +52,13 @@ public class UpdateMediaWorkerTests {
 
     @Before
     public void populateDatabase() {
-        String[] seriesWatchListTitles = mContext.getResources()
-                .getStringArray(R.array.watch_status_series_titles);
-        for (String title: seriesWatchListTitles) {
-            WatchListModel watchListModel = new WatchListModel(title);
-            AppDatabase.getInstance(mContext).watchListsDao()
-                    .addList(watchListModel);
+        String[] watchStatusTitles = context.getResources()
+                .getStringArray(R.array.watch_status_titles);
+
+        //starting from 1 skips 0(none watch status)
+        for (int i = 1; i < watchStatusTitles.length; i++) {
+            WatchListModel watchListModel = new WatchListModel(watchStatusTitles[i]);
+            AppDatabase.getInstance(context).watchListsDao().addList(watchListModel);
         }
     }
 
@@ -1382,7 +1383,7 @@ public class UpdateMediaWorkerTests {
                 .build();
 
         UpdateMediaWorker worker =
-                (UpdateMediaWorker) TestWorkerBuilder.from(mContext,
+                (UpdateMediaWorker) TestWorkerBuilder.from(context,
                         UpdateMediaWorker.class,
                         mExecutor)
                         .setInputData(inputData)
@@ -1443,7 +1444,7 @@ public class UpdateMediaWorkerTests {
                 .build();
 
         UpdateMediaWorker worker =
-                (UpdateMediaWorker) TestWorkerBuilder.from(mContext,
+                (UpdateMediaWorker) TestWorkerBuilder.from(context,
                         UpdateMediaWorker.class,
                         mExecutor)
                         .setInputData(inputData)

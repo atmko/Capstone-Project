@@ -92,12 +92,13 @@ public class NotificationTests {
 
     @Before
     public void populateDatabase() {
-        String[] seriesWatchListTitles = context.getResources()
-                .getStringArray(R.array.watch_status_series_titles);
-        for (String title: seriesWatchListTitles) {
-            WatchListModel watchListModel = new WatchListModel(title);
-            AppDatabase.getInstance(context).watchListsDao()
-                    .addList(watchListModel);
+        String[] watchStatusTitles = context.getResources()
+                .getStringArray(R.array.watch_status_titles);
+
+        //starting from 1 skips 0(none watch status)
+        for (int i = 1; i < watchStatusTitles.length; i++) {
+            WatchListModel watchListModel = new WatchListModel(watchStatusTitles[i]);
+            AppDatabase.getInstance(context).watchListsDao().addList(watchListModel);
         }
     }
 

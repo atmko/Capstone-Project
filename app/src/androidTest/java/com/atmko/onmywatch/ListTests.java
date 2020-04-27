@@ -77,11 +77,13 @@ public class ListTests {
 
     @Before
     public void populateDatabase() {
-        String[] seriesWatchListTitles = context.getResources()
-                .getStringArray(R.array.watch_status_series_titles);
-        for (String title: seriesWatchListTitles) {
-            WatchListModel watchListModel = new WatchListModel(title);
-            db.watchListsDao().addList(watchListModel);
+        String[] watchStatusTitles = context.getResources()
+                .getStringArray(R.array.watch_status_titles);
+
+        //starting from 1 skips 0(none watch status)
+        for (int i = 1; i < watchStatusTitles.length; i++) {
+            WatchListModel watchListModel = new WatchListModel(watchStatusTitles[i]);
+            AppDatabase.getInstance(context).watchListsDao().addList(watchListModel);
         }
     }
 
@@ -122,10 +124,8 @@ public class ListTests {
         //save
         onView(withText("SAVE")).perform(click());
 
-        WatchListModel watchListModel = db.watchListsDao().getListByNameAlt("none");
         movieData = db.movieDataDao().getMovieByIdAlt(movieData.getId());
 
-        if (watchListModel.getItemCount() != 0) fail();
         if (movieData != null) fail();
     }
 
@@ -268,11 +268,9 @@ public class ListTests {
         onView(withText("SAVE")).perform(click());
 
         originalWatchListModel = db.watchListsDao().getListByNameAlt("to watch");
-        WatchListModel newWatchListModel = db.watchListsDao().getListByNameAlt("none");
         movieData = db.movieDataDao().getMovieByIdAlt(movieData.getId());
 
         if (originalWatchListModel.getItemCount() != 0) fail();
-        if (newWatchListModel.getItemCount() != 0) fail();
         if (movieData != null) fail();
     }
 
@@ -300,10 +298,8 @@ public class ListTests {
         onView(withText("test list")).perform(click());
         onView(withText("SAVE")).perform(click());
 
-        WatchListModel watchListModel = db.watchListsDao().getListByNameAlt("none");
         userListModel = db.userListsDao().getListByNameAlt("test list");
 
-        if (watchListModel.getItemCount() != 1) fail();
         if (userListModel.getItemCount() != 1) fail();
     }
 
@@ -399,11 +395,9 @@ public class ListTests {
         onView(withText("Watched")).perform(click());
         onView(withText("SAVE")).perform(click());
 
-        WatchListModel originalWatchListModel = db.watchListsDao().getListByNameAlt("none");
         WatchListModel newWatchListModel = db.watchListsDao().getListByNameAlt("watched");
         userListModel = db.userListsDao().getListByNameAlt("test list");
 
-        if (originalWatchListModel.getItemCount() != 0) fail();
         if (newWatchListModel.getItemCount() != 1) fail();
         if (userListModel.getItemCount() != 1) fail();
     }
@@ -496,11 +490,9 @@ public class ListTests {
         onView(withText("SAVE")).perform(click());
 
         WatchListModel originalWatchListModel = db.watchListsDao().getListByNameAlt("to watch");
-        WatchListModel newWatchListModel = db.watchListsDao().getListByNameAlt("none");
         userListModel = db.userListsDao().getListByNameAlt("test list");
 
         if (originalWatchListModel.getItemCount() != 0) fail();
-        if (newWatchListModel.getItemCount() != 1) fail();
         if (userListModel.getItemCount() != 1) fail();
     }
 
@@ -580,13 +572,10 @@ public class ListTests {
         onView(withText("test list")).perform(click());
         onView(withText("SAVE")).perform(click());
 
-        WatchListModel watchListModel = db.watchListsDao().getListByNameAlt("none");
         userListModel = db.userListsDao().getListByNameAlt("test list");
 
-        System.out.println("watchListModel: " + watchListModel.getItemCount());
         System.out.println("userListModel: " + userListModel.getItemCount());
 
-        if (watchListModel.getItemCount() != 0) fail();
         if (userListModel.getItemCount() != 0) fail();
     }
 

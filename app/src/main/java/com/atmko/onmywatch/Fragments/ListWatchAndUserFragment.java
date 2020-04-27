@@ -449,22 +449,9 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
             int watchStatus = movieData.getWatchStatus();
 
             //TODO delete notifiers when item is unused
-            if (containingLists.size() == 0 && movieData.getWatchStatus() == 0) {
+            if (containingLists.size() == 0 && watchStatus == MediaData.WATCH_STATUS_NONE) {
                 mDatabase.movieDataDao().deleteMovieData(movieData);
                 deleteMediaTags(movieData);
-
-                if (getContext() == null) continue;
-
-                //subtract 1 from watch status list if deleted
-                WatchListModel watchList = mDatabase.watchListsDao().getListByNameAlt(
-                        MediaData.getWatchStatusTitle(watchStatus, getContext()));
-
-                //ensure list has a value higher than zero
-                if (watchList.getItemCount() <= 0) continue;
-
-                watchList.setItemCount(watchList.getItemCount() - 1);
-
-                mDatabase.watchListsDao().updateListConfiguration(watchList);
             }
         }
     }
@@ -479,22 +466,9 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
             int watchStatus = seriesData.getWatchStatus();
 
             //TODO delete notifiers when item is unused
-            if (containingLists.size() == 0 && seriesData.getWatchStatus() == 0) {
+            if (containingLists.size() == 0 && watchStatus == MediaData.WATCH_STATUS_NONE) {
                 mDatabase.seriesDataDao().deleteSeriesData(seriesData);
                 deleteMediaTags(seriesData);
-
-                if (getContext() == null) continue;
-
-                //subtract 1 from watch status list if deleted
-                WatchListModel watchList = mDatabase.watchListsDao().getListByNameAlt(
-                        MediaData.getWatchStatusTitle(watchStatus, getContext()));
-
-                //ensure list has a value higher than zero
-                if (watchList.getItemCount() <= 0) continue;
-
-                watchList.setItemCount(watchList.getItemCount() - 1);
-
-                mDatabase.watchListsDao().updateListConfiguration(watchList);
             }
         }
     }

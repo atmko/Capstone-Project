@@ -173,9 +173,9 @@ public class ListResultsFragment extends Fragment
 
         database = AppDatabase.getInstance(getContext());
 
-        final String[] watchStatusMoviesTitles = getResources()
-                .getStringArray(R.array.watch_status_movie_titles);
-        List<String> titleList = Arrays.asList(watchStatusMoviesTitles);
+        final String[] watchStatusTitles = getResources()
+                .getStringArray(R.array.watch_status_titles);
+        List<String> titleList = Arrays.asList(watchStatusTitles);
 
         ListResultsViewModelFactory resultsViewModelFactory =
                 new ListResultsViewModelFactory(database, mListType, titleList, mListName);
@@ -254,9 +254,9 @@ public class ListResultsFragment extends Fragment
         final Object listId;
 
         if (mListType == ListsWatchAndUserParentFragment.LIST_TYPE_WATCH) {
-            final String[] watchStatusMoviesTitles = getContext().getResources()
-                    .getStringArray(R.array.watch_status_movie_titles);
-            listId = Arrays.asList(watchStatusMoviesTitles).indexOf(mListName);
+            final String[] watchStatusTitles = getContext().getResources()
+                    .getStringArray(R.array.watch_status_titles);
+            listId = Arrays.asList(watchStatusTitles).indexOf(mListName);
 
         } else {
             listId = mListName;

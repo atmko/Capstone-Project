@@ -100,9 +100,9 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     }
 
     private void getListData() {
-        final String[] watchStatusMoviesTitles =
-                mContext.getResources().getStringArray(R.array.watch_status_movie_titles);
-        final List<String> titleList = Arrays.asList(watchStatusMoviesTitles);
+        final String[] watchStatusTitles =
+                mContext.getResources().getStringArray(R.array.watch_status_titles);
+        final List<String> titleList = Arrays.asList(watchStatusTitles);
 
         String mListName = ListWidgetProviderConfigureActivity.loadTitlePref(mContext, mAppWidgetId);
         mListType = ListWidgetProviderConfigureActivity.loadListTypePref(mContext, mAppWidgetId);

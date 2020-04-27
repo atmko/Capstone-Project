@@ -126,23 +126,7 @@
 
     <!--DATABASE-->
 
-    <array name="watch_status_movie_titles">
-        <item>none</item>
-        <item>to watch</item>
-        <item>watching</item>
-        <item>watched</item>
-        <item>dropped</item>
-    </array>
-
-    <array name="watch_status_values">
-        <item>0</item>    <!--NONE-->
-        <item>1</item>    <!--TO WATCH-->
-        <item>2</item>    <!--WATCHING-->
-        <item>3</item>    <!--WATCHED-->
-        <item>4</item>    <!--DROPPED-->
-    </array>
-
-    <array name="watch_status_series_titles">
+    <array name="watch_status_titles">
         <item>none</item>
         <item>to watch</item>
         <item>watching</item>
