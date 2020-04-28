@@ -286,7 +286,10 @@ abstract public class MediaData {
             e.printStackTrace();
         }
 
-        boolean releaseDateInFuture = !scheduledMedia.getBestLocalAirDate().before(new Date());
+        boolean releaseDateInFuture = true;
+        if (scheduledMedia.getBestLocalAirDate() != null) {
+            releaseDateInFuture = !scheduledMedia.getBestLocalAirDate().before(new Date());
+        }
         return releaseDateInFuture || isPendingReleasedStatus;
     }
 

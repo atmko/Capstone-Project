@@ -250,7 +250,8 @@ public class NotificationTests {
     public void testSeriesNotificationClick() {
         SeriesData seriesData = new SeriesData("43435", "", "", "Dead",
                 0, "", "", "",
-                new ArrayList<String>(), new ArrayList<String>(), "", "", "");
+                new ArrayList<String>(), new ArrayList<String>(), "", "",
+                "2020-04-24");
 
         seriesData.setReleaseStatus("Running");
         seriesData.setTraktId("1393");
@@ -363,7 +364,8 @@ public class NotificationTests {
     public void testSettingNewEpisodeNotifierThroughTmdb() {
         SeriesData seriesData = new SeriesData("43435", "", "", "Dead",
                 0, "", "", "",
-                new ArrayList<String>(), new ArrayList<String>(), "", "", "");
+                new ArrayList<String>(), new ArrayList<String>(), "", "",
+                "2020-04-24");
 
         seriesData.setReleaseStatus("Running");
         seriesData.setTraktId("1393");
@@ -404,7 +406,8 @@ public class NotificationTests {
     public void testSettingSeriesNewEpisodeNotifierThroughReleaseStatus() {
         SeriesData seriesData = new SeriesData("43435", "", "", "Dead",
                 0, "", "", "",
-                new ArrayList<String>(), new ArrayList<String>(), "", "", "");
+                new ArrayList<String>(), new ArrayList<String>(), "", "",
+                "2020-04-24");
 
         seriesData.setTraktId("1393");
         seriesData.setReleaseStatus(ApiConstants.TextReplacement.REPLACEMENT_RETURNING_SERIES);
@@ -522,7 +525,8 @@ public class NotificationTests {
     public void testNextEpisodeInFuture() {
         SeriesData seriesData = new SeriesData("43435", "", "", "Dead",
                 0, "", "", "",
-                new ArrayList<String>(), new ArrayList<String>(), "", "", "");
+                new ArrayList<String>(), new ArrayList<String>(), "", "",
+                "2020-04-24");
 
         seriesData.setReleaseStatus("Running");
         seriesData.setTraktId("1393");
@@ -607,7 +611,8 @@ public class NotificationTests {
         //test first notification displays correct item
         SeriesData seriesData = new SeriesData("43435", "", "", "Dead",
                 0, "", "", "",
-                new ArrayList<String>(), new ArrayList<String>(), "", "", "");
+                new ArrayList<String>(), new ArrayList<String>(), "", "",
+                "2020-04-24");
 
         seriesData.setReleaseStatus("Running");
         seriesData.setTraktId("1393");
@@ -636,7 +641,8 @@ public class NotificationTests {
         //(needed because pending intent id might conflict and send old data)
         SeriesData seriesData2 = new SeriesData("44217", "", "", "Vikings",
                 0, "", "", "",
-                new ArrayList<String>(), new ArrayList<String>(), "", "", "");
+                new ArrayList<String>(), new ArrayList<String>(), "", "",
+                "2020-04-24");
 
         seriesData2.setReleaseStatus("Running");
         seriesData2.setTraktId("43973");
