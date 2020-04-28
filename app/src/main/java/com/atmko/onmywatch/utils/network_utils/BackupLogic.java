@@ -13,6 +13,7 @@ import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.database.daos.FirebaseUserDataDao;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.MovieDataRecord;
+import com.atmko.onmywatch.models.MovieLog;
 import com.atmko.onmywatch.models.MovieNotifier;
 import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesDataRecord;
@@ -64,6 +65,7 @@ public class BackupLogic {
     private static final String SERIES_DATA_RECORDS_KEY = "series_data_records";
     private static final String MOVIES_NOTIFIERS_KEY = "movie_notifiers";
     private static final String SERIES_NOTIFIERS_KEY = "series_notifiers";
+    private static final String MOVIE_LOGS_KEY = "movie_logs";
     private static final String SERIES_LOGS_KEY = "series_logs";
 
     private final Context mContext;
@@ -179,6 +181,7 @@ public class BackupLogic {
             pushSeriesDataRecords();
             pushMovieNotifiers();
             pushSeriesNotifiers();
+            pushMovieLogs();
             pushSeriesLogs();
             onPushComplete();
 
@@ -316,6 +319,22 @@ public class BackupLogic {
         }
 
         mDatabaseMap.put(SERIES_NOTIFIERS_KEY, mapList);
+    }
+
+    //pushes locally saved mediaLogs to remote database
+    private void pushMovieLogs() {
+        //get locally saved movie logs
+        //save to cloud
+
+        //get locally saved movie logs
+        List<MovieLog> localMovieLogs = mLocalDatabase.movieLogsDao().getAllLogsAlt();
+        List<Map> mapList = new ArrayList<>();
+        for (MovieLog movieLog: localMovieLogs) {
+            Map movieLogsDataMap = movieLog.parseLogToDataMap();
+            mapList.add(movieLogsDataMap);
+        }
+
+        mDatabaseMap.put(MOVIE_LOGS_KEY, mapList);
     }
 
     //pushes locally saved mediaLogs to remote database

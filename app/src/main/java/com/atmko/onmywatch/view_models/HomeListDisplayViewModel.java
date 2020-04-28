@@ -17,15 +17,15 @@ public class HomeListDisplayViewModel extends ViewModel {
     HomeListDisplayViewModel(@NonNull AppDatabase database, String listName) {
         switch (listName) {
             case HomeListDisplayFragment.UPCOMING_MOVIES:
-                listLiveData = database.movieDataDao().getUserUpcomingMovies();
+                listLiveData = database.movieLogsDao().getUpcoming();
                 break;
 
             case HomeListDisplayFragment.ALREADY_RELEASED_MOVIES:
-                listLiveData = database.movieDataDao().getReleasedMovies();
+                listLiveData = database.movieLogsDao().getAired();
                 break;
 
                 case HomeListDisplayFragment.UNDATED_MOVIES:
-                listLiveData = database.movieDataDao().getUndatedMovies();
+                listLiveData = database.movieLogsDao().getUndated();
                 break;
 
             case HomeListDisplayFragment.UPCOMING_EPISODES:

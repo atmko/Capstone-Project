@@ -6,8 +6,6 @@ package com.atmko.onmywatch.models;
 
 import org.parceler.Parcel;
 
-import java.util.Date;
-
 /*
  * episode model class
  */
@@ -17,7 +15,6 @@ public class Episode extends ScheduledMedia {
     public String parentMediaId;
     public int seasonNumber;
     public int episodeNumber;
-    public long timestamp;
     public int source;
 
     public Episode() {
@@ -33,16 +30,5 @@ public class Episode extends ScheduledMedia {
         } catch (DateFormatException e) {
             e.printStackTrace();
         }
-
-        if (getBestLocalAirDate() != null) {
-            timestamp = getBestLocalAirDate().getTime();
-
-        } else {
-            timestamp = Long.MAX_VALUE;
-        }
-    }
-
-    public boolean isInFuture() {
-        return new Date().getTime() < timestamp;
     }
 }

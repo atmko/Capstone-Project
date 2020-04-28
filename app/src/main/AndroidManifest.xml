@@ -61,6 +61,10 @@
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
         <service
+            android:name=".utils.MovieTracker"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <service
             android:name=".utils.SeriesTracker"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />

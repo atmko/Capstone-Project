@@ -24,6 +24,7 @@ import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MediaLog;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.MovieDataRecord;
+import com.atmko.onmywatch.models.MovieLog;
 import com.atmko.onmywatch.models.MovieNotifier;
 import com.atmko.onmywatch.models.ScheduledMedia;
 import com.atmko.onmywatch.models.SearchListTag;
@@ -85,6 +86,7 @@ public class RestoreService extends JobIntentService {
     private static final String SERIES_DATA_RECORDS_KEY = "series_data_records";
     private static final String MOVIES_NOTIFIERS_KEY = "movie_notifiers";
     private static final String SERIES_NOTIFIERS_KEY = "series_notifiers";
+    private static final String MOVIE_LOGS_KEY = "movie_logs";
     private static final String SERIES_LOGS_KEY = "series_logs";
 
     private AppDatabase mLocalDatabase;
@@ -237,6 +239,10 @@ public class RestoreService extends JobIntentService {
     }
 
     private void onRestoreNotificationsComplete() {
+        pullMovieLogs();
+    }
+
+    private void onPullMovieLogsComplete() {
         pullSeriesLogs();
     }
 
@@ -394,18 +400,34 @@ public class RestoreService extends JobIntentService {
         );
     }
 
+    private static MovieLog parseMovieLog(Map map) {
+        Double conditionDouble = (Double) map.get(MediaLog.CONDITION_KEY);
+        Double timestampDouble = (Double) map.get(MediaLog.TIMESTAMP_KEY);
+        int condition = conditionDouble != null ? conditionDouble.intValue() : 0;
+        long timestamp = timestampDouble != null ? timestampDouble.longValue() : 0;
+
+        return new MovieLog(
+                condition,
+                timestamp,
+                (String) map.get(MediaLog.TITLE_KEY),
+                (String) map.get(MediaLog.POSTER_PATH_KEY),
+                (String) map.get(MediaLog.BACKDROP_PATH_KEY),
+                (String) map.get(MediaLog.PARENT_ID_KEY)
+        );
+    }
+
     private static SeriesLog parseSeriesLog(Map map) {
         Double seasonNumberDouble = (Double) map.get(SeriesLog.SEASON_NUMBER_KEY);
         Double episodeNumberDouble = (Double) map.get(SeriesLog.EPISODE_NUMBER_KEY);
-        Double conditionDouble = (Double) map.get(SeriesLog.CONDITION_KEY);
-        Double timestampDouble = (Double) map.get(SeriesLog.TIMESTAMP_KEY);
+        Double conditionDouble = (Double) map.get(MediaLog.CONDITION_KEY);
+        Double timestampDouble = (Double) map.get(MediaLog.TIMESTAMP_KEY);
         int seasonNumber = seasonNumberDouble != null ? seasonNumberDouble.intValue() : 0;
         int episodeNumber = episodeNumberDouble != null ? episodeNumberDouble.intValue() : 0;
         int condition = conditionDouble != null ? conditionDouble.intValue() : 0;
         long timestamp = timestampDouble != null ? timestampDouble.longValue() : 0;
 
         return new SeriesLog(
-                (String) map.get(MediaLog.TYPE_KEY),
+                (String) map.get(SeriesLog.TYPE_KEY),
                 seasonNumber,
                 episodeNumber,
                 condition,
@@ -573,6 +595,22 @@ public class RestoreService extends JobIntentService {
         }
 
         onPullSeriesNotifiersComplete();
+    }
+
+    //pull remotely saved movie logs to local database
+    private void pullMovieLogs() {
+        Gson gson = new Gson();
+        Map returnedMap = gson.fromJson(mJsonString, Map.class);
+
+        List<Map> recordMaps = (List<Map>) returnedMap.get(MOVIE_LOGS_KEY);
+        if (recordMaps == null) return;
+
+        for (Map map : recordMaps) {
+            MovieLog movieLog = parseMovieLog(map);
+            mLocalDatabase.movieLogsDao().addMediaLog(movieLog);
+        }
+
+        onPullMovieLogsComplete();
     }
 
     //pull remotely saved series logs to local database

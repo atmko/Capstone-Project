@@ -73,8 +73,29 @@ public class NoNotifierService extends JobIntentService {
     }
 
     private void setNotifiers() {
-        if (newMediaData instanceof SeriesData) {
+        if (newMediaData instanceof MovieData) {
+            updateReleaseNotifier();
+
+        } else {
             updateNewEpisodeNotifier();
+        }
+    }
+
+    //creates release notifier if new watch status is to watch or watching,
+    //otherwise delete notifier with this media id and cancel alarm
+    private void updateReleaseNotifier() {
+        int newWatchStatus = newMediaData.getWatchStatus();
+
+        //delete old logs
+        if (newWatchStatus != MediaData.WATCH_STATUS_TO_WATCH
+                && newWatchStatus != MediaData.WATCH_STATUS_WATCHING) {
+            trackMovie(SeriesTracker.ACTION_DELETE);
+        }
+
+        if (newWatchStatus == MediaData.WATCH_STATUS_TO_WATCH
+                || newWatchStatus == MediaData.WATCH_STATUS_WATCHING) {
+
+            trackMovie(MovieTracker.ACTION_SET);
         }
     }
 
@@ -88,7 +109,7 @@ public class NoNotifierService extends JobIntentService {
         //instead, any deletion of watching logs should be done inside tracker where updates are more likely to occur
         //delete old logs
         if (newWatchStatus != MediaData.WATCH_STATUS_WATCHING) {
-            trackMedia(SeriesTracker.ACTION_DELETE);
+            trackSeries(SeriesTracker.ACTION_DELETE);
         }
 
         //if (to watch and is pending release) OR if watching
@@ -146,7 +167,7 @@ public class NoNotifierService extends JobIntentService {
                                 newMediaData =
                                         SeriesDataParser.parseTraktNextEpisodeDetails(returnedJSONString, ((SeriesData) newMediaData));
 
-                                trackMedia(SeriesTracker.ACTION_SET);
+                                trackSeries(SeriesTracker.ACTION_SET);
 
                                 //if there is a next episode and date, create notifier using date, otherwise create pending notifier
                                 Episode nextEpisode = ((SeriesData) newMediaData).getNextEpisodeToAir();
@@ -232,7 +253,14 @@ public class NoNotifierService extends JobIntentService {
         }
     }
 
-    private void trackMedia(String actionMode) {
+    private void trackMovie(String actionMode) {
+        MovieTracker.sActionMode = actionMode;
+        Intent intent = new Intent(getApplicationContext(), MovieTracker.class);
+        intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(newMediaData));
+        MovieTracker.enqueueWork(getApplicationContext(), intent);
+    }
+
+    private void trackSeries(String actionMode) {
         SeriesTracker.sActionMode = actionMode;
         Intent intent = new Intent(getApplicationContext(), SeriesTracker.class);
         intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(newMediaData));

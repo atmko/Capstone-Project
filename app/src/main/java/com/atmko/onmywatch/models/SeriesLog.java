@@ -5,7 +5,6 @@ import androidx.room.Ignore;
 
 import org.parceler.Parcel;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Parcel
@@ -14,6 +13,7 @@ public class SeriesLog extends MediaLog {
     public static final String TYPE_SEASON = "Season";
     public static final String TYPE_EPISODE = "Episode";
 
+    public static final String TYPE_KEY = "type";
     public static final String SEASON_NUMBER_KEY = "season_number";
     public static final String EPISODE_NUMBER_KEY = "episode";
     public static final String IS_BUNDLED_KEY = "is_bundled";
@@ -72,17 +72,12 @@ public class SeriesLog extends MediaLog {
         }
     }
 
+    @Override
     public Map<String, Object> parseLogToDataMap() {
-        Map<String, Object> seriesLogMap = new HashMap<>();
+        Map<String, Object> seriesLogMap = super.parseLogToDataMap();
         seriesLogMap.put(TYPE_KEY, type);
         seriesLogMap.put(SEASON_NUMBER_KEY, seasonNumber);
         seriesLogMap.put(EPISODE_NUMBER_KEY, episodeNumber);
-        seriesLogMap.put(CONDITION_KEY, condition);
-        seriesLogMap.put(TIMESTAMP_KEY, timestamp);
-        seriesLogMap.put(TITLE_KEY, title);
-        seriesLogMap.put(POSTER_PATH_KEY, posterPath);
-        seriesLogMap.put(BACKDROP_PATH_KEY, backdropPath);
-        seriesLogMap.put(PARENT_ID_KEY, parentId);
         seriesLogMap.put(IS_BUNDLED_KEY, isBundled);
 
         return seriesLogMap;

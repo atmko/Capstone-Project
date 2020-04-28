@@ -141,8 +141,7 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
             if (mMediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
                 if (isProMode) {
-                    mMovieDataList = mDatabase.movieDataDao().getUserUpcomingMoviesAlt();
-                    mMovieLogs = MovieLog.convertMediaToLogs(mMovieDataList, mListName);
+                    mMovieLogs = mDatabase.movieLogsDao().getUpcomingAlt();
 
                 } else {
                     mMovieLogs = new ArrayList<>();

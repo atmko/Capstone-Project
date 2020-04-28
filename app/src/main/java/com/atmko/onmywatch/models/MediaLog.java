@@ -6,6 +6,8 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Entity(tableName = "media_logs", primaryKeys = {"parent_id", "condition"})
@@ -14,7 +16,6 @@ public abstract class MediaLog {
     public static final int CONDITION_AIRED = 2;
     public static final int CONDITION_UNDATED = 3;
 
-    public static final String TYPE_KEY = "type";
     public static final String CONDITION_KEY = "condition";
     public static final String TIMESTAMP_KEY = "timestamp";
     public static final String TITLE_KEY = "title";
@@ -79,5 +80,17 @@ public abstract class MediaLog {
             if (minutesValue <= -1) return Math.abs(minutesValue) + TIME_SUFFIX_MINUTES + PAST_SUFFIX;
             else return Math.abs(secondsValue) + TIME_SUFFIX_SECONDS + PAST_SUFFIX;
         }
+    }
+
+    public Map<String, Object> parseLogToDataMap() {
+        Map<String, Object> seriesLogMap = new HashMap<>();
+        seriesLogMap.put(CONDITION_KEY, condition);
+        seriesLogMap.put(TIMESTAMP_KEY, timestamp);
+        seriesLogMap.put(TITLE_KEY, title);
+        seriesLogMap.put(POSTER_PATH_KEY, posterPath);
+        seriesLogMap.put(BACKDROP_PATH_KEY, backdropPath);
+        seriesLogMap.put(PARENT_ID_KEY, parentId);
+
+        return seriesLogMap;
     }
 }

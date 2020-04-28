@@ -90,8 +90,17 @@ public class UpdateNotifierService extends JobIntentService {
     //otherwise delete notifier with this media id and cancel alarm
     private void updateReleaseNotifier() {
         int newWatchStatus = newMediaData.getWatchStatus();
+
+        //delete old logs
+        if (newWatchStatus != MediaData.WATCH_STATUS_TO_WATCH
+                && newWatchStatus != MediaData.WATCH_STATUS_WATCHING) {
+            trackMovie(SeriesTracker.ACTION_DELETE);
+        }
+
         if (newWatchStatus == MediaData.WATCH_STATUS_TO_WATCH
                 || newWatchStatus == MediaData.WATCH_STATUS_WATCHING) {
+
+            trackMovie(MovieTracker.ACTION_SET);
 
             String releaseDate = newMediaData.getReleaseDate();
 
@@ -191,7 +200,7 @@ public class UpdateNotifierService extends JobIntentService {
         //instead, any deletion of watching logs should be done inside tracker where updates are more likely to occur
         //delete old logs
         if (newWatchStatus != MediaData.WATCH_STATUS_WATCHING) {
-            trackMedia(SeriesTracker.ACTION_DELETE);
+            trackSeries(SeriesTracker.ACTION_DELETE);
         }
 
         //cancel old alarms
@@ -268,7 +277,7 @@ public class UpdateNotifierService extends JobIntentService {
                                 newMediaData =
                                         SeriesDataParser.parseTraktNextEpisodeDetails(returnedJSONString, ((SeriesData) newMediaData));
 
-                                trackMedia(SeriesTracker.ACTION_SET);
+                                trackSeries(SeriesTracker.ACTION_SET);
 
                                 //if there is a next episode and date, create notifier using date, otherwise create pending notifier
                                 Episode nextEpisode = ((SeriesData) newMediaData).getNextEpisodeToAir();
@@ -498,7 +507,14 @@ public class UpdateNotifierService extends JobIntentService {
         }
     }
 
-    private void trackMedia(String actionMode) {
+    private void trackMovie(String actionMode) {
+        MovieTracker.sActionMode = actionMode;
+        Intent intent = new Intent(getApplicationContext(), MovieTracker.class);
+        intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(newMediaData));
+        MovieTracker.enqueueWork(getApplicationContext(), intent);
+    }
+
+    private void trackSeries(String actionMode) {
         SeriesTracker.sActionMode = actionMode;
         Intent intent = new Intent(getApplicationContext(), SeriesTracker.class);
         intent.putExtra(NEW_MEDIA_DATA_KEY, Parcels.wrap(newMediaData));

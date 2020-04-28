@@ -89,6 +89,11 @@ public class NotificationHandler {
                         }
                     }
 
+                    if (mediaType == MEDIA_TYPE_MOVIE && condition == MediaNotifier.CONDITION_ON_RELEASE) {
+                        //update logs
+                        MovieTracker.transferUpcomingLogToReleased(context, mediaId);
+                    }
+
                     //remove media notifier from the database
                     removeMediaNotifier(context, mediaType, mediaId, condition);
 

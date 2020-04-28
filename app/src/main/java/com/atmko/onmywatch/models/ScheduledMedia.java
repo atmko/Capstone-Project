@@ -85,6 +85,19 @@ public class ScheduledMedia {
         }
     }
 
+    public long getTimestamp() {
+        if (getBestLocalAirDate() != null) {
+            return getBestLocalAirDate().getTime();
+
+        } else {
+            return Long.MAX_VALUE;
+        }
+    }
+
+    public boolean isInFuture() {
+        return new Date().getTime() < getTimestamp();
+    }
+
     //returns the most accurate available date of episode. Uses iso date if available, otherwise regular date, otherwise null
     public String getBestAvailableDateString() {
         if (mAirDateIso != null) {

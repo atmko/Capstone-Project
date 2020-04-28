@@ -1,17 +1,19 @@
 package com.atmko.onmywatch.models;
 
+import androidx.room.Entity;
 import androidx.room.Ignore;
-
-import com.atmko.onmywatch.fragments.HomeListDisplayFragment;
 
 import org.parceler.Parcel;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Parcel
+@Entity(tableName = "movie_logs")
 public class MovieLog extends MediaLog {
-    private MovieLog(int condition, long timestamp, String title, String posterPath,
+    //constructor for parceler
+    @Ignore
+    public MovieLog() {
+    }
+
+    public MovieLog(int condition, long timestamp, String title, String posterPath,
                      String backdropPath, String parentId) {
         this.condition = condition;
         this.timestamp = timestamp;
@@ -19,46 +21,5 @@ public class MovieLog extends MediaLog {
         this.posterPath = posterPath;
         this.backdropPath = backdropPath;
         this.parentId = parentId;
-    }
-
-    //constructor for parceler
-    @Ignore
-    public MovieLog() {
-
-    }
-
-    public static ArrayList<MovieLog> convertMediaToLogs(List<MovieData> movieDataList, String listName) {
-        ArrayList<MovieLog> movieLogs = new ArrayList<>();
-        for (MovieData movieData: movieDataList) {
-            int condition = convertListNameToCondition(listName);
-            long releaseTimestamp;
-            ScheduledMedia scheduledMedia = movieData.getScheduledMedia();
-            if (scheduledMedia == null) {
-                releaseTimestamp = Long.MAX_VALUE;
-
-            } else {
-                releaseTimestamp = scheduledMedia.getBestLocalAirDate().getTime();
-            }
-
-            MovieLog movieLog = new MovieLog(condition, releaseTimestamp, movieData.getTitle(),
-                    movieData.mPosterPath, movieData.mBackdropPath, movieData.getId());
-
-            movieLogs.add(movieLog);
-        }
-
-        return movieLogs;
-    }
-
-    private static int convertListNameToCondition(String listName) {
-        switch (listName) {
-            case HomeListDisplayFragment.UPCOMING_MOVIES:
-                return CONDITION_UPCOMING;
-            case HomeListDisplayFragment.ALREADY_RELEASED_MOVIES:
-                return CONDITION_AIRED;
-            case HomeListDisplayFragment.UNDATED_MOVIES:
-                return CONDITION_UNDATED;
-            default:
-                return 0;
-        }
     }
 }

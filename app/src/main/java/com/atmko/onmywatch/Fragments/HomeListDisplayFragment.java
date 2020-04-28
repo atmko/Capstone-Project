@@ -25,7 +25,6 @@ import com.atmko.onmywatch.adapters.MediaLogAdapter;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MediaLog;
-import com.atmko.onmywatch.models.MovieLog;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.view_models.HomeListDisplayViewModel;
 import com.atmko.onmywatch.view_models.HomeListDisplayViewModelFactory;
@@ -134,12 +133,6 @@ public class HomeListDisplayFragment extends Fragment
 
     private void populateAndNotifyAdapter(List mediaList) {
         mMediaLogAdapter.getAdapterData().clear();
-
-        //if media type is movie, convert movie data to movie logs
-        if (mMediaType == MEDIA_TYPE_MOVIE) {
-            //noinspection unchecked
-            mediaList = MovieLog.convertMediaToLogs(mediaList, mListName);
-        }
 
         //noinspection unchecked
         mMediaLogAdapter.addAdapterData(mediaList);

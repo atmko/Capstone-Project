@@ -164,12 +164,12 @@ public class SeriesTracker extends JobIntentService {
                                     lastSeason.getEpisodes().get(lastSeason.getEpisodes().size() - 1);
 
                             insertSeason(lastSeason.seasonNumber, CONDITION_AIRED,
-                                    lastEpisodeInSeason.timestamp, lastSeason.isBundled);
+                                    lastEpisodeInSeason.getTimestamp(), lastSeason.isBundled);
 
                             //set next season without air date();
                             Season nextSeason = new Season(lastSeason.seasonNumber + 1, "");
                             insertSeason(nextSeason.seasonNumber, CONDITION_UNDATED,
-                                    nextSeason.timestamp, lastSeason.isBundled);
+                                    nextSeason.getTimestamp(), lastSeason.isBundled);
 
                         } else if (!lastSeason.hasEnded() && isRunning){
                             if (lastSeason.isBundled) {
@@ -205,18 +205,18 @@ public class SeriesTracker extends JobIntentService {
             if (nextEpisode.isInFuture()) {
                 //set season upcoming
                 insertSeason(lastSeason.seasonNumber, CONDITION_UPCOMING,
-                        nextEpisode.timestamp, lastSeason.isBundled);
+                        nextEpisode.getTimestamp(), lastSeason.isBundled);
 
             } else {
                 //set season aired
                 insertSeason(lastSeason.seasonNumber, CONDITION_AIRED,
-                        nextEpisode.timestamp, lastSeason.isBundled);
+                        nextEpisode.getTimestamp(), lastSeason.isBundled);
             }
 
         } else {
             //set season undated
             insertSeason(lastSeason.seasonNumber, CONDITION_UNDATED,
-                    nextEpisode.timestamp, lastSeason.isBundled);
+                    nextEpisode.getTimestamp(), lastSeason.isBundled);
         }
     }
 
@@ -237,14 +237,14 @@ public class SeriesTracker extends JobIntentService {
         if (currentEpisode != null && nextEpisode != null
                 && !currentEpisode.isInFuture() && !nextEpisode.isInFuture()) {
             insertEpisode(lastSeason.seasonNumber, nextEpisode.episodeNumber, CONDITION_AIRED,
-                    nextEpisode.timestamp, lastSeason.isBundled);
+                    nextEpisode.getTimestamp(), lastSeason.isBundled);
             return;
         }
 
         //set episode ended
         if (currentEpisode != null) {
             insertEpisode(lastSeason.seasonNumber, currentEpisode.episodeNumber, CONDITION_AIRED,
-                    currentEpisode.timestamp, lastSeason.isBundled);
+                    currentEpisode.getTimestamp(), lastSeason.isBundled);
         }
 
         //set upcoming / aired episode if air date available else set without air date
@@ -252,19 +252,19 @@ public class SeriesTracker extends JobIntentService {
             if (nextEpisode.isInFuture()) {
                 //set episode upcoming
                 insertEpisode(lastSeason.seasonNumber, nextEpisode.episodeNumber, CONDITION_UPCOMING,
-                        nextEpisode.timestamp, lastSeason.isBundled);
+                        nextEpisode.getTimestamp(), lastSeason.isBundled);
 
             } else {
                 //set episode upcoming
                 insertEpisode(lastSeason.seasonNumber, nextEpisode.episodeNumber, CONDITION_AIRED,
-                        nextEpisode.timestamp, lastSeason.isBundled);
+                        nextEpisode.getTimestamp(), lastSeason.isBundled);
             }
 
         } else {
             //set episode undated
             if (nextEpisode != null) {
                 insertEpisode(lastSeason.seasonNumber, nextEpisode.episodeNumber, CONDITION_UNDATED,
-                        nextEpisode.timestamp, lastSeason.isBundled);
+                        nextEpisode.getTimestamp(), lastSeason.isBundled);
             }
         }
     }
