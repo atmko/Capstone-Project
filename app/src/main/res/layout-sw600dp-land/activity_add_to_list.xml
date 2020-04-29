@@ -66,17 +66,14 @@
         app:layout_constraintTop_toBottomOf="@id/top_frame_layout"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintHorizontal_bias="0.66"
+        app:layout_constraintHorizontal_bias="0.60"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:theme="@style/AppTheme.ActionBar"
-        android:id="@+id/watch_status_radio_group"
+    <include layout="@layout/watch_status_radio_layout"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_weight="1"
         android:layout_marginTop="@dimen/x2_layout_margin"
         android:layout_marginStart="@dimen/x1_layout_margin"
         android:layout_marginLeft="@dimen/x1_layout_margin"
@@ -85,77 +82,7 @@
         app:layout_constraintBottom_toTopOf="@id/save_button"
         app:layout_constraintStart_toStartOf="@id/status_dividing_line"
         app:layout_constraintTop_toTopOf="@id/top_frame_layout"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <androidx.appcompat.widget.AppCompatRadioButton
-            style="@style/radio_button_style"
-            android:id="@+id/none_radio_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:text="@string/watch_status_none_title" />
-
-        <androidx.appcompat.widget.AppCompatRadioButton
-            style="@style/radio_button_style"
-            android:id="@+id/to_watch_radio_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/none_radio_button"
-            app:layout_constraintStart_toStartOf="parent"
-            android:text="@string/watch_status_to_watch_title" />
-
-        <androidx.appcompat.widget.AppCompatRadioButton
-            style="@style/radio_button_style"
-            android:id="@+id/watching_radio_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/to_watch_radio_button"
-            app:layout_constraintStart_toStartOf="parent"
-            android:text="@string/watch_status_watching_title" />
-
-        <androidx.appcompat.widget.AppCompatRadioButton
-            style="@style/radio_button_style"
-            android:id="@+id/watched_radio_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/watching_radio_button"
-            app:layout_constraintStart_toStartOf="parent"
-            android:text="@string/watch_status_watched_title" />
-
-        <androidx.appcompat.widget.AppCompatRadioButton
-            style="@style/radio_button_style"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/watched_radio_button"
-            app:layout_constraintStart_toStartOf="parent"
-            android:text="@string/watch_status_dropped_title" />
-
-        <ImageButton
-            android:id="@+id/to_watch_info_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/x1_layout_margin"
-            android:background="@drawable/background_circle"
-            app:layout_constraintTop_toTopOf="@id/to_watch_radio_button"
-            app:layout_constraintBottom_toBottomOf="@id/to_watch_radio_button"
-            app:layout_constraintStart_toEndOf="@id/to_watch_radio_button"
-            android:src="@drawable/ic_info"
-            android:contentDescription="@string/content_description_info_button"/>
-
-        <ImageButton
-            android:id="@+id/watching_info_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/x1_layout_margin"
-            android:background="@drawable/background_circle"
-            app:layout_constraintTop_toTopOf="@id/watching_radio_button"
-            app:layout_constraintBottom_toBottomOf="@id/watching_radio_button"
-            app:layout_constraintStart_toEndOf="@id/to_watch_radio_button"
-            android:src="@drawable/ic_info"
-            android:contentDescription="@string/content_description_info_button"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <Button
         android:id="@+id/save_button"
