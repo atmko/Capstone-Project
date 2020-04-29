@@ -27,6 +27,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.ExistingWorkPolicy;
 import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.PeriodicWorkRequest;
@@ -117,6 +118,7 @@ public class MasterActivity extends AppCompatActivity implements
 
     private static final String UPDATE_MEDIA_WORKER_KEY = "update_media_worker";
     private static final String BACKUP_WORKER_KEY = "backup worker";
+    private static final String JUST_TURNED_PRO_WORKER_KEY = "just_turned_pro_worker";
     private static final int UPDATE_REPEAT_INTERVAL = 5;
     private static final int BACKUP_REPEAT_INTERVAL = 12;
     private static final int INITIAL_DELAY = 15;
@@ -341,6 +343,7 @@ public class MasterActivity extends AppCompatActivity implements
         //stop workers
         WorkManager.getInstance(this).cancelAllWorkByTag(UPDATE_MEDIA_WORKER_KEY);
         WorkManager.getInstance(this).cancelAllWorkByTag(BACKUP_WORKER_KEY);
+        WorkManager.getInstance(this).cancelAllWorkByTag(JUST_TURNED_PRO_WORKER_KEY);
 
         startLaunchActivity();
     }
@@ -1213,6 +1216,7 @@ public class MasterActivity extends AppCompatActivity implements
                 .setConstraints(constraints)
                 .build();
 
-        WorkManager.getInstance(activity).enqueue(proUpdateForNotifications);
+        WorkManager.getInstance(activity).enqueueUniqueWork(
+                JUST_TURNED_PRO_WORKER_KEY, ExistingWorkPolicy.KEEP, proUpdateForNotifications);
     }
 }
