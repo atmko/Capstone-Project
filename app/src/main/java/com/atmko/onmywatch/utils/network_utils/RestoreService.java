@@ -446,13 +446,13 @@ public class RestoreService extends JobIntentService {
         Map returnedMap = gson.fromJson(mJsonString, Map.class);
 
         List<Map> movieMaps = (List<Map>) returnedMap.get(MOVIES_KEY);
-        if (movieMaps == null) return;
-
-        for (Map map : movieMaps) {
-            MovieData movieData = parseDataMapToMovieData(map);
-            mLocalDatabase.movieDataDao().addMovieData(movieData);
-            //restore search tags
-            restoreSearchMediaTags(movieData.searchTags);
+        if (movieMaps != null) {
+            for (Map map : movieMaps) {
+                MovieData movieData = parseDataMapToMovieData(map);
+                mLocalDatabase.movieDataDao().addMovieData(movieData);
+                //restore search tags
+                restoreSearchMediaTags(movieData.searchTags);
+            }
         }
 
         onPullMovieDataComplete();
@@ -464,13 +464,13 @@ public class RestoreService extends JobIntentService {
         Map returnedMap = gson.fromJson(mJsonString, Map.class);
 
         List<Map> seriesMaps = (List<Map>) returnedMap.get(SERIES_KEY);
-        if (seriesMaps == null) return;
-
-        for (Map map : seriesMaps) {
-            SeriesData seriesData = parseDataMapToSeriesData(map);
-            mLocalDatabase.seriesDataDao().addSeriesData(seriesData);
-            //restore search tags
-            restoreSearchMediaTags(seriesData.searchTags);
+        if (seriesMaps != null) {
+            for (Map map : seriesMaps) {
+                SeriesData seriesData = parseDataMapToSeriesData(map);
+                mLocalDatabase.seriesDataDao().addSeriesData(seriesData);
+                //restore search tags
+                restoreSearchMediaTags(seriesData.searchTags);
+            }
         }
 
         onPullSeriesDataComplete();
@@ -492,15 +492,15 @@ public class RestoreService extends JobIntentService {
         Map returnedMap = gson.fromJson(mJsonString, Map.class);
 
         List<Map> listMaps = (List<Map>) returnedMap.get(WATCH_LISTS_KEY);
-        if (listMaps == null) return;
+        if (listMaps != null) {
+            String noneWatchListName = getApplicationContext()
+                    .getResources().getStringArray(R.array.watch_status_titles)[0];
 
-        String noneWatchListName = getApplicationContext()
-                .getResources().getStringArray(R.array.watch_status_titles)[0];
-
-        for (Map map : listMaps) {
-            WatchListModel watchListModel = parseWatchListModel(map);
-            if (watchListModel.getName().equals(noneWatchListName)) continue;
-            mLocalDatabase.watchListsDao().addList(watchListModel);
+            for (Map map : listMaps) {
+                WatchListModel watchListModel = parseWatchListModel(map);
+                if (watchListModel.getName().equals(noneWatchListName)) continue;
+                mLocalDatabase.watchListsDao().addList(watchListModel);
+            }
         }
 
         onPullWatchListsComplete();
@@ -512,13 +512,13 @@ public class RestoreService extends JobIntentService {
         Map returnedMap = gson.fromJson(mJsonString, Map.class);
 
         List<Map> listMaps = (List<Map>) returnedMap.get(USER_LISTS_KEY);
-        if (listMaps == null) return;
-
-        for (Map map : listMaps) {
-            UserListModel userListModel = parseUserListModel(map);
-            mLocalDatabase.userListsDao().addList(userListModel);
-            //restore search tags
-            restoreSearchListTags(userListModel);
+        if (listMaps != null) {
+            for (Map map : listMaps) {
+                UserListModel userListModel = parseUserListModel(map);
+                mLocalDatabase.userListsDao().addList(userListModel);
+                //restore search tags
+                restoreSearchListTags(userListModel);
+            }
         }
 
         onPullUserListsComplete();
@@ -539,11 +539,11 @@ public class RestoreService extends JobIntentService {
         Map returnedMap = gson.fromJson(mJsonString, Map.class);
 
         List<Map> recordMaps = (List<Map>) returnedMap.get(MOVIE_DATA_RECORDS_KEY);
-        if (recordMaps == null) return;
-
-        for (Map map : recordMaps) {
-            MovieDataRecord movieDataRecord = parseMovieRecord(map);
-            mLocalDatabase.movieDataRecordsDao().addRecord(movieDataRecord);
+        if (recordMaps != null) {
+            for (Map map : recordMaps) {
+                MovieDataRecord movieDataRecord = parseMovieRecord(map);
+                mLocalDatabase.movieDataRecordsDao().addRecord(movieDataRecord);
+            }
         }
 
         onPullMovieDataRecordsComplete();
@@ -555,11 +555,11 @@ public class RestoreService extends JobIntentService {
         Map returnedMap = gson.fromJson(mJsonString, Map.class);
 
         List<Map> recordMaps = (List<Map>) returnedMap.get(SERIES_DATA_RECORDS_KEY);
-        if (recordMaps == null) return;
-
-        for (Map map : recordMaps) {
-            SeriesDataRecord seriesDataRecord = parseSeriesRecord(map);
-            mLocalDatabase.seriesDataRecordsDao().addRecord(seriesDataRecord);
+        if (recordMaps != null) {
+            for (Map map : recordMaps) {
+                SeriesDataRecord seriesDataRecord = parseSeriesRecord(map);
+                mLocalDatabase.seriesDataRecordsDao().addRecord(seriesDataRecord);
+            }
         }
 
         onPullSeriesDataRecordsComplete();
@@ -571,11 +571,11 @@ public class RestoreService extends JobIntentService {
         Map returnedMap = gson.fromJson(mJsonString, Map.class);
 
         List<Map> recordMaps = (List<Map>) returnedMap.get(MOVIES_NOTIFIERS_KEY);
-        if (recordMaps == null) return;
-
-        for (Map map : recordMaps) {
-            MovieNotifier movieNotifier = parseMovieNotifier(map);
-            mLocalDatabase.movieNotifierDao().addMediaNotifier(movieNotifier);
+        if (recordMaps != null) {
+            for (Map map : recordMaps) {
+                MovieNotifier movieNotifier = parseMovieNotifier(map);
+                mLocalDatabase.movieNotifierDao().addMediaNotifier(movieNotifier);
+            }
         }
 
         onPullMovieNotifiersComplete();
@@ -587,11 +587,11 @@ public class RestoreService extends JobIntentService {
         Map returnedMap = gson.fromJson(mJsonString, Map.class);
 
         List<Map> notifierMaps = (List<Map>) returnedMap.get(SERIES_NOTIFIERS_KEY);
-        if (notifierMaps == null) return;
-
-        for (Map map : notifierMaps) {
-            SeriesNotifier seriesNotifier = parseSeriesNotifier(map);
-            mLocalDatabase.seriesNotifierDao().addMediaNotifier(seriesNotifier);
+        if (notifierMaps != null) {
+            for (Map map : notifierMaps) {
+                SeriesNotifier seriesNotifier = parseSeriesNotifier(map);
+                mLocalDatabase.seriesNotifierDao().addMediaNotifier(seriesNotifier);
+            }
         }
 
         onPullSeriesNotifiersComplete();
@@ -603,11 +603,11 @@ public class RestoreService extends JobIntentService {
         Map returnedMap = gson.fromJson(mJsonString, Map.class);
 
         List<Map> recordMaps = (List<Map>) returnedMap.get(MOVIE_LOGS_KEY);
-        if (recordMaps == null) return;
-
-        for (Map map : recordMaps) {
-            MovieLog movieLog = parseMovieLog(map);
-            mLocalDatabase.movieLogsDao().addMediaLog(movieLog);
+        if (recordMaps != null) {
+            for (Map map : recordMaps) {
+                MovieLog movieLog = parseMovieLog(map);
+                mLocalDatabase.movieLogsDao().addMediaLog(movieLog);
+            }
         }
 
         onPullMovieLogsComplete();
@@ -619,11 +619,11 @@ public class RestoreService extends JobIntentService {
         Map returnedMap = gson.fromJson(mJsonString, Map.class);
 
         List<Map> recordMaps = (List<Map>) returnedMap.get(SERIES_LOGS_KEY);
-        if (recordMaps == null) return;
-
-        for (Map map : recordMaps) {
-            SeriesLog seriesLog = parseSeriesLog(map);
-            mLocalDatabase.seriesLogsDao().addMediaLog(seriesLog);
+        if (recordMaps != null) {
+            for (Map map : recordMaps) {
+                SeriesLog seriesLog = parseSeriesLog(map);
+                mLocalDatabase.seriesLogsDao().addMediaLog(seriesLog);
+            }
         }
 
         onPullSeriesLogsComplete();
