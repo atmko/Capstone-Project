@@ -25,6 +25,9 @@ public interface SeriesDataDao {
     @Query("SELECT * FROM series")
     List<SeriesData> getAllSeriesAlt();
 
+    @Query("SELECT * FROM series WHERE last_updated <= :updateThreshold")
+    List<SeriesData> getMediaAtOrBeforeThreshold(long updateThreshold);
+
     //alternate method without live data
     @Query("SELECT * FROM series WHERE tags LIKE :tag")
     List<SeriesData> getAllMediaWithTagAlt(String tag);

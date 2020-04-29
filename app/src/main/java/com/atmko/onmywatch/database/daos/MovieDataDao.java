@@ -25,6 +25,9 @@ public interface MovieDataDao {
     @Query("SELECT * FROM movies")
     List<MovieData> getAllMoviesAlt();
 
+    @Query("SELECT * FROM movies WHERE last_updated <= :updateThreshold")
+    List<MovieData> getMediaAtOrBeforeThreshold(long updateThreshold);
+
     //alternate method without live data
     @Query("SELECT * FROM movies WHERE tags LIKE :tag")
     List<MovieData> getAllMediaWithTagAlt(String tag);

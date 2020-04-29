@@ -33,6 +33,7 @@ import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
 
 import org.parceler.Parcels;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -54,12 +55,14 @@ public class UpdateMediaWorker extends Worker {
     public static String sSeriesDetailsStringInject;
     private final Context mContext;
     private final AppDatabase mDatabase;
+    private final long mUpdateThreshold;
 
     public UpdateMediaWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
 
         mContext = context;
         mDatabase = AppDatabase.getInstance(mContext);
+        mUpdateThreshold = new Date().getTime() - UPDATE_INTERVAL;
     }
 
     @NonNull
@@ -73,7 +76,14 @@ public class UpdateMediaWorker extends Worker {
 
     private void fetchSavedMovies() {
         //get all saved movies
-        List<MovieData> movieDataList = mDatabase.movieDataDao().getAllMoviesAlt();
+        List<MovieData> expiredMediaList =
+                mDatabase.movieDataDao().getMediaAtOrBeforeThreshold(mUpdateThreshold);
+
+        //weed out media that don't support notifiers
+        List<MovieData> mediaToUpdateList = new ArrayList<>();
+        for (MovieData movieData: expiredMediaList) {
+            if (movieData.supportsNotifiers()) mediaToUpdateList.add(movieData);
+        }
 
         //get movie detail url format
         String[] detailUrls = mContext.getResources().getStringArray(R.array.details_urls);
@@ -82,22 +92,24 @@ public class UpdateMediaWorker extends Worker {
         //configure search preferences
         SearchPreferences searchPreferences = new SearchPreferences();
 
-        //iterate through movie list with this watch status
-        for (MovieData movieData: movieDataList) {
+        //iterate through update list
+        for (MovieData movieData: mediaToUpdateList) {
             SystemClock.sleep(REQUEST_COOL_DOWN);
 
-            long timeSinceUpdate = new Date().getTime() - movieData.getLastUpdated();
-            boolean isUpdateTimeElapsed =  timeSinceUpdate >= UPDATE_INTERVAL;
-
-            if (movieData.supportsNotifiers() && isUpdateTimeElapsed) {
-                updateSavedMedia(movieData, detailUrl, searchPreferences);
-            }
+            updateSavedMedia(movieData, detailUrl, searchPreferences);
         }
     }
 
     private void fetchSavedSeries() {
         //get all saved series
-        List<SeriesData> seriesDataList = mDatabase.seriesDataDao().getAllSeriesAlt();
+        List<SeriesData> expiredMediaList
+                = mDatabase.seriesDataDao().getMediaAtOrBeforeThreshold(mUpdateThreshold);
+
+        //weed out media that don't support notifiers
+        List<SeriesData> mediaToUpdateList = new ArrayList<>();
+        for (SeriesData seriesData: expiredMediaList) {
+            if (seriesData.supportsNotifiers()) mediaToUpdateList.add(seriesData);
+        }
 
         //get series detail url format
         String[] detailUrls = mContext.getResources().getStringArray(R.array.details_urls);
@@ -106,16 +118,11 @@ public class UpdateMediaWorker extends Worker {
         //configure search preferences
         SearchPreferences searchPreferences = new SearchPreferences();
 
-        //iterate through series list with this watch status
-        for (SeriesData seriesData: seriesDataList) {
+        //iterate through update list
+        for (SeriesData seriesData: mediaToUpdateList) {
             SystemClock.sleep(REQUEST_COOL_DOWN);
 
-            long timeSinceUpdate = new Date().getTime() - seriesData.getLastUpdated();
-            boolean isUpdateTimeElapsed =  timeSinceUpdate >= UPDATE_INTERVAL;
-
-            if (seriesData.supportsNotifiers() && isUpdateTimeElapsed) {
-                updateSavedMedia(seriesData, detailUrl, searchPreferences);
-            }
+            updateSavedMedia(seriesData, detailUrl, searchPreferences);
         }
     }
 
