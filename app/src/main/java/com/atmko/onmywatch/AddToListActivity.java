@@ -224,22 +224,6 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
             });
         }
 
-        findViewById(R.id.to_watch_info_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MasterActivity.showSnackBarMessage(getString(R.string.to_watch_status_info),
-                            AddToListActivity.this);
-            }
-        });
-
-        findViewById(R.id.watching_info_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MasterActivity.showSnackBarMessage(getString(R.string.watching_status_info),
-                        AddToListActivity.this);
-            }
-        });
-
         mSaveButton = findViewById(R.id.save_button);
     }
 

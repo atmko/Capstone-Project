@@ -60,28 +60,4 @@
         app:layout_constraintStart_toStartOf="parent"
         android:text="@string/watch_status_dropped_title" />
 
-    <ImageButton
-        android:id="@+id/to_watch_info_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/x1_layout_margin"
-        android:background="@drawable/background_circle"
-        app:layout_constraintTop_toTopOf="@id/to_watch_radio_button"
-        app:layout_constraintBottom_toBottomOf="@id/to_watch_radio_button"
-        app:layout_constraintStart_toEndOf="@id/to_watch_radio_button"
-        android:src="@drawable/ic_info"
-        android:contentDescription="@string/content_description_info_button" />
-
-    <ImageButton
-        android:id="@+id/watching_info_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/x1_layout_margin"
-        android:background="@drawable/background_circle"
-        app:layout_constraintTop_toTopOf="@id/watching_radio_button"
-        app:layout_constraintBottom_toBottomOf="@id/watching_radio_button"
-        app:layout_constraintStart_toEndOf="@id/to_watch_radio_button"
-        android:src="@drawable/ic_info"
-        android:contentDescription="@string/content_description_info_button" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
