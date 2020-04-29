@@ -168,6 +168,7 @@ public class SeriesDataParser {
         detailsSeriesData.setUserRating(seriesData.getUserRating());
         detailsSeriesData.setTraktId(seriesData.getTraktId());
         detailsSeriesData.setUniqueExternalId(seriesData.getUniqueExternalId());
+        detailsSeriesData.setLastUpdated(seriesData.getLastUpdated());
         detailsSeriesData.searchTags = seriesData.searchTags;
 
         return detailsSeriesData;

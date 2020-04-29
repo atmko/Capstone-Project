@@ -83,7 +83,7 @@ public class MovieData extends MediaData{
                      String posterPath, String originalLanguage, String originalTitle,
                      ArrayList<String> genres, boolean adult, String backdropPath, String overview,
                      String releaseDate, String maturityRating, String releaseStatus,
-                     ScheduledMedia scheduledMedia, List<SearchMediaTag> searchTags) {
+                     ScheduledMedia scheduledMedia, long lastUpdated, List<SearchMediaTag> searchTags) {
 
         this.mId = id;
         this.mTraktId = traktId;
@@ -100,6 +100,7 @@ public class MovieData extends MediaData{
         this.mMaturityRating = maturityRating;
         this.mReleaseStatus = releaseStatus;
         this.mScheduledMedia = scheduledMedia;
+        this.mLastUpdated = lastUpdated;
         this.searchTags = searchTags;
     }
 

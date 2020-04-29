@@ -117,7 +117,7 @@ public class MasterActivity extends AppCompatActivity implements
 
     private static final String UPDATE_MEDIA_WORKER_KEY = "update_media_worker";
     private static final String BACKUP_WORKER_KEY = "backup worker";
-    private static final int UPDATE_REPEAT_INTERVAL = 18;
+    private static final int UPDATE_REPEAT_INTERVAL = 5;
     private static final int BACKUP_REPEAT_INTERVAL = 12;
     private static final int INITIAL_DELAY = 15;
 

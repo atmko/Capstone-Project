@@ -160,6 +160,7 @@ public class MovieDataParser {
         detailsMovieData.setUserRating(movieData.getUserRating());
         detailsMovieData.setTraktId(movieData.getTraktId());
         detailsMovieData.setUniqueExternalId(movieData.getUniqueExternalId());
+        detailsMovieData.setLastUpdated(movieData.getLastUpdated());
         detailsMovieData.searchTags = movieData.searchTags;
 
         return detailsMovieData;

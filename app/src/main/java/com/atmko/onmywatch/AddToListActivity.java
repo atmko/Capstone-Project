@@ -611,6 +611,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
             mMediaData.setUserRating(mSavedMedia.getUserRating());
             mMediaData.setTraktId(mSavedMedia.getTraktId());
             mMediaData.setUniqueExternalId(mSavedMedia.getUniqueExternalId());
+            mMediaData.setLastUpdated(mSavedMedia.getLastUpdated());
 
             mDatabase.movieDataDao().updateMovieData(((MovieData) mMediaData));
 
@@ -629,6 +630,7 @@ public class AddToListActivity extends AppCompatActivity implements AddToListAda
             mMediaData.setUserRating(mSavedMedia.getUserRating());
             mMediaData.setTraktId(mSavedMedia.getTraktId());
             mMediaData.setUniqueExternalId(mSavedMedia.getUniqueExternalId());
+            mMediaData.setLastUpdated(mSavedMedia.getLastUpdated());
 
             mDatabase.seriesDataDao().updateSeriesData(((SeriesData) mMediaData));
 

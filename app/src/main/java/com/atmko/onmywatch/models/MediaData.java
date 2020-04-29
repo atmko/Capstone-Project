@@ -40,6 +40,8 @@ abstract public class MediaData {
 
     public static final String TAGS_KEY = "tags";
 
+    public static final String LAST_UPDATED_KEY = "last_updated";
+
     private static final String MATURITY_RATING_PLACEHOLDER = "____";
     private static final String RELEASE_DATE_PLACEHOLDER = "____";
     private static final String NO_STATUS_PLACEHOLDER = "No Status";
@@ -73,6 +75,8 @@ abstract public class MediaData {
 
     @ColumnInfo(name = "watch_status") int mWatchStatus;
     @ColumnInfo(name = "user_rating") int mUserRating;
+
+    @ColumnInfo(name = "last_updated") long mLastUpdated;
 
     @Ignore String mUniqueExternalId;
 
@@ -295,6 +299,14 @@ abstract public class MediaData {
 
     public abstract boolean supportsNotifiers();
 
+    public long getLastUpdated() {
+        return mLastUpdated;
+    }
+
+    public void setLastUpdated(long lastUpdated) {
+        this.mLastUpdated = lastUpdated;
+    }
+
     Map<String, Object> getFirebaseMediaDataMap(MediaData mediaData) {
         Map<String, Object> mediaDataMap = new HashMap<>();
 
@@ -314,6 +326,7 @@ abstract public class MediaData {
         mediaDataMap.put(ApiConstants.RELEASE_STATUS_KEY, mediaData.getReleaseStatus());
         mediaDataMap.put(WATCH_STATUS_KEY, mediaData.getWatchStatus());
         mediaDataMap.put(USER_RATING_KEY, mediaData.getUserRating());
+        mediaDataMap.put(LAST_UPDATED_KEY, mediaData.getLastUpdated());
         mediaDataMap.put(TAGS_KEY, tagStrings);
 
         return mediaDataMap;

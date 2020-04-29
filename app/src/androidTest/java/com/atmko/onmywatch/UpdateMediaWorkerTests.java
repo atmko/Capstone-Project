@@ -62,6 +62,7 @@ public class UpdateMediaWorkerTests {
         }
     }
 
+    //todo: add last updated media data property to test strings
     public void injectMovieDetailsString() {
         UpdateMediaWorker.sMovieDetailsStringInject = "{\n" +
                 "  \"adult\": true,\n" +

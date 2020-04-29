@@ -79,7 +79,8 @@ public class SeriesData extends MediaData{
                       String posterPath, String originalLanguage, String originalTitle,
                       ArrayList<String> countryOfOrigin, ArrayList<String> genres, String backdropPath,
                       String overview, String releaseDate, String maturityRating, String releaseStatus,
-                      Episode nextEpisodeToAir, List<SearchMediaTag> searchTags, String network) {
+                      Episode nextEpisodeToAir, long lastUpdated, List<SearchMediaTag> searchTags,
+                      String network) {
 
         this.mId = id;
         this.mTraktId = traktId;
@@ -96,6 +97,7 @@ public class SeriesData extends MediaData{
         this.mMaturityRating = maturityRating;
         this.mReleaseStatus = releaseStatus;
         this.mNextEpisodeToAir = nextEpisodeToAir;
+        this.mLastUpdated = lastUpdated;
         this.searchTags = searchTags;
         this.mNetwork = network;
     }

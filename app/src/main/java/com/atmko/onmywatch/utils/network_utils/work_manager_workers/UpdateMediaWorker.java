@@ -33,7 +33,9 @@ import com.atmko.onmywatch.utils.api_utils.NetworkFunctions;
 
 import org.parceler.Parcels;
 
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
@@ -43,6 +45,8 @@ public class UpdateMediaWorker extends Worker {
     private static final String TAG = UpdateMediaWorker.class.getSimpleName();
 
     public static final String NEW_MEDIA_DATA_KEY = "new_media_data";
+
+    private static final long UPDATE_INTERVAL = TimeUnit.HOURS.toMillis(24);
 
     public static final int REQUEST_COOL_DOWN = 1000;
 
@@ -69,8 +73,7 @@ public class UpdateMediaWorker extends Worker {
 
     private void fetchSavedMovies() {
         //get all saved movies
-        List<MovieData> movieDataList = mDatabase.movieDataDao()
-                .getAllMoviesAlt();
+        List<MovieData> movieDataList = mDatabase.movieDataDao().getAllMoviesAlt();
 
         //get movie detail url format
         String[] detailUrls = mContext.getResources().getStringArray(R.array.details_urls);
@@ -83,7 +86,10 @@ public class UpdateMediaWorker extends Worker {
         for (MovieData movieData: movieDataList) {
             SystemClock.sleep(REQUEST_COOL_DOWN);
 
-            if (movieData.supportsNotifiers()) {
+            long timeSinceUpdate = new Date().getTime() - movieData.getLastUpdated();
+            boolean isUpdateTimeElapsed =  timeSinceUpdate >= UPDATE_INTERVAL;
+
+            if (movieData.supportsNotifiers() && isUpdateTimeElapsed) {
                 updateSavedMedia(movieData, detailUrl, searchPreferences);
             }
         }
@@ -91,8 +97,7 @@ public class UpdateMediaWorker extends Worker {
 
     private void fetchSavedSeries() {
         //get all saved series
-        List<SeriesData> seriesDataList = mDatabase.seriesDataDao()
-                .getAllSeriesAlt();
+        List<SeriesData> seriesDataList = mDatabase.seriesDataDao().getAllSeriesAlt();
 
         //get series detail url format
         String[] detailUrls = mContext.getResources().getStringArray(R.array.details_urls);
@@ -105,7 +110,10 @@ public class UpdateMediaWorker extends Worker {
         for (SeriesData seriesData: seriesDataList) {
             SystemClock.sleep(REQUEST_COOL_DOWN);
 
-            if (seriesData.supportsNotifiers()) {
+            long timeSinceUpdate = new Date().getTime() - seriesData.getLastUpdated();
+            boolean isUpdateTimeElapsed =  timeSinceUpdate >= UPDATE_INTERVAL;
+
+            if (seriesData.supportsNotifiers() && isUpdateTimeElapsed) {
                 updateSavedMedia(seriesData, detailUrl, searchPreferences);
             }
         }

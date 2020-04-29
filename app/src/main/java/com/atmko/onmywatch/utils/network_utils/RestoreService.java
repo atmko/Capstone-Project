@@ -300,6 +300,7 @@ public class RestoreService extends JobIntentService {
                 (String) map.get(MovieApiConstants.CERTIFICATION_KEY),
                 (String) map.get(ApiConstants.RELEASE_STATUS_KEY),
                 scheduledMedia,
+                ((Double) map.get(MediaData.LAST_UPDATED_KEY)).longValue(),
                 searchTags
         );
 
@@ -338,6 +339,7 @@ public class RestoreService extends JobIntentService {
                 (String) map.get(SeriesApiConstants.RATING_KEY),
                 (String) map.get(ApiConstants.RELEASE_STATUS_KEY),
                 episode,
+                ((Double) map.get(MediaData.LAST_UPDATED_KEY)).longValue(),
                 searchTags,
                 (String) map.get(SeriesApiConstants.NETWORK_KEY)
         );
