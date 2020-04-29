@@ -278,6 +278,9 @@ public class RestoreService extends JobIntentService {
         ScheduledMedia scheduledMedia = map.get(SCHEDULED_MEDIA_KEY) == null ? null
                 : Converters.longToScheduledMedia(((Double) map.get(SCHEDULED_MEDIA_KEY)).longValue());
 
+        long lastUpdated = map.get(MediaData.LAST_UPDATED_KEY) == null ? 0
+                : ((Double) map.get(MediaData.LAST_UPDATED_KEY)).longValue();
+
         List<String> tagStrings = (ArrayList<String>) map.get(TAGS_KEY);
         List<SearchMediaTag> searchTags = new ArrayList<>();
         for (String tagString : tagStrings) {
@@ -300,7 +303,7 @@ public class RestoreService extends JobIntentService {
                 (String) map.get(MovieApiConstants.CERTIFICATION_KEY),
                 (String) map.get(ApiConstants.RELEASE_STATUS_KEY),
                 scheduledMedia,
-                ((Double) map.get(MediaData.LAST_UPDATED_KEY)).longValue(),
+                lastUpdated,
                 searchTags
         );
 
@@ -316,6 +319,9 @@ public class RestoreService extends JobIntentService {
     private static SeriesData parseDataMapToSeriesData(Map map) {
         Episode episode = map.get(NEXT_EPISODE_KEY) == null ? null
                 : Converters.stringToEpisode((String) map.get(NEXT_EPISODE_KEY));
+
+        long lastUpdated = map.get(MediaData.LAST_UPDATED_KEY) == null ? 0
+                : ((Double) map.get(MediaData.LAST_UPDATED_KEY)).longValue();
 
         List<String> tagStrings = (ArrayList<String>) map.get(TAGS_KEY);
         List<SearchMediaTag> searchTags = new ArrayList<>();
@@ -339,7 +345,7 @@ public class RestoreService extends JobIntentService {
                 (String) map.get(SeriesApiConstants.RATING_KEY),
                 (String) map.get(ApiConstants.RELEASE_STATUS_KEY),
                 episode,
-                ((Double) map.get(MediaData.LAST_UPDATED_KEY)).longValue(),
+                lastUpdated,
                 searchTags,
                 (String) map.get(SeriesApiConstants.NETWORK_KEY)
         );
