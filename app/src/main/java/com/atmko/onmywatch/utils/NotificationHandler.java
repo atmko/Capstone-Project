@@ -33,7 +33,7 @@ import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_MOVIE;
 import static com.atmko.onmywatch.MasterActivity.MEDIA_TYPE_SERIES;
 
 public class NotificationHandler {
-    private static final long TIME_DILATION = TimeUnit.MINUTES.toMillis(30);
+    private static final long TIME_DILATION = TimeUnit.MINUTES.toMillis(10);
     //for testing
     public static long TEST_TIME_DILATION = 0;
     public static boolean IS_TESTING = false;
