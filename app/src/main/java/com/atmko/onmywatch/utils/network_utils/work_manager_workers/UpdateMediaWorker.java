@@ -170,16 +170,14 @@ public class UpdateMediaWorker extends Worker {
 
         //parse and populate retrieved data
         if (oldMediaData instanceof MovieData) {
-            newMediaData =
-                    MovieDataParser.parseDetails(returnedJSONString,
-                            ((MovieData) oldMediaData));
+            newMediaData = MovieDataParser.parseDetails(returnedJSONString, ((MovieData) oldMediaData));
+            newMediaData.setLastUpdated(new Date().getTime());
 
             mDatabase.movieDataDao().updateMovieData(((MovieData) newMediaData));
 
         } else {
-            newMediaData =
-                    SeriesDataParser.parseDetails(returnedJSONString,
-                            ((SeriesData) oldMediaData));
+            newMediaData = SeriesDataParser.parseDetails(returnedJSONString, ((SeriesData) oldMediaData));
+            newMediaData.setLastUpdated(new Date().getTime());
 
             mDatabase.seriesDataDao().updateSeriesData(((SeriesData) newMediaData));
         }
