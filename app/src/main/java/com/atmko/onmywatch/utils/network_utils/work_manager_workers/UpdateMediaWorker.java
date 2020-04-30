@@ -47,7 +47,7 @@ public class UpdateMediaWorker extends Worker {
 
     public static final String NEW_MEDIA_DATA_KEY = "new_media_data";
 
-    private static final long UPDATE_INTERVAL = TimeUnit.HOURS.toMillis(24);
+    private static final long UPDATE_INTERVAL = TimeUnit.HOURS.toMillis(18);
 
     public static final int REQUEST_COOL_DOWN = 1000;
 
