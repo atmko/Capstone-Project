@@ -33,6 +33,8 @@ public interface MovieLogsDao {
             + "WHERE parent_id = :parentId")
     List<MovieLog> getAllLogsWithMediaIdAlt(String parentId);
 
+    //TODO: REMOVE HARDCODED CONSTANTS FROMM QUERIES
+
     @Query("SELECT * FROM movie_logs "
             + "WHERE condition = 1 "
             + "ORDER BY timestamp ASC "

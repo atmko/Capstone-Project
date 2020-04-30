@@ -11,13 +11,15 @@ import com.atmko.onmywatch.BuildConfig;
  */
 public class ApiConstants {
     //api key
-    public static final String API_KEY = BuildConfig.tmdbApiKey;
+    static final String API_KEY = BuildConfig.tmdbApiKey;
 
     public static final String MEDIA_TYPE_MOVIE = "movie";
-    public static final String MEDIA_TYPE_TV = "tv";
+    static final String MEDIA_TYPE_TV = "tv";
 
     //URLS
     public static final String IMAGE_BASE_URL = "https://image.tmdb.org/t/p";
+
+    //TODO: REMOVE COMMENTED CODE
 // --Commented out by Inspection START (4/20/2020 4:23 AM):
 //    @SuppressWarnings("SpellCheckingInspection")
 //    public static final String VIDEO_IMAGE_URL_FORMAT = "https://img.youtube.com/vi/{video_id}/sddefault.jpg";
@@ -91,7 +93,7 @@ public class ApiConstants {
         public static final String REPLACEMENT_RETURNING_SERIES = "Running";
         public static final String REPLACEMENT_IN_PRODUCTION = "Production";
 
-        public static String replaceText(String originalText) {
+        static String replaceText(String originalText) {
             if (SeriesApiConstants.RELEASE_STATUS_RETURNING_SERIES.equals(originalText)) {
                 return REPLACEMENT_RETURNING_SERIES;
 

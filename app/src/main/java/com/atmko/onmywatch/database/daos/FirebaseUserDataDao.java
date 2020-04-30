@@ -40,6 +40,9 @@ public class FirebaseUserDataDao {
     private static final String BACKUP_COUNTER_KEY = "backup_counter";
     public static final String MIGRATION_KEY = "migration";
 
+    private static final String USERS_DIRECTORY = "users";
+    private static final String BACKUPS_DIRECTORY = "backups";
+
     public static DocumentReference getFeaturePermissions() {
         return MasterActivity.getUserDbHomeReference()
                 .collection(ADMIN_COLLECTION_TITLE)
@@ -55,9 +58,9 @@ public class FirebaseUserDataDao {
 
         StorageReference reference = FirebaseStorage.getInstance()
                 .getReference()
-                .child("users")
+                .child(USERS_DIRECTORY)
                 .child(MasterActivity.getCurrentUser().getUid())
-                .child("backups");
+                .child(BACKUPS_DIRECTORY);
         reference.listAll()
                 .addOnSuccessListener(new OnSuccessListener<ListResult>() {
                     @Override
@@ -97,9 +100,9 @@ public class FirebaseUserDataDao {
 
         StorageReference reference = FirebaseStorage.getInstance()
                 .getReference()
-                .child("users")
+                .child(USERS_DIRECTORY)
                 .child(MasterActivity.getCurrentUser().getUid())
-                .child("backups");
+                .child(BACKUPS_DIRECTORY);
         try {
             ListResult listResult = Tasks.await(reference.listAll());
 

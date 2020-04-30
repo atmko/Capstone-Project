@@ -262,7 +262,7 @@
     </array>
 
     <array name="inapp_skus">
-        <item>pro_mode</item>
+        <item>@string/pro_mode_sku</item>
     </array>
 
     <array name="terms_clickable_spans">

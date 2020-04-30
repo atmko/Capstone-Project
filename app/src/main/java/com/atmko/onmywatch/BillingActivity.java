@@ -109,7 +109,7 @@ public class BillingActivity extends AppCompatActivity implements
             int supportResponseCode = mBillingClient.isFeatureSupported(FeatureType.SUBSCRIPTIONS).getResponseCode();
             boolean isSupported = supportResponseCode == BillingClient.BillingResponseCode.OK;
             if (!isSupported) {
-                showSnackBarMessage("Not supported. Update Google Play Store");
+                showSnackBarMessage(getString(R.string.play_store_item_not_supported));
                 return;
             }
         }

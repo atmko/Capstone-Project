@@ -144,7 +144,7 @@ public class ListWidgetProviderConfigureActivity extends AppCompatActivity
 
         //if current user is null start login
         if (getCurrentUser() == null) {
-            Toast.makeText(this, "You're not logged in", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.you_are_not_logged_in, Toast.LENGTH_LONG).show();
             finish();
             return;
         }

@@ -108,6 +108,9 @@ public class MasterActivity extends AppCompatActivity implements
     public static final int MEDIA_TYPE_MOVIE = 1;
     public static final int MEDIA_TYPE_PEOPLE = 2;
 
+    private static final String STATUS_KEY = "status";
+    private static final String ERROR_KEY = "error";
+
     public static final String IS_LOGGING_IN_KEY = "is_logging_in";
     private static final String INITIAL_PRO_CHECK_KEY = "initial_pro_check";
     private static final String KEYBOARD_VISIBILITY_KEY = "keyboard_visibility";
@@ -404,7 +407,7 @@ public class MasterActivity extends AppCompatActivity implements
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                showSnackBarMessage("Log out failed", MasterActivity.this);
+                                showSnackBarMessage(getString(R.string.log_out_failed), MasterActivity.this);
                             }
                         });
                     }
@@ -1120,7 +1123,7 @@ public class MasterActivity extends AppCompatActivity implements
             //iterate through list and ensure that app values match purchases
             //handle purchases if app values are false
             for (Purchase purchase : inAppPurchases) {
-                if (purchase.getSku().equals("pro_mode") && !MasterActivity.sIsProMode) {
+                if (purchase.getSku().equals(activity.getString(R.string.pro_mode_sku)) && !MasterActivity.sIsProMode) {
                     Log.d(TAG, "handling pro_mode");
                     handlePurchase(purchase, activity);
                 }
@@ -1132,7 +1135,7 @@ public class MasterActivity extends AppCompatActivity implements
 
     static void handlePurchase(final Purchase purchase, final Activity activity) {
         if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
-            showSnackBarMessage("Your Purchase Has Been Completed", activity);
+            showSnackBarMessage(activity.getString(R.string.your_purchase_has_been_completed), activity);
 
             // Acknowledge the purchase if it hasn't already been acknowledged.
             if (!purchase.isAcknowledged()) {
@@ -1177,7 +1180,7 @@ public class MasterActivity extends AppCompatActivity implements
                         Map<String, String> results = ((Map<String, String>) httpsCallableResult.getData());
                         if (results == null) return;
 
-                        String error = results.get("error");
+                        String error = results.get(ERROR_KEY);
                         if (error != null) {
                             if (error.equals(IS_DIFFERENT_ACCOUNT_KEY)) {
                                 sIsDifferentAccount = true;
@@ -1188,9 +1191,9 @@ public class MasterActivity extends AppCompatActivity implements
                                 showSnackBarMessage(error, activity);
                             }
 
-                        } else if (results.get("status") != null) {
+                        } else if (results.get(STATUS_KEY) != null) {
                             //query purchases to update check marks on purchases
-                            showSnackBarMessage("Purchase Verified", activity);
+                            showSnackBarMessage(activity.getString(R.string.purchase_verified), activity);
                             justTurnedPro(activity);
                         }
                     }
@@ -1199,7 +1202,7 @@ public class MasterActivity extends AppCompatActivity implements
             public void onFailure(@NonNull Exception e) {
                 if (e.getMessage() != null) Log.d(TAG, e.getMessage());
                 Log.d(TAG, "Purchase Verification Failed");
-                showSnackBarMessage("sever down, purchase will complete when server available", activity);
+                showSnackBarMessage(activity.getString(R.string.purchase_sever_down), activity);
             }
         });
     }
