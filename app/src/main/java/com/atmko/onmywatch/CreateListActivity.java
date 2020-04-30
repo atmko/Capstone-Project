@@ -29,6 +29,7 @@ import java.util.List;
 public class CreateListActivity extends AppCompatActivity {
 
     public static final String MODE_KEY = "mode";
+    public static final String LIST_NAME_KEY = "list_mame";
     public static final String USER_LIST_KEY = "user_list";
 
     public static final int MODE_CREATE = 0;
@@ -44,16 +45,6 @@ public class CreateListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_list);
 
-        if (savedInstanceState == null) {
-            MasterActivity.showSoftKeyboard(findViewById(R.id.top_layout));
-        }
-
-        Intent intent = getIntent();
-        mMode = intent.getIntExtra(MODE_KEY, 0);
-        if (mMode == MODE_EDIT) {
-            mEditListModel = Parcels.unwrap(intent.getParcelableExtra(USER_LIST_KEY));
-        }
-
         defineViews();
         setViewValues(savedInstanceState);
     }
@@ -62,7 +53,7 @@ public class CreateListActivity extends AppCompatActivity {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putParcelable(USER_LIST_KEY, Parcels.wrap(mEditListModel));
+        outState.putString(LIST_NAME_KEY, nameEditTextView.getText().toString());
     }
 
     private void defineViews() {
@@ -167,9 +158,18 @@ public class CreateListActivity extends AppCompatActivity {
     }
 
     private void setViewValues(Bundle savedInstanceState) {
-        String editTextString =
-                savedInstanceState == null ? "" : savedInstanceState.getString(USER_LIST_KEY);
+        Intent intent = getIntent();
+        mMode = intent.getIntExtra(MODE_KEY, 0);
+        mEditListModel = Parcels.unwrap(intent.getParcelableExtra(USER_LIST_KEY));
 
-        nameEditTextView.setText(editTextString);
+        if (savedInstanceState == null) {
+            MasterActivity.showSoftKeyboard(findViewById(R.id.top_layout));
+            if (mMode == MODE_EDIT) {
+                if (mEditListModel != null) nameEditTextView.setText(mEditListModel.getName());
+            }
+
+        } else {
+            nameEditTextView.setText(savedInstanceState.getString(LIST_NAME_KEY));
+        }
     }
 }
