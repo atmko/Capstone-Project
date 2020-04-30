@@ -427,12 +427,18 @@ public class DiscoverResultsFragment extends Fragment implements
         if (getActivity() == null) return;
 
         if (mDataAdapter instanceof MediaDataAdapter) {
+            //index exception fix to handle placeholder pre-loading by stack library
+            if (position > ((MediaDataAdapter) mDataAdapter).getAdapterData().size() - 1) return;
+
             MediaData mediaData = ((MediaDataAdapter) mDataAdapter).getAdapterData().get(position);
             //do nothing if selecting placeholder
             if (mediaData == null || mediaData.getId() == null || mediaData.getId().equals("")) return;
             ((MasterActivity) getActivity()).launchDetailsFragment(mediaData, null);
 
         } else {
+            //index exception fix to handle placeholder pre-loading by stack library
+            if (position > ((PeopleDataAdapter) mDataAdapter).getAdapterData().size() - 1) return;
+
             PersonData person = ((PeopleDataAdapter) mDataAdapter).getAdapterData().get(position);
             //do nothing if selecting placeholder
             if (person == null || person.getId() == null || person.getId().equals("")) return;

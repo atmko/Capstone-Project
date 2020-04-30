@@ -304,6 +304,8 @@ public class RecommendationsFragment extends Fragment
     @Override
     public void onItemClick(int position) {
         if (getActivity() == null) return;
+        //index exception fix to handle placeholder pre-loading by stack library
+        if (position > mDataAdapter.getAdapterData().size() - 1) return;
 
         MediaData mediaData = mDataAdapter.getAdapterData().get(position);
         //do nothing if selecting placeholder
