@@ -2,11 +2,10 @@ package com.atmko.onmywatch.models;
 
 import java.util.List;
 
-public class Season extends ScheduledMedia{
+public class Season extends ScheduledMedia {
     public final int seasonNumber;
     private List<Episode> episodes;
     public int episodesAired;
-    public final long timestamp;
     public boolean isBundled;
 
     public Season(int seasonNumber, String airDate) {
@@ -15,13 +14,6 @@ public class Season extends ScheduledMedia{
             setAirDate(airDate);
         } catch (DateFormatException e) {
             e.printStackTrace();
-        }
-
-        if (getBestLocalAirDate() != null) {
-            timestamp = getBestLocalAirDate().getTime();
-
-        } else {
-            timestamp = Long.MAX_VALUE;
         }
     }
 
