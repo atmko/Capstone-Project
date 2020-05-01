@@ -16,7 +16,7 @@ import org.parceler.Parcel;
 public final class SearchPreferences {
 
     //language parameters
-    final String mLanguageParamVal;
+    String mLanguageParamVal;
     private static final String ENG_US = "en-US";
 
     //query parameter
@@ -28,10 +28,10 @@ public final class SearchPreferences {
     int mTotalPages = 1;
 
     //include adult parameter
-    final boolean mIncludeAdult = false;
+    boolean mIncludeAdult = false;
 
     //region parameter
-    final String mRegion;
+    String mRegion;
 
     //year parameter
     String mYear;
