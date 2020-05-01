@@ -11,11 +11,12 @@
     <uses-feature android:name="android.hardware.camera2" android:required="false" />
     <uses-feature android:name="android.hardware.camera.front" android:required="false" />
 
-    <supports-screens android:smallScreens="false"/>
-    <supports-screens android:normalScreens="false"/>
-    <supports-screens android:largeScreens="true"/>
-    <supports-screens android:xlargeScreens="true"/>
-    <supports-screens android:anyDensity="true"/>
+    <supports-screens
+        android:smallScreens="false"
+        android:normalScreens="false"
+        android:largeScreens="true"
+        android:xlargeScreens="true"
+        android:anyDensity="true"/>
 
     <application
         android:name="androidx.multidex.MultiDexApplication"
