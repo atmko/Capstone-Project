@@ -150,7 +150,7 @@ public class RestoreService extends JobIntentService {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
         return new NotificationCompat.Builder(context, BACKUP_CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notify_black)
+                .setSmallIcon(R.drawable.ic_logo)
                 .setContentTitle(notificationTitle)
                 .setContentText(notificationContent)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)

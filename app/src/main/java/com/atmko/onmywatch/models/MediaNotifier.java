@@ -82,7 +82,7 @@ public abstract class MediaNotifier {
     Notification buildReleaseNotification(Context context, String contentTitle,
                                           String contentText, PendingIntent pendingIntent) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, RELEASE_CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notify_black)
+                .setSmallIcon(R.drawable.ic_logo)
                 .setContentTitle(contentTitle)
                 .setContentText(contentText)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
