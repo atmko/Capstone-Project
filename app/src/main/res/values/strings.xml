@@ -185,6 +185,7 @@
     <string name="no_browser_error_message">No browser to launch page</string>
     <string name="log_in_failed_message">Log In Failed</string>
     <string name="you_are_not_logged_in">You\'re not logged in</string>
+    <string name="accept_agreement_above">Please check the box above to continue</string>
 
     <string name="play_store_item_not_supported">Not supported. Update Google Play Store</string>
     <string name="log_out_failed">Log out failed</string>

@@ -294,6 +294,8 @@ public class LaunchActivity extends AppCompatActivity
 
     private void showMissingAgreements() {
         iUnderstandTextView.setTextColor(getResources().getColor(R.color.colorAccent));
+        MasterActivity
+                .showSnackBarMessage(getString(R.string.accept_agreement_above),this);
     }
 
     private void updateAgreementPreference() {
