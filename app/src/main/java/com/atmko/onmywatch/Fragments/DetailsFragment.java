@@ -343,7 +343,21 @@ public class DetailsFragment extends Fragment {
             });
 
             mReleaseStatusTextView = getView().findViewById(R.id.release_status_text);
+            mReleaseStatusTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MasterActivity.showSnackBarMessage(String.format(getString(R.string.release_status_info),
+                            mReleaseStatusTextView.getText()), getActivity());
+                }
+            });
             mCountDownTextView = getView().findViewById(R.id.count_down_text);
+            mCountDownTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MasterActivity.showSnackBarMessage(String.format(getString(R.string.release_countdown_status_info),
+                            mCountDownTextView.getText()), getActivity());
+                }
+            });
             mNetworkTextView = getView().findViewById(R.id.network_text_view);
 
         } catch (NullPointerException e) {
@@ -446,8 +460,17 @@ public class DetailsFragment extends Fragment {
                         : watchStatusShorthandList[0];
 
                 //set shorthand text
-                ((TextView) getView().findViewById(R.id.watch_status_shorthand_text))
-                        .setText(shorthand);
+                final TextView watchStatusShorthand = getView().findViewById(R.id.watch_status_shorthand_text);
+                watchStatusShorthand.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String watchStatusString = MediaData.getWatchStatusTitle(mWatchStatus, getContext());
+                        String displayWatchStatus = GeneralUtils.convertToDisplayText(watchStatusString);
+                        MasterActivity.showSnackBarMessage(String.format(getString(R.string.watch_status_info),
+                                displayWatchStatus), getActivity());
+                    }
+                });
+                watchStatusShorthand.setText(shorthand);
 
                 //configure user rating related UI
                 TextView userRatingTextView = getView().findViewById(R.id.user_rating_text);
@@ -463,6 +486,14 @@ public class DetailsFragment extends Fragment {
             }
         });
 
+        final TextView containingListsTextView = getView().findViewById(R.id.list_counts_text);
+        containingListsTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MasterActivity.showSnackBarMessage(String.format(getString(R.string.list_count_info),
+                        containingListsTextView.getText()), getActivity());
+            }
+        });
         containingUserLists.observe(getViewLifecycleOwner(), new Observer<List<String>>() {
             @Override
             public void onChanged(List<String> listNames) {
@@ -470,8 +501,7 @@ public class DetailsFragment extends Fragment {
                 int containingListsCount = listNames != null ? listNames.size() : 0;
 
                 //set counts text
-                ((TextView) getView().findViewById(R.id.list_counts_text))
-                        .setText(String.valueOf(containingListsCount));
+                containingListsTextView.setText(String.valueOf(containingListsCount));
             }
         });
 

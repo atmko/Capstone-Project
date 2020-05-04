@@ -200,8 +200,10 @@
 
     <string name="upcoming_movies_info">Displays new movies from \"To Watch\" and \"Watching\" list</string>
     <string name="ended_movies_info">Displays past movies from \"To Watch\" and \"Watching\" list</string>
-    <string name="to_watch_status_info">For first released notifications</string>
-    <string name="watching_status_info">For first released and episodic notifications</string>
+    <string name="watch_status_info">Your watch status: %s</string>
+    <string name="list_count_info">In %s lists</string>
+    <string name="release_status_info">Release Status: %s</string>
+    <string name="release_countdown_status_info">Releases in: %s</string>
     <!--SNACK BAR MESSAGES-->
 
     <!--CONFIRMATION MESSAGES-->
