@@ -7,7 +7,8 @@
         android:summary="@string/settings_about_app_summary"
         app:iconSpaceReserved="false"
         app:allowDividerAbove="true"
-        app:allowDividerBelow="true"/>
+        app:allowDividerBelow="true"
+        app:icon="@drawable/ic_logo"/>
 
     <Preference
         android:title="@string/settings_link_title"
