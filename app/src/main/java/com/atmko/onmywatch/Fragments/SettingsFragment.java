@@ -117,7 +117,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             });
         }
 
-        Preference contactPreference = findPreference(getString(R.string.settings_key_contact));
+        Preference contactPreference = findPreference(getString(R.string.settings_key_support));
         if (contactPreference != null) {
             contactPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
@@ -128,7 +128,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                             if (getActivity() == null) return;
 
                             String[] sentTo = new String[1];
-                            sentTo[0] = getString(R.string.contact_email_address);
+                            sentTo[0] = getString(R.string.support_email_address);
 
                             Intent intent = new Intent(Intent.ACTION_SENDTO);
                             intent.setData(Uri.parse("mailto:")); // only email apps should handle this

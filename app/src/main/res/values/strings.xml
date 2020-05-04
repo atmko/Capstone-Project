@@ -27,7 +27,7 @@
     <string name="settings_key_link">link</string>
     <string name="settings_key_restore">restore</string>
     <string name="settings_key_create_backup">create_backup</string>
-    <string name="settings_key_contact">contact</string>
+    <string name="settings_key_support">support</string>
     <string name="settings_key_privacy">privacy</string>
     <string name="settings_key_terms">terms</string>
     <!--preference keys-->
@@ -38,12 +38,12 @@
     <!--shared preference keys-->
 
     <!--settings titles-->
-    <string name="contact_email_address">contact@majik.tv</string>
+    <string name="support_email_address">support@majik.tv</string>
     <!--settings titles-->
 
     <!--settings titles-->
     <string name="settings_link_title">Link Google Account</string>
-    <string name="settings_contact_title">Contact Us</string>
+    <string name="settings_support_title">Support</string>
     <string name="settings_about_app_title">About App</string>
     <string name="settings_restore_title">Restore Data</string>
     <string name="settings_create_backup_title">Create Backup</string>
@@ -53,7 +53,6 @@
 
     <!--settings summary-->
     <string name="settings_link_summary">Become a permanent user. Access your data on any device</string>
-    <string name="settings_contact_summary">We\'d love to hear your feedback</string>
     <string name="settings_about_app_summary">Majik Version 1.0.0</string>
     <string name="settings_restore_summary">Restore files to a previous state</string>
     <string name="settings_create_backup_summary">Create a manual backup of current files</string>

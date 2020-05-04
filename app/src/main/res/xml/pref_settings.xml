@@ -35,17 +35,16 @@
         app:allowDividerBelow="true"/>
 
     <Preference
-        android:title="@string/settings_contact_title"
-        android:summary="@string/settings_contact_summary"
-        android:key="@string/settings_key_contact"
+        android:title="The Movie Database"
+        android:summary="This product uses the TMDb API but is not endorsed or certified by TMDb."
+        android:icon="@drawable/ic_tmdb_logo"
         app:iconSpaceReserved="false"
         app:allowDividerAbove="true"
         app:allowDividerBelow="true"/>
 
     <Preference
-        android:title="The Movie Database"
-        android:summary="This product uses the TMDb API but is not endorsed or certified by TMDb."
-        android:icon="@drawable/ic_tmdb_logo"
+        android:title="@string/settings_support_title"
+        android:key="@string/settings_key_support"
         app:iconSpaceReserved="false"
         app:allowDividerAbove="true"
         app:allowDividerBelow="true"/>
