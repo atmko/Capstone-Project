@@ -11,7 +11,7 @@ import com.atmko.onmywatch.R;
 import org.parceler.Parcel;
 
 //TODO: access is weaker to accommodate parceler library
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings("ALL")
 @Parcel
 public final class SearchPreferences {
 
