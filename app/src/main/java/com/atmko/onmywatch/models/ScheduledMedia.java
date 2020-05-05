@@ -95,7 +95,7 @@ public class ScheduledMedia {
     }
 
     public boolean isInFuture() {
-        return new Date().getTime() < getTimestamp();
+        return DateInject.getInstance().currentDate().getTime() < getTimestamp();
     }
 
     //returns the most accurate available date of episode. Uses iso date if available, otherwise regular date, otherwise null

@@ -120,6 +120,7 @@ public class NotificationTests {
         NotificationHandler.TEST_TIME_DILATION = 0;
         NotificationHandler.IS_TESTING = false;
         NotificationManagerCompat.from(context).cancelAll();
+        GeneralUtils.DateInject.custom = null;
     }
 
     //ensures movie notifiers get canceled when watch status updated to other than "to watch" or "watching"
@@ -243,7 +244,8 @@ public class NotificationTests {
 
         onView(withText("SAVE")).perform(click());
 
-        clickNotification(movieData, MediaNotifier.CONDITION_ON_RELEASE, ScheduledMedia.SOURCE_TMDB);
+        clickNotification(movieData, MediaNotifier.CONDITION_ON_RELEASE,
+                true, ScheduledMedia.SOURCE_TMDB);
     }
 
     @Test
@@ -277,7 +279,7 @@ public class NotificationTests {
         onView(withText("SAVE")).perform(click());
 
         clickNotification(seriesData, SeriesNotifier.CONDITION_NEW_EPISODE,
-                ScheduledMedia.SOURCE_TRAKT);
+                true, ScheduledMedia.SOURCE_TRAKT);
     }
 
     //tests movie release notifications when release date doesn't exist by using release status
@@ -350,7 +352,8 @@ public class NotificationTests {
 
         onView(withText("SAVE")).perform(click());
 
-        checkForNotification(movieData, MediaNotifier.CONDITION_ON_RELEASE, ScheduledMedia.SOURCE_TMDB);
+        checkForNotification(movieData, MediaNotifier.CONDITION_ON_RELEASE,
+                true, ScheduledMedia.SOURCE_TMDB);
 
         //ensure notifier is removed after notification
         MovieNotifier movieNotifier =
@@ -362,6 +365,10 @@ public class NotificationTests {
 
     @Test
     public void testSettingNewEpisodeNotifierThroughTmdb() {
+        TimeZone utcTimeZone = TimeZone.getTimeZone("UTC");
+        Calendar utcCalender = Calendar.getInstance(utcTimeZone);
+        utcCalender.add(Calendar.SECOND, 7);
+
         SeriesData seriesData = new SeriesData("43435", "", "", "Dead",
                 0, "", "", "",
                 new ArrayList<String>(), new ArrayList<String>(), "", "",
@@ -372,7 +379,7 @@ public class NotificationTests {
 
         //set date in episode as placeholder, bypass production logic, insert TEST_TIME_DILATION
         Episode nextEpisode = new Episode(seriesData.getId(), 1, 1,
-                ScheduledMedia.SOURCE_TMDB, "2019-08-08T05:00:00.000Z");
+                ScheduledMedia.SOURCE_TMDB, parseIsoDateFromCalender(utcCalender));
         seriesData.setNextEpisodeToAir(nextEpisode);
 
         //bypass logic to allow past air date to be posted as notification
@@ -392,7 +399,7 @@ public class NotificationTests {
         onView(withText("SAVE")).perform(click());
 
         checkForNotification(seriesData, SeriesNotifier.CONDITION_NEW_EPISODE,
-                ScheduledMedia.SOURCE_TMDB);
+                true, ScheduledMedia.SOURCE_TMDB);
 
         //ensure notifier isn't removed after notification
         SeriesNotifier seriesNotifier =
@@ -503,7 +510,8 @@ public class NotificationTests {
         onView(withText("To Watch")).perform(click());
         onView(withText("SAVE")).perform(click());
 
-        checkForNotification(seriesData, MediaNotifier.CONDITION_ON_RELEASE, ScheduledMedia.SOURCE_TRAKT);
+        checkForNotification(seriesData, MediaNotifier.CONDITION_ON_RELEASE,
+                true, ScheduledMedia.SOURCE_TRAKT);
 
         //ensure release notifier is removed after notification
         SeriesNotifier seriesReleaseNotifier =
@@ -552,7 +560,8 @@ public class NotificationTests {
         onView(withText("Watching")).perform(click());
         onView(withText("SAVE")).perform(click());
 
-        checkForNotification(seriesData, SeriesNotifier.CONDITION_NEW_EPISODE, ScheduledMedia.SOURCE_TRAKT);
+        checkForNotification(seriesData, SeriesNotifier.CONDITION_NEW_EPISODE,
+                true, ScheduledMedia.SOURCE_TRAKT);
 
         //ensure notifier isn't removed after notification
         SeriesNotifier seriesNotifier =
@@ -608,6 +617,15 @@ public class NotificationTests {
 
     @Test
     public void testNotificationClickFunctionality() {
+        //set date to
+        ScheduledMedia scheduledMedia = new ScheduledMedia();
+        try {
+            scheduledMedia.setAirDate("2020-04-23");
+            GeneralUtils.DateInject.custom = scheduledMedia.getBestLocalAirDate();
+        } catch (ScheduledMedia.DateFormatException e) {
+            e.printStackTrace();
+        }
+
         //test first notification displays correct item
         SeriesData seriesData = new SeriesData("43435", "", "", "Dead",
                 0, "", "", "",
@@ -665,11 +683,119 @@ public class NotificationTests {
         onView(withText("SAVE")).perform(click());
 
         clickNotification(seriesData, SeriesNotifier.CONDITION_NEW_EPISODE,
-                ScheduledMedia.SOURCE_TRAKT);
+                true, ScheduledMedia.SOURCE_TRAKT);
         onView(withId(R.id.title_text_view)).perform().check(matches(withText("Dead")));
         clickNotification(seriesData2, SeriesNotifier.CONDITION_NEW_EPISODE,
-                ScheduledMedia.SOURCE_TRAKT);
+                true, ScheduledMedia.SOURCE_TRAKT);
         onView(withId(R.id.title_text_view)).perform().check(matches(withText("Vikings")));
+    }
+
+    @Test
+    public void testMovieRestoreReleaseNotificationFromPast() {
+        TimeZone utcTimeZone = TimeZone.getTimeZone("UTC");
+        Calendar utcCalender = Calendar.getInstance(utcTimeZone);
+        utcCalender.add(Calendar.SECOND, -1);
+
+        MovieData movieData = new MovieData("399579", "", false, "",
+                "Alita", 0, "", "", "",
+                new ArrayList<String>(), "", false, "",
+                parseIsoDateFromCalender(utcCalender));
+
+        movieData.setReleaseStatus("Planned");
+
+        //bypass logic to allow past air date to be posted as notification
+        GeneralUtils.LOGIC_BYPASS = true;
+
+        Intent intent = new Intent(getInstrumentation().getTargetContext(), AddToListActivity.class);
+        intent.putExtra(AddToListActivity.MEDIA_DATA_KEY, Parcels.wrap(movieData));
+        intent.putExtra(AddToListActivity.MEDIA_TYPE_KEY, MasterActivity.MEDIA_TYPE_MOVIE);
+
+        addToListActivityTestRule.launchActivity(intent);
+
+        registerSimpleIdleResource();
+        registerNotificationIdleResource();
+
+        onView(withText("To Watch")).perform(click());
+        onView(withText("SAVE")).perform(click());
+
+        clickNotification(movieData, MediaNotifier.CONDITION_ON_RELEASE,
+                false, ScheduledMedia.SOURCE_TMDB);
+    }
+
+    @Test
+    public void testSeriesRestoreNewEpisodeNotificationFromPast() {
+        TimeZone utcTimeZone = TimeZone.getTimeZone("UTC");
+        Calendar utcCalender = Calendar.getInstance(utcTimeZone);
+        utcCalender.add(Calendar.SECOND, -1);
+
+        SeriesData seriesData = new SeriesData("43435", "", "", "Dead",
+                0, "", "", "",
+                new ArrayList<String>(), new ArrayList<String>(), "", "",
+                "2020-04-24");
+
+        seriesData.setReleaseStatus("Running");
+        seriesData.setTraktId("1393");
+
+        //set date in episode as placeholder, bypass production logic
+        Episode nextEpisode = new Episode(seriesData.getId(), 1, 1,
+                ScheduledMedia.SOURCE_TMDB, parseIsoDateFromCalender(utcCalender));
+        seriesData.setNextEpisodeToAir(nextEpisode);
+
+        //bypass logic to allow past air date to be posted as notification
+        GeneralUtils.LOGIC_BYPASS = true;
+
+        Intent intent = new Intent(getInstrumentation().getTargetContext(), AddToListActivity.class);
+        intent.putExtra(AddToListActivity.MEDIA_DATA_KEY, Parcels.wrap(seriesData));
+        intent.putExtra(AddToListActivity.MEDIA_TYPE_KEY, MasterActivity.MEDIA_TYPE_SERIES);
+
+        addToListActivityTestRule.launchActivity(intent);
+
+        registerSimpleIdleResource();
+        registerNotificationIdleResource();
+
+        onView(withText("Watching")).perform(click());
+        onView(withText("SAVE")).perform(click());
+
+        clickNotification(seriesData, SeriesNotifier.CONDITION_NEW_EPISODE,
+                false, ScheduledMedia.SOURCE_TMDB);
+    }
+
+    @Test
+    public void testSeriesRestoreReleaseNotificationFromPast() {
+        TimeZone utcTimeZone = TimeZone.getTimeZone("UTC");
+        Calendar utcCalender = Calendar.getInstance(utcTimeZone);
+        utcCalender.add(Calendar.SECOND, -1);
+
+        SeriesData seriesData = new SeriesData("43435", "", "", "Dead",
+                0, "", "", "",
+                new ArrayList<String>(), new ArrayList<String>(), "", "",
+                "2020-04-24");
+
+        seriesData.setReleaseStatus("Planned");
+        seriesData.setTraktId("1393");
+
+        //set date in episode as placeholder, bypass production logic
+        Episode nextEpisode = new Episode(seriesData.getId(), 1, 1,
+                ScheduledMedia.SOURCE_TMDB, parseIsoDateFromCalender(utcCalender));
+        seriesData.setNextEpisodeToAir(nextEpisode);
+
+        //bypass logic to allow past air date to be posted as notification
+        GeneralUtils.LOGIC_BYPASS = true;
+
+        Intent intent = new Intent(getInstrumentation().getTargetContext(), AddToListActivity.class);
+        intent.putExtra(AddToListActivity.MEDIA_DATA_KEY, Parcels.wrap(seriesData));
+        intent.putExtra(AddToListActivity.MEDIA_TYPE_KEY, MasterActivity.MEDIA_TYPE_SERIES);
+
+        addToListActivityTestRule.launchActivity(intent);
+
+        registerSimpleIdleResource();
+        registerNotificationIdleResource();
+
+        onView(withText("To Watch")).perform(click());
+        onView(withText("SAVE")).perform(click());
+
+        clickNotification(seriesData, SeriesNotifier.CONDITION_ON_RELEASE,
+                false, ScheduledMedia.SOURCE_TMDB);
     }
 
     private void registerSimpleIdleResource() {
@@ -682,12 +808,12 @@ public class NotificationTests {
         IdlingRegistry.getInstance().register(notificationIdlingResource);
     }
 
-    private void checkForNotification(MediaData mediaData, int condition, int source) {
+    private void checkForNotification(MediaData mediaData, int condition, boolean isInFuture, int source) {
         UiDevice device = UiDevice.getInstance(getInstrumentation());
 
         device.openNotification();
 
-        String containingText = getContainingText(mediaData.getTitle(), condition, source);
+        String containingText = getContainingText(mediaData.getTitle(), condition, isInFuture, source);
         if (containingText == null) fail();
 
         UiSelector uiSelector = new UiSelector().textContains(containingText);
@@ -706,12 +832,12 @@ public class NotificationTests {
         device.pressBack();
     }
 
-    private void clickNotification(MediaData mediaData, int condition, int source) {
+    private void clickNotification(MediaData mediaData, int condition, boolean isInFuture, int source) {
         UiDevice device = UiDevice.getInstance(getInstrumentation());
 
         device.openNotification();
 
-        String containingText = getContainingText(mediaData.getTitle(), condition, source);
+        String containingText = getContainingText(mediaData.getTitle(), condition, isInFuture, source);
         if (containingText == null) fail();
 
         UiSelector uiSelector = new UiSelector().textContains(containingText);
@@ -740,23 +866,31 @@ public class NotificationTests {
         }
     }
 
-    private String getContainingText(String mediaTitle, int condition, int source) {
+    private String getContainingText(String mediaTitle, int condition, boolean isInFuture, int source) {
         if (condition == MediaNotifier.CONDITION_ON_RELEASE) {
-            if (source == ScheduledMedia.SOURCE_TRAKT) {
-                return mediaTitle + " will be released soon";
+            if (isInFuture) {
+                if (source == ScheduledMedia.SOURCE_TRAKT) {
+                    return mediaTitle + " will be released soon";
 
+                } else {
+                    return mediaTitle + " is being released today";
+                }
             } else {
-                return mediaTitle + " is being released today";
+                return String.format(context.getString(R.string.notification_new_release_content_past), mediaTitle);
+            }
+        } else if (condition == SeriesNotifier.CONDITION_NEW_EPISODE) {
+            if (isInFuture) {
+                String containingText = "A new episode of " + mediaTitle;
+                if (source == ScheduledMedia.SOURCE_TRAKT) {
+                    return containingText + " is airing soon";
+
+                } else {
+                    return containingText + " airs today";
+                }
+            } else {
+                return String.format(context.getString(R.string.notification_new_episode_content_past), mediaTitle);
             }
 
-        } else if (condition == SeriesNotifier.CONDITION_NEW_EPISODE){
-            String containingText = "A new episode of " + mediaTitle;
-            if (source == ScheduledMedia.SOURCE_TRAKT) {
-                return containingText + " is airing soon";
-
-            } else {
-                return containingText + " airs today";
-            }
         } else return null;
     }
 }

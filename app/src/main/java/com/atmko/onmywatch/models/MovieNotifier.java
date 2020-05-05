@@ -42,7 +42,6 @@ public class MovieNotifier extends MediaNotifier {
             contentText = String.format(
                     context.getString(R.string.notification_new_release_content_general),
                     mediaData.getTitle());
-
         } else {
             contentText = String.format(
                     context.getString(R.string.notification_new_release_content_past),

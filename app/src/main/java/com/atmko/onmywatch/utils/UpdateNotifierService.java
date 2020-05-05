@@ -125,22 +125,22 @@ public class UpdateNotifierService extends JobIntentService {
     //compares release date and current date and sets release notifier if release date is in the future
     //then schedules alarm notification for future
     private void setReleaseNotifierThroughDateComparision() {
-        ScheduledMedia scheduledMedia = new ScheduledMedia();
+        ScheduledMedia scheduledMedia = ((MovieData) newMediaData).getScheduledMedia();
 
-        try {
-            scheduledMedia.setAirDate(newMediaData.getReleaseDate());
-        } catch (ScheduledMedia.DateFormatException e) {
-            e.printStackTrace();
-        }
+        boolean releaseDateInPast =
+                scheduledMedia.getBestLocalAirDate().before(GeneralUtils.DateInject.getInstance().currentDate());
 
-        //if release date has passed, return
-        if (scheduledMedia.getBestLocalAirDate().before(new GeneralUtils.DateInject().currentDate())) {
-            //set idle state to true
-            if (NotificationIdlingResource.getNotificationIdlingResource() != null) {
-                NotificationIdlingResource.getNotificationIdlingResource().setIdleState(true);
+        //if logic bypass is false, use production code
+        if (!GeneralUtils.LOGIC_BYPASS) {
+            //if release date is null or if release date has passed, return
+            if (scheduledMedia.getBestLocalAirDate() == null || releaseDateInPast) {
+                //set idle state to true
+                if (NotificationIdlingResource.getNotificationIdlingResource() != null) {
+                    NotificationIdlingResource.getNotificationIdlingResource().setIdleState(true);
+                }
+
+                return;
             }
-
-            return;
         }
 
         //create notifier and set alarm with release notification
