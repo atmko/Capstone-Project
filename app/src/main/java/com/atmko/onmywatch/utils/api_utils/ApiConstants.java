@@ -19,14 +19,7 @@ public class ApiConstants {
     //URLS
     public static final String IMAGE_BASE_URL = "https://image.tmdb.org/t/p";
 
-    //TODO: REMOVE COMMENTED CODE
-// --Commented out by Inspection START (4/20/2020 4:23 AM):
-//    @SuppressWarnings("SpellCheckingInspection")
-//    public static final String VIDEO_IMAGE_URL_FORMAT = "https://img.youtube.com/vi/{video_id}/sddefault.jpg";
-// --Commented out by Inspection STOP (4/20/2020 4:23 AM)
     public static final String YOUTUBE_INTENT_BASE_URL = "https://www.youtube.com/watch?v=";
-
-    // --Commented out by Inspection (4/20/2020 4:22 AM):public static final String VIDEO_IMG_KEY = "video_id";
 
     //IMAGE VALUES
     public static final String POSTER_IMAGE_SIZE = "/w185";
