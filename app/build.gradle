@@ -79,12 +79,12 @@ dependencies {
     apply plugin: 'com.google.gms.google-services'  // Google Play services Gradle plugin
 
     //firebase analytics
-    implementation 'com.google.firebase:firebase-analytics:17.3.0'
+    implementation 'com.google.firebase:firebase-analytics:17.4.0'
     //firebase Crashlytics
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
 
     //firestore
-    implementation 'com.google.firebase:firebase-firestore:21.4.2'
+    implementation 'com.google.firebase:firebase-firestore:21.4.3'
     //firebase cloud functions
     implementation 'com.google.firebase:firebase-functions:19.0.2'
 
@@ -95,7 +95,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage:19.1.1'
 
     //firebase authentication
-    implementation 'com.google.firebase:firebase-auth:19.3.0'
+    implementation 'com.google.firebase:firebase-auth:19.3.1'
 
     // (WorkManager)
     implementation "androidx.work:work-runtime:2.3.4"
