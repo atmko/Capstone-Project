@@ -41,13 +41,11 @@ public class SeriesNotifier extends MediaNotifier {
         String contentTitle = context.getString(R.string.notification_new_episode_title);
         String contentText;
         if (source == ScheduledMedia.SOURCE_TRAKT) {
-            contentText = context.getString(R.string.notification_new_episode_content_prefix)
-                    + " " + mediaData.getTitle()
-                    + " " + context.getString(R.string.notification_new_episode_specific_content_suffix);
+            contentText = String.format(context.getString(R.string.notification_new_episode_content),
+                    mediaData.getTitle());
         } else {
-            contentText = context.getString(R.string.notification_new_episode_content_prefix)
-                    + " " + mediaData.getTitle()
-                    + " " + context.getString(R.string.notification_new_episode_general_content_suffix);
+            contentText = String.format(context.getString(R.string.notification_new_episode_general_content),
+                    mediaData.getTitle());
         }
 
         //create intent to launch activity on click
@@ -70,12 +68,14 @@ public class SeriesNotifier extends MediaNotifier {
         String contentTitle = context.getString(R.string.notification_new_release_title);
         String contentText;
         if (source == ScheduledMedia.SOURCE_TRAKT) {
-            contentText = mediaData.getTitle() + " "
-                    + context.getString(R.string.notification_new_release_specific_content_suffix);
+            contentText = String.format(
+                    context.getString(R.string.notification_new_release_specific_content),
+                    mediaData.getTitle());
 
         } else {
-            contentText = mediaData.getTitle() + " "
-                    + context.getString(R.string.notification_new_release_content_general_suffix);
+            contentText = String.format(
+                    context.getString(R.string.notification_new_release_content_general),
+                    mediaData.getTitle());
         }
 
         //create intent to launch activity on click

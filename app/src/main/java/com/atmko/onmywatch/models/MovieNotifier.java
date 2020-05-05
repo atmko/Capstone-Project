@@ -36,8 +36,9 @@ public class MovieNotifier extends MediaNotifier {
     @Override
     public Notification createReleaseNotification(Context context, MediaData mediaData, int source) {
         String contentTitle = context.getString(R.string.notification_new_release_title);
-        String contentText = mediaData.getTitle() + " "
-                + context.getString(R.string.notification_new_release_content_general_suffix);
+        String contentText = String.format(
+                context.getString(R.string.notification_new_release_content_general),
+                mediaData.getTitle());
 
         //create intent to launch activity on click
         Intent detailsIntent = new Intent(context, MasterActivity.class);
