@@ -4,13 +4,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:ignore="MergeRootFrame">
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/launch_img_background"/>
+        android:src="@drawable/launch_img_background"
+        tools:ignore="ContentDescription" />
 
     <View
         android:layout_width="match_parent"
@@ -58,100 +60,82 @@
             android:textColor="@android:color/white"
             android:textSize="@dimen/headline_2_text_size"/>
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
             app:layout_constraintTop_toBottomOf="@id/description_text_view"
             app:layout_constraintBottom_toTopOf="@id/button_layout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@drawable/launch_img_background"/>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/launch_gradient"/>
-
             <LinearLayout
+                android:id="@+id/disclaimer_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_gravity="center">
+                android:orientation="horizontal">
 
-                <LinearLayout
-                    android:id="@+id/disclaimer_text_view"
+                <TextView
+                    android:id="@+id/no_streaming_prefix_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/no_streaming_prefix_text_view"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/streaming_disclaimer_prefix"
-                        android:textColor="@android:color/white"
-                        android:textSize="@dimen/headline_2_text_size"/>
-
-                    <TextView
-                        android:id="@+id/not_text_view"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/x2_layout_margin"
-                        android:text="@string/not_text_literal"
-                        android:textColor="@color/colorAccent"
-                        android:textStyle="bold"
-                        android:textSize="@dimen/headline_3_text_size"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/x2_layout_margin"
-                        android:gravity="center"
-                        android:text="@string/streaming_disclaimer_suffix"
-                        android:textColor="@android:color/white"
-                        android:textSize="@dimen/headline_2_text_size"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/i_understand_linear_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/x1_layout_margin"
-                    android:layout_marginStart="@dimen/text_margin"
-                    android:layout_marginEnd="@dimen/text_margin"
-                    android:orientation="horizontal"
                     android:gravity="center"
-                    app:layout_constraintTop_toBottomOf="@id/disclaimer_text_view"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent">
+                    android:text="@string/streaming_disclaimer_prefix"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/headline_2_text_size"/>
 
-                    <TextView
-                        android:id="@+id/i_understand_text_view"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/x1_layout_margin"
-                        android:text="@string/streaming_confirmation_text"
-                        android:textColor="@android:color/white"
-                        android:textSize="@dimen/body_text_size" />
+                <TextView
+                    android:id="@+id/not_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/x2_layout_margin"
+                    android:text="@string/not_text_literal"
+                    android:textColor="@color/colorAccent"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/headline_3_text_size"/>
 
-                    <androidx.appcompat.widget.AppCompatCheckBox
-                        android:id="@+id/i_understand_checkbox"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/x1_layout_margin" />
-
-                </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/x2_layout_margin"
+                    android:gravity="center"
+                    android:text="@string/streaming_disclaimer_suffix"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/headline_2_text_size"/>
 
             </LinearLayout>
 
-        </FrameLayout>
+            <LinearLayout
+                android:id="@+id/i_understand_linear_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/x1_layout_margin"
+                android:layout_marginStart="@dimen/text_margin"
+                android:layout_marginEnd="@dimen/text_margin"
+                android:orientation="horizontal"
+                android:gravity="center"
+                app:layout_constraintTop_toBottomOf="@id/disclaimer_text_view"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <TextView
+                    android:id="@+id/i_understand_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/x1_layout_margin"
+                    android:text="@string/streaming_confirmation_text"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/body_text_size" />
+
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/i_understand_checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/x1_layout_margin" />
+
+            </LinearLayout>
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/button_layout"
@@ -165,13 +149,15 @@
                 android:id="@+id/google_continue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/google_continue_text_literal"/>
+                android:text="@string/google_continue_text_literal"
+                tools:ignore="ButtonStyle" />
 
             <Button
                 android:id="@+id/guest_continue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/guest_continue_text_literal"/>
+                android:text="@string/guest_continue_text_literal"
+                tools:ignore="ButtonStyle" />
 
         </LinearLayout>
 

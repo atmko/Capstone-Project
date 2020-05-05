@@ -6,7 +6,6 @@
     <string name="streaming_disclaimer_prefix">Majik can</string>
     <string name="streaming_disclaimer_suffix">stream movies or series</string>
     <string name="streaming_confirmation_text">I understand</string>
-    <string name="agreement_error_text">You must accept this condition to continue</string>
     <string name="google_continue_text_literal">google sign in</string>
     <string name="guest_continue_text_literal">continue as guest</string>
     <string name="accept_terms_text">By clicking continue, you are agreeing to our\nTerms of Use and Privacy Policy</string>

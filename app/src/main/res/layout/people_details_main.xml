@@ -13,7 +13,7 @@
 
     <ImageView
         android:id="@+id/profile_image_view"
-        android:src="@drawable/backdrop"
+        android:src="@drawable/poster_image_placeholder"
         android:layout_width="@dimen/person_profile_image_dimen"
         android:layout_height="@dimen/person_profile_image_dimen"
         android:layout_marginTop="@dimen/x5_layout_margin"
