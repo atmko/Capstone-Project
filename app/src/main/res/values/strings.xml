@@ -231,12 +231,14 @@
     <string name="notification_channel_backup_description">Backup data to server</string>
 
     <string name="notification_new_release_title">New Release</string>
-    <string name="notification_new_release_specific_content">%s will be released soon</string>
+    <string name="notification_new_release_content_specific">%s will be released soon</string>
     <string name="notification_new_release_content_general">%s is being released today</string>
+    <string name="notification_new_release_content_past">%s was already released</string>
 
     <string name="notification_new_episode_title">New Episode</string>
-    <string name="notification_new_episode_content">A new episode of %s is airing soon</string>
-    <string name="notification_new_episode_general_content">A new episode of %s airs today</string>
+    <string name="notification_new_episode_content_specific">A new episode of %s is airing soon</string>
+    <string name="notification_new_episode_content_general">A new episode of %s airs today</string>
+    <string name="notification_new_episode_content_past">A new episode of %s was already released</string>
 
     <string name="notification_channel_releases">Releases</string>
     <string name="notification_channel_releases_description">Notifications for new releases</string>

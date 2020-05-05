@@ -34,11 +34,20 @@ public class MovieNotifier extends MediaNotifier {
     }
 
     @Override
-    public Notification createReleaseNotification(Context context, MediaData mediaData, int source) {
+    public Notification createReleaseNotification(Context context, MediaData mediaData,
+                                                  boolean isInFuture, int source) {
         String contentTitle = context.getString(R.string.notification_new_release_title);
-        String contentText = String.format(
-                context.getString(R.string.notification_new_release_content_general),
-                mediaData.getTitle());
+        String contentText;
+        if (isInFuture) {
+            contentText = String.format(
+                    context.getString(R.string.notification_new_release_content_general),
+                    mediaData.getTitle());
+
+        } else {
+            contentText = String.format(
+                    context.getString(R.string.notification_new_release_content_past),
+                    mediaData.getTitle());
+        }
 
         //create intent to launch activity on click
         Intent detailsIntent = new Intent(context, MasterActivity.class);

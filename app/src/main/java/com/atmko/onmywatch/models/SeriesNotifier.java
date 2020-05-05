@@ -37,14 +37,20 @@ public class SeriesNotifier extends MediaNotifier {
 
     public Notification createNewEpisodeNotification(Context context,
                                                      MediaData mediaData,
-                                                     int source) {
+                                                     boolean isInFuture, int source) {
         String contentTitle = context.getString(R.string.notification_new_episode_title);
         String contentText;
-        if (source == ScheduledMedia.SOURCE_TRAKT) {
-            contentText = String.format(context.getString(R.string.notification_new_episode_content),
-                    mediaData.getTitle());
+        if (isInFuture) {
+            if (source == ScheduledMedia.SOURCE_TRAKT) {
+                contentText = String.format(context.getString(R.string.notification_new_episode_content_specific),
+                        mediaData.getTitle());
+            } else {
+                contentText = String.format(context.getString(R.string.notification_new_episode_content_general),
+                        mediaData.getTitle());
+            }
         } else {
-            contentText = String.format(context.getString(R.string.notification_new_episode_general_content),
+            contentText = String.format(
+                    context.getString(R.string.notification_new_episode_content_past),
                     mediaData.getTitle());
         }
 
@@ -64,17 +70,24 @@ public class SeriesNotifier extends MediaNotifier {
     }
 
     @Override
-    public Notification createReleaseNotification(Context context, MediaData mediaData, int source) {
+    public Notification createReleaseNotification(Context context, MediaData mediaData,
+                                                  boolean isInFuture, int source) {
         String contentTitle = context.getString(R.string.notification_new_release_title);
         String contentText;
-        if (source == ScheduledMedia.SOURCE_TRAKT) {
-            contentText = String.format(
-                    context.getString(R.string.notification_new_release_specific_content),
-                    mediaData.getTitle());
+        if (isInFuture) {
+            if (source == ScheduledMedia.SOURCE_TRAKT) {
+                contentText = String.format(
+                        context.getString(R.string.notification_new_release_content_specific),
+                        mediaData.getTitle());
 
+            } else {
+                contentText = String.format(
+                        context.getString(R.string.notification_new_release_content_general),
+                        mediaData.getTitle());
+            }
         } else {
             contentText = String.format(
-                    context.getString(R.string.notification_new_release_content_general),
+                    context.getString(R.string.notification_new_release_content_past),
                     mediaData.getTitle());
         }
 

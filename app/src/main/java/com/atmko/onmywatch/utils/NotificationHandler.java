@@ -220,7 +220,8 @@ public class NotificationHandler {
             source = ((Episode) scheduledMedia).source;
         }
 
-        Notification notification = notifier.createReleaseNotification(context, mediaData, source);
+        Notification notification =
+                notifier.createReleaseNotification(context, mediaData, scheduledMedia.isInFuture(), source);
 
         //create pending intent to house notification for when alarm is triggered
         PendingIntent releasePendingIntent =
@@ -237,7 +238,8 @@ public class NotificationHandler {
         Episode nextEpisode = mediaData.getNextEpisodeToAir();
         int source = nextEpisode.source;
 
-        Notification notification = notifier.createNewEpisodeNotification(context, mediaData, source);
+        Notification notification =
+                notifier.createNewEpisodeNotification(context, mediaData, nextEpisode.isInFuture(), source);
 
         //create pending intent to house notification for when alarm is triggered
         PendingIntent releasePendingIntent =

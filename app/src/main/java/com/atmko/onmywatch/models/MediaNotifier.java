@@ -77,7 +77,7 @@ public abstract class MediaNotifier {
 
     public abstract Notification createReleaseNotification(Context context,
                                                            MediaData mediaData,
-                                                           int source);
+                                                           boolean isInFuture, int source);
 
     Notification buildReleaseNotification(Context context, String contentTitle,
                                           String contentText, PendingIntent pendingIntent) {
