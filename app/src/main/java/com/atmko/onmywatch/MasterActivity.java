@@ -326,6 +326,11 @@ public class MasterActivity extends AppCompatActivity implements
     }
 
     private void logOut() {
+        //stop workers
+        WorkManager.getInstance(this).cancelAllWorkByTag(UPDATE_MEDIA_WORKER_KEY);
+        WorkManager.getInstance(this).cancelAllWorkByTag(BACKUP_WORKER_KEY);
+        WorkManager.getInstance(this).cancelAllWorkByTag(JUST_TURNED_PRO_WORKER_KEY);
+
         AppDatabase.deleteLocallySavedData(this);
 
         //log out
@@ -342,11 +347,6 @@ public class MasterActivity extends AppCompatActivity implements
                 Context.MODE_PRIVATE).edit()
                 .putBoolean(getString(R.string.is_pro_mode_key), false)
                 .apply();
-
-        //stop workers
-        WorkManager.getInstance(this).cancelAllWorkByTag(UPDATE_MEDIA_WORKER_KEY);
-        WorkManager.getInstance(this).cancelAllWorkByTag(BACKUP_WORKER_KEY);
-        WorkManager.getInstance(this).cancelAllWorkByTag(JUST_TURNED_PRO_WORKER_KEY);
 
         startLaunchActivity();
     }
