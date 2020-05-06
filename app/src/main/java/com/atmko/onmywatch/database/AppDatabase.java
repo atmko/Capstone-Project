@@ -35,6 +35,7 @@ import com.atmko.onmywatch.models.SeriesLog;
 import com.atmko.onmywatch.models.SeriesNotifier;
 import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.models.WatchListModel;
+import com.atmko.onmywatch.utils.LogUpdateReceiver;
 import com.atmko.onmywatch.utils.NotificationHandler;
 
 @Database(entities = {WatchListModel.class, UserListModel.class, MovieData.class, SeriesData.class,
@@ -75,10 +76,11 @@ public abstract class AppDatabase extends RoomDatabase {
     }
 
     public static void deleteLocallySavedData(Context context) {
-        AppDatabase.getInstance(context).clearAllTables();
-
         //cancel all alarms
-        NotificationHandler.cancelAllAlarms(context);
+        LogUpdateReceiver.cancelAllLogUpdateAlarms(context);
+        NotificationHandler.cancelAllNotificationAlarms(context);
+
+        AppDatabase.getInstance(context).clearAllTables();
     }
 
     public abstract WatchListsDao watchListsDao();

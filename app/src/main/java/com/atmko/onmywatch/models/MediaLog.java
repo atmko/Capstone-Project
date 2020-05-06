@@ -1,9 +1,16 @@
 package com.atmko.onmywatch.models;
 
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
+
+import com.atmko.onmywatch.utils.LogUpdateReceiver;
+import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -12,6 +19,8 @@ import java.util.concurrent.TimeUnit;
 
 @Entity(tableName = "media_logs", primaryKeys = {"parent_id", "condition"})
 public abstract class MediaLog {
+    private static final int UPDATE_LOG_PREFIX = 9;
+
     public static final int CONDITION_UPCOMING = 1;
     public static final int CONDITION_AIRED = 2;
     public static final int CONDITION_UNDATED = 3;
@@ -80,6 +89,27 @@ public abstract class MediaLog {
             if (minutesValue <= -1) return Math.abs(minutesValue) + TIME_SUFFIX_MINUTES + PAST_SUFFIX;
             else return Math.abs(secondsValue) + TIME_SUFFIX_SECONDS + PAST_SUFFIX;
         }
+    }
+
+    //creates pending intent alarm log update
+    public static PendingIntent createUpdatePendingIntent(Context context, int mediaType,
+                                             String mediaId, int notifierCondition) {
+        Intent intent = new Intent(context, LogUpdateReceiver.class);
+        intent.putExtra(MediaData.MEDIA_TYPE_KEY, mediaType);
+        intent.putExtra(ApiConstants.ID_KEY, mediaId);
+        intent.putExtra(CONDITION_KEY, notifierCondition);
+        return PendingIntent.getBroadcast(context, getUpdateCode(mediaId),
+                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    //creates pending intent without notification (for canceling alarm)
+    public PendingIntent createPendingIntent(Context context, String mediaId) {
+        Intent intent = new Intent(context, LogUpdateReceiver.class);
+        return PendingIntent.getBroadcast(context, getUpdateCode(mediaId), intent, 0);
+    }
+
+    private static int getUpdateCode(String mediaId) {
+        return Integer.parseInt(UPDATE_LOG_PREFIX + mediaId);
     }
 
     public Map<String, Object> parseLogToDataMap() {

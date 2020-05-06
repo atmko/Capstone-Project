@@ -47,6 +47,7 @@
             </intent-filter>
         </receiver>
         <receiver android:name=".utils.NotificationHandler$AlarmReceiver" android:exported="false" />
+        <receiver android:name=".utils.LogUpdateReceiver" android:exported="false" />
         <receiver android:name=".utils.NotificationHandler$TimeChangedReceiver"  android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.TIME_SET" />

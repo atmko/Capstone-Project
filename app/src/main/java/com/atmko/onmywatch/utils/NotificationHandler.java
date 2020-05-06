@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 
 import androidx.core.app.NotificationManagerCompat;
 
+import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.database.AppDatabase;
 import com.atmko.onmywatch.database.daos.SeriesNotifierDao;
 import com.atmko.onmywatch.models.Episode;
@@ -24,7 +25,6 @@ import com.atmko.onmywatch.models.SeriesData;
 import com.atmko.onmywatch.models.SeriesNotifier;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
-import com.atmko.onmywatch.widget.ListWidgetProvider;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -52,6 +52,7 @@ public class NotificationHandler {
 
                     int mediaType = intent.getIntExtra(MediaData.MEDIA_TYPE_KEY, 0);
                     String mediaId = intent.getStringExtra(ApiConstants.ID_KEY);
+                    long releaseTimestamp = intent.getLongExtra(MediaNotifier.TIMESTAMP_KEY, 0);
                     int condition = intent.getIntExtra(MediaNotifier.CONDITION_KEY, 0);
                     Notification notification = intent.getParcelableExtra(MediaNotifier.NOTIFICATIONS_KEY);
                     NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
@@ -73,11 +74,7 @@ public class NotificationHandler {
                             seriesNotifier.setIsActive(false);
                             seriesNotifierDao.updateNotifier(seriesNotifier);
 
-                            //update logs
-                            SeriesTracker.transferUpcomingLogToReleased(context, mediaId);
-
-                            //update widgets
-                            ListWidgetProvider.updateWidgets(context);
+                            LogUpdateReceiver.createLogUpdateAlarm(mediaType, mediaId, condition, releaseTimestamp, context);
 
                             // The IdlingResource is null in production.
                             if (NotificationIdlingResource.getNotificationIdlingResource() != null) {
@@ -90,15 +87,11 @@ public class NotificationHandler {
                     }
 
                     if (mediaType == MEDIA_TYPE_MOVIE && condition == MediaNotifier.CONDITION_ON_RELEASE) {
-                        //update logs
-                        MovieTracker.transferUpcomingLogToReleased(context, mediaId);
+                        LogUpdateReceiver.createLogUpdateAlarm(mediaType, mediaId, condition, releaseTimestamp, context);
                     }
 
                     //remove media notifier from the database
                     removeMediaNotifier(context, mediaType, mediaId, condition);
-
-                    //update widgets
-                    ListWidgetProvider.updateWidgets(context);
 
                     // The IdlingResource is null in production.
                     if (NotificationIdlingResource.getNotificationIdlingResource() != null) {
@@ -223,13 +216,15 @@ public class NotificationHandler {
         Notification notification =
                 notifier.createReleaseNotification(context, mediaData, scheduledMedia.isInFuture(), source);
 
-        //create pending intent to house notification for when alarm is triggered
-        PendingIntent releasePendingIntent =
-                notifier.createPendingIntent(context, mediaType, mediaData.getId(), notification);
-
         long releaseTimestamp = scheduledMedia.getBestLocalAirDate().getTime();
 
-        setNotificationAlarm(context, releasePendingIntent, getNotificationTimestamp(releaseTimestamp));
+        //create pending intent to house notification for when alarm is triggered
+        PendingIntent releasePendingIntent =
+                notifier.createPendingIntent(context, mediaType, mediaData.getId(),
+                        releaseTimestamp, notification);
+
+        setNotificationAlarm(context, releasePendingIntent,
+                getNotificationTimestamp(mediaType, releaseTimestamp));
     }
 
     static void scheduleNewEpisodeNotification(Context context, SeriesData mediaData,
@@ -241,25 +236,28 @@ public class NotificationHandler {
         Notification notification = notifier.createNewEpisodeNotification(
                 context, mediaData, nextEpisode.isInFuture(), source, nextEpisode.getShorthand());
 
-        //create pending intent to house notification for when alarm is triggered
-        PendingIntent releasePendingIntent =
-                notifier.createPendingIntent(context, MEDIA_TYPE_SERIES, mediaData.getId(), notification);
-
         long releaseTimestamp = nextEpisode.getBestLocalAirDate().getTime();
 
-        setNotificationAlarm(context, releasePendingIntent, getNotificationTimestamp(releaseTimestamp));
+        //create pending intent to house notification for when alarm is triggered
+        PendingIntent releasePendingIntent =
+                notifier.createPendingIntent(context, MEDIA_TYPE_SERIES, mediaData.getId(),
+                        releaseTimestamp, notification);
+
+        setNotificationAlarm(context, releasePendingIntent,
+                getNotificationTimestamp(MasterActivity.MEDIA_TYPE_SERIES, releaseTimestamp));
     }
 
-    private static long getNotificationTimestamp(long releaseTimestamp) {
-        long notificationTimestamp;
-        if (IS_TESTING) {
-            notificationTimestamp = releaseTimestamp + TEST_TIME_DILATION;
-
+    private static long getNotificationTimestamp(int mediaType, long releaseTimestamp) {
+        if (mediaType == MEDIA_TYPE_MOVIE) {
+            return releaseTimestamp;
         } else {
-            notificationTimestamp = releaseTimestamp - TIME_DILATION;
-        }
+            if (IS_TESTING) {
+                return releaseTimestamp + TEST_TIME_DILATION;
 
-        return notificationTimestamp;
+            } else {
+                return releaseTimestamp - TIME_DILATION;
+            }
+        }
     }
 
     private static void setNotificationAlarm(Context context, PendingIntent releasePendingIntent,
@@ -274,7 +272,7 @@ public class NotificationHandler {
     }
 
     //deletes notifiers and cancel alarm notifications
-    static void cancelAlarm(Context context, MediaNotifier notifier) {
+    static void cancelNotificationAlarm(Context context, MediaNotifier notifier) {
         AppDatabase database = AppDatabase.getInstance(context);
 
         AlarmManager alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
@@ -289,7 +287,7 @@ public class NotificationHandler {
         }
     }
 
-    public static void cancelAllAlarms(final Context context) {
+    public static void cancelAllNotificationAlarms(final Context context) {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -297,13 +295,13 @@ public class NotificationHandler {
                 //cancel all movie alarms
                 List<MovieNotifier> movieNotifiers = database.movieNotifierDao().getAllNotifiersAlt();
                 for (MovieNotifier movieNotifier: movieNotifiers) {
-                    cancelAlarm(context, movieNotifier);
+                    cancelNotificationAlarm(context, movieNotifier);
                 }
 
                 //cancel all series alarms
                 List<SeriesNotifier> seriesNotifiers = database.seriesNotifierDao().getAllNotifiersAlt();
                 for (SeriesNotifier seriesNotifier: seriesNotifiers) {
-                    cancelAlarm(context, seriesNotifier);
+                    cancelNotificationAlarm(context, seriesNotifier);
                 }
             }
         });

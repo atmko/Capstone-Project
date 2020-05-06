@@ -495,7 +495,7 @@ public class UpdateNotifierService extends JobIntentService {
 
         if (notifier != null) {
             //cancel alarm and delete media notifier
-            NotificationHandler.cancelAlarm(this, notifier);
+            NotificationHandler.cancelNotificationAlarm(this, notifier);
         }
     }
 

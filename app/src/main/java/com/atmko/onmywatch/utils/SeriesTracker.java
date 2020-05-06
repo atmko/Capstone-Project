@@ -349,7 +349,7 @@ public class SeriesTracker extends JobIntentService {
                 mDatabase.seriesLogsDao().getAllLogsWithMediaIdAlt(newMediaData.getId());
 
         for (SeriesLog mediaLog : mediaLogs) {
-            mDatabase.seriesLogsDao().deleteMediaLog(mediaLog);
+            LogUpdateReceiver.cancelLogUpdateAlarm(getApplicationContext(), mediaLog);
         }
     }
 }

@@ -22,6 +22,8 @@ public abstract class MediaNotifier {
 
     public static final String NOTIFICATIONS_KEY = "notification";
 
+    public static final String TIMESTAMP_KEY = "timestamp";
+
     public static final String CONDITION_KEY = "condition";
 
     public static final String IS_ACTIVE_KEY = "is_active";
@@ -92,13 +94,15 @@ public abstract class MediaNotifier {
         return builder.build();
     }
 
-    //creates pending intent to house notification
+    //creates alarm pending intent to house notification
     public PendingIntent createPendingIntent(Context context, int mediaType,
-                                             String mediaId, Notification notification) {
+                                             String mediaId, long releaseTimestamp,
+                                             Notification notification) {
         Intent intent = new Intent(context, NotificationHandler.AlarmReceiver.class);
         intent.putExtra(MediaData.MEDIA_TYPE_KEY, mediaType);
         intent.putExtra(ApiConstants.ID_KEY, mediaId);
         intent.putExtra(CONDITION_KEY, mCondition);
+        intent.putExtra(TIMESTAMP_KEY, releaseTimestamp);
         intent.putExtra(MediaNotifier.NOTIFICATIONS_KEY, notification);
         return PendingIntent
                 .getBroadcast(context, getNotificationCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT);

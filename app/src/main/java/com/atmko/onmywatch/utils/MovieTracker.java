@@ -121,7 +121,7 @@ public class MovieTracker extends JobIntentService {
                 mDatabase.movieLogsDao().getAllLogsWithMediaIdAlt(newMediaData.getId());
 
         for (MovieLog mediaLog : mediaLogs) {
-            mDatabase.movieLogsDao().deleteMediaLog(mediaLog);
+            LogUpdateReceiver.cancelLogUpdateAlarm(getApplicationContext(), mediaLog);
         }
     }
 }
