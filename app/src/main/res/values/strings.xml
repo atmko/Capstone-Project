@@ -230,15 +230,21 @@
     <string name="notification_channel_backup">Backup</string>
     <string name="notification_channel_backup_description">Backup data to server</string>
 
-    <string name="notification_new_release_title">New Release</string>
-    <string name="notification_new_release_content_specific">%s will be released soon</string>
-    <string name="notification_new_release_content_general">%s is being released today</string>
-    <string name="notification_new_release_content_past">%s was already released</string>
+    <string name="notification_movie_release_title">%s releases today</string>
+    <string name="notification_movie_release_title_past">%s was already released</string>
 
-    <string name="notification_new_episode_title">New Episode</string>
-    <string name="notification_new_episode_content_specific">A new episode of %s is airing soon</string>
-    <string name="notification_new_episode_content_general">A new episode of %s airs today</string>
-    <string name="notification_new_episode_content_past">A new episode of %s was already released</string>
+    <string name="notification_series_release_title">%s airs soon</string>
+    <string name="notification_series_release_title_past">%s already aired</string>
+
+    <string name="notification_series_release_content_specific">Premieres in 10 minutes</string>
+    <string name="notification_series_release_content_general">Premieres today</string>
+    <string name="notification_series_release_content_specific_past">Premiere already aired</string>
+    <string name="notification_series_release_content_general_past">Premiere may have already aired</string>
+
+    <string name="notification_new_episode_content_specific">%s airs in 10 minutes</string>
+    <string name="notification_new_episode_content_general">%s airs today</string>
+    <string name="notification_new_episode_content_specific_past">%s already aired</string>
+    <string name="notification_new_episode_content_general_past">%s may have already aired</string>
 
     <string name="notification_channel_releases">Releases</string>
     <string name="notification_channel_releases_description">Notifications for new releases</string>

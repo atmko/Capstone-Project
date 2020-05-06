@@ -808,15 +808,18 @@ public class NotificationTests {
         IdlingRegistry.getInstance().register(notificationIdlingResource);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void checkForNotification(MediaData mediaData, int condition, boolean isInFuture, int source) {
         UiDevice device = UiDevice.getInstance(getInstrumentation());
 
         device.openNotification();
 
-        String containingText = getContainingText(mediaData.getTitle(), condition, isInFuture, source);
+        int mediaType = mediaData instanceof MovieData ? MasterActivity.MEDIA_TYPE_MOVIE : MasterActivity.MEDIA_TYPE_SERIES;
+        String titleText = getTitleText(mediaType, mediaData.getTitle(), isInFuture);
+        String containingText = getContainingText(mediaType, condition, isInFuture, source);
         if (containingText == null) fail();
 
-        UiSelector uiSelector = new UiSelector().textContains(containingText);
+        UiSelector uiSelector = new UiSelector().textContains(titleText).textContains(containingText);
         UiCollection uiCollection = new UiCollection(uiSelector);
 
         try {
@@ -837,10 +840,13 @@ public class NotificationTests {
 
         device.openNotification();
 
-        String containingText = getContainingText(mediaData.getTitle(), condition, isInFuture, source);
+        int mediaType = mediaData instanceof MovieData ? MasterActivity.MEDIA_TYPE_MOVIE : MasterActivity.MEDIA_TYPE_SERIES;
+        String titleText = getTitleText(mediaType, mediaData.getTitle(), isInFuture);
+        String containingText = getContainingText(mediaType, condition, isInFuture, source);
         if (containingText == null) fail();
 
-        UiSelector uiSelector = new UiSelector().textContains(containingText);
+        UiSelector uiSelector = new UiSelector().textContains(titleText);
+        uiSelector.textContains(containingText);
         UiCollection uiCollection = new UiCollection(uiSelector);
 
         try {
@@ -866,31 +872,54 @@ public class NotificationTests {
         }
     }
 
-    private String getContainingText(String mediaTitle, int condition, boolean isInFuture, int source) {
+    private String getTitleText(int mediaType, String mediaTitle, boolean isInFuture) {
+        if (mediaType == MasterActivity.MEDIA_TYPE_MOVIE) {
+            if (isInFuture) {
+                return mediaTitle + " releases today";
+            } else {
+                return mediaTitle + " was already released";
+            }
+        } else {
+            if (isInFuture) {
+                return mediaTitle + " airs soon";
+            } else {
+                return mediaTitle + " already aired";
+            }
+        }
+    }
+
+    private String getContainingText(int mediaType, int condition, boolean isInFuture, int source) {
+        if (mediaType == MasterActivity.MEDIA_TYPE_MOVIE) return "";
         if (condition == MediaNotifier.CONDITION_ON_RELEASE) {
             if (isInFuture) {
                 if (source == ScheduledMedia.SOURCE_TRAKT) {
-                    return mediaTitle + " will be released soon";
-
+                    return "Premieres in 10 minutes";
                 } else {
-                    return mediaTitle + " is being released today";
+                    return "Premieres today";
                 }
             } else {
-                return String.format(context.getString(R.string.notification_new_release_content_past), mediaTitle);
+                if (source == ScheduledMedia.SOURCE_TRAKT) {
+                    return "Premiere already aired";
+                } else {
+                    return "Premiere may have already aired";
+                }
             }
         } else if (condition == SeriesNotifier.CONDITION_NEW_EPISODE) {
             if (isInFuture) {
-                String containingText = "A new episode of " + mediaTitle;
                 if (source == ScheduledMedia.SOURCE_TRAKT) {
-                    return containingText + " is airing soon";
-
+                    return "S1E1 airs in 10 minutes";
                 } else {
-                    return containingText + " airs today";
+                    return "S1E1 airs today";
                 }
             } else {
-                return String.format(context.getString(R.string.notification_new_episode_content_past), mediaTitle);
+                if (source == ScheduledMedia.SOURCE_TRAKT) {
+                    return "S1E1 already aired";
+                } else {
+                    return "S1E1 may have already aired";
+                }
             }
-
-        } else return null;
+        } else {
+            return null;
+        }
     }
 }

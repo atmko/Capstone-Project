@@ -12,6 +12,9 @@ import org.parceler.Parcel;
 
 @Parcel
 public class Episode extends ScheduledMedia {
+    private static final String SEASON_SHORTHAND = "S";
+    private static final String EPISODE_SHORTHAND = "E";
+
     public String parentMediaId;
     public int seasonNumber;
     public int episodeNumber;
@@ -30,5 +33,12 @@ public class Episode extends ScheduledMedia {
         } catch (DateFormatException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getShorthand() {
+        return SEASON_SHORTHAND +
+                seasonNumber +
+                EPISODE_SHORTHAND +
+                episodeNumber;
     }
 }

@@ -36,15 +36,14 @@ public class MovieNotifier extends MediaNotifier {
     @Override
     public Notification createReleaseNotification(Context context, MediaData mediaData,
                                                   boolean isInFuture, int source) {
-        String contentTitle = context.getString(R.string.notification_new_release_title);
-        String contentText;
+        String contentTitle;
         if (isInFuture) {
-            contentText = String.format(
-                    context.getString(R.string.notification_new_release_content_general),
+            contentTitle = String.format(
+                    context.getString(R.string.notification_movie_release_title),
                     mediaData.getTitle());
         } else {
-            contentText = String.format(
-                    context.getString(R.string.notification_new_release_content_past),
+            contentTitle = String.format(
+                    context.getString(R.string.notification_movie_release_title_past),
                     mediaData.getTitle());
         }
 
@@ -60,7 +59,7 @@ public class MovieNotifier extends MediaNotifier {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, getNotificationCode(),
                 detailsIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        return buildReleaseNotification(context, contentTitle, contentText, pendingIntent);
+        return buildReleaseNotification(context, contentTitle, "", pendingIntent);
     }
 
     public Map<String, Object> parseNotifierToDataMap() {

@@ -37,21 +37,34 @@ public class SeriesNotifier extends MediaNotifier {
 
     public Notification createNewEpisodeNotification(Context context,
                                                      MediaData mediaData,
-                                                     boolean isInFuture, int source) {
-        String contentTitle = context.getString(R.string.notification_new_episode_title);
+                                                     boolean isInFuture, int source,
+                                                     String shorthand) {
+        String contentTitle;
+        if (isInFuture) {
+            contentTitle =  String.format(context.getString(R.string.notification_series_release_title),
+                    mediaData.getTitle());
+        } else {
+            contentTitle =  String.format(context.getString(R.string.notification_series_release_title_past),
+                    mediaData.getTitle());
+        }
+
         String contentText;
         if (isInFuture) {
             if (source == ScheduledMedia.SOURCE_TRAKT) {
                 contentText = String.format(context.getString(R.string.notification_new_episode_content_specific),
-                        mediaData.getTitle());
+                        shorthand);
             } else {
                 contentText = String.format(context.getString(R.string.notification_new_episode_content_general),
-                        mediaData.getTitle());
+                        shorthand);
             }
         } else {
-            contentText = String.format(
-                    context.getString(R.string.notification_new_episode_content_past),
-                    mediaData.getTitle());
+            if (source == ScheduledMedia.SOURCE_TRAKT) {
+                contentText = String.format(context.getString(R.string.notification_new_episode_content_specific_past),
+                        shorthand);
+            } else {
+                contentText = String.format(context.getString(R.string.notification_new_episode_content_general_past),
+                        shorthand);
+            }
         }
 
         //create intent to launch activity on click
@@ -72,23 +85,28 @@ public class SeriesNotifier extends MediaNotifier {
     @Override
     public Notification createReleaseNotification(Context context, MediaData mediaData,
                                                   boolean isInFuture, int source) {
-        String contentTitle = context.getString(R.string.notification_new_release_title);
+        String contentTitle;
+        if (isInFuture) {
+            contentTitle =  String.format(context.getString(R.string.notification_series_release_title),
+                    mediaData.getTitle());
+        } else {
+            contentTitle =  String.format(context.getString(R.string.notification_series_release_title_past),
+                    mediaData.getTitle());
+        }
+
         String contentText;
         if (isInFuture) {
             if (source == ScheduledMedia.SOURCE_TRAKT) {
-                contentText = String.format(
-                        context.getString(R.string.notification_new_release_content_specific),
-                        mediaData.getTitle());
-
+                contentText = context.getString(R.string.notification_series_release_content_specific);
             } else {
-                contentText = String.format(
-                        context.getString(R.string.notification_new_release_content_general),
-                        mediaData.getTitle());
+                contentText = context.getString(R.string.notification_series_release_content_general);
             }
         } else {
-            contentText = String.format(
-                    context.getString(R.string.notification_new_release_content_past),
-                    mediaData.getTitle());
+            if (source == ScheduledMedia.SOURCE_TRAKT) {
+                contentText = context.getString(R.string.notification_series_release_content_specific_past);
+            } else {
+                contentText = context.getString(R.string.notification_series_release_content_general_past);
+            }
         }
 
         //create intent to launch activity on click
