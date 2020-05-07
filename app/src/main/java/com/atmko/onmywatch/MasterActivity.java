@@ -124,7 +124,7 @@ public class MasterActivity extends AppCompatActivity implements
     private static final String JUST_TURNED_PRO_WORKER_KEY = "just_turned_pro_worker";
     private static final int UPDATE_REPEAT_INTERVAL = 5;
     private static final int BACKUP_REPEAT_INTERVAL = 12;
-    private static final int INITIAL_DELAY = 15;
+    private static final int INITIAL_DELAY = 1;
 
     private static final String USER_COLLECTION_PATH = "users";
 
@@ -277,7 +277,7 @@ public class MasterActivity extends AppCompatActivity implements
 
                 if (getSupportFragmentManager().getFragments().size() == 0) loadUi();
                 //start background work managers
-                startWorkers();
+                startWorkers(getApplicationContext());
             }
         });
     }
@@ -326,10 +326,7 @@ public class MasterActivity extends AppCompatActivity implements
     }
 
     private void logOut() {
-        //stop workers
-        WorkManager.getInstance(this).cancelAllWorkByTag(UPDATE_MEDIA_WORKER_KEY);
-        WorkManager.getInstance(this).cancelAllWorkByTag(BACKUP_WORKER_KEY);
-        WorkManager.getInstance(this).cancelAllWorkByTag(JUST_TURNED_PRO_WORKER_KEY);
+        stopWorkers(getApplicationContext());
 
         AppDatabase.deleteLocallySavedData(this);
 
@@ -492,7 +489,7 @@ public class MasterActivity extends AppCompatActivity implements
         MediaNotifier.createReleaseNotificationChannel(this);
     }
 
-    private void startWorkers() {
+    public static void startWorkers(Context context) {
         Constraints constraints = new Constraints.Builder()
                 .setRequiresBatteryNotLow(true)
                 .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -502,20 +499,27 @@ public class MasterActivity extends AppCompatActivity implements
         PeriodicWorkRequest updateMediaDataRequest = new PeriodicWorkRequest.Builder(
                 UpdateMediaWorker.class, UPDATE_REPEAT_INTERVAL, TimeUnit.HOURS)
                 .setConstraints(constraints)
-                .setInitialDelay(INITIAL_DELAY, TimeUnit.MINUTES)
+                .setInitialDelay(INITIAL_DELAY, TimeUnit.HOURS)
                 .build();
 
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
                 UPDATE_MEDIA_WORKER_KEY, ExistingPeriodicWorkPolicy.KEEP, updateMediaDataRequest);
 
         PeriodicWorkRequest backupRequest = new PeriodicWorkRequest.Builder(
                 BackupWorker.class, BACKUP_REPEAT_INTERVAL, TimeUnit.HOURS)
                 .setConstraints(constraints)
-                .setInitialDelay(INITIAL_DELAY, TimeUnit.MINUTES)
+                .setInitialDelay(INITIAL_DELAY, TimeUnit.HOURS)
                 .build();
 
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
                 BACKUP_WORKER_KEY, ExistingPeriodicWorkPolicy.KEEP, backupRequest);
+    }
+
+    //stop workers
+    public static void stopWorkers(Context context) {
+        WorkManager.getInstance(context).cancelAllWorkByTag(UPDATE_MEDIA_WORKER_KEY);
+        WorkManager.getInstance(context).cancelAllWorkByTag(BACKUP_WORKER_KEY);
+        WorkManager.getInstance(context).cancelAllWorkByTag(JUST_TURNED_PRO_WORKER_KEY);
     }
 
     @Override

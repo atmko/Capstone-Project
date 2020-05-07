@@ -110,6 +110,9 @@ public class RestoreActivity extends AppCompatActivity implements BackupAdapter.
                         if (backup != null) {
                             intent.putExtra(RestoreService.FILENAME_KEY, backup.getFileName());
                         }
+                        //stop workers before restoring data
+                        MasterActivity.stopWorkers(getApplicationContext());
+
                         RestoreService.enqueueWork(RestoreActivity.this, intent);
                     }
                 }
@@ -136,6 +139,8 @@ public class RestoreActivity extends AppCompatActivity implements BackupAdapter.
             public void run() {
                 progressLayout.setVisibility(View.GONE);
                 showSnackBarMessage(getString(R.string.restore_completed_message));
+                //resume workers
+                MasterActivity.startWorkers(getApplicationContext());
             }
         });
     }
@@ -147,6 +152,8 @@ public class RestoreActivity extends AppCompatActivity implements BackupAdapter.
             public void run() {
                 progressLayout.setVisibility(View.GONE);
                 showSnackBarMessage(getString(R.string.restore_failed_message));
+                //resume workers
+                MasterActivity.startWorkers(getApplicationContext());
             }
         });
     }
