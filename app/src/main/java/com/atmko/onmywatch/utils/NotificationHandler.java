@@ -13,7 +13,6 @@ import androidx.core.app.NotificationManagerCompat;
 
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.database.AppDatabase;
-import com.atmko.onmywatch.database.daos.SeriesNotifierDao;
 import com.atmko.onmywatch.models.Episode;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MediaNotifier;
@@ -62,28 +61,17 @@ public class NotificationHandler {
                         notificationManager.notify(mediaId, condition, notification);
                     }
 
-                    //if notifier condition is new episode, update notifier
+                    //if notifier condition is new episode, create alarm to update logs when time arrives
                     if (condition == SeriesNotifier.CONDITION_NEW_EPISODE) {
-                        SeriesNotifierDao seriesNotifierDao =
-                                AppDatabase.getInstance(context).seriesNotifierDao();
+                        LogUpdateReceiver.createLogUpdateAlarm(mediaType, mediaId, condition, releaseTimestamp, context);
 
-                        SeriesNotifier seriesNotifier =
-                                seriesNotifierDao.getNotifierByIdAlt(mediaId, condition);
-                        if (seriesNotifier != null) {
-                            //set series notifier to inactive
-                            seriesNotifier.setIsActive(false);
-                            seriesNotifierDao.updateNotifier(seriesNotifier);
-
-                            LogUpdateReceiver.createLogUpdateAlarm(mediaType, mediaId, condition, releaseTimestamp, context);
-
-                            // The IdlingResource is null in production.
-                            if (NotificationIdlingResource.getNotificationIdlingResource() != null) {
-                                NotificationIdlingResource.getNotificationIdlingResource().setIdleState(true);
-                            }
-
-                            //skip notifier deletion if condition is new episodes
-                            return;
+                        // The IdlingResource is null in production.
+                        if (NotificationIdlingResource.getNotificationIdlingResource() != null) {
+                            NotificationIdlingResource.getNotificationIdlingResource().setIdleState(true);
                         }
+
+                        //skip notifier deletion if condition is new episodes
+                        return;
                     }
 
                     if (mediaType == MEDIA_TYPE_MOVIE && condition == MediaNotifier.CONDITION_ON_RELEASE) {

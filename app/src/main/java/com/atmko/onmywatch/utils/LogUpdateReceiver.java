@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.atmko.onmywatch.database.AppDatabase;
+import com.atmko.onmywatch.database.daos.SeriesNotifierDao;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MediaLog;
 import com.atmko.onmywatch.models.MediaNotifier;
@@ -36,13 +37,24 @@ public class LogUpdateReceiver extends BroadcastReceiver {
                 String mediaId = intent.getStringExtra(ApiConstants.ID_KEY);
                 int condition = intent.getIntExtra(MediaNotifier.CONDITION_KEY, 0);
 
-                //if condition is new episode, update logs
+                //if condition is new episode, update notifier and update logs
                 if (condition == SeriesNotifier.CONDITION_NEW_EPISODE) {
-                    //update logs
-                    SeriesTracker.transferUpcomingLogToReleased(context, mediaId);
-                    //update widgets
-                    ListWidgetProvider.updateWidgets(context);
-                    return;
+                    SeriesNotifierDao seriesNotifierDao =
+                            AppDatabase.getInstance(context).seriesNotifierDao();
+
+                    SeriesNotifier seriesNotifier =
+                            seriesNotifierDao.getNotifierByIdAlt(mediaId, condition);
+                    if (seriesNotifier != null) {
+                        //set series notifier to inactive
+                        seriesNotifier.setIsActive(false);
+                        seriesNotifierDao.updateNotifier(seriesNotifier);
+
+                        //update logs
+                        SeriesTracker.transferUpcomingLogToReleased(context, mediaId);
+                        //update widgets
+                        ListWidgetProvider.updateWidgets(context);
+                        return;
+                    }
                 }
 
                 //if condition is release and is movie, update logs
