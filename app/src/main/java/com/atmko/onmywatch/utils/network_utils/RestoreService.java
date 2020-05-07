@@ -501,12 +501,8 @@ public class RestoreService extends JobIntentService {
 
         List<Map> listMaps = (List<Map>) returnedMap.get(WATCH_LISTS_KEY);
         if (listMaps != null) {
-            String noneWatchListName = getApplicationContext()
-                    .getResources().getStringArray(R.array.watch_status_titles)[0];
-
             for (Map map : listMaps) {
                 WatchListModel watchListModel = parseWatchListModel(map);
-                if (watchListModel.getName().equals(noneWatchListName)) continue;
                 mLocalDatabase.watchListsDao().addList(watchListModel);
             }
         }

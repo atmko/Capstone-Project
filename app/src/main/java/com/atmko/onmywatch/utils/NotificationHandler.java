@@ -46,6 +46,7 @@ public class NotificationHandler {
                     if (intent == null) return;
                     if (!intent.hasExtra(MediaData.MEDIA_TYPE_KEY)) return;
                     if (!intent.hasExtra(ApiConstants.ID_KEY)) return;
+                    if (!intent.hasExtra(MediaNotifier.TIMESTAMP_KEY)) return;
                     if (!intent.hasExtra(MediaNotifier.CONDITION_KEY)) return;
                     if (!intent.hasExtra(MediaNotifier.NOTIFICATIONS_KEY)) return;
 
