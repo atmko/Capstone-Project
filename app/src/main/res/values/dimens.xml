@@ -41,6 +41,7 @@
     <dimen name="list_height">85dp</dimen>
 
     <!--image_dimensions-->
+    <dimen name="splash_logo_size">72dp</dimen>
     <dimen name="search_box_padding">12dp</dimen>
     <dimen name="up_button_padding">@dimen/x2_layout_margin</dimen>
 
