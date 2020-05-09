@@ -5,7 +5,9 @@
 package com.atmko.onmywatch.models;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 
+import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.utils.GeneralUtils;
 import com.atmko.onmywatch.utils.GeneralUtils.DateInject;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
@@ -22,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 import static com.atmko.onmywatch.utils.GeneralUtils.ISO_DATE_FORMAT;
 
 /*
- * episode model class
+ * scheduled media model class
  */
 
 @Parcel
@@ -30,13 +32,6 @@ public class ScheduledMedia {
     public static final int SOURCE_TMDB = 0;
     public static final int SOURCE_TRAKT = 1;
 
-    private static final String TIME_SUFFIX_YEARS = " year(s)";
-    private static final String TIME_SUFFIX_MONTHS = " month(s)";
-    private static final String TIME_SUFFIX_WEEKS = " week(s)";
-    public static final String TIME_SUFFIX_DAYS = " day(s)";
-    public static final String TIME_SUFFIX_HOURS = " hour(s)";
-    public static final String TIME_SUFFIX_MINUTES = " minute(s)";
-    private static final String TIME_SUFFIX_SECONDS = " second(s)";
     public static final String NO_DATES = "No Dates";
 
     private static final int YEARS_CONVERSION = 365;
@@ -162,31 +157,103 @@ public class ScheduledMedia {
 
     //gets the time till next air date in days, hours, or minutes
     @SuppressWarnings("IntegerDivisionInFloatingPointContext")
-    public String getCountdown() {
+    public String getCountdown(Context context) {
         if (mAirDate == null && mAirDateIso == null) return NO_DATES;
 
         long timeDifference = getBestTimeDifference();
 
         boolean inFuture = timeDifference >= 0;
-        int daysValue = Long.valueOf(TimeUnit.MILLISECONDS.toDays(timeDifference)).intValue();
-        int yearsValue = ((Double) Math.floor(daysValue / YEARS_CONVERSION)).intValue();
-        int monthsValue = ((Double) Math.floor(daysValue / MONTHS_CONVERSION)).intValue();
-        int weeksValue = ((Double) Math.floor(daysValue / WEEKS_CONVERSION)).intValue();
-        int hoursValue = Long.valueOf(TimeUnit.MILLISECONDS.toHours(timeDifference)).intValue();
-        int minutesValue = Long.valueOf(TimeUnit.MILLISECONDS.toMinutes(timeDifference)).intValue();
-        int secondsValue = Long.valueOf(TimeUnit.MILLISECONDS.toSeconds(timeDifference)).intValue();
 
-        if (inFuture) {
-            if (yearsValue >= 1) return yearsValue + TIME_SUFFIX_YEARS;
-            if (monthsValue >= 1) return monthsValue + TIME_SUFFIX_MONTHS;
-            if (weeksValue >= 1) return weeksValue + TIME_SUFFIX_WEEKS;
-            if (daysValue >= 1) return daysValue + TIME_SUFFIX_DAYS;
-            if (hoursValue >= 1) return hoursValue + TIME_SUFFIX_HOURS;
-            if (minutesValue >= 1) return minutesValue + TIME_SUFFIX_MINUTES;
-            else return secondsValue + TIME_SUFFIX_SECONDS;
-        } else {
-            return NO_DATES;
+        if (!inFuture) return NO_DATES;
+        int daysValue = Math.abs(Long.valueOf(TimeUnit.MILLISECONDS.toDays(timeDifference)).intValue());
+        int yearsValue =  Math.abs(((Double) Math.floor(daysValue / YEARS_CONVERSION)).intValue());
+        int monthsValue =  Math.abs(((Double) Math.floor(daysValue / MONTHS_CONVERSION)).intValue());
+        int weeksValue =  Math.abs(((Double) Math.floor(daysValue / WEEKS_CONVERSION)).intValue());
+        int hoursValue =  Math.abs(Long.valueOf(TimeUnit.MILLISECONDS.toHours(timeDifference)).intValue());
+        int minutesValue =  Math.abs(Long.valueOf(TimeUnit.MILLISECONDS.toMinutes(timeDifference)).intValue());
+        int secondsValue =  Math.abs(Long.valueOf(TimeUnit.MILLISECONDS.toSeconds(timeDifference)).intValue());
+
+        String countdownFormat;
+        if (yearsValue >= 1) {
+            if (yearsValue > 1) {
+                //plural and in future
+                countdownFormat = context.getString(R.string.countdown_years);
+            } else {
+                //singular and in future
+                countdownFormat = context.getString(R.string.countdown_year);
+            }
+
+            return String.format(countdownFormat, yearsValue);
         }
+
+        if (monthsValue >= 1) {
+            if (monthsValue > 1) {
+                //plural and in future
+                countdownFormat = context.getString(R.string.countdown_months);
+            } else {
+                //singular and in future
+                countdownFormat = context.getString(R.string.countdown_month);
+            }
+
+            return String.format(countdownFormat, monthsValue);
+        }
+        if (weeksValue >= 1) {
+            if (weeksValue > 1) {
+                //plural and in future
+                countdownFormat = context.getString(R.string.countdown_weeks);
+            } else {
+                //singular and in future
+                countdownFormat = context.getString(R.string.countdown_week);
+            }
+
+            return String.format(countdownFormat, weeksValue);
+        }
+
+        if (daysValue >= 1) {
+            if (daysValue > 1) {
+                //plural and in future
+                countdownFormat = context.getString(R.string.countdown_days);
+            } else {
+                //singular and in future
+                countdownFormat = context.getString(R.string.countdown_day);
+            }
+
+            return String.format(countdownFormat, daysValue);
+        }
+
+        if (hoursValue >= 1) {
+            if (hoursValue > 1) {
+                //plural and in future
+                countdownFormat = context.getString(R.string.countdown_hours);
+            } else {
+                //singular and in future
+                countdownFormat = context.getString(R.string.countdown_hour);
+            }
+
+            return String.format(countdownFormat, hoursValue);
+        }
+
+        if (minutesValue >= 1) {
+            if (minutesValue > 1) {
+                //plural and in future
+                countdownFormat = context.getString(R.string.countdown_minutes);
+            } else {
+                //singular and in future
+                countdownFormat = context.getString(R.string.countdown_minute);
+            }
+
+            return String.format(countdownFormat, minutesValue);
+        }
+
+        if (secondsValue > 1) {
+            //plural and in future
+            countdownFormat = context.getString(R.string.countdown_seconds);
+        } else {
+            //singular and in future
+            countdownFormat = context.getString(R.string.countdown_second);
+        }
+
+        return String.format(countdownFormat, secondsValue);
     }
 
     //returns time in millis till nex air date. Uses air date if air date iso not available else returns Long.MAX_VALUE

@@ -18,9 +18,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import static com.atmko.onmywatch.models.ScheduledMedia.NO_DATES;
-import static com.atmko.onmywatch.models.ScheduledMedia.TIME_SUFFIX_DAYS;
-import static com.atmko.onmywatch.models.ScheduledMedia.TIME_SUFFIX_HOURS;
-import static com.atmko.onmywatch.models.ScheduledMedia.TIME_SUFFIX_MINUTES;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -45,15 +42,15 @@ public class ScheduledMediaTest {
         ScheduledMedia releaseSchedule = new ScheduledMedia();
         try {
             releaseSchedule.setAirDate("2019-12-09T05:00:00.000Z");
-            String daysAnswer = 3 + TIME_SUFFIX_DAYS;
+            String daysAnswer = 3 + "days";
             assertEquals(daysAnswer, releaseSchedule.getCountdown());
 
             releaseSchedule.setAirDate("2019-12-05T21:00:00.000Z");
-            String hoursAnswer = 3 + TIME_SUFFIX_HOURS;
+            String hoursAnswer = 3 + "hours";
             assertEquals(hoursAnswer, releaseSchedule.getCountdown());
 
             releaseSchedule.setAirDate("2019-12-05T18:00:00.000Z");
-            String minutesAnswer = 36 + TIME_SUFFIX_MINUTES;
+            String minutesAnswer = 36 + "minutes";
             assertEquals(minutesAnswer, releaseSchedule.getCountdown());
 
         } catch (ScheduledMedia.DateFormatException e) {

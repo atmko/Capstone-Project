@@ -666,7 +666,8 @@ public class DetailsFragment extends Fragment {
     private void setMovieCountDown(MovieData movieData) {
         //set count down if available
         ScheduledMedia releaseMedia = movieData.getScheduledMedia();
-        String countdown = releaseMedia != null ? releaseMedia.getCountdown() : ScheduledMedia.NO_DATES;
+        String countdown =
+                releaseMedia != null ?releaseMedia.getCountdown(getContext()) : ScheduledMedia.NO_DATES;
 
         mCountDownTextView.setText(countdown);
         mCountDownTextView.setVisibility(View.VISIBLE);
@@ -675,7 +676,8 @@ public class DetailsFragment extends Fragment {
     private void setSeriesCountDown(SeriesData seriesData) {
         //set count down if available
         Episode nextEpisode = seriesData.getNextEpisodeToAir();
-        String countdown = nextEpisode != null ? nextEpisode.getCountdown() : ScheduledMedia.NO_DATES;
+        String countdown =
+                nextEpisode != null ? nextEpisode.getCountdown(getContext()) : ScheduledMedia.NO_DATES;
 
         mCountDownTextView.setText(countdown);
         mCountDownTextView.setVisibility(View.VISIBLE);

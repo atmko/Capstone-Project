@@ -223,7 +223,7 @@ public class MediaLogAdapter
             adapterViewHolder.countDownTextView.setVisibility(View.GONE);
 
         } else {
-            adapterViewHolder.countDownTextView.setText(currentMediaLog.getCountdown());
+            adapterViewHolder.countDownTextView.setText(currentMediaLog.getCountdown(mContext));
         }
     }
 

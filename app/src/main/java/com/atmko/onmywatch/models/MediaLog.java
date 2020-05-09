@@ -9,6 +9,7 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 
+import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.utils.LogUpdateReceiver;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 
@@ -32,14 +33,6 @@ public abstract class MediaLog {
     public static final String BACKDROP_PATH_KEY = "backdrop_path";
     public static final String PARENT_ID_KEY = "parent_id";
 
-    private static final String TIME_SUFFIX_YEARS = " year(s)";
-    private static final String TIME_SUFFIX_MONTHS = " month(s)";
-    private static final String TIME_SUFFIX_WEEKS = " week(s)";
-    private static final String TIME_SUFFIX_DAYS = " day(s)";
-    private static final String TIME_SUFFIX_HOURS = " hour(s)";
-    private static final String TIME_SUFFIX_MINUTES = " minute(s)";
-    private static final String TIME_SUFFIX_SECONDS = " second(s)";
-
     private static final int YEARS_CONVERSION = 365;
     private static final int MONTHS_CONVERSION = 30;
     private static final int WEEKS_CONVERSION = 7;
@@ -59,36 +52,141 @@ public abstract class MediaLog {
 
     //gets the time till next air date in days, hours, or minutes
     @SuppressWarnings("IntegerDivisionInFloatingPointContext")
-    public String getCountdown() {
+    public String getCountdown(Context context) {
         long timeDifference = timestamp - new Date().getTime();
 
         boolean inFuture = timeDifference >= 0;
-        int daysValue = Long.valueOf(TimeUnit.MILLISECONDS.toDays(timeDifference)).intValue();
-        int yearsValue = ((Double) Math.floor(daysValue / YEARS_CONVERSION)).intValue();
-        int monthsValue = ((Double) Math.floor(daysValue / MONTHS_CONVERSION)).intValue();
-        int weeksValue = ((Double) Math.floor(daysValue / WEEKS_CONVERSION)).intValue();
-        int hoursValue = Long.valueOf(TimeUnit.MILLISECONDS.toHours(timeDifference)).intValue();
-        int minutesValue = Long.valueOf(TimeUnit.MILLISECONDS.toMinutes(timeDifference)).intValue();
-        int secondsValue = Long.valueOf(TimeUnit.MILLISECONDS.toSeconds(timeDifference)).intValue();
+        int daysValue = Math.abs(Long.valueOf(TimeUnit.MILLISECONDS.toDays(timeDifference)).intValue());
+        int yearsValue =  Math.abs(((Double) Math.floor(daysValue / YEARS_CONVERSION)).intValue());
+        int monthsValue =  Math.abs(((Double) Math.floor(daysValue / MONTHS_CONVERSION)).intValue());
+        int weeksValue =  Math.abs(((Double) Math.floor(daysValue / WEEKS_CONVERSION)).intValue());
+        int hoursValue =  Math.abs(Long.valueOf(TimeUnit.MILLISECONDS.toHours(timeDifference)).intValue());
+        int minutesValue =  Math.abs(Long.valueOf(TimeUnit.MILLISECONDS.toMinutes(timeDifference)).intValue());
+        int secondsValue =  Math.abs(Long.valueOf(TimeUnit.MILLISECONDS.toSeconds(timeDifference)).intValue());
 
-        if (inFuture) {
-            if (yearsValue >= 1) return yearsValue + TIME_SUFFIX_YEARS;
-            if (monthsValue >= 1) return monthsValue + TIME_SUFFIX_MONTHS;
-            if (weeksValue >= 1) return weeksValue + TIME_SUFFIX_WEEKS;
-            if (daysValue >= 1) return daysValue + TIME_SUFFIX_DAYS;
-            if (hoursValue >= 1) return hoursValue + TIME_SUFFIX_HOURS;
-            if (minutesValue >= 1) return minutesValue + TIME_SUFFIX_MINUTES;
-            else return secondsValue + TIME_SUFFIX_SECONDS;
+        String countdownFormat;
+        if (yearsValue >= 1) {
+            if (yearsValue > 1 && !inFuture) {
+                //plural and in past
+                countdownFormat = context.getString(R.string.countdown_years_past);
+            } else if (yearsValue == 1 && !inFuture) {
+                //singular and in past
+                countdownFormat = context.getString(R.string.countdown_year_past);
+            } else if (yearsValue > 1) {
+                //plural and in future
+                countdownFormat = context.getString(R.string.countdown_years);
+            } else {
+                //singular and in future
+                countdownFormat = context.getString(R.string.countdown_year);
+            }
 
-        } else {
-            if (yearsValue <= -1) return Math.abs(yearsValue) + TIME_SUFFIX_YEARS + PAST_SUFFIX;
-            if (monthsValue <= -1) return Math.abs(monthsValue) + TIME_SUFFIX_MONTHS + PAST_SUFFIX;
-            if (weeksValue <= -1) return Math.abs(weeksValue) + TIME_SUFFIX_WEEKS + PAST_SUFFIX;
-            if (daysValue <= -1) return Math.abs(daysValue) + TIME_SUFFIX_DAYS + PAST_SUFFIX;
-            if (hoursValue <= -1) return Math.abs(hoursValue) + TIME_SUFFIX_HOURS + PAST_SUFFIX;
-            if (minutesValue <= -1) return Math.abs(minutesValue) + TIME_SUFFIX_MINUTES + PAST_SUFFIX;
-            else return Math.abs(secondsValue) + TIME_SUFFIX_SECONDS + PAST_SUFFIX;
+            return String.format(countdownFormat, yearsValue);
         }
+
+        if (monthsValue >= 1) {
+            if (monthsValue > 1 && !inFuture) {
+                //plural and in past
+                countdownFormat = context.getString(R.string.countdown_months_past);
+            } else if (monthsValue == 1 && !inFuture) {
+                //singular and in past
+                countdownFormat = context.getString(R.string.countdown_month_past);
+            } else if (monthsValue > 1) {
+                //plural and in future
+                countdownFormat = context.getString(R.string.countdown_months);
+            } else {
+                //singular and in future
+                countdownFormat = context.getString(R.string.countdown_month);
+            }
+
+            return String.format(countdownFormat, monthsValue);
+        }
+        if (weeksValue >= 1) {
+            if (weeksValue > 1 && !inFuture) {
+                //plural and in past
+                countdownFormat = context.getString(R.string.countdown_weeks_past);
+            } else if (weeksValue == 1 && !inFuture) {
+                //singular and in past
+                countdownFormat = context.getString(R.string.countdown_week_past);
+            } else if (weeksValue > 1) {
+                //plural and in future
+                countdownFormat = context.getString(R.string.countdown_weeks);
+            } else {
+                //singular and in future
+                countdownFormat = context.getString(R.string.countdown_week);
+            }
+
+            return String.format(countdownFormat, weeksValue);
+        }
+
+        if (daysValue >= 1) {
+            if (daysValue > 1 && !inFuture) {
+                //plural and in past
+                countdownFormat = context.getString(R.string.countdown_days_past);
+            } else if (daysValue == 1 && !inFuture) {
+                //singular and in past
+                countdownFormat = context.getString(R.string.countdown_day_past);
+            } else if (daysValue > 1) {
+                //plural and in future
+                countdownFormat = context.getString(R.string.countdown_days);
+            } else {
+                //singular and in future
+                countdownFormat = context.getString(R.string.countdown_day);
+            }
+
+            return String.format(countdownFormat, daysValue);
+        }
+
+        if (hoursValue >= 1) {
+            if (hoursValue > 1 && !inFuture) {
+                //plural and in past
+                countdownFormat = context.getString(R.string.countdown_hours_past);
+            } else if (hoursValue == 1 && !inFuture) {
+                //singular and in past
+                countdownFormat = context.getString(R.string.countdown_hour_past);
+            } else if (hoursValue > 1) {
+                //plural and in future
+                countdownFormat = context.getString(R.string.countdown_hours);
+            } else {
+                //singular and in future
+                countdownFormat = context.getString(R.string.countdown_hour);
+            }
+
+            return String.format(countdownFormat, hoursValue);
+        }
+
+        if (minutesValue >= 1) {
+            if (minutesValue > 1 && !inFuture) {
+                //plural and in past
+                countdownFormat = context.getString(R.string.countdown_minutes_past);
+            } else if (minutesValue == 1 && !inFuture) {
+                //singular and in past
+                countdownFormat = context.getString(R.string.countdown_minute_past);
+            } else if (minutesValue > 1) {
+                //plural and in future
+                countdownFormat = context.getString(R.string.countdown_minutes);
+            } else {
+                //singular and in future
+                countdownFormat = context.getString(R.string.countdown_minute);
+            }
+
+            return String.format(countdownFormat, minutesValue);
+        }
+
+        if (secondsValue > 1 && !inFuture) {
+            //plural and in past
+            countdownFormat = context.getString(R.string.countdown_seconds_past);
+        } else if (secondsValue == 1 && !inFuture) {
+            //singular and in past
+            countdownFormat = context.getString(R.string.countdown_second_past);
+        } else if (secondsValue > 1) {
+            //plural and in future
+            countdownFormat = context.getString(R.string.countdown_seconds);
+        } else {
+            //singular and in future
+            countdownFormat = context.getString(R.string.countdown_second);
+        }
+
+        return String.format(countdownFormat, secondsValue);
     }
 
     //creates pending intent alarm log update

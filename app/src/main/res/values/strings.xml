@@ -1,6 +1,38 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Majik</string>
 
+    <string name="countdown_year">%d year</string>
+    <string name="countdown_month">%d month</string>
+    <string name="countdown_week">%d week</string>
+    <string name="countdown_day">%d day</string>
+    <string name="countdown_hour">%d hour</string>
+    <string name="countdown_minute">%d minute</string>
+    <string name="countdown_second">%d second</string>
+
+    <string name="countdown_years">%d years</string>
+    <string name="countdown_months">%d months</string>
+    <string name="countdown_weeks">%d weeks</string>
+    <string name="countdown_days">%d days</string>
+    <string name="countdown_hours">%d hours</string>
+    <string name="countdown_minutes">%d minutes</string>
+    <string name="countdown_seconds">%d seconds</string>
+
+    <string name="countdown_year_past">%d year ago</string>
+    <string name="countdown_month_past">%d month ago</string>
+    <string name="countdown_week_past">%d week ago</string>
+    <string name="countdown_day_past">%d day ago</string>
+    <string name="countdown_hour_past">%d hour ago</string>
+    <string name="countdown_minute_past">%d minute ago</string>
+    <string name="countdown_second_past">%d second ago</string>
+
+    <string name="countdown_years_past">%d years ago</string>
+    <string name="countdown_months_past">%d months ago</string>
+    <string name="countdown_weeks_past">%d weeks ago</string>
+    <string name="countdown_days_past">%d days ago</string>
+    <string name="countdown_hours_past">%d hours ago</string>
+    <string name="countdown_minutes_past">%d minutes ago</string>
+    <string name="countdown_seconds_past">%d seconds ago</string>
+
     <!--LAUNCH ACTIVITY TEXT-->
     <string name="app_description">Manage And Track What You Watch</string>
     <string name="streaming_disclaimer_prefix">Majik can</string>

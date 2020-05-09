@@ -208,7 +208,7 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
             if (mListType == LIST_TYPE_AUTO) {
                 mediaLog = mMovieLogs.get(position);
                 title = mMovieLogs.get(position).title;
-                countdown = mMovieLogs.get(position).getCountdown();
+                countdown = mMovieLogs.get(position).getCountdown(mContext);
                 backdropUrl = mMovieLogs.get(position).backdropPath;
 
             } else {
@@ -221,7 +221,7 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
             if (mListType == LIST_TYPE_AUTO) {
                 mediaLog = mSeriesLogs.get(position);
                 title = mSeriesLogs.get(position).title;
-                countdown = mSeriesLogs.get(position).getCountdown();
+                countdown = mSeriesLogs.get(position).getCountdown(mContext);
                 type = mSeriesLogs.get(position).getTypeString();
                 backdropUrl = mSeriesLogs.get(position).backdropPath;
 
