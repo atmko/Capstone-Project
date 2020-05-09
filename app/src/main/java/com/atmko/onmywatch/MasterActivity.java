@@ -319,7 +319,8 @@ public class MasterActivity extends AppCompatActivity implements
         startActivity(launchIntent);
     }
 
-    public static void startLogOutBackupService(Activity activity) {
+    public static void startLogOutBackupService(MasterActivity activity) {
+        activity.setProgressVisibility(View.VISIBLE);
         //backup before logging out;
         Intent intent = new Intent(activity, BackupService.class);
         BackupService.enqueueWork(activity, intent);
@@ -346,6 +347,7 @@ public class MasterActivity extends AppCompatActivity implements
                 .apply();
 
         startLaunchActivity();
+        finish();
     }
 
     @Override
@@ -363,6 +365,7 @@ public class MasterActivity extends AppCompatActivity implements
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                setProgressVisibility(View.GONE);
                 if (errorMessage != null && !errorMessage.equals("")) {
                     showSnackBarMessage(errorMessage, MasterActivity.this);
 
@@ -386,11 +389,13 @@ public class MasterActivity extends AppCompatActivity implements
                 //if returning from firebase sign in activity, configure database and observe data
                 if (requestCode == REQUEST_LOG_OUT) {
                     if (resultCode == RESULT_OK) {
+                        setProgressVisibility(View.VISIBLE);
                         logOut();
                     }
 
                 } else if (requestCode == REQUEST_GUEST_LOG_OUT) {
                     if (resultCode == RESULT_OK) {
+                        setProgressVisibility(View.VISIBLE);
                         getCurrentUser().delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
@@ -404,6 +409,7 @@ public class MasterActivity extends AppCompatActivity implements
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
+                                setProgressVisibility(View.GONE);
                                 showSnackBarMessage(getString(R.string.log_out_failed), MasterActivity.this);
                             }
                         });
@@ -1020,8 +1026,13 @@ public class MasterActivity extends AppCompatActivity implements
         }
     }
 
-    public void setProgressVisibility(int visibility) {
-        progressLayout.setVisibility(visibility);
+    public void setProgressVisibility(final int visibility) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressLayout.setVisibility(visibility);
+            }
+        });
     }
 
     public static void showSnackBarMessage(String string, Activity activity) {

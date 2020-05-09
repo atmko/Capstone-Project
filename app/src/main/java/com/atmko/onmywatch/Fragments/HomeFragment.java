@@ -453,15 +453,14 @@ public class HomeFragment extends Fragment {
         logOutItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+                if (getActivity() == null) return true;
                 //launch settings activity
                 if (getCurrentUser().isAnonymous()) {
-                    if (getActivity() != null) {
-                        MasterActivity.launchConfirmationActivity(getActivity(),
-                                REQUEST_GUEST_LOG_OUT,
-                                ConfirmationActivity.ACTION_GUEST_LOG_OUT, 3);
-                    }
+                    MasterActivity.launchConfirmationActivity(getActivity(),
+                            REQUEST_GUEST_LOG_OUT,
+                            ConfirmationActivity.ACTION_GUEST_LOG_OUT, 3);
                 } else {
-                    MasterActivity.startLogOutBackupService(getActivity());
+                    MasterActivity.startLogOutBackupService(((MasterActivity) getActivity()));
                 }
 
                 return true;
