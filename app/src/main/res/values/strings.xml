@@ -23,6 +23,7 @@
     <!--options menu titles-->
 
     <!--preference keys-->
+    <string name="settings_key_about_app">about_app</string>
     <string name="settings_key_link">link</string>
     <string name="settings_key_restore">restore</string>
     <string name="settings_key_create_backup">create_backup</string>
@@ -52,7 +53,7 @@
 
     <!--settings summary-->
     <string name="settings_link_summary">Become a permanent user. Access your data on any device</string>
-    <string name="settings_about_app_summary">Majik Version 1.0.0</string>
+    <string name="settings_about_app_summary">Majik Version %s</string>
     <string name="settings_restore_summary">Restore files to a previous state</string>
     <string name="settings_create_backup_summary">Create a manual backup of current files</string>
     <!--settings summary-->

@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
+import com.atmko.onmywatch.BuildConfig;
 import com.atmko.onmywatch.ConfirmationActivity;
 import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
@@ -51,6 +52,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.pref_settings);
+
+        Preference aboutAppPreference = findPreference(getString(R.string.settings_key_about_app));
+        if (aboutAppPreference != null) {
+            aboutAppPreference.setSummary(
+                    getString(R.string.settings_about_app_summary, BuildConfig.VERSION_NAME));
+        }
 
         Preference linkPreference = findPreference(getString(R.string.settings_key_link));
         if (linkPreference != null) {

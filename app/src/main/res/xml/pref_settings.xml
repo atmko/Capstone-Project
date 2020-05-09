@@ -5,6 +5,7 @@
     <Preference
         android:title="@string/settings_about_app_title"
         android:summary="@string/settings_about_app_summary"
+        android:key="@string/settings_key_about_app"
         app:iconSpaceReserved="false"
         app:allowDividerAbove="true"
         app:allowDividerBelow="true"
