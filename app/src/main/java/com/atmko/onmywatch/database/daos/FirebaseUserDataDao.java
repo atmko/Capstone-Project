@@ -75,7 +75,7 @@ public class FirebaseUserDataDao {
                                 @Override
                                 public void onSuccess(StorageMetadata storageMetadata) {
                                     backups.add(new Backup(prefix.getName(), storageMetadata.getUpdatedTimeMillis()));
-                                    if (finalI == storageReferences.size() -1) {
+                                    if (finalI == storageReferences.size() - 1) {
                                         sortBackUps(backups);
                                         liveData.setValue(backups);
                                     }
@@ -114,7 +114,7 @@ public class FirebaseUserDataDao {
                 StorageMetadata storageMetadata = Tasks.await(prefix.getMetadata());
 
                 backups.add(new Backup(prefix.getName(), storageMetadata.getUpdatedTimeMillis()));
-                if (i == storageReferences.size() -1) {
+                if (i == storageReferences.size() - 1) {
                     sortBackUps(backups);
                 }
             }
@@ -125,22 +125,25 @@ public class FirebaseUserDataDao {
         return backups;
     }
 
+    //sort backups via bubble sort
     private static void sortBackUps(final List<Backup> backups) {
-        Comparator<Backup> comparator = new Comparator<Backup>() {
-            @Override
-            public int compare(Backup backup1, Backup backup2) {
-                //noinspection UseCompareMethod
-                if (backup1.mTimestamp < backup2.mTimestamp) {
-
-                    return 1;
-                } else if (backup1.mTimestamp > backup2.mTimestamp) {
-                    return -1;
-                } else {
-                    return 0;
+        boolean isSorted = false;
+        int counter = 0;
+        while (!isSorted) {
+            isSorted = true;
+            for (int i = 0; i < backups.size() - 1 - counter; i++) {
+                Backup currentBackup = backups.get(i);
+                Backup nextBackup = backups.get(i + 1);
+                long currentTimestamp = currentBackup.mTimestamp;
+                long nextTimestamp = nextBackup.mTimestamp;
+                if (currentTimestamp < nextTimestamp) {
+                    backups.set(i, nextBackup);
+                    backups.set(i + 1, currentBackup);
+                    isSorted = false;
                 }
             }
-        };
-        Collections.sort(backups, comparator);
+            counter += 1;
+        }
     }
 
     public static void setBackupCounter(int backupCounter) {
