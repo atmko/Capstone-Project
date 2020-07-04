@@ -151,15 +151,9 @@ public class SeriesDataParser {
 
         if (nextEpisodeToAirMap != null) {
             Episode nextEpisode = EpisodeParser.parseTmdbEpisode(seriesData.getId(), nextEpisodeToAirMap);
-            //todo refactor other instances to use less verbose hasNonEmptyDate() rather than checking not null and not ""
-            if (nextEpisode.hasNonEmptyDate()) {
-                if (EpisodeParser.shouldReplaceEpisode(seriesData.getNextEpisodeToAir(), nextEpisode)) {
-                    detailsSeriesData.setNextEpisodeToAir(nextEpisode);
-                } else {
-                    detailsSeriesData.setNextEpisodeToAir(seriesData.getNextEpisodeToAir());
-                }
-            }
-        } else {
+            detailsSeriesData.setNextEpisodeToAir(nextEpisode);
+        } else if (seriesData.getNextEpisodeToAir() != null
+                && seriesData.getNextEpisodeToAir().source != Episode.SOURCE_TMDB) {
             detailsSeriesData.setNextEpisodeToAir(seriesData.getNextEpisodeToAir());
         }
 
@@ -243,20 +237,19 @@ public class SeriesDataParser {
         //skips code below if returnedJSONString null or empty
         if (returnedJSONString == null || returnedJSONString.equals("")){
             //return same series data
+            seriesData.setNextEpisodeToAir(null);
             return seriesData;
         }
 
         Gson gson = new Gson();
         Map returnedMap = gson.fromJson(returnedJSONString, Map.class);
 
-        if (returnedMap == null) return seriesData;
-
-        Episode nextEpisode = EpisodeParser.parseTraktEpisode(seriesData.getId(), returnedMap);
-        //todo refactor other instances to use less verbose hasNonEmptyDate() rather than checking not null and not ""
-        if (nextEpisode.hasNonEmptyDate()) {
-            if (EpisodeParser.shouldReplaceEpisode(seriesData.getNextEpisodeToAir(), nextEpisode)) {
-                seriesData.setNextEpisodeToAir(nextEpisode);
-            }
+        if (returnedMap != null) {
+            Episode nextEpisode = EpisodeParser.parseTraktEpisode(seriesData.getId(), returnedMap);
+            seriesData.setNextEpisodeToAir(nextEpisode);
+        } else if (seriesData.getNextEpisodeToAir() != null
+                    && seriesData.getNextEpisodeToAir().source == Episode.SOURCE_TRAKT) {
+            seriesData.setNextEpisodeToAir(null);
         }
 
         return seriesData;

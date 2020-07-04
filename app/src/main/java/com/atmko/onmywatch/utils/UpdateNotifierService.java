@@ -277,14 +277,14 @@ public class UpdateNotifierService extends JobIntentService {
                                 newMediaData =
                                         SeriesDataParser.parseTraktNextEpisodeDetails(returnedJSONString, ((SeriesData) newMediaData));
 
+                                //save next episode
+                                updateMedia(newMediaData);
+
                                 trackSeries(SeriesTracker.ACTION_SET);
 
                                 //if there is a next episode and date, create notifier using date, otherwise create pending notifier
                                 Episode nextEpisode = ((SeriesData) newMediaData).getNextEpisodeToAir();
                                 if (nextEpisode != null && nextEpisode.hasNonEmptyDate()) {
-                                    //save next episode
-                                    updateMedia(newMediaData);
-
                                     setNewEpisodeNotifierThroughDateComparison();
 
                                 } else {
@@ -311,9 +311,6 @@ public class UpdateNotifierService extends JobIntentService {
                             //if there is a next episode and date, create notifier using date, otherwise create pending notifier
                             Episode nextEpisode = ((SeriesData) newMediaData).getNextEpisodeToAir();
                             if (nextEpisode != null && nextEpisode.hasNonEmptyDate()) {
-                                //save next episode
-                                updateMedia(newMediaData);
-
                                 setNewEpisodeNotifierThroughDateComparison();
 
                             } else {

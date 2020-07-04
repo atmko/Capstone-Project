@@ -17,7 +17,6 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.database.AppDatabase;
-import com.atmko.onmywatch.models.Episode;
 import com.atmko.onmywatch.models.MediaData;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.NotificationIdlingResource;
@@ -167,14 +166,10 @@ public class NoNotifierService extends JobIntentService {
                                 newMediaData =
                                         SeriesDataParser.parseTraktNextEpisodeDetails(returnedJSONString, ((SeriesData) newMediaData));
 
-                                trackSeries(SeriesTracker.ACTION_SET);
+                                //save next episode
+                                updateMedia(newMediaData);
 
-                                //if there is a next episode and date, create notifier using date, otherwise create pending notifier
-                                Episode nextEpisode = ((SeriesData) newMediaData).getNextEpisodeToAir();
-                                if (nextEpisode != null && nextEpisode.hasNonEmptyDate()) {
-                                    //save next episode
-                                    updateMedia(newMediaData);
-                                }
+                                trackSeries(SeriesTracker.ACTION_SET);
                             }
 
                         } catch (NullPointerException e) {
@@ -191,14 +186,6 @@ public class NoNotifierService extends JobIntentService {
                     public void run() {
                         if (anError.getErrorCode() == TraktApiConstants.TOO_MANY_REQUESTS) {
                             retryAfterCoolDOwn(anError, COOL_DOWN_REQUEST_TRAKT_ID);
-
-                        } else {
-                            //if there is a next episode and date, create notifier using date, otherwise create pending notifier
-                            Episode nextEpisode = ((SeriesData) newMediaData).getNextEpisodeToAir();
-                            if (nextEpisode != null && nextEpisode.hasNonEmptyDate()) {
-                                //save next episode
-                                updateMedia(newMediaData);
-                            }
                         }
 
                         //notify user of error
