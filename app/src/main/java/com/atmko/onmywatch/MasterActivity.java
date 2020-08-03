@@ -89,8 +89,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import hotchemi.android.rate.AppRate;
-
 import static com.atmko.onmywatch.ConfirmationActivity.ACTION_PENDING_PURCHASE;
 
 public class MasterActivity extends AppCompatActivity implements
@@ -187,19 +185,6 @@ public class MasterActivity extends AppCompatActivity implements
         }
     }
 
-    private void startReviewsLibrary() {
-        AppRate.with(this)
-                .setInstallDays(1) // default 10, 0 means install day.
-                .setLaunchTimes(3) // default 10
-                .setRemindInterval(2) // default 1
-                .setShowLaterButton(true) // default true
-
-                .monitor();
-
-        // Show a dialog if meets conditions
-        AppRate.showRateDialogIfMeetsConditions(this);
-    }
-
     private void startBillingClient() {
         if (sIsDifferentAccount) return;
 
@@ -283,8 +268,6 @@ public class MasterActivity extends AppCompatActivity implements
     }
 
     private void loadUi() {
-        startReviewsLibrary();
-
         //remove all fragments
         Fragment masterFragment =
                 getSupportFragmentManager().findFragmentById(R.id.master_fragments_container);
