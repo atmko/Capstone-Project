@@ -88,6 +88,7 @@
     <string name="settings_about_app_summary">Majik Version %s</string>
     <string name="settings_restore_summary">Restore files to a previous state</string>
     <string name="settings_create_backup_summary">Create a manual backup of current files</string>
+    <string name="settings_tmdb_disclaimer_summary">This product uses the TMDb API but is not endorsed or certified by TMDb.</string>
     <!--settings summary-->
 
     <!--CONTENT DESCRIPTIONS-->
