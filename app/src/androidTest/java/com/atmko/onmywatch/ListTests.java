@@ -41,7 +41,7 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItem;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
-import static androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static org.hamcrest.Matchers.allOf;
@@ -632,7 +632,7 @@ public class ListTests {
             e.printStackTrace();
         }
 
-        onView(allOf(ViewMatchers.withId(R.id.results_recycler_view), isCompletelyDisplayed()))
+        onView(allOf(ViewMatchers.withId(R.id.results_recycler_view), isDisplayed()))
                 .perform(actionOnItem(hasDescendant(withText("test list")), clickChildViewWithId(R.id.options_spinner)));
 
         try {
@@ -708,7 +708,7 @@ public class ListTests {
             e.printStackTrace();
         }
 
-        onView(allOf(ViewMatchers.withId(R.id.results_recycler_view), isCompletelyDisplayed()))
+        onView(allOf(ViewMatchers.withId(R.id.results_recycler_view), isDisplayed()))
                 .perform(actionOnItem(hasDescendant(withText("test list")), clickChildViewWithId(R.id.options_spinner)));
 
         try {

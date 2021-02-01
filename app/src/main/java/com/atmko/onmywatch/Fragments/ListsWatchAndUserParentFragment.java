@@ -30,6 +30,7 @@ import com.atmko.onmywatch.MasterActivity;
 import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.adapters.ListWatchAndUserAdapter;
 import com.atmko.onmywatch.custom_views.SuperEditText;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
 public class ListsWatchAndUserParentFragment extends Fragment
@@ -242,6 +243,23 @@ public class ListsWatchAndUserParentFragment extends Fragment
 
             }
         });
+
+        FloatingActionButton mFab = requireView().findViewById(R.id.new_list_fab);
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MasterActivity.launchCreateListActivity(getActivity());
+            }
+        });
+    }
+
+    void setFabViewState(boolean showFab) {
+        FloatingActionButton mFab = requireView().findViewById(R.id.new_list_fab);
+        if (showFab) {
+            mFab.show();
+        } else {
+            mFab.hide();
+        }
     }
 
     @Override

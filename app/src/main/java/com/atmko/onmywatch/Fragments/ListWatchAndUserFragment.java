@@ -48,7 +48,6 @@ import com.atmko.onmywatch.models.UserListModel;
 import com.atmko.onmywatch.models.WatchListModel;
 import com.atmko.onmywatch.utils.network_utils.AppExecutors;
 import com.atmko.onmywatch.view_models.ListsWatchAndUserViewModel;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.parceler.Parcels;
@@ -123,7 +122,7 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.fragment_list_watch_and_user, container, false);
+        return inflater.inflate(R.layout.fragment_recycler_results_btm_padding, container, false);
     }
 
     @Override
@@ -133,6 +132,14 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
         defineViews();
 
         observeData(savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getParentFragment() != null) {
+            ((ListsWatchAndUserParentFragment) getParentFragment()).setFabViewState(mShowFab);
+        }
     }
 
     @Override
@@ -163,20 +170,6 @@ public class ListWatchAndUserFragment extends Fragment implements ListsAdapter.O
         }
 
         mRecyclerView.setAdapter(mAdapter);
-
-        FloatingActionButton mFab = getView().findViewById(R.id.new_list_fab);
-        if (mShowFab) {
-            mFab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (getParentFragment() != null) {
-                        MasterActivity.launchCreateListActivity(getParentFragment().getActivity());
-                    }
-                }
-            });
-        } else {
-            mFab.hide();
-        }
 
         //get search bar from parent fragment
         mSearchTextView =

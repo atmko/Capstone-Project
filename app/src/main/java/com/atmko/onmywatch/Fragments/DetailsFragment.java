@@ -49,6 +49,7 @@ import com.atmko.onmywatch.models.MediaNotifier;
 import com.atmko.onmywatch.models.MovieData;
 import com.atmko.onmywatch.models.ScheduledMedia;
 import com.atmko.onmywatch.models.SeriesData;
+import com.atmko.onmywatch.models.TimeMetricsGenerator;
 import com.atmko.onmywatch.utils.GeneralUtils;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
 import com.atmko.onmywatch.utils.api_utils.MovieDataParser;
@@ -664,20 +665,24 @@ public class DetailsFragment extends Fragment {
     }
 
     private void setMovieCountDown(MovieData movieData) {
+        TimeMetricsGenerator metrics = new TimeMetricsGenerator(requireContext());
+
         //set count down if available
         ScheduledMedia releaseMedia = movieData.getScheduledMedia();
         String countdown =
-                releaseMedia != null ?releaseMedia.getCountdown(getContext()) : ScheduledMedia.NO_DATES;
+                releaseMedia != null ?releaseMedia.getCountdown(metrics) : ScheduledMedia.NO_DATES;
 
         mCountDownTextView.setText(countdown);
         mCountDownTextView.setVisibility(View.VISIBLE);
     }
 
     private void setSeriesCountDown(SeriesData seriesData) {
+        TimeMetricsGenerator metrics = new TimeMetricsGenerator(requireContext());
+
         //set count down if available
         Episode nextEpisode = seriesData.getNextEpisodeToAir();
         String countdown =
-                nextEpisode != null ? nextEpisode.getCountdown(getContext()) : ScheduledMedia.NO_DATES;
+                nextEpisode != null ? nextEpisode.getCountdown(metrics) : ScheduledMedia.NO_DATES;
 
         mCountDownTextView.setText(countdown);
         mCountDownTextView.setVisibility(View.VISIBLE);

@@ -1,40 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/top_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MasterActivity"
     android:background="@color/background"
-    android:focusableInTouchMode="true"
     android:focusable="true"
+    android:focusableInTouchMode="true"
     android:nextFocusDown="@id/tab_layout_1"
+    tools:context=".MasterActivity"
     tools:ignore="Overdraw">
 
-<!--parent layout isn't useless, its used for focus functionality-->
-    <LinearLayout
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/discover_results_view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <!--parent layout isn't useless, its used for focus functionality-->
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         tools:ignore="UselessParent">
 
-        <FrameLayout
+        <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize">
+            android:layout_height="match_parent"
+            app:layout_scrollFlags="scroll|enterAlways">
 
-            <include layout="@layout/toolbar_general" />
-        </FrameLayout>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize">
 
-        <include layout="@layout/tab_layout_no_line"/>
+                <include layout="@layout/toolbar_general" />
+            </FrameLayout>
 
-        <include layout="@layout/tab_layout_2_degree"/>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
 
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/discover_results_view_pager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+        <include layout="@layout/tab_layout_no_line" />
 
-    </LinearLayout>
+        <include layout="@layout/tab_layout_2_degree" />
 
-</FrameLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

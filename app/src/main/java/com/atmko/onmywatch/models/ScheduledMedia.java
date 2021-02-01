@@ -5,9 +5,7 @@
 package com.atmko.onmywatch.models;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 
-import com.atmko.onmywatch.R;
 import com.atmko.onmywatch.utils.GeneralUtils;
 import com.atmko.onmywatch.utils.GeneralUtils.DateInject;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
@@ -157,7 +155,7 @@ public class ScheduledMedia {
 
     //gets the time till next air date in days, hours, or minutes
     @SuppressWarnings("IntegerDivisionInFloatingPointContext")
-    public String getCountdown(Context context) {
+    public String getCountdown(TimeMetricsGenerator metrics) {
         if (mAirDate == null && mAirDateIso == null) return NO_DATES;
 
         long timeDifference = getBestTimeDifference();
@@ -177,10 +175,10 @@ public class ScheduledMedia {
         if (yearsValue >= 1) {
             if (yearsValue > 1) {
                 //plural and in future
-                countdownFormat = context.getString(R.string.countdown_years);
+                countdownFormat = metrics.getYearsMetric();
             } else {
                 //singular and in future
-                countdownFormat = context.getString(R.string.countdown_year);
+                countdownFormat = metrics.getYearMetric();
             }
 
             return String.format(countdownFormat, yearsValue);
@@ -189,10 +187,10 @@ public class ScheduledMedia {
         if (monthsValue >= 1) {
             if (monthsValue > 1) {
                 //plural and in future
-                countdownFormat = context.getString(R.string.countdown_months);
+                countdownFormat = metrics.getMonthsMetric();
             } else {
                 //singular and in future
-                countdownFormat = context.getString(R.string.countdown_month);
+                countdownFormat = metrics.getMonthMetric();
             }
 
             return String.format(countdownFormat, monthsValue);
@@ -200,10 +198,10 @@ public class ScheduledMedia {
         if (weeksValue >= 1) {
             if (weeksValue > 1) {
                 //plural and in future
-                countdownFormat = context.getString(R.string.countdown_weeks);
+                countdownFormat = metrics.getWeeksMetric();
             } else {
                 //singular and in future
-                countdownFormat = context.getString(R.string.countdown_week);
+                countdownFormat = metrics.getWeekMetric();
             }
 
             return String.format(countdownFormat, weeksValue);
@@ -212,10 +210,10 @@ public class ScheduledMedia {
         if (daysValue >= 1) {
             if (daysValue > 1) {
                 //plural and in future
-                countdownFormat = context.getString(R.string.countdown_days);
+                countdownFormat = metrics.getDaysMetric();
             } else {
                 //singular and in future
-                countdownFormat = context.getString(R.string.countdown_day);
+                countdownFormat = metrics.getDayMetric();
             }
 
             return String.format(countdownFormat, daysValue);
@@ -224,10 +222,10 @@ public class ScheduledMedia {
         if (hoursValue >= 1) {
             if (hoursValue > 1) {
                 //plural and in future
-                countdownFormat = context.getString(R.string.countdown_hours);
+                countdownFormat = metrics.getHoursMetric();
             } else {
                 //singular and in future
-                countdownFormat = context.getString(R.string.countdown_hour);
+                countdownFormat = metrics.getHourMetric();
             }
 
             return String.format(countdownFormat, hoursValue);
@@ -236,10 +234,10 @@ public class ScheduledMedia {
         if (minutesValue >= 1) {
             if (minutesValue > 1) {
                 //plural and in future
-                countdownFormat = context.getString(R.string.countdown_minutes);
+                countdownFormat = metrics.getMinutesMetric();
             } else {
                 //singular and in future
-                countdownFormat = context.getString(R.string.countdown_minute);
+                countdownFormat = metrics.getMinuteMetric();
             }
 
             return String.format(countdownFormat, minutesValue);
@@ -247,10 +245,10 @@ public class ScheduledMedia {
 
         if (secondsValue > 1) {
             //plural and in future
-            countdownFormat = context.getString(R.string.countdown_seconds);
+            countdownFormat = metrics.getSecondsMetric();
         } else {
             //singular and in future
-            countdownFormat = context.getString(R.string.countdown_second);
+            countdownFormat = metrics.getSecondMetric();
         }
 
         return String.format(countdownFormat, secondsValue);

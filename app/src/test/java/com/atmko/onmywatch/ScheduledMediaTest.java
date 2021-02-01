@@ -5,6 +5,7 @@
 package com.atmko.onmywatch;
 
 import com.atmko.onmywatch.models.ScheduledMedia;
+import com.atmko.onmywatch.models.TimeMetricsGenerator;
 import com.atmko.onmywatch.utils.GeneralUtils;
 import com.atmko.onmywatch.utils.GeneralUtils.DateInject;
 import com.atmko.onmywatch.utils.api_utils.ApiConstants;
@@ -16,6 +17,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.atmko.onmywatch.models.ScheduledMedia.NO_DATES;
 import static org.junit.Assert.assertEquals;
@@ -28,6 +31,24 @@ import static org.junit.Assert.fail;
  */
 public class ScheduledMediaTest {
     private static final long CURRENT_TIMESTAMP_STUB = 1575566616000L;
+    private static Map<String, String> METRICS_MAP() {
+        return new HashMap<String, String>() {{
+            put(TimeMetricsGenerator.YEAR_KEY, "%d year");
+            put(TimeMetricsGenerator.MONTH_KEY, "%d month");
+            put(TimeMetricsGenerator.WEEK_KEY, "%d week");
+            put(TimeMetricsGenerator.DAY_KEY, "%d day");
+            put(TimeMetricsGenerator.HOUR_KEY, "%d hour");
+            put(TimeMetricsGenerator.MINUTE_KEY, "%d minute");
+            put(TimeMetricsGenerator.SECOND_KEY, "%d second");
+            put(TimeMetricsGenerator.YEARS_KEY, "%d years");
+            put(TimeMetricsGenerator.MONTHS_KEY, "%d months");
+            put(TimeMetricsGenerator.WEEKS_KEY, "%d weeks");
+            put(TimeMetricsGenerator.DAYS_KEY, "%d days");
+            put(TimeMetricsGenerator.HOURS_KEY, "%d hours");
+            put(TimeMetricsGenerator.MINUTES_KEY, "%d minutes");
+            put(TimeMetricsGenerator.SECONDS_KEY, "%d seconds");
+        }};
+    }
 
     @Before
     public void setDateInject()  {
@@ -41,17 +62,19 @@ public class ScheduledMediaTest {
     public void getCountdownTest() {
         ScheduledMedia releaseSchedule = new ScheduledMedia();
         try {
+            TimeMetricsGenerator metrics = new TimeMetricsGenerator(METRICS_MAP());
+
             releaseSchedule.setAirDate("2019-12-09T05:00:00.000Z");
-            String daysAnswer = 3 + "days";
-            assertEquals(daysAnswer, releaseSchedule.getCountdown());
+            String daysAnswer = 3 + " days";
+            assertEquals(daysAnswer, releaseSchedule.getCountdown(metrics));
 
             releaseSchedule.setAirDate("2019-12-05T21:00:00.000Z");
-            String hoursAnswer = 3 + "hours";
-            assertEquals(hoursAnswer, releaseSchedule.getCountdown());
+            String hoursAnswer = 3 + " hours";
+            assertEquals(hoursAnswer, releaseSchedule.getCountdown(metrics));
 
             releaseSchedule.setAirDate("2019-12-05T18:00:00.000Z");
-            String minutesAnswer = 36 + "minutes";
-            assertEquals(minutesAnswer, releaseSchedule.getCountdown());
+            String minutesAnswer = 36 + " minutes";
+            assertEquals(minutesAnswer, releaseSchedule.getCountdown(metrics));
 
         } catch (ScheduledMedia.DateFormatException e) {
             e.printStackTrace();
@@ -69,7 +92,8 @@ public class ScheduledMediaTest {
             fail();
         }
 
-        assertEquals(NO_DATES, releaseSchedule.getCountdown());
+        TimeMetricsGenerator metrics = new TimeMetricsGenerator(METRICS_MAP());
+        assertEquals(NO_DATES, releaseSchedule.getCountdown(metrics));
     }
 
     @Test

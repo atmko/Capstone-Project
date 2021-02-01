@@ -74,8 +74,8 @@
     <style name="fab_base_style">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginBottom">@dimen/x1_layout_margin</item>
-        <item name="android:layout_marginEnd">@dimen/x1_layout_margin</item>
+        <item name="android:layout_marginBottom">@dimen/x2_layout_margin</item>
+        <item name="android:layout_marginEnd">@dimen/x2_layout_margin</item>
         <item name="android:layout_gravity">bottom|end</item>
         <item name="fabSize">auto</item>
         <item name="fabCustomSize">@dimen/fabCustomSize</item>
