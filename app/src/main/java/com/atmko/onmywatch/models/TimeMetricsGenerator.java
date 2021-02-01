@@ -32,20 +32,20 @@ public class TimeMetricsGenerator {
 
     public TimeMetricsGenerator(final Context context) {
         mTimeMetrics =  new HashMap<String, String>() {{
-            put("year", context.getString(R.string.countdown_year));
-            put("month", context.getString(R.string.countdown_month));
-            put("week", context.getString(R.string.countdown_week));
-            put("day", context.getString(R.string.countdown_day));
-            put("hour", context.getString(R.string.countdown_hour));
-            put("minute", context.getString(R.string.countdown_minute));
-            put("second", context.getString(R.string.countdown_second));
-            put("years", context.getString(R.string.countdown_years));
-            put("months", context.getString(R.string.countdown_months));
-            put("weeks", context.getString(R.string.countdown_weeks));
-            put("days ", context.getString(R.string.countdown_days));
-            put("hours", context.getString(R.string.countdown_hours));
-            put("minutes", context.getString(R.string.countdown_minutes));
-            put("seconds", context.getString(R.string.countdown_seconds));
+            put(YEAR_KEY, context.getString(R.string.countdown_year));
+            put(MONTH_KEY, context.getString(R.string.countdown_month));
+            put(WEEK_KEY, context.getString(R.string.countdown_week));
+            put(DAY_KEY, context.getString(R.string.countdown_day));
+            put(HOUR_KEY, context.getString(R.string.countdown_hour));
+            put(MINUTE_KEY, context.getString(R.string.countdown_minute));
+            put(SECOND_KEY, context.getString(R.string.countdown_second));
+            put(YEARS_KEY, context.getString(R.string.countdown_years));
+            put(MONTHS_KEY, context.getString(R.string.countdown_months));
+            put(WEEKS_KEY, context.getString(R.string.countdown_weeks));
+            put(DAYS_KEY, context.getString(R.string.countdown_days));
+            put(HOURS_KEY, context.getString(R.string.countdown_hours));
+            put(MINUTES_KEY, context.getString(R.string.countdown_minutes));
+            put(SECONDS_KEY, context.getString(R.string.countdown_seconds));
         }};
     }
 
