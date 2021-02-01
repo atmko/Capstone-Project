@@ -23,8 +23,8 @@ android {
         applicationId "com.atmko.onmywatch"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 26
-        versionName "1.0.5.1"
+        versionCode 27
+        versionName "1.0.5.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
 
