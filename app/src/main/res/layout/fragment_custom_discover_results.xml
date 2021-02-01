@@ -32,7 +32,7 @@
         android:id="@+id/search_button_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/x2_layout_margin"
+        android:paddingBottom="@dimen/x7_layout_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -13,6 +13,7 @@
     <dimen name="x4_layout_margin">32dp</dimen>
     <dimen name="x5_layout_margin">40dp</dimen>
     <dimen name="x6_layout_margin">48dp</dimen>
+    <dimen name="x7_layout_margin">56dp</dimen>
     <dimen name="x8_layout_margin">64dp</dimen>
     <dimen name="x9_layout_margin">72dp</dimen>
     <dimen name="x10_layout_margin">80dp</dimen>
