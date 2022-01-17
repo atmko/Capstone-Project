@@ -334,7 +334,6 @@ public class DetailsFragment extends Fragment {
             });
 
             configureBackDropDimensions();
-            configureDetailExtrasSize();
 
             getView().findViewById(R.id.user_rating_text).setOnClickListener(new View.OnClickListener() {
                 @Override

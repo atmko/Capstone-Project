@@ -5,4 +5,5 @@
     android:layout_height="match_parent"
     android:background="@color/background"
     android:clipToPadding="false"
-    android:paddingBottom="@dimen/fab_list_bottom_padding" />
+    android:paddingBottom="@dimen/fab_list_bottom_padding"
+    android:nestedScrollingEnabled="true"/>
