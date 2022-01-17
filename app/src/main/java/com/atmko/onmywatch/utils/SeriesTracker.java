@@ -101,6 +101,7 @@ public class SeriesTracker extends JobIntentService {
                     public void run() {
                         List<Season> seasons =
                                 SeasonParser.parseTraktSeasons(returnedJSONString);
+                        if (seasons.size() <= 0) return;
                         lastSeason = seasons.get(seasons.size() - 1);
                         getEpisodesInSeason(traktId, String.valueOf(lastSeason.seasonNumber));
                     }
@@ -155,10 +156,14 @@ public class SeriesTracker extends JobIntentService {
                         boolean isRunning = newMediaData.getReleaseStatus()
                                 .equals(ApiConstants.TextReplacement.REPLACEMENT_RETURNING_SERIES);
 
-                        //if season is finished and is running, show season end and show next season without release date
-                        //otherwise process bundle if bundle and single if single
+                        //set latest season as undated if series is running and there are no episodes
+                        if (lastSeason.getEpisodes().size() <= 0 && isRunning) {
+                            //set last season without air date();
+                            insertSeason(lastSeason.seasonNumber, CONDITION_UNDATED,
+                                    lastSeason.getTimestamp(), lastSeason.isBundled);
 
-                        if (lastSeason.hasEnded() && isRunning) {
+                        // set latest season as aired and next season as undated if latest season has ended and series is running
+                        } else if (lastSeason.hasEnded() && isRunning) {
                             //set season ended
                             Episode lastEpisodeInSeason =
                                     lastSeason.getEpisodes().get(lastSeason.getEpisodes().size() - 1);
@@ -171,7 +176,9 @@ public class SeriesTracker extends JobIntentService {
                             insertSeason(nextSeason.seasonNumber, CONDITION_UNDATED,
                                     nextSeason.getTimestamp(), lastSeason.isBundled);
 
+                        // otherwise if latest season has not ended and series is running
                         } else if (!lastSeason.hasEnded() && isRunning){
+                            // process as bundle if bundle otherwise process as single episodes
                             if (lastSeason.isBundled) {
                                 processBundle();
                             } else {
